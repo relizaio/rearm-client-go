@@ -168,7 +168,7 @@ func (t *authTransport) setLegacy()     { t.mu.Lock(); defer t.mu.Unlock(); t.le
 
 func (t *authTransport) send(req *http.Request, body []byte, sess *csrfSession) (*http.Response, error) {
 	r := req.Clone(req.Context())
-	if t.isLegacy() && !strings.HasSuffix(r.URL.Path, LegacyPath) {
+	if t.isLegacy() && r.URL.Path != LegacyPath {
 		u, err := url.Parse(t.legacyURL)
 		if err != nil {
 			return nil, err
