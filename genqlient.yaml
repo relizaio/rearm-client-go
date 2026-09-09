@@ -1,0 +1,22 @@
+schema:
+  - schema/rearm.graphqls
+  - schema/declarative.graphqls
+operations:
+  - operations/*.graphql
+generated: generated.go
+package: rearm
+use_struct_references: true
+optional: pointer
+bindings:
+  ID:
+    type: string
+  DateTime:
+    type: string
+  Long:
+    type: int64
+  JSON:
+    type: encoding/json.RawMessage
+  Object:
+    type: encoding/json.RawMessage
+  Upload:
+    type: string

@@ -1,0 +1,213 @@
+# Declarative configuration operations. Mirrors the Pro backend schema additions; regenerate the
+# client when the backend schema changes.
+# ---------------------------------------------------------------------------
+# Declarative configuration (GitOps-style). One spec kind per ownership slice;
+# a file is authoritative only for what it declares. Apply is idempotent and
+# keyed by name; cross-references (component, branch, release) go by name and
+# are resolved at apply time. Rows stay the source of truth; provenance of the
+# last apply is stamped on each touched row. Pruning of rows absent from a
+# spec is governed by the org-wide Settings.declarativePrune (never by the
+# spec itself).
+# ---------------------------------------------------------------------------
+
+"""How rows absent from an applied spec are treated. LEAVE (default) reports them; ARCHIVE archives them."""
+enum DeclarativePruneMode {
+	LEAVE
+	ARCHIVE
+}
+
+enum DeclarativeAction {
+	CREATE
+	UPDATE
+	UNCHANGED
+	ARCHIVE
+	ERROR
+}
+
+"""Where an applied spec came from, recorded on every row the apply touched."""
+input DeclarativeSourceInput {
+	repo: String
+	path: String
+	commit: String
+}
+
+type DeclarativeSource {
+	repo: String
+	path: String
+	commit: String
+}
+
+type DeclarativeProvenance {
+	"""SHA-256 of the canonical JSON of the spec that last touched this row."""
+	specHash: String
+	appliedAt: DateTime
+	source: DeclarativeSource
+}
+
+type DeclarativeChange {
+	"""Entity kind: component | branch"""
+	kind: String!
+	name: String!
+	action: DeclarativeAction!
+	"""Fields that differ (UPDATE) or would be set (CREATE)."""
+	fields: [String!]
+	message: String
+}
+
+type DeclarativeApplyResult {
+	kind: String!
+	dryRun: Boolean!
+	specHash: String!
+	changes: [DeclarativeChange!]!
+	created: Int!
+	updated: Int!
+	unchanged: Int!
+	archived: Int!
+	errors: Int!
+}
+
+"""Catalog slice: components and products of an organization (no branches, no releases)."""
+input CatalogSpecInput {
+	version: Int!
+	"""
+	When true the file claims every active component / product of the org: with
+	Settings.declarativePrune = ARCHIVE, components not listed are archived. Partial
+	files (per team) leave this false.
+	"""
+	authoritative: Boolean
+	components: [CatalogComponentInput!]!
+}
+
+input CatalogComponentInput {
+	name: String!
+	type: ComponentType!
+	kind: ComponentKind
+	versionSchema: String
+	marketingVersionSchema: String
+	versionType: VersionType
+	featureBranchVersioning: String
+	"""Base branch name on create only (main by default)."""
+	defaultBranch: String
+	"""VCS repository by URI; created in the org when missing."""
+	vcsUri: String
+	vcsType: String
+	repoPath: String
+	nature: ComponentNature
+	deviceClass: DeviceClass
+	branchSuffixMode: BranchSuffixMode
+	identifiers: [IdentifierInput!]
+}
+
+type CatalogSpec {
+	version: Int!
+	authoritative: Boolean!
+	components: [CatalogComponent!]!
+}
+
+type CatalogComponent {
+	name: String!
+	type: ComponentType!
+	kind: ComponentKind
+	versionSchema: String
+	marketingVersionSchema: String
+	versionType: VersionType
+	featureBranchVersioning: String
+	vcsUri: String
+	vcsType: String
+	repoPath: String
+	nature: ComponentNature
+	deviceClass: DeviceClass
+	branchSuffixMode: BranchSuffixMode
+	identifiers: [Identifier!]
+	provenance: DeclarativeProvenance
+}
+
+"""Branches slice: branches of a component, or feature sets of a product. The file is authoritative for that component."""
+input BranchesSpecInput {
+	version: Int!
+	"""Component or product name."""
+	component: String!
+	"""
+	When true (the default for files) the spec claims every non-base branch of the component and
+	Settings.declarativePrune decides what happens to branches it does not list. Single-branch
+	callers such as the Terraform provider pass false.
+	"""
+	authoritative: Boolean
+	branches: [BranchSpecInput!]!
+}
+
+input BranchSpecInput {
+	name: String!
+	type: BranchType
+	versionSchema: String
+	marketingVersionSchema: String
+	vcsBranch: String
+	autoIntegrate: AutoIntegrateState
+	findingAnalyticsParticipation: FindingAnalyticsParticipation
+	dependencies: [DependencySpecInput!]
+	dependencyPatterns: [DependencyPatternSpecInput!]
+}
+
+input DependencySpecInput {
+	"""Component name."""
+	component: String!
+	"""Branch name of that component; omitted = follow its base branch semantics as today."""
+	branch: String
+	"""Pin to a release by version."""
+	release: String
+	status: Status
+	isFollowVersion: Boolean
+}
+
+input DependencyPatternSpecInput {
+	pattern: String!
+	targetBranchName: String
+	defaultStatus: Status
+	fallbackToBase: FallbackToBase
+}
+
+type BranchesSpec {
+	version: Int!
+	component: String!
+	authoritative: Boolean!
+	branches: [BranchSpecEntry!]!
+}
+
+type BranchSpecEntry {
+	name: String!
+	type: BranchType
+	versionSchema: String
+	marketingVersionSchema: String
+	vcsBranch: String
+	autoIntegrate: AutoIntegrateState
+	findingAnalyticsParticipation: FindingAnalyticsParticipation
+	dependencies: [DependencySpec!]
+	dependencyPatterns: [DependencyPattern!]
+	provenance: DeclarativeProvenance
+}
+
+type DependencySpec {
+	component: String!
+	branch: String
+	release: String
+	status: Status
+	isFollowVersion: Boolean
+}
+
+extend type Mutation {
+	applyCatalogProgrammatic(spec: CatalogSpecInput!, dryRun: Boolean, source: DeclarativeSourceInput): DeclarativeApplyResult
+	applyBranchesProgrammatic(spec: BranchesSpecInput!, dryRun: Boolean, source: DeclarativeSourceInput): DeclarativeApplyResult
+}
+
+extend type Query {
+	exportCatalogProgrammatic(components: [String!]): CatalogSpec
+	exportBranchesProgrammatic(component: String!): BranchesSpec
+}
+
+extend input SettingsInput {
+	declarativePrune: DeclarativePruneMode
+}
+
+extend type Settings {
+	declarativePrune: DeclarativePruneMode
+}
