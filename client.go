@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -20,6 +21,14 @@ import (
 
 // Version is stamped by the build; consumers may override the user agent with WithUserAgent.
 var Version = "dev"
+
+// ProgrammaticPath is the API-key GraphQL endpoint: stateless, no CSRF token, only the
+// operations declared in the programmatic schema. Older servers do not have it; see LegacyPath.
+const ProgrammaticPath = "/api/programmatic/graphql"
+
+// LegacyPath is the original endpoint shared with the browser UI. Reaching it with an API key
+// requires the CSRF session handshake, which the client performs when it falls back here.
+const LegacyPath = "/graphql"
 
 // Client wraps a genqlient graphql.Client with ReARM API-key auth.
 type Client struct {
@@ -33,6 +42,7 @@ type Option func(*options)
 type options struct {
 	httpClient *http.Client
 	userAgent  string
+	legacy     bool
 }
 
 // WithHTTPClient sets the underlying HTTP client (timeouts, proxies, TLS).
@@ -40,6 +50,11 @@ func WithHTTPClient(h *http.Client) Option { return func(o *options) { o.httpCli
 
 // WithUserAgent sets the User-Agent header sent with every request.
 func WithUserAgent(ua string) Option { return func(o *options) { o.userAgent = ua } }
+
+// WithLegacyEndpoint forces the shared /graphql endpoint (with the CSRF handshake) instead of
+// the programmatic endpoint. Only needed to pin behaviour against an old server; by default
+// the client tries the programmatic endpoint and falls back on its own when it is absent.
+func WithLegacyEndpoint() Option { return func(o *options) { o.legacy = true } }
 
 // New returns a client for the ReARM instance at baseURL (scheme and host, e.g.
 // https://app.rearmhq.com) authenticating with an API key pair.
@@ -62,11 +77,13 @@ func New(baseURL, apiKeyID, apiKey string, opts ...Option) (*Client, error) {
 	if !strings.HasPrefix(root, "http://") && !strings.HasPrefix(root, "https://") {
 		root = "https://" + root
 	}
-	endpoint := root + "/graphql"
 	auth := "Basic " + base64.StdEncoding.EncodeToString([]byte(apiKeyID+":"+apiKey))
-	hc := &http.Client{
-		Timeout:   base.Timeout,
-		Transport: &authTransport{next: transportOf(base), auth: auth, userAgent: o.userAgent, csrfURL: root + "/api/manual/v1/fetchCsrf"},
+	t := &authTransport{next: transportOf(base), auth: auth, userAgent: o.userAgent,
+		csrfURL: root + "/api/manual/v1/fetchCsrf", legacyURL: root + LegacyPath, legacy: o.legacy}
+	hc := &http.Client{Timeout: base.Timeout, Transport: t}
+	endpoint := root + ProgrammaticPath
+	if o.legacy {
+		endpoint = root + LegacyPath
 	}
 	return &Client{Client: graphql.NewClient(endpoint, hc), endpoint: endpoint}, nil
 }
@@ -81,17 +98,21 @@ func transportOf(h *http.Client) http.RoundTripper {
 	return http.DefaultTransport
 }
 
-// authTransport adds the API key and the CSRF session ReARM requires on /graphql even for
-// key-authenticated calls: a session cookie plus an XSRF token obtained from fetchCsrf, sent
-// back as Cookie and X-XSRF-TOKEN (the same handshake the ReARM CLI performs). The session is
-// fetched lazily and refreshed once when the server answers 401 or 403.
+// authTransport adds the API key. On the programmatic endpoint that is all a request needs.
+// When the server is older and has no programmatic endpoint (404), or when the legacy
+// endpoint is forced, the transport switches to /graphql and performs the CSRF session
+// handshake that endpoint requires even for key-authenticated calls: a session cookie plus
+// an XSRF token from fetchCsrf, sent back as Cookie and X-XSRF-TOKEN (the same handshake the
+// ReARM CLI performs). The session is fetched lazily and refreshed once on 401 or 403.
 type authTransport struct {
 	next      http.RoundTripper
 	auth      string
 	userAgent string
 	csrfURL   string
+	legacyURL string
 
 	mu      sync.Mutex
+	legacy  bool
 	session *csrfSession
 }
 
@@ -110,6 +131,18 @@ func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		}
 		_ = req.Body.Close()
 		body = b
+	}
+	if !t.isLegacy() {
+		resp, err := t.send(req, body, nil)
+		if err != nil {
+			return nil, err
+		}
+		if resp.StatusCode != http.StatusNotFound {
+			return resp, nil
+		}
+		// no programmatic endpoint on this server: fall back to /graphql with the handshake, for good
+		_ = resp.Body.Close()
+		t.setLegacy()
 	}
 	sess, err := t.sessionFor(req.Context(), false)
 	if err != nil {
@@ -130,8 +163,19 @@ func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
+func (t *authTransport) isLegacy() bool { t.mu.Lock(); defer t.mu.Unlock(); return t.legacy }
+func (t *authTransport) setLegacy()     { t.mu.Lock(); defer t.mu.Unlock(); t.legacy = true }
+
 func (t *authTransport) send(req *http.Request, body []byte, sess *csrfSession) (*http.Response, error) {
 	r := req.Clone(req.Context())
+	if t.isLegacy() && !strings.HasSuffix(r.URL.Path, LegacyPath) {
+		u, err := url.Parse(t.legacyURL)
+		if err != nil {
+			return nil, err
+		}
+		r.URL = u
+		r.Host = u.Host
+	}
 	if body != nil {
 		r.Body = io.NopCloser(bytes.NewReader(body))
 		r.ContentLength = int64(len(body))

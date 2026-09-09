@@ -9,6 +9,9 @@ Go client for the [ReARM](https://rearmhq.com) GraphQL API, shared by the
   compile error in every consumer rather than a runtime surprise.
 - Authentication is API-key only (`Authorization: Basic base64(id:secret)`), the same
   credentials the CLI uses. Browser sessions are out of scope.
+- Talks to the programmatic endpoint `/api/programmatic/graphql` (stateless, no CSRF). On
+  an older server without it the client falls back to `/graphql` and performs the CSRF
+  session handshake that endpoint requires; `WithLegacyEndpoint()` forces that mode.
 - `catalog/` works with declarative spec files (`kind: Catalog`, `kind: Branches`): load,
   apply (with dry run), export, render YAML, print change sets.
 
