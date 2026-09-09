@@ -176,7 +176,7 @@ func ToYAML(file any) ([]byte, error) {
 	if err := json.Unmarshal(js, &generic); err != nil {
 		return nil, err
 	}
-	node := toNode(stripNulls(generic), []string{"kind", "version", "authoritative", "component", "name", "type"})
+	node := toNode(stripNulls(generic), true)
 	return yaml.Marshal(node)
 }
 
@@ -250,10 +250,20 @@ func stripNulls(v any) any {
 	}
 }
 
+// Key order for the document envelope and for nested entries; anything else follows alphabetically.
+var (
+	topLevelKeyOrder = []string{"kind", "version", "authoritative", "component", "components", "branches"}
+	entryKeyOrder    = []string{"name", "type", "component", "branch", "release", "pattern"}
+)
+
 // toNode builds a yaml.Node so map keys keep a stable, human order: preferred keys first, then alphabetical.
-func toNode(v any, preferred []string) *yaml.Node {
+func toNode(v any, top bool) *yaml.Node {
 	switch t := v.(type) {
 	case map[string]any:
+		preferred := entryKeyOrder
+		if top {
+			preferred = topLevelKeyOrder
+		}
 		n := &yaml.Node{Kind: yaml.MappingNode}
 		keys := make([]string, 0, len(t))
 		for k := range t {
@@ -275,13 +285,13 @@ func toNode(v any, preferred []string) *yaml.Node {
 			return keys[i] < keys[j]
 		})
 		for _, k := range keys {
-			n.Content = append(n.Content, &yaml.Node{Kind: yaml.ScalarNode, Value: k}, toNode(t[k], preferred))
+			n.Content = append(n.Content, &yaml.Node{Kind: yaml.ScalarNode, Value: k}, toNode(t[k], false))
 		}
 		return n
 	case []any:
 		n := &yaml.Node{Kind: yaml.SequenceNode}
 		for _, x := range t {
-			n.Content = append(n.Content, toNode(x, preferred))
+			n.Content = append(n.Content, toNode(x, false))
 		}
 		return n
 	default:

@@ -5,10 +5,14 @@
 package rearm
 
 import (
+	"bytes"
+	"context"
 	"encoding/base64"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/Khan/genqlient/graphql"
@@ -54,11 +58,15 @@ func New(baseURL, apiKeyID, apiKey string, opts ...Option) (*Client, error) {
 	if base == nil {
 		base = &http.Client{Timeout: 60 * time.Second}
 	}
-	endpoint := strings.TrimRight(baseURL, "/") + "/graphql"
+	root := strings.TrimRight(baseURL, "/")
+	if !strings.HasPrefix(root, "http://") && !strings.HasPrefix(root, "https://") {
+		root = "https://" + root
+	}
+	endpoint := root + "/graphql"
 	auth := "Basic " + base64.StdEncoding.EncodeToString([]byte(apiKeyID+":"+apiKey))
 	hc := &http.Client{
 		Timeout:   base.Timeout,
-		Transport: &authTransport{next: transportOf(base), auth: auth, userAgent: o.userAgent},
+		Transport: &authTransport{next: transportOf(base), auth: auth, userAgent: o.userAgent, csrfURL: root + "/api/manual/v1/fetchCsrf"},
 	}
 	return &Client{Client: graphql.NewClient(endpoint, hc), endpoint: endpoint}, nil
 }
@@ -73,16 +81,103 @@ func transportOf(h *http.Client) http.RoundTripper {
 	return http.DefaultTransport
 }
 
+// authTransport adds the API key and the CSRF session ReARM requires on /graphql even for
+// key-authenticated calls: a session cookie plus an XSRF token obtained from fetchCsrf, sent
+// back as Cookie and X-XSRF-TOKEN (the same handshake the ReARM CLI performs). The session is
+// fetched lazily and refreshed once when the server answers 401 or 403.
 type authTransport struct {
 	next      http.RoundTripper
 	auth      string
 	userAgent string
+	csrfURL   string
+
+	mu      sync.Mutex
+	session *csrfSession
+}
+
+type csrfSession struct {
+	jsessionID string
+	xsrfToken  string
 }
 
 func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	// GraphQL requests carry a body; keep a copy so the request can be replayed after a refresh.
+	var body []byte
+	if req.Body != nil {
+		b, err := io.ReadAll(req.Body)
+		if err != nil {
+			return nil, err
+		}
+		_ = req.Body.Close()
+		body = b
+	}
+	sess, err := t.sessionFor(req.Context(), false)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := t.send(req, body, sess)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
+		_ = resp.Body.Close()
+		sess, err = t.sessionFor(req.Context(), true)
+		if err != nil {
+			return nil, err
+		}
+		return t.send(req, body, sess)
+	}
+	return resp, nil
+}
+
+func (t *authTransport) send(req *http.Request, body []byte, sess *csrfSession) (*http.Response, error) {
 	r := req.Clone(req.Context())
+	if body != nil {
+		r.Body = io.NopCloser(bytes.NewReader(body))
+		r.ContentLength = int64(len(body))
+		r.GetBody = func() (io.ReadCloser, error) { return io.NopCloser(bytes.NewReader(body)), nil }
+	}
 	r.Header.Set("Authorization", t.auth)
 	r.Header.Set("User-Agent", t.userAgent)
 	r.Header.Set("Accept", "application/json")
+	if sess != nil {
+		r.Header.Set("X-XSRF-TOKEN", sess.xsrfToken)
+		r.Header.Set("Cookie", "JSESSIONID="+sess.jsessionID+"; XSRF-TOKEN="+sess.xsrfToken)
+	}
 	return t.next.RoundTrip(r)
+}
+
+// sessionFor returns the cached CSRF session, fetching it on first use or when refresh is set.
+func (t *authTransport) sessionFor(ctx context.Context, refresh bool) (*csrfSession, error) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	if t.session != nil && !refresh {
+		return t.session, nil
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, t.csrfURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", t.userAgent)
+	req.Header.Set("Accept", "application/json")
+	resp, err := t.next.RoundTrip(req)
+	if err != nil {
+		return nil, fmt.Errorf("rearm: csrf handshake: %w", err)
+	}
+	defer resp.Body.Close()
+	_, _ = io.Copy(io.Discard, resp.Body)
+	sess := &csrfSession{}
+	for _, c := range resp.Cookies() {
+		switch c.Name {
+		case "JSESSIONID":
+			sess.jsessionID = c.Value
+		case "XSRF-TOKEN":
+			sess.xsrfToken = c.Value
+		}
+	}
+	if sess.xsrfToken == "" {
+		return nil, fmt.Errorf("rearm: csrf handshake: no XSRF-TOKEN cookie from %s (status %d)", t.csrfURL, resp.StatusCode)
+	}
+	t.session = sess
+	return sess, nil
 }
