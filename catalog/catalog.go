@@ -17,23 +17,20 @@ import (
 	rearm "github.com/relizaio/rearm-client-go"
 )
 
-const (
-	KindCatalog  = "Catalog"
-	KindBranches = "Branches"
-)
+// Kind values are the DeclarativeKind enum of the programmatic schema (CATALOG, BRANCHES);
+// spec files carry them verbatim in their `kind` field.
+type Kind = rearm.DeclarativeKind
 
 // Source records where a spec came from (repo, path, commit) and is stamped on every row the apply touches.
 type Source = rearm.DeclarativeSourceInput
 
-// CatalogFile is a `kind: Catalog` document: components and products of one organization.
+// CatalogFile is a `kind: CATALOG` document: components and products of one organization.
 type CatalogFile struct {
-	Kind string `json:"kind"`
 	rearm.CatalogSpecInput
 }
 
-// BranchesFile is a `kind: Branches` document: branches (or feature sets) of one component (or product).
+// BranchesFile is a `kind: BRANCHES` document: branches (or feature sets) of one component (or product).
 type BranchesFile struct {
-	Kind string `json:"kind"`
 	rearm.BranchesSpecInput
 }
 
@@ -48,7 +45,7 @@ type Change struct {
 
 // Result is the normalised outcome of an apply, identical for both kinds.
 type Result struct {
-	Kind      string
+	Kind      Kind
 	DryRun    bool
 	SpecHash  string
 	Created   int
@@ -79,8 +76,8 @@ func Parse(raw []byte) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	switch kind {
-	case KindCatalog:
+	switch Kind(kind) {
+	case rearm.DeclarativeKindCatalog:
 		var f CatalogFile
 		if err := json.Unmarshal(js, &f); err != nil {
 			return nil, fmt.Errorf("spec (%s): %w", kind, err)
@@ -89,7 +86,7 @@ func Parse(raw []byte) (any, error) {
 			f.Version = 1
 		}
 		return &f, nil
-	case KindBranches:
+	case rearm.DeclarativeKindBranches:
 		var f BranchesFile
 		if err := json.Unmarshal(js, &f); err != nil {
 			return nil, fmt.Errorf("spec (%s): %w", kind, err)
@@ -99,9 +96,9 @@ func Parse(raw []byte) (any, error) {
 		}
 		return &f, nil
 	case "":
-		return nil, fmt.Errorf("spec: missing 'kind' (expected %s or %s)", KindCatalog, KindBranches)
+		return nil, fmt.Errorf("spec: missing 'kind' (expected %s or %s)", rearm.DeclarativeKindCatalog, rearm.DeclarativeKindBranches)
 	default:
-		return nil, fmt.Errorf("spec: unsupported kind %q (expected %s or %s)", kind, KindCatalog, KindBranches)
+		return nil, fmt.Errorf("spec: unsupported kind %q (expected %s or %s)", kind, rearm.DeclarativeKindCatalog, rearm.DeclarativeKindBranches)
 	}
 }
 
@@ -145,7 +142,7 @@ func ExportCatalog(ctx context.Context, c *rearm.Client, names []string) (*Catal
 	if err := roundTrip(resp.ExportCatalogProgrammatic, &f.CatalogSpecInput); err != nil {
 		return nil, err
 	}
-	f.Kind = KindCatalog
+	f.Kind = rearm.DeclarativeKindCatalog
 	return &f, nil
 }
 
@@ -162,7 +159,7 @@ func ExportBranches(ctx context.Context, c *rearm.Client, component string) (*Br
 	if err := roundTrip(resp.ExportBranchesProgrammatic, &f.BranchesSpecInput); err != nil {
 		return nil, err
 	}
-	f.Kind = KindBranches
+	f.Kind = rearm.DeclarativeKindBranches
 	return &f, nil
 }
 

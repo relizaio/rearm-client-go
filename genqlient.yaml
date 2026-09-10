@@ -1,6 +1,5 @@
 schema:
-  - schema/rearm.graphqls
-  - schema/declarative.graphqls
+  - schema/programmatic.graphqls
 operations:
   - operations/*.graphql
 generated: generated.go

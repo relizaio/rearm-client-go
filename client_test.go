@@ -36,7 +36,9 @@ func TestProgrammaticEndpointNeedsNoHandshake(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var resp struct{ Typename string `json:"__typename"` }
+	var resp struct {
+		Typename string `json:"__typename"`
+	}
 	if err := c.MakeRequest(context.Background(), &graphql.Request{Query: "{__typename}"}, &graphql.Response{Data: &resp}); err != nil {
 		t.Fatal(err)
 	}
@@ -74,7 +76,9 @@ func TestFallsBackToLegacyEndpointWithHandshake(t *testing.T) {
 		t.Fatal(err)
 	}
 	for i := 0; i < 2; i++ {
-		var resp struct{ Typename string `json:"__typename"` }
+		var resp struct {
+			Typename string `json:"__typename"`
+		}
 		if err := c.MakeRequest(context.Background(), &graphql.Request{Query: "{__typename}"}, &graphql.Response{Data: &resp}); err != nil {
 			t.Fatal(err)
 		}

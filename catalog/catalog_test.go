@@ -8,7 +8,7 @@ import (
 )
 
 const sampleCatalog = `
-kind: Catalog
+kind: CATALOG
 authoritative: true
 components:
   - name: api
@@ -20,7 +20,7 @@ components:
 `
 
 const sampleBranches = `
-kind: Branches
+kind: BRANCHES
 component: platform
 branches:
   - name: stable
@@ -41,7 +41,7 @@ func TestParseCatalog(t *testing.T) {
 	if !ok {
 		t.Fatalf("expected *CatalogFile, got %T", f)
 	}
-	if c.Version != 1 || c.Authoritative == nil || !*c.Authoritative || len(c.Components) != 1 {
+	if c.Kind != rearm.DeclarativeKindCatalog || c.Version != 1 || c.Authoritative == nil || !*c.Authoritative || len(c.Components) != 1 {
 		t.Fatalf("unexpected catalog: %+v", c.CatalogSpecInput)
 	}
 	comp := c.Components[0]
@@ -73,7 +73,7 @@ func TestParseBranchesAndYAMLRoundTrip(t *testing.T) {
 		t.Fatal(err)
 	}
 	s := string(y)
-	if !strings.HasPrefix(s, "kind: Branches\nversion: 1\ncomponent: platform\n") {
+	if !strings.HasPrefix(s, "kind: BRANCHES\nversion: 1\ncomponent: platform\n") {
 		t.Fatalf("yaml key order wrong:\n%s", s)
 	}
 	if strings.Contains(s, "null") {
@@ -89,7 +89,7 @@ func TestParseBranchesAndYAMLRoundTrip(t *testing.T) {
 }
 
 func TestParseRejectsUnknownKind(t *testing.T) {
-	if _, err := Parse([]byte("kind: Instances\n")); err == nil {
+	if _, err := Parse([]byte("kind: INSTANCES\n")); err == nil {
 		t.Fatal("expected an error for an unsupported kind")
 	}
 	if _, err := Parse([]byte("version: 1\n")); err == nil {

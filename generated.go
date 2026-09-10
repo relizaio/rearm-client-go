@@ -15,7 +15,7 @@ type ApplyBranchesApplyBranchesProgrammaticDeclarativeApplyResult struct {
 }
 
 // GetKind returns ApplyBranchesApplyBranchesProgrammaticDeclarativeApplyResult.Kind, and is useful for accessing the field via an interface.
-func (v *ApplyBranchesApplyBranchesProgrammaticDeclarativeApplyResult) GetKind() string {
+func (v *ApplyBranchesApplyBranchesProgrammaticDeclarativeApplyResult) GetKind() DeclarativeKind {
 	return v.ApplyResultFields.Kind
 }
 
@@ -85,7 +85,7 @@ func (v *ApplyBranchesApplyBranchesProgrammaticDeclarativeApplyResult) Unmarshal
 }
 
 type __premarshalApplyBranchesApplyBranchesProgrammaticDeclarativeApplyResult struct {
-	Kind string `json:"kind"`
+	Kind DeclarativeKind `json:"kind"`
 
 	DryRun bool `json:"dryRun"`
 
@@ -129,6 +129,8 @@ func (v *ApplyBranchesApplyBranchesProgrammaticDeclarativeApplyResult) __premars
 
 // ApplyBranchesResponse is returned by ApplyBranches on success.
 type ApplyBranchesResponse struct {
+	// Declarative apply of the Branches slice for one component / product (API key, write access on the
+	// org). Idempotent, keyed by branch name. Branches absent from the spec follow Settings.declarativePrune.
 	ApplyBranchesProgrammatic *ApplyBranchesApplyBranchesProgrammaticDeclarativeApplyResult `json:"applyBranchesProgrammatic"`
 }
 
@@ -143,7 +145,7 @@ type ApplyCatalogApplyCatalogProgrammaticDeclarativeApplyResult struct {
 }
 
 // GetKind returns ApplyCatalogApplyCatalogProgrammaticDeclarativeApplyResult.Kind, and is useful for accessing the field via an interface.
-func (v *ApplyCatalogApplyCatalogProgrammaticDeclarativeApplyResult) GetKind() string {
+func (v *ApplyCatalogApplyCatalogProgrammaticDeclarativeApplyResult) GetKind() DeclarativeKind {
 	return v.ApplyResultFields.Kind
 }
 
@@ -213,7 +215,7 @@ func (v *ApplyCatalogApplyCatalogProgrammaticDeclarativeApplyResult) UnmarshalJS
 }
 
 type __premarshalApplyCatalogApplyCatalogProgrammaticDeclarativeApplyResult struct {
-	Kind string `json:"kind"`
+	Kind DeclarativeKind `json:"kind"`
 
 	DryRun bool `json:"dryRun"`
 
@@ -257,6 +259,8 @@ func (v *ApplyCatalogApplyCatalogProgrammaticDeclarativeApplyResult) __premarsha
 
 // ApplyCatalogResponse is returned by ApplyCatalog on success.
 type ApplyCatalogResponse struct {
+	// Declarative apply of the Catalog slice (API key, write access on the org). Idempotent, keyed by
+	// component name. dryRun computes the change set without writing.
 	ApplyCatalogProgrammatic *ApplyCatalogApplyCatalogProgrammaticDeclarativeApplyResult `json:"applyCatalogProgrammatic"`
 }
 
@@ -267,7 +271,7 @@ func (v *ApplyCatalogResponse) GetApplyCatalogProgrammatic() *ApplyCatalogApplyC
 
 // ApplyResultFields includes the GraphQL fields of DeclarativeApplyResult requested by the fragment ApplyResultFields.
 type ApplyResultFields struct {
-	Kind      string                                       `json:"kind"`
+	Kind      DeclarativeKind                              `json:"kind"`
 	DryRun    bool                                         `json:"dryRun"`
 	SpecHash  string                                       `json:"specHash"`
 	Created   int                                          `json:"created"`
@@ -279,7 +283,7 @@ type ApplyResultFields struct {
 }
 
 // GetKind returns ApplyResultFields.Kind, and is useful for accessing the field via an interface.
-func (v *ApplyResultFields) GetKind() string { return v.Kind }
+func (v *ApplyResultFields) GetKind() DeclarativeKind { return v.Kind }
 
 // GetDryRun returns ApplyResultFields.DryRun, and is useful for accessing the field via an interface.
 func (v *ApplyResultFields) GetDryRun() bool { return v.DryRun }
@@ -493,7 +497,9 @@ var AllBranchType = []BranchType{
 
 // Branches slice: branches of a component, or feature sets of a product. The file is authoritative for that component.
 type BranchesSpecInput struct {
-	Version int `json:"version"`
+	// Must be BRANCHES; the file's kind is validated against the operation.
+	Kind    DeclarativeKind `json:"kind"`
+	Version int             `json:"version"`
 	// Component or product name.
 	Component string `json:"component"`
 	// When true (the default for files) the spec claims every non-base branch of the component and
@@ -502,6 +508,9 @@ type BranchesSpecInput struct {
 	Authoritative *bool              `json:"authoritative"`
 	Branches      []*BranchSpecInput `json:"branches,omitempty"`
 }
+
+// GetKind returns BranchesSpecInput.Kind, and is useful for accessing the field via an interface.
+func (v *BranchesSpecInput) GetKind() DeclarativeKind { return v.Kind }
 
 // GetVersion returns BranchesSpecInput.Version, and is useful for accessing the field via an interface.
 func (v *BranchesSpecInput) GetVersion() int { return v.Version }
@@ -584,13 +593,18 @@ func (v *CatalogComponentInput) GetIdentifiers() []*IdentifierInput { return v.I
 
 // Catalog slice: components and products of an organization (no branches, no releases).
 type CatalogSpecInput struct {
-	Version int `json:"version"`
+	// Must be CATALOG; the file's kind is validated against the operation.
+	Kind    DeclarativeKind `json:"kind"`
+	Version int             `json:"version"`
 	// When true the file claims every active component / product of the org: with
 	// Settings.declarativePrune = ARCHIVE, components not listed are archived. Partial
 	// files (per team) leave this false.
 	Authoritative *bool                    `json:"authoritative"`
 	Components    []*CatalogComponentInput `json:"components,omitempty"`
 }
+
+// GetKind returns CatalogSpecInput.Kind, and is useful for accessing the field via an interface.
+func (v *CatalogSpecInput) GetKind() DeclarativeKind { return v.Kind }
 
 // GetVersion returns CatalogSpecInput.Version, and is useful for accessing the field via an interface.
 func (v *CatalogSpecInput) GetVersion() int { return v.Version }
@@ -684,6 +698,19 @@ var AllDeclarativeAction = []DeclarativeAction{
 	DeclarativeActionError,
 }
 
+// Ownership slice a declarative spec describes. One kind per file; the apply / export operations are per kind.
+type DeclarativeKind string
+
+const (
+	DeclarativeKindCatalog  DeclarativeKind = "CATALOG"
+	DeclarativeKindBranches DeclarativeKind = "BRANCHES"
+)
+
+var AllDeclarativeKind = []DeclarativeKind{
+	DeclarativeKindCatalog,
+	DeclarativeKindBranches,
+}
+
 // Where an applied spec came from, recorded on every row the apply touched.
 type DeclarativeSourceInput struct {
 	Repo   *string `json:"repo"`
@@ -762,10 +789,16 @@ var AllDeviceClass = []DeviceClass{
 
 // ExportBranchesExportBranchesProgrammaticBranchesSpec includes the requested fields of the GraphQL type BranchesSpec.
 type ExportBranchesExportBranchesProgrammaticBranchesSpec struct {
+	Kind          DeclarativeKind                                                                `json:"kind"`
 	Version       int                                                                            `json:"version"`
 	Component     string                                                                         `json:"component"`
 	Authoritative bool                                                                           `json:"authoritative"`
 	Branches      []*ExportBranchesExportBranchesProgrammaticBranchesSpecBranchesBranchSpecEntry `json:"branches"`
+}
+
+// GetKind returns ExportBranchesExportBranchesProgrammaticBranchesSpec.Kind, and is useful for accessing the field via an interface.
+func (v *ExportBranchesExportBranchesProgrammaticBranchesSpec) GetKind() DeclarativeKind {
+	return v.Kind
 }
 
 // GetVersion returns ExportBranchesExportBranchesProgrammaticBranchesSpec.Version, and is useful for accessing the field via an interface.
@@ -984,6 +1017,7 @@ func (v *ExportBranchesExportBranchesProgrammaticBranchesSpecBranchesBranchSpecE
 
 // ExportBranchesResponse is returned by ExportBranches on success.
 type ExportBranchesResponse struct {
+	// Export the Branches slice of one component / product as a spec (CONFIGURATION_READ).
 	ExportBranchesProgrammatic *ExportBranchesExportBranchesProgrammaticBranchesSpec `json:"exportBranchesProgrammatic"`
 }
 
@@ -994,10 +1028,14 @@ func (v *ExportBranchesResponse) GetExportBranchesProgrammatic() *ExportBranches
 
 // ExportCatalogExportCatalogProgrammaticCatalogSpec includes the requested fields of the GraphQL type CatalogSpec.
 type ExportCatalogExportCatalogProgrammaticCatalogSpec struct {
+	Kind          DeclarativeKind                                                                `json:"kind"`
 	Version       int                                                                            `json:"version"`
 	Authoritative bool                                                                           `json:"authoritative"`
 	Components    []*ExportCatalogExportCatalogProgrammaticCatalogSpecComponentsCatalogComponent `json:"components"`
 }
+
+// GetKind returns ExportCatalogExportCatalogProgrammaticCatalogSpec.Kind, and is useful for accessing the field via an interface.
+func (v *ExportCatalogExportCatalogProgrammaticCatalogSpec) GetKind() DeclarativeKind { return v.Kind }
 
 // GetVersion returns ExportCatalogExportCatalogProgrammaticCatalogSpec.Version, and is useful for accessing the field via an interface.
 func (v *ExportCatalogExportCatalogProgrammaticCatalogSpec) GetVersion() int { return v.Version }
@@ -1194,6 +1232,7 @@ func (v *ExportCatalogExportCatalogProgrammaticCatalogSpecComponentsCatalogCompo
 
 // ExportCatalogResponse is returned by ExportCatalog on success.
 type ExportCatalogResponse struct {
+	// Export the Catalog slice of the key's org as a spec (CONFIGURATION_READ); optionally only the named components.
 	ExportCatalogProgrammatic *ExportCatalogExportCatalogProgrammaticCatalogSpec `json:"exportCatalogProgrammatic"`
 }
 
@@ -1534,6 +1573,7 @@ func ApplyCatalog(
 const ExportBranches_Operation = `
 query ExportBranches ($component: String!) {
 	exportBranchesProgrammatic(component: $component) {
+		kind
 		version
 		component
 		authoritative
@@ -1604,6 +1644,7 @@ func ExportBranches(
 const ExportCatalog_Operation = `
 query ExportCatalog ($components: [String!]) {
 	exportCatalogProgrammatic(components: $components) {
+		kind
 		version
 		authoritative
 		components {

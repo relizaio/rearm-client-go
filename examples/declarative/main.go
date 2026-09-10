@@ -28,7 +28,7 @@ func main() {
 	switch os.Args[1] {
 	case "apply":
 		fs := flag.NewFlagSet("apply", flag.ExitOnError)
-		file := fs.String("f", "", "spec file (kind: Catalog | Branches)")
+		file := fs.String("f", "", "spec file (kind: CATALOG | Branches)")
 		commit := fs.Bool("commit", false, "write changes (default is dry run)")
 		repo := fs.String("repo", "", "provenance: repository")
 		path := fs.String("path", "", "provenance: path in the repository")

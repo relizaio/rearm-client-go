@@ -46,6 +46,7 @@ mutation ApplyBranches($spec: BranchesSpecInput!, $dryRun: Boolean, $source: Dec
 
 query ExportCatalog($components: [String!]) {
   exportCatalogProgrammatic(components: $components) {
+    kind
     version
     authoritative
     components {
@@ -75,6 +76,7 @@ query ExportCatalog($components: [String!]) {
 
 query ExportBranches($component: String!) {
   exportBranchesProgrammatic(component: $component) {
+    kind
     version
     component
     authoritative

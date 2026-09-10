@@ -1,0 +1,3975 @@
+# ReARM programmatic API contract. Generated from programmatic.graphqls and the types it reaches;
+# served at /api/programmatic/schema. Consumed by rearm-client-go and the Terraform provider.
+
+type Query {
+  """
+  Export the Catalog slice of the key's org as a spec (CONFIGURATION_READ); optionally only the named components.
+  """
+  exportCatalogProgrammatic(
+  components: [String!]): CatalogSpec
+  """
+  Export the Branches slice of one component / product as a spec (CONFIGURATION_READ).
+  """
+  exportBranchesProgrammatic(
+  component: String!): BranchesSpec
+  release(releaseUuid: ID!, orgUuid: ID): Release
+  getSbomProbingResult(runId: String!): SbomProbingResult
+  getReleaseByHashProgrammatic(hash: String!, componentId: ID): String
+  """
+  Exact-version lookup. Returns the release's OBOM (CycloneDX 1.6: the release
+  plus every dependency release unwound, with deliverables) as a JSON string,
+  or "{}" when the version does not exist on the component / product.
+  Lifecycle and approvals are not consulted: the named version is returned as is.
+  componentId is the component / product uuid, or -- with an organization-scoped
+  key -- its name: matched case-insensitively against the org's active components
+  and products, exactly one hit required (unknown or ambiguous names error).
+  """
+  getReleaseByReleaseVersionProgrammatic(
+  version: String!
+  componentId: ID!): String
+  getLatestReleaseProgrammaticCdx(release: GetLatestReleaseInput!): String
+  getLatestReleaseProgrammatic(release: GetLatestReleaseInput!): Release
+  getInstanceRevisionCycloneDxExportProg(instanceUuid: ID, instanceUri: String, revision: Int!, namespace: String, stateType: InstanceStateType): String
+  isInstanceHasSealedSecretCert(instanceUuid: ID, instanceUri: String): Boolean
+  getInstancePropSecrets(instanceUuid: ID, instanceUri: String, namespace: String!, revision: Int!, properties: [String], secrets: [String], product: ID, productSpecificProps: Boolean): PropSecrets
+  deliverableDownloadSecrets(instanceUuid: ID, instanceUri: String, deliverableDigest: String!, namespace: String, releaseNs: String): ComponentAuthentication
+  listInstanceProductFeatureSets(instanceUuid: ID, instanceUri: String, namespace: String): [InstanceProductFeatureSets!]!
+  """
+  Programmatic poll endpoint for an agent's session -- returns
+  actionable events (lifecycle changes on attributed releases,
+  approval flips, new session policy verdicts) strictly after the
+  supplied cursor. Auth: FREEFORM key bound to the session's owning
+  agent identity. Designed for closed-loop "disapproval → agent
+  fix" flows; see {@code /api/agents/orientation.md} for the
+  canonical polling cadence.
+  """
+  agentSessionInboxProgrammatic(
+  inboxRequest: AgentSessionInboxInput!): [AgentSessionInboxEvent!]!
+  """
+  FREEFORM-auth read of a single session by uuid. Returns null when
+  the session does not exist or is owned by a different org than the
+  calling key. The JWT-authenticated {@code session} query is the
+  operator/UI path; this is the agent's path for fetching its own
+  full session state (policy verdicts, releases, PRs) after an inbox
+  event.
+  """
+  sessionProgrammatic(
+  sessionUuid: ID!): Session
+  """
+  FREEFORM-auth read of a single release by uuid, scoped to the
+  calling agent's session. The caller must pass either {@code
+  sessionUuid} (the row uuid returned by {@code sessionInitializeProgrammatic})
+  or {@code clientSessionId} (the agent-chosen id). Authorization
+  chain: (a) calling key carries {@code PermissionFunction.AGENT}
+  at {@code ORGANIZATION} scope; (b) the session's owning agent
+  belongs to the calling key's identity; (c) the requested release
+  is attributed to that session (its commits trace through to this
+  release). Any failure throws {@code AccessDeniedException} and
+  is logged SECURITY-level. Used by agents after a LIFECYCLE_CHANGE
+  / APPROVAL inbox event to pull updateEvents + approvalEvents on
+  the release.
+  """
+  agenticReleaseProgrammatic(
+  releaseUuid: ID!
+  sessionUuid: ID
+  clientSessionId: String): Release
+}
+
+type Mutation {
+  """
+  Declarative apply of the Catalog slice (API key, write access on the org). Idempotent, keyed by
+  component name. dryRun computes the change set without writing.
+  """
+  applyCatalogProgrammatic(
+  spec: CatalogSpecInput!
+  dryRun: Boolean
+  source: DeclarativeSourceInput): DeclarativeApplyResult
+  """
+  Declarative apply of the Branches slice for one component / product (API key, write access on the
+  org). Idempotent, keyed by branch name. Branches absent from the spec follow Settings.declarativePrune.
+  """
+  applyBranchesProgrammatic(
+  spec: BranchesSpecInput!
+  dryRun: Boolean
+  source: DeclarativeSourceInput): DeclarativeApplyResult
+  """
+  Programmatic (API-key) upsert of a PullRequest. CI registers the PR
+  row independently of release creation so the registration survives
+  push/pull_request races and DO_BUILD=false short-circuits.
+  Idempotent on (targetVcsRepository, identity) -- safe to call
+  multiple times per CI run (e.g. once per component in a monorepo).
+  When `commit` is supplied and an SCE already exists for
+  (targetVcs, commit), the head is advanced to that SCE in the same
+  call; otherwise the PR row is registered without a head and the
+  subsequent addReleaseProgrammatic call (which carries the same PR
+  input) will advance the head once the SCE is persisted.
+  Resolves the target VCS by `vcsUri`+`repoPath` (FREEFORM or
+  ORGANIZATION_RW key) or by `component` UUID (COMPONENT,
+  FREEFORM, or ORGANIZATION_RW key). Accepts COMPONENT, FREEFORM,
+  or ORGANIZATION_RW API keys; other ORGANIZATION_* types are
+  rejected.
+  """
+  upsertPullRequestProgrammatic(
+  input: PullRequestUpsertProgrammaticInput!): PullRequest
+  getNewVersionProgrammatic(newVersionInput: GetNewVersionInput!): Version
+  addReleaseProgrammatic(release: ReleaseInputProg!): Release
+  """
+  Batch counterpart to addReleaseProgrammatic. Creates every supplied
+  release in a single all-or-nothing transaction -- if any entry fails,
+  none are persisted. Auto-integration of products is deferred until all
+  releases are created, then fired once per affected feature set (deduped
+  across the whole batch) instead of once per release. Use this when a CI
+  run builds several component releases at once and you want a single
+  product auto-integrate rather than one per component version.
+  """
+  addReleasesProgrammatic(
+  releases: [ReleaseInputProg!]!): [Release]
+  addOutboundDeliverablesProgrammatic(deliverables: AddODeliverableInput!): Release
+  createComponentProgrammatic(component: CreateComponentInput!): Component
+  """
+  Programmatic counterpart to createComponentInPerspective. Requires a FREEFORM API key
+  with WRITE permission on the supplied perspective (or a broader scope that covers it).
+  Only real perspectives (PerspectiveType.PERSPECTIVE) are accepted -- product-derived
+  perspectives are rejected.
+  """
+  createComponentInPerspectiveProgrammatic(
+  component: CreateComponentInput!
+  perspectiveUuid: ID!): Component
+  addArtifactProgrammatic(artifactInput: AddArtifactInput): Release
+  approveReleaseProgrammatic(releaseApprovals: ReleaseApprovalProgrammaticInput!): Release
+  synchronizeLiveBranches(synchronizeBranchInput: SynchronizeBranchInput!): Boolean
+  probeSbomProgrammatic(sbom: String!, componentUuid: ID, branchUuid: ID): SbomProbingRun
+  releasecompletionfinalizerProgrammatic(release: ID!): Boolean
+  instData(instance: InstanceDataInput!): Object
+  instanceDeploymentEventsProgrammatic(events: [InstanceDeploymentEventInput!]!): Object
+  setInstanceSealedSecretCert(sealedCert: String!): Boolean
+  """
+  Switch a product deployment on the instance plan to another feature set of the same product.
+  release: optional release uuid or version on the new feature set; pins the deployment to it
+  (the plan entry becomes TARGET). follow: optional, true returns the entry to FOLLOW. Without
+  either, the integrate type is kept and the previous target release is cleared.
+  """
+  switchInstanceProductFeatureSet(
+  instanceUuid: ID
+  instanceUri: String
+  productUuid: ID!
+  featureSetUuid: ID!
+  namespace: String
+  release: String
+  follow: Boolean): Instance
+  versionFeatureSet(productUuid: ID!, overrides: [VersionFeatureSetOverride!]!): Branch
+  sessionInitializeProgrammatic(sessionInit: SessionInitializeInput!): Session
+  sessionTouchProgrammatic(sessionUuid: ID!): Session
+  sessionCloseProgrammatic(sessionUuid: ID!): Session
+  sessionAddArtifactProgrammatic(addArtifact: SessionAddArtifactInput!): Session
+  sessionUpdateMetaProgrammatic(updateMeta: SessionUpdateMetaInput!): Session
+  spawnSubAgentProgrammatic(spawnSubAgent: SpawnSubAgentInput!): Agent
+  setModelOntologyModelCardProgrammatic(input: SetModelCardInput!): ModelOntology
+  reportDeviceState(report: DeviceStateReportInput!): Device
+  enrollSigningKeyProgrammatic(signingKey: AgentSigningKeyInput!): SigningKey
+}
+
+type CatalogSpec {
+  kind: DeclarativeKind!
+  version: Int!
+  authoritative: Boolean!
+  components: [CatalogComponent!]!
+}
+
+type BranchesSpec {
+  kind: DeclarativeKind!
+  version: Int!
+  component: String!
+  authoritative: Boolean!
+  branches: [BranchSpecEntry!]!
+}
+
+type Release {
+  uuid: ID
+  version: String
+  marketingVersion: String
+  status: Status
+  lifecycle: ReleaseLifecycleEnum
+  """
+  Computed (Distribution): true when this release's component is HARDWARE, or --
+  for a product release -- when at least one constituent component release is.
+  """
+  hardware: Boolean
+  org: ID
+  orgDetails: Organization
+  component: ID
+  componentDetails: Component
+  branch: ID
+  branchDetails: Branch
+  parentReleases: [ParentRelease]
+  sourceCodeEntry: ID
+  sourceCodeEntryDetails: SourceCodeEntry
+  commits: [ID]
+  commitTime: DateTime
+  commitsDetails: [SourceCodeEntry]
+  """
+  Pull requests this release participates in -- any PR whose commits[]
+  intersects this release's commits[]. Computed at read time; resolves
+  by matching SCE UUIDs.
+  """
+  pullRequests: [PullRequest]
+  artifacts: [ID]
+  artifactDetails: [Artifact]
+  inboundDeliverables: [ID]
+  inboundDeliverableDetails: [Deliverable]
+  tickets: [ID]
+  ticketDetails: [Ticket]
+  notes: String
+  decoratedVersionString: String
+  createdType: ProgrammaticType
+  lastUpdatedBy: ID
+  createdDate: DateTime
+  endpoint: String
+  inProducts: [Release]
+  vcsRepository: VcsRepository
+  tags: [TagRecord]
+  approvedEnvironments: [String]
+  approvalEvents: [ReleaseApprovalEvent]
+  approvalRequests: [ReleaseApprovalRequest]
+  variantDetails: [Variant]
+  updateEvents: [ReleaseUpdateEvent]
+  metrics: DependencyTrackMetrics
+  identifiers: [Identifier]
+  gudidRecord: GudidRecord
+  gudidStatus: GudidStatus
+  eos: String
+  eol: String
+  """
+  Component name snapshot captured when a sid PURL was first emitted for this release (D6).
+  Immutable once set. Null on releases pre-dating sid enablement and on releases of
+  EXTERNAL components.
+  """
+  sidComponentName: String
+  """
+  Resolved BOM root identifier per the D4 picker: sid PURL > any other PURL >
+  release UUID. Always non-null. Used by the UI to display the canonical
+  identifier and matches what VDR / OBOM / aggregated-SBOM emit at the BOM root.
+  """
+  preferredBomIdentifier: String
+  releaseCollection: ReleaseCollection
+  """
+  Adjacent releases on this release's own branch / feature set, ordered by
+  created date (the same CANCELLED-excluding lineage used for the SBOM-component
+  changelog). previousRelease is the release created immediately before this one
+  on the branch, nextRelease the one immediately after; both are null at the
+  branch's first / last release. Unlike the changelog baseline these do NOT fall
+  back to a base-branch fork point -- navigation stays within the same branch.
+  Lazily resolved: only queried when selected. Select a light subselection
+  (e.g. uuid version lifecycle createdDate) -- used by the release view's
+  prev/next navigation arrows.
+  """
+  previousRelease: Release
+  nextRelease: Release
+  intermediateFailedReleases: [IntermediateFailedRelease]
+  sbomReconcilePending: Boolean
+  """
+  Distinct AgentSessions whose commits contributed to this release.
+  Walks release.commits -> SCE.agentSession (the forward pointer set
+  by the PR 2 commit-trailer parser) and dedupes. Empty list when
+  no commits carry agent attribution.
+  """
+  sessions: [Session]
+}
+
+type SbomProbingResult {
+  status: SbomProbingStatus!
+  metrics: DependencyTrackMetrics
+}
+
+input GetLatestReleaseInput {
+  """
+  Component / product uuid, or -- with an organization-scoped key -- its name:
+  matched case-insensitively against the org's active components and products,
+  exactly one hit required (unknown or ambiguous names error).
+  """
+  component: ID
+  product: ID
+  branch: String
+  tags: [TagRecordInput]
+  lifecycle: ReleaseLifecycleEnum
+  conditions: ConditionGroupOnGetLatestReleaseInput
+  vcsUri: String
+  repoPath: String
+  upToVersion: String
+  """
+  Only consider releases whose approvedEnvironments contains this built-in
+  environment (DEV, BUILD, TEST, SIT, UAT, PAT, STAGING, PRODUCTION; case-insensitive).
+  Orthogonal to lifecycle and conditions: they are applied on top when set.
+  Environment approvals are granted by an ADD_APPROVED_ENVIRONMENT trigger or an
+  admin override; a later policy disapproval does not revoke them (only an admin
+  override removes), so combine with approval-entry conditions when the current
+  approval state matters. Like conditions, this scans the newest 300 releases
+  of the branch.
+  """
+  approvedEnvironment: String
+}
+
+enum InstanceStateType {
+  PLAN
+  ACTUAL
+}
+
+type PropSecrets {
+  properties: [KeyValue]
+  secrets: [KeyValue]
+}
+
+type ComponentAuthentication {
+  login: String
+  password: String
+  type: String
+}
+
+type InstanceProductFeatureSets {
+  namespace: String
+  product: NamedRef!
+  currentFeatureSet: NamedRef
+  """
+  Integrate type of the plan entry: FOLLOW (latest release approved for the instance environment),
+  TARGET (pinned release), INTEGRATE, NONE or UNINSTALL.
+  """
+  integrateType: IntegrateType
+  """
+  Release the plan currently aims at: the FOLLOW-resolved release or the pinned TARGET release.
+  Null when nothing is selected yet (TARGET without a release, or no approved release).
+  """
+  targetRelease: FeatureSetReleaseRef
+  """
+  Release the instance actually reports as running for this product (matched from agent data).
+  Null when nothing has matched yet.
+  """
+  deployedRelease: FeatureSetReleaseRef
+  availableFeatureSets: [FeatureSetOption!]!
+}
+
+"""
+One actionable event the agent owning a session needs to react to --
+typically a release minted from the session's commits changing
+lifecycle (REJECTED by a CEL gate, ASSEMBLED, etc.) or carrying a
+new approval (DISAPPROVED with reviewer comment is the canonical
+"agent fix loop" trigger). Polled by the agent via
+{@code agentSessionInboxProgrammatic} with a cursor it stores
+client-side.
+"""
+type AgentSessionInboxEvent {
+  """
+  Opaque, monotone cursor token. Pass back as the {@code since}
+  field on the next poll to fetch strictly newer events. Stable --
+  the same event always returns the same cursor.
+  """
+  cursor: String!
+  occurredAt: DateTime!
+  kind: AgentInboxEventKind!
+  """
+  Release this event is about, when {@code kind} is release-side
+  (LIFECYCLE_CHANGE / APPROVAL). Null on session-side events
+  (POLICY_VERDICT).
+  """
+  release: Release
+  """
+  Previous value, when meaningful (e.g. prior lifecycle).
+  """
+  oldValue: String
+  """
+  New value (e.g. new lifecycle, "DISAPPROVED").
+  """
+  newValue: String
+  """
+  Free-form human-readable reason for the event:
+    - LIFECYCLE_CHANGE: the matching ReleaseUpdateEvent.message
+      (e.g. "Triggered by 'Reject when any commit is not VERIFIED'
+      (CEL: …)") -- what *caused* the lifecycle change.
+    - APPROVAL: the reviewer's free-text comment when
+      DISAPPROVED; null on APPROVED unless a comment was left.
+    - POLICY_VERDICT: the failing policy's failure message.
+  """
+  reason: String
+  source: AgentInboxSource!
+  """
+  User uuid that authored the change, when {@code source = HUMAN}.
+  Null for automated / policy-driven events.
+  """
+  actorUuid: ID
+  """
+  Approval role id ({@code ApprovalEntry.roleId} snapshot), when {@code kind = APPROVAL}.
+  """
+  actorRoleId: String
+}
+
+input AgentSessionInboxInput {
+  sessionUuid: ID!
+  """
+  Opaque cursor from a prior poll. Null = "from session start".
+  Server returns events strictly after this cursor.
+  """
+  since: String
+  """
+  Optional filter; null = all kinds.
+  """
+  kinds: [AgentInboxEventKind!]
+  """
+  Default 50; capped at 200.
+  """
+  limit: Int
+}
+
+"""
+One ROOT Agent invocation. Many concurrent sessions per agent are
+allowed on the same API key. Sub-agents of the root contribute
+commits / artifacts to the same session via the commit-trailer
+attribution path (PR 2).
+"""
+type Session {
+  uuid: ID
+  org: ID
+  """
+  Owning ROOT agent uuid.
+  """
+  agent: ID
+  """
+  Agent-supplied natural session id. Defaults to the row uuid when
+  the agent didn't pick one on initialize. The two-line commit
+  trailer references this value, not the row uuid.
+  """
+  clientSessionId: String
+  """
+  API key the agent used to open the session.
+  """
+  apiKey: ID
+  title: String
+  status: SessionStatus
+  startedAt: DateTime
+  closedAt: DateTime
+  lastActivityAt: DateTime
+  """
+  Artifact UUIDs attached to this session (reuses rearm.artifacts).
+  """
+  artifacts: [ID]
+  """
+  SCE UUIDs attributed to this session via the commit-trailer parser
+  (PR 2). Order is append-order; head of list is the earliest commit.
+  """
+  commits: [ID]
+  """
+  Append-only log of agent-policy evaluations (PR 4). Empty on CE
+  deployments and on sessions opened under an org with no policies.
+  """
+  policyEvents: [PolicyEvent]
+  """
+  Releases produced from this session's commits. Computed at read
+  time by walking `commits → Release.sourceCodeEntry` (and
+  `commits[]` for multi-commit releases). Distinct on release uuid.
+  """
+  releases: [Release]
+  """
+  Pull requests touched by this session's commits. Computed at read
+  time by walking `commits → PullRequest.commits[]`. Distinct on
+  PR uuid.
+  """
+  pullRequests: [PullRequest]
+  """
+  If this session was opened by an agent retrying after a prior
+  BLOCKED / CLOSED predecessor, this is that predecessor's uuid.
+  Null on first-time sessions.
+  """
+  parentSession: ID
+  """
+  The AI model this session ran. The model is a property of the chat,
+  not the durable agent -- set from the agent's declared model on
+  initialize. Null on legacy sessions written before per-session model
+  tracking existed. Prefer this over the deprecated Agent.model.
+  """
+  primaryModel: ModelOntology
+  """
+  How much trust primaryModel carries. DECLARED = the agent self-
+  reported the model string (the only source today). RUNTIME_OBSERVED is
+  reserved for host-side hooks that read the model from the runtime's own
+  record; not yet emitted. The UI must not imply the model carries the
+  session signature's authority.
+  """
+  modelAssertion: ModelAssertionState!
+  createdDate: DateTime
+}
+
+type DeclarativeApplyResult {
+  kind: DeclarativeKind!
+  dryRun: Boolean!
+  specHash: String!
+  changes: [DeclarativeChange!]!
+  created: Int!
+  updated: Int!
+  unchanged: Int!
+  archived: Int!
+  errors: Int!
+}
+
+"""
+Catalog slice: components and products of an organization (no branches, no releases).
+"""
+input CatalogSpecInput {
+  """
+  Must be CATALOG; the file's kind is validated against the operation.
+  """
+  kind: DeclarativeKind!
+  version: Int!
+  """
+  When true the file claims every active component / product of the org: with
+  Settings.declarativePrune = ARCHIVE, components not listed are archived. Partial
+  files (per team) leave this false.
+  """
+  authoritative: Boolean
+  components: [CatalogComponentInput!]!
+}
+
+"""
+Where an applied spec came from, recorded on every row the apply touched.
+"""
+input DeclarativeSourceInput {
+  repo: String
+  path: String
+  commit: String
+}
+
+"""
+Branches slice: branches of a component, or feature sets of a product. The file is authoritative for that component.
+"""
+input BranchesSpecInput {
+  """
+  Must be BRANCHES; the file's kind is validated against the operation.
+  """
+  kind: DeclarativeKind!
+  version: Int!
+  """
+  Component or product name.
+  """
+  component: String!
+  """
+  When true (the default for files) the spec claims every non-base branch of the component and
+  Settings.declarativePrune decides what happens to branches it does not list. Single-branch
+  callers such as the Terraform provider pass false.
+  """
+  authoritative: Boolean
+  branches: [BranchSpecInput!]!
+}
+
+"""
+First-class PullRequest entity. Owns its own identity at the SCM level
+(target VCS + identity string), its own commit list (SCE UUIDs), and
+both inbound (release_validation_events) and outbound
+(pr_validation_events) event streams.
+"""
+type PullRequest {
+  uuid: ID
+  org: ID
+  targetVcsRepository: ID
+  sourceVcsRepository: ID
+  identity: String
+  state: String
+  title: String
+  sourceBranchName: String
+  targetBranchName: String
+  endpoint: String
+  commits: [ID]
+  prCreatedDate: DateTime
+  closedDate: DateTime
+  mergedDate: DateTime
+  createdDate: DateTime
+  prValidationEvents: [PullRequestValidationEvent]
+  releaseValidationEvents: [ReleaseValidationEvent]
+  """
+  Releases currently attributed to this PR -- every release whose
+  primary sourceCodeEntry is one of the PR's commits, scoped to
+  the PR's org. Same logic the aggregator uses to compute the
+  PR-level verdict (no dispatch is triggered). Empty when the PR
+  has no commits or no releases have been minted against any of
+  them yet.
+  """
+  attributedReleases: [Release]
+  """
+  Hydrated commit list -- SCE rows for every entry in `commits`.
+  Order matches `commits` (head is the last element). Used by the
+  UI to render the actual git commit SHA / message / author
+  instead of just the SCE UUID. Missing SCEs (e.g. one that was
+  since archived) are silently dropped.
+  """
+  commitDetails: [SourceCodeEntry]
+  """
+  Releases referenced by any release_validation_event in this PR's
+  history -- superset of attributedReleases. Required so the UI can
+  display release names for events whose release has since been
+  superseded (newest-per-component attribution drops the older
+  release from attributedReleases but its event row remains).
+  Distinct on UUID; missing releases (archived) are silently dropped.
+  """
+  validatedReleaseDetails: [Release]
+  """
+  Latest pr_validation_event verdict whose sourceCodeEntry matches
+  the PR's current head commit. Mirrors the aggregator's
+  "latest-for-head" lookup so this resolver and the SCM dispatch
+  read the same value. {@code null} when the PR has no commits, no
+  validation events, or no event for the current head -- UI should
+  render that as "pending / not yet validated".
+  """
+  currentValidationState: ValidationState
+  """
+  Distinct ROOT agents that contributed to this PR -- walks
+  `commits → SCE.agent → resolveRoot`. One PR can be attributed to
+  multiple agents (different commits from different sessions / keys).
+  Empty when no commits carry agentic attribution. Order is by first
+  appearance in `commits`.
+  """
+  agents: [Agent]
+}
+
+input PullRequestUpsertProgrammaticInput {
+  identity: String!
+  state: String!
+  title: String
+  sourceBranchName: String
+  targetBranchName: String
+  endpoint: String
+  """
+  Target VCS resolution. With a COMPONENT API key the component is
+  implicit (the key identifies it) -- `component` / `vcsUri` are not
+  needed. With an ORGANIZATION_RW or FREEFORM key, supply either
+  `component` (UUID of the target component, whose VCS is used) or
+  the (`vcsUri`, `repoPath`) pair plus optionally `vcsDisplayName`.
+  When both are present, `component` wins and vcsUri/repoPath are
+  ignored.
+  """
+  component: ID
+  vcsUri: String
+  repoPath: String
+  vcsDisplayName: String
+  """
+  When supplied, the backend looks up the SCE for (targetVcs, commit)
+  and advances the PR head to it if found. If no SCE exists yet for
+  that commit, the PR row is registered without a head -- the
+  subsequent addReleaseProgrammatic call carrying the same PR input
+  will advance the head once the SCE is persisted.
+  """
+  commit: String
+}
+
+type Version {
+  version: String
+  dockerTagSafeVersion: String
+  changelog: String
+  releaseAlreadyExists: Boolean
+  """
+  Lifecycle of the resolved release at the time getNewVersion returned.
+  Reflects the state AFTER any synchronous component-trigger run during
+  release creation -- so a CEL gate that pre-emptively moves the release
+  to REJECTED is visible here. Callers (CLI / CI actions) should abort
+  downstream build steps when this is a terminal state (REJECTED,
+  CANCELLED) instead of charging into a subsequent addrelease that will
+  collide on the (component, version) dedup gate. Null on the
+  onlyVersion path (no release row was created).
+  """
+  lifecycle: ReleaseLifecycleEnum
+}
+
+input GetNewVersionInput {
+  component: ID
+  branch: String!
+  modifier: String
+  action: String
+  metadata: String
+  versionSchema: String
+  lifecycle: ReleaseLifecycleEnum
+  onlyVersion: Boolean
+  sourceCodeEntry: SourceCodeEntryInput
+  commits: [SourceCodeEntryInput]
+  vcsUri: String
+  repoPath: String
+  vcsDisplayName: String
+  createComponentIfMissing: Boolean
+  createComponentName: String
+  createComponentVersionSchema: String
+  createComponentFeatureBranchVersionSchema: String
+  """
+  Optional perspective UUID. When supplied with createComponentIfMissing
+  and the component does not yet exist, the new component is created and
+  assigned to this perspective; authorization with a FREEFORM key requires
+  WRITE on the perspective. Ignored when the component already exists.
+  """
+  perspective: ID
+  """
+  Optional PR metadata bundled with the call. When supplied on
+  addReleaseProgrammatic, a first-class PullRequest entity is upserted
+  by (targetVcsRepository, identity) and its head is advanced to the
+  release's SCE. The PR aggregator picks up the release on subsequent
+  VALIDATE_PR firings. Ignored on calls that do not create a release.
+  """
+  pullRequest: PullRequestInfoInput
+  """
+  Opt-in dedup override for the commit-keyed gate on
+  (component, branch, commit). When a version_assignment already
+  exists for the supplied commit on this branch:
+    - rebuild = false (default) → mutation fails with an error so the
+      duplicate CI run can fail fast instead of minting a second
+      release on the same head.
+    - rebuild = true → return the existing version assignment so the
+      caller intentionally reuses the same version (e.g. a re-issue
+      of an artifact for the same commit).
+  No effect when no commit is supplied (manual mints, marketing
+  versions, commit-less callers).
+  """
+  rebuild: Boolean
+}
+
+input ReleaseInputProg {
+  version: String!
+  lifecycle: ReleaseLifecycleEnum
+  component: ID
+  branch: String
+  sourceCodeEntry: SourceCodeEntryInput
+  artifacts: [ArtifactInput]
+  inboundDeliverables: [DeliverableInput]
+  outboundDeliverables: [DeliverableInput]
+  endpoint: String
+  commits: [SourceCodeEntryInput]
+  """
+  DEPRECATED -- silently dropped by addReleaseProgrammatic. The resolver
+  only consumes source-code-entry artifacts from `sourceCodeEntry.artifacts`
+  (or each `commits[i].artifacts` for multi-commit inputs). Nest the
+  artifacts there instead. The server logs a WARN whenever this field
+  is supplied so we can track remaining callers before removing it.
+  """
+  sceArts: [ArtifactInput] @deprecated(reason: "Nest SCE artifacts under sourceCodeEntry.artifacts (or commits[i].artifacts); this top-level field is ignored by addReleaseProgrammatic.")
+  identifiers: [IdentifierInput]
+  gudidRecord: GudidRecordInput
+  gudidStatus: GudidStatus
+  eos: String
+  eol: String
+  vcsUri: String
+  repoPath: String
+  vcsDisplayName: String
+  createComponentIfMissing: Boolean
+  createComponentName: String
+  createComponentVersionSchema: String
+  createComponentFeatureBranchVersionSchema: String
+  """
+  Optional perspective UUID. When supplied together with createComponentIfMissing=true and
+  the component does not yet exist, the new component is created and assigned to this
+  perspective. Required scope on the API key is WRITE on the perspective (FREEFORM keys)
+  or any broader scope that covers it. Ignored when the component already exists.
+  """
+  perspective: ID
+  rebuildRelease: Boolean
+  """
+  Optional PR metadata bundled with the call. When supplied on
+  addReleaseProgrammatic, a first-class PullRequest entity is upserted
+  by (targetVcsRepository, identity) and its head is advanced to the
+  release's SCE. The PR aggregator picks up the release on subsequent
+  VALIDATE_PR firings. Ignored on calls that do not create a release.
+  """
+  pullRequest: PullRequestInfoInput
+}
+
+input AddODeliverableInput {
+  release: ID
+  component: ID
+  variant: ID
+  version: String
+  deliverables: [DeliverableInput]
+}
+
+type Component {
+  uuid: ID
+  name: String
+  org: ID
+  resourceGroup: ID
+  type: ComponentType
+  kind: ComponentKind
+  versionSchema: String
+  marketingVersionSchema: String
+  versionType: VersionType
+  vcs: ID
+  vcsRepositoryDetails: VcsRepository
+  featureBranchVersioning: String
+  repositoryEnabled: Int
+  status: Status
+  apiKeyId: String
+  apiKey: String
+  createdType: ProgrammaticType
+  lastUpdatedBy: ID
+  createdDate: DateTime
+  defaultConfig: String
+  visibilitySetting: VisibilitySetting
+  approvalPolicy: ID
+  approvalPolicyDetails: ApprovalPolicy
+  """
+  Resolved approval policy for this component. Per-component
+  {@code approvalPolicy} wins when present AND still references an
+  existing policy. Otherwise the org-wide rule list is walked in
+  order; the first rule whose {@code namePattern} matches the
+  component's name AND whose {@code componentType} accepts the
+  component's type contributes its policy. {@code source} discriminates
+  between the cases; {@code ruleName} is set only when source =
+  ORG_RULE; {@code alsoMatchedRuleNames} carries any later-list rules
+  whose pattern + type-filter also matched; {@code perComponentPolicyArchived}
+  is true when the component carried a per-component reference but
+  the referenced policy was archived/missing, so resolution fell
+  through to org rules (signals a stale reference for the UI to
+  warn about).
+  """
+  effectiveApprovalPolicy: EffectiveApprovalPolicy
+  releaseInputTriggers: [ReleaseInputEvent]
+  outputTriggers: [ReleaseOutputEvent]
+  identifiers: [Identifier]
+  nature: ComponentNature
+  deviceClass: DeviceClass
+  medicalProfile: MedicalProfile
+  repoPath: String
+  authentication: ComponentAuthentication
+  branchSuffixMode: BranchSuffixMode
+  globalInputEventRefs: [GlobalInputEventRef]
+  perspectiveDetails: [Perspective]
+  """
+  Component-level sid override (null = INHERIT).
+  """
+  sidPurlOverride: SidPurlOverride
+  """
+  Component-level decoded authority segments (null/empty = none stored).
+  """
+  sidAuthoritySegments: [String!]
+  """
+  Internal/external classification (D16). Null on legacy rows is treated as INTERNAL.
+  """
+  isInternal: BelongsToOrganization
+  """
+  Synthetic component-level lifecycle derived from the lifecycles of the
+  component's releases:
+  - if every release lifecycle is ≤ GENERAL_AVAILABILITY, returns the
+    most-advanced of those (i.e. max-pre-or-at-GA);
+  - otherwise returns the smallest lifecycle ≥ GENERAL_AVAILABILITY
+    observed across releases (i.e. min-post-GA).
+  Null when the component has no releases.
+  """
+  effectiveLifecycle: ReleaseLifecycleEnum
+  """
+  Manually-assigned lead user UUIDs for this component/product.
+  """
+  leads: [ID!]
+  """
+  Resolved org-user details for the manually-assigned leads.
+  """
+  leadDetails: [OrgUserData!]
+  """
+  Freeform stakeholder contacts for non-registered users (HTML-sanitized on write).
+  """
+  contacts: [ComponentContact!]
+  """
+  Derived team: org users holding a READ_WRITE-or-stronger COMPONENT-scoped
+  permission on this component. Falls back up the parent (product) chain when
+  the component itself has no direct members.
+  """
+  team: [OrgUserData!]
+  """
+  Derived approvers: org users whose COMPONENT-scoped permission on this
+  component carries one or more approval-role grants. Same parent fallback as team.
+  """
+  approvers: [OrgUserData!]
+  """
+  Stored durable owner (team-preferred, USER escape hatch); null = none set (RFC Phase 4).
+  """
+  owner: ComponentOwner
+  """
+  Computed ownership resolution: status / durability / derived suggestion. Pure
+  recompute (never stored); a non-OWNED status drives a non-blocking banner + the
+  at-risk report and NEVER blocks releases.
+  """
+  ownership: ComponentOwnership!
+}
+
+input CreateComponentInput {
+  org: ID
+  name: String!
+  type: ComponentType!
+  defaultBranch: String
+  versionSchema: String
+  marketingVersionSchema: String
+  versionType: VersionType
+  featureBranchVersioning: String
+  vcs: ID
+  vcsRepository: VcsRepositoryInput
+  includeApi: Boolean
+  approvalPolicy: ID
+  identifiers: [IdentifierInput]
+  nature: ComponentNature
+  deviceClass: DeviceClass
+  medicalProfile: MedicalProfileInput
+  repoPath: String
+  branchSuffixMode: BranchSuffixMode
+  """
+  Component-level sid override. Only writeable when the org is in ENABLED_FLEXIBLE;
+  the mutation layer rejects ENABLE/DISABLE writes otherwise (D3).
+  """
+  sidPurlOverride: SidPurlOverride
+  """
+  Component-level authority segments. May be set even when sidPurlOverride is INHERIT --
+  the segments only take effect once a higher level enables sid for this component.
+  """
+  sidAuthoritySegments: [String!]
+  """
+  Whether this component is the tenant's own software (INTERNAL) or a tracked
+  third-party dependency (EXTERNAL). Defaults to INTERNAL when null. EXTERNAL
+  components never receive a platform-stamped sid PURL (D16).
+  """
+  isInternal: BelongsToOrganization
+}
+
+input AddArtifactInput {
+  release: ID
+  component: ID
+  version: String
+  releaseArtifacts: [ArtifactInput]
+  deliverableArtifacts: [DeliverableArtifactInput]
+  sceArtifacts: [SceArtifactInput]
+}
+
+input ReleaseApprovalProgrammaticInput {
+  approvals: [ReleaseApprovalInput]
+  release: ID
+  component: ID
+  version: String
+}
+
+input SynchronizeBranchInput {
+  component: String
+  liveBranches: [String]
+  vcsUri: String
+  repoPath: String
+}
+
+type SbomProbingRun {
+  runId: String!
+  status: SbomProbingStatus!
+}
+
+scalar Object
+
+input InstanceDataInput {
+  uuid: ID
+  namespace: String
+  senderId: String
+  timeSent: String
+  images: [Object]
+  type: String
+  labels: Object
+  annotations: Object
+}
+
+input InstanceDeploymentEventInput {
+  instance: ID
+  namespace: String
+  senderId: String
+  deploymentName: String!
+  featureSet: ID
+  product: ID
+  targetRelease: ID
+  phase: DeploymentPhase
+  failureClass: DeploymentFailureClass
+  message: String
+  detail: String
+  attemptedAt: DateTime
+  fingerprint: String
+}
+
+type Instance {
+  uuid: ID
+  uri: String
+  org: ID
+  name: String
+  displayName: String
+  namespace: String
+  instanceType: InstanceType
+  status: Status
+  notes: String
+  spawnType: SpawnType
+  instances: [ID]
+  environment: String
+  properties: [InstancePropertyRecord]
+  releases: [DeployedRelease]
+  targetReleases: [DeployedRelease]
+  unmatchedReleases: [UnmatchedImage]
+  deploymentFailures: [InstanceDeploymentFailure]
+  deploymentHealth: DeploymentHealth
+  agentData: String
+  productPlans: [InstanceProductMapPlan]
+  productActuals: [InstanceProductMapActual]
+  createdType: ProgrammaticType
+  lastUpdatedBy: ID
+  createdDate: DateTime
+}
+
+type Branch {
+  uuid: ID
+  name: String
+  component: ID
+  componentDetails: Component
+  components: [ID]
+  status: Status
+  type: BranchType
+  vcs: ID
+  vcsBranch: String
+  dependencies: [ChildComponent]
+  dependencyPatterns: [DependencyPattern]
+  effectiveDependencies: [EffectiveDependency]
+  org: ID
+  versionSchema: String
+  marketingVersionSchema: String
+  versionType: VersionType
+  metadata: String
+  hasChildren: Boolean
+  createdType: ProgrammaticType
+  lastUpdatedBy: ID
+  createdDate: DateTime
+  autoIntegrate: AutoIntegrateState
+  vcsRepositoryDetails: VcsRepository
+  findingAnalyticsParticipation: FindingAnalyticsParticipation
+}
+
+input VersionFeatureSetOverride {
+  componentUuid: ID
+  vcsUri: String
+  repoPath: String
+  branch: String!
+}
+
+input SessionInitializeInput {
+  """
+  Display name the agent reports for itself ("Claude Code", "Cursor
+  Agent"). Required -- used as the (org, lower(name)) lookup key.
+  """
+  agentName: String!
+  """
+  Model name the agent reports running ("claude-sonnet",
+  "composer-1"). Required -- used as the (org, lower(name), version)
+  lookup key on the ModelOntology row.
+  """
+  agentModel: String!
+  """
+  Model version (e.g. "4.5"). Defaults to "unknown" if omitted.
+  """
+  agentModelVersion: String
+  """
+  Publisher / vendor (e.g. "Anthropic"). Display-only; stored on the ModelOntology row.
+  """
+  agentVendor: String
+  agentIconKind: String
+  agentColor: String
+  """
+  Optional client-side session id. Defaults server-side to the row
+  uuid when omitted. **Unique forever within (org, agent)**: an id
+  previously used by ANY session (OPEN, CLOSED, or BLOCKED) cannot
+  be re-used; sessionInitializeProgrammatic errors with
+  clientSessionId-conflict. Agents that retry after a BLOCKED /
+  CLOSED predecessor must mint a fresh id.
+  """
+  clientSessionId: String
+  title: String
+  """
+  Optional pointer to a prior session this one continues from.
+  Set when an agent retries after a BLOCKED or CLOSED predecessor
+  so the audit trail threads the related attempts. Null on first-
+  time sessions.
+  """
+  parentSession: ID
+}
+
+"""
+Upload one or more artifacts and bind them to an agent session.
+Each {@code ArtifactInput.file} is a separate multipart part on the
+HTTP body per the Apollo upload spec. The resulting artifact rows
+carry {@code belongsTo=AGENT_SESSION} and live only on the session --
+they do not appear on any release or component.
+"""
+input SessionAddArtifactInput {
+  sessionUuid: ID!
+  artifacts: [ArtifactInput!]!
+}
+
+input SessionUpdateMetaInput {
+  uuid: ID!
+  title: String
+  clientSessionId: String
+}
+
+"""
+A coding agent registered to an org. ROOT agents are what an
+external tool registers as and own sessions; SUB agents are
+children a ROOT spawns and share the parent's session.
+
+Identity = (org, lower(name)). Auto-registered on the first session
+a calling FREEFORM key opens with a previously-unknown name in the
+org. {@code model} points to a ModelOntology row carrying the
+publisher / model / version / CycloneDX ML-BOM model card -- many
+agents may share a model.
+"""
+type Agent {
+  uuid: ID
+  org: ID
+  """
+  Registration key supplied by the runtime via --agent-name. Part of
+  the (org, agentIdentity, lower(name)) resolution key -- treat as
+  immutable. User-facing renames go through displayName.
+  """
+  name: String
+  """
+  Optional admin-chosen label shown in the UI in place of name. Falls
+  back to name when null. Cosmetic only -- never used for resolution
+  or uniqueness.
+  """
+  displayName: String
+  """
+  Resolved label the UI should render. Precedence (strongest last):
+  name → first bound FREEFORM key note → displayName. I.e.
+  displayName if set, else the note on a bound FREEFORM key, else name.
+  Read-only -- set displayName to override.
+  """
+  effectiveDisplayName: String
+  """
+  ModelOntology row this agent runs.
+  """
+  model: ModelOntology @deprecated(reason: "Model is a property of the chat, not the durable agent. Read Session.primaryModel instead; this returns the agent's last-seen declared model as a transitional fallback.")
+  """
+  Optional dashboard glyph.
+  """
+  iconKind: String
+  """
+  Optional dashboard accent colour (CSS hex).
+  """
+  color: String
+  """
+  Free-form notes the user sets on the dashboard.
+  """
+  notes: String
+  """
+  AgentIdentity row that scopes this agent. (org, agentIdentity,
+  lower(name)) is the uniqueness boundary -- two different identities
+  can each own a "Claude Code". SUB agents inherit their root's
+  identity.
+  """
+  agentIdentity: ID
+  status: AgentStatus
+  agentType: AgentType
+  """
+  ROOT for top-level agents; SUB pointers point at the owning root.
+  """
+  rootAgent: ID
+  """
+  Direct children spawned by this agent (best-effort report).
+  """
+  subAgents: [ID]
+  createdDate: DateTime
+  """
+  OPEN sessions owned by this ROOT agent. Empty list on SUB agents
+  (sub-agents do not own sessions). Returns the same ordering as
+  {@code sessionsOfAgent} -- most recently active first.
+  """
+  openSessions: [Session]
+  """
+  CLOSED sessions owned by this ROOT agent. Same ordering as
+  {@code openSessions}.
+  """
+  closedSessions: [Session]
+  """
+  Open + closed session counts for this agent. Cheaper than walking
+  the full lists when the dashboard only needs the badges.
+  """
+  sessionCounts: AgentSessionCounts
+  """
+  Most-recent activity timestamp across all sessions this agent
+  owns. Drives the dashboard "connected" pill. Null when the agent
+  has no sessions yet.
+  """
+  lastActivityAt: DateTime
+  """
+  Enrolled public keys this agent signs commits with. Includes
+  revoked entries -- UI filters by revokedAt for display, the
+  verifier filters at lookup time.
+  """
+  signingKeys: [SigningKey]
+  """
+  FREEFORM API keys bound to this agent's identity
+  (agent_identity_credentials of type REARM_API_KEY). These are the
+  keys an agent runtime authenticates with to drive this agent.
+  """
+  boundApiKeys: [ApiKey]
+}
+
+"""
+Register a SUB agent under an existing parent. The parent may be
+ROOT or SUB; the new sub's rootAgent is resolved to the parent's
+owning root and its model ontology inherits from the parent unless
+overridden.
+"""
+input SpawnSubAgentInput {
+  parentUuid: ID!
+  name: String!
+  """
+  Optional model-ontology override. Defaults to the parent's model.
+  """
+  modelUuid: ID
+  iconKind: String
+  color: String
+}
+
+"""
+A row describing one AI/ML model an Agent runs. Identity =
+(org, lower(name), version). Carries publisher + a full CycloneDX
+ML-BOM model card (opaque jsonb). Auto-upserted on session
+initialize from (agentVendor, agentModel, agentModelVersion).
+"""
+type ModelOntology {
+  uuid: ID
+  org: ID
+  """
+  Model name, e.g. "claude-sonnet".
+  """
+  name: String
+  """
+  Model version, e.g. "4.5". Defaults to "unknown" on auto-registration when omitted.
+  """
+  version: String
+  """
+  Publisher / vendor (e.g. "Anthropic"). Display-only.
+  """
+  publisher: String
+  """
+  One-line summary for the dashboard tooltip.
+  """
+  description: String
+  """
+  Optional canonical id (e.g. "pkg:huggingface/anthropic/claude-sonnet@4.5").
+  """
+  purl: String
+  """
+  CycloneDX ML-BOM model component (type machine-learning-model)
+  stored opaquely. Empty {} on auto-registration; the user attaches
+  a fuller card later via setModelOntologyModelCardProgrammatic.
+  """
+  modelCard: Object
+  notes: String
+  createdDate: DateTime
+}
+
+"""
+Attach (or replace) a CycloneDX ML-BOM model card on an ontology
+row. The card is the {@code component} object of a CycloneDX
+machine-learning model -- see the
+[CycloneDX ML-BOM guide](https://github.com/CycloneDX/guides/tree/main/ML-BOM/en)
+for the expected shape.
+"""
+input SetModelCardInput {
+  modelOntologyUuid: ID!
+  modelCard: Object!
+}
+
+"""
+An individual fielded unit -- the optional per-unit layer below a shipment.
+Instance-like: plan (expected version) vs actual (phone-home) + 821 tracking.
+"""
+type Device {
+  uuid: ID
+  org: ID
+  """
+  Soft-delete marker: ARCHIVED rows are hidden from listings.
+  """
+  status: Status
+  shippedProduct: ID
+  site: ID
+  """
+  Unit-level identifiers (SERIAL, UDI, UDI-PI, ...).
+  """
+  identifiers: [Identifier]
+  plan: DevicePlan
+  actual: ActualReport
+  tracking: TrackingRecord
+  """
+  Latest reconciled software state (digital twin, software side).
+  """
+  observedState: ObservedState
+  notes: String
+  """
+  Computed: observed version diverges from the device's expected release.
+  """
+  versionDrift: Boolean
+  createdDate: DateTime
+}
+
+"""
+Programmatic phone-home payload: observed digests (structured) and/or a raw
+text blob (e.g. a k8s image list) the backend extracts digests from.
+"""
+input DeviceStateReportInput {
+  device: ID!
+  source: ReportSource
+  observed: [ObservedDigestInput]
+  rawText: String
+}
+
+"""
+Enrolled public key bound to an Agent or Committer. The verifier
+matches signatures by fingerprint to this row and never trusts the
+key embedded in a signature blob.
+"""
+type SigningKey {
+  uuid: ID
+  org: ID
+  format: SignatureFormat
+  ownerType: SigningKeyOwnerType
+  ownerUuid: ID
+  """
+  Normalised fingerprint -- SHA256:... for SSH, long key id for GPG.
+  """
+  fingerprint: String
+  """
+  Principal string ssh-keygen expects via -I, or GPG user-id.
+  """
+  identity: String
+  """
+  Wire-format pubkey -- single line SSH, ASCII-armoured GPG.
+  """
+  pubKey: String
+  createdDate: DateTime
+  revokedAt: DateTime
+}
+
+"""
+Programmatic (FREEFORM-auth'd) variant of SigningKeyInput with no {@code org}
+field: the org is always the one the calling key resolves to, so accepting a
+client-supplied org is redundant and a footgun (a mismatched value previously
+surfaced as an opaque "Not authorized"). Used only by
+{@code enrollSigningKeyProgrammatic}.
+"""
+input AgentSigningKeyInput {
+  format: SignatureFormat!
+  ownerType: SigningKeyOwnerType!
+  ownerUuid: ID!
+  """
+  SHA256:... for SSH; long key id for GPG. Derived from pubKey when omitted.
+  """
+  fingerprint: String
+  """
+  Optional override; defaults to the agent's identity where applicable.
+  """
+  identity: String
+  """
+  Single-line SSH or ASCII-armoured GPG block.
+  """
+  pubKey: String!
+}
+
+"""
+Ownership slice a declarative spec describes. One kind per file; the apply / export operations are per kind.
+"""
+enum DeclarativeKind {
+  CATALOG
+  BRANCHES
+}
+
+type CatalogComponent {
+  name: String!
+  type: ComponentType!
+  kind: ComponentKind
+  versionSchema: String
+  marketingVersionSchema: String
+  versionType: VersionType
+  featureBranchVersioning: String
+  vcsUri: String
+  vcsType: String
+  repoPath: String
+  nature: ComponentNature
+  deviceClass: DeviceClass
+  branchSuffixMode: BranchSuffixMode
+  identifiers: [Identifier!]
+  provenance: DeclarativeProvenance
+}
+
+type BranchSpecEntry {
+  name: String!
+  type: BranchType
+  versionSchema: String
+  marketingVersionSchema: String
+  vcsBranch: String
+  autoIntegrate: AutoIntegrateState
+  findingAnalyticsParticipation: FindingAnalyticsParticipation
+  dependencies: [DependencySpec!]
+  dependencyPatterns: [DependencyPattern!]
+  provenance: DeclarativeProvenance
+}
+
+enum Status {
+  ACTIVE
+  APPROVED
+  ARCHIVED
+  COMPLETE
+  DRAFT
+  IGNORED
+  JOB
+  OPTIONAL
+  PENDING
+  REJECTED
+  REQUIRED
+  TRANSIENT
+}
+
+enum ReleaseLifecycleEnum {
+  CANCELLED
+  REJECTED
+  PENDING
+  DRAFT
+  ASSEMBLED
+  READY_TO_SHIP
+  GENERAL_AVAILABILITY
+  END_OF_MARKETING
+  END_OF_DISTRIBUTION
+  END_OF_SUPPORT
+  END_OF_LIFE
+}
+
+type Organization {
+  uuid: ID
+  name: String
+  type: OrganizationType
+  approvalRoles: [ApprovalRole]
+  terminology: Terminology
+  ignoreViolation: IgnoreViolation
+  settings: Settings
+  createdType: ProgrammaticType
+  lastUpdatedBy: ID
+  createdDate: DateTime
+  """
+  Org-wide PR-validation trigger rules. Each rule maps a regex over
+  {@code VcsRepository.uri} (matched fully-anchored, see {@link
+  GlobalPrValidationTriggerRule.uriPattern}) to an EXTERNAL_VALIDATION
+  trigger that should apply when a VCS in the org has no per-repo
+  override. List order is the priority order -- the first matching
+  rule wins, and the per-VCS resolver surfaces the losing rule names
+  for operator clean-up. SAAS-only.
+  """
+  globalPrValidationTriggerRules: [GlobalPrValidationTriggerRule]
+  """
+  Org-wide approval-policy assignment rules. Each rule maps a regex
+  over {@code Component.name} (matched fully-anchored) plus a
+  {@code componentType} filter to an approval-policy UUID. When a
+  component has no per-component policy reference (or it points to
+  an archived/missing policy), the resolver walks this list in order
+  and the first matching rule's policy becomes the effective policy.
+  List order is the priority order -- first match wins; the per-
+  Component resolver surfaces the losing rule names for operator
+  clean-up. SAAS-only.
+  """
+  globalApprovalPolicyRules: [GlobalApprovalPolicyRule]
+  """
+  Org-wide team-assignment rules. Each rule maps a regex over
+  {@code Component.name} (matched fully-anchored) plus a
+  {@code componentType} filter to an owner team. When a component has no
+  per-component owner, the resolver walks this list in order and the first
+  matching rule's team becomes the component's durable owner -- the result
+  is flagged derived and names the rule, so the UI can distinguish "someone
+  chose this" from "a pattern matched". A per-component owner always wins.
+  List order is the priority order -- first match wins.
+  """
+  globalTeamAssignmentRules: [GlobalTeamAssignmentRule]
+}
+
+type ParentRelease {
+  org: ID
+  release: ID
+  releaseDetails: Release
+}
+
+type SourceCodeEntry {
+  uuid: ID
+  branch: ID
+  vcsUuid: ID
+  vcsBranch: String
+  vcsRepository: VcsRepository
+  commit: String
+  commits: String
+  commitMessage: String
+  commitAuthor: String
+  commitEmail: String
+  vcsTag: String
+  notes: String
+  org: ID
+  dateActual: DateTime
+  createdType: ProgrammaticType
+  lastUpdatedBy: ID
+  createdDate: DateTime
+  artifacts: [ID]
+  artifactDetails: [Artifact]
+  """
+  Resolved AgentSession this commit was authored under, or null on
+  non-agent commits / unresolved trailers. Set by the PR 2
+  commit-trailer parser from ReARM-Agentic-Session: on the commit
+  message.
+  """
+  agentSession: ID
+  """
+  Leaf agent that authored the commit (may be a SUB; the session's
+  {@code agent} is always the ROOT). Set by the PR 2 commit-trailer
+  parser from ReARM-Agent: on the commit message.
+  """
+  agent: ID
+  """
+  Releases whose primary SCE is this commit. Typically 0 or 1, but
+  rebuilds against the same commit produce multiple entries. Each
+  release is the natural place the UI can jump to from a commit row.
+  """
+  releases: [Release]
+  """
+  Latest signature-verification verdict for this commit (or null when
+  no signature artifact has been attached). Backed by the
+  signature_verifications row pointed at by this SCE -- read-time
+  pick of the most-recent verdict for (SCE, subjectUuid). Used by
+  CEL via {@code commit.signature.*}.
+  """
+  signature: SceSignature
+  """
+  Outcome of the agent-attribution trailer resolution for this commit.
+  UNATTRIBUTED on non-agent commits; RESOLVED when both trailers parsed
+  and the agent / session were found; REJECTED when the trailers were
+  present but the claim could not be resolved (malformed clientSessionId,
+  unknown agent / session, cross-org, etc.). Used by CEL via
+  {@code commit.attribution.state} -- symmetric with
+  {@code commit.signature.state} for the unsigned-commit gate.
+  """
+  attributionState: AttributionState
+  """
+  Human-readable reason explaining a REJECTED attribution. Null on
+  UNATTRIBUTED and RESOLVED.
+  """
+  attributionReason: String
+}
+
+scalar DateTime
+
+type Artifact {
+  uuid: ID
+  displayIdentifier: String
+  """
+  Whether the artifact bytes live inside ReARM's blob store (REARM)
+  or only as external download links (EXTERNALLY). UI uses this to
+  decide whether to render an in-place download button.
+  """
+  storedIn: ArtifactStoredIn
+  org: ID
+  branch: ID
+  buildId: String
+  buildUri: String
+  cicdMeta: String
+  digestRecords: [DigestRecord]
+  isInternal: ArtifactBelonging
+  type: ArtifactType
+  bomFormat: BomFormat
+  specVersion: SpecVersion
+  serializationFormat: SerializationFormat
+  notes: String
+  tags: [TagRecord]
+  tagRecords: [TagRecord]
+  dateFrom: DateTime
+  dateTo: DateTime
+  duration: Long
+  packageType: PackageType
+  version: String
+  publisher: String
+  group: String
+  dependencies: [ID]
+  createdType: ProgrammaticType
+  lastUpdatedBy: ID
+  createdDate: DateTime
+  internalBom: InternalBom
+  downloadLinks: [Downloadlink]
+  metrics: DependencyTrackMetrics
+  componentUuid: ID
+  artifacts: [ID]
+  artifactDetails: [Artifact]
+  enrichmentStatus: EnrichmentStatus
+  vexImportSummary: VexImportSummary
+}
+
+type Deliverable {
+  uuid: ID
+  name: String
+  org: ID
+  displayIdentifier: String
+  branch: ID
+  type: String
+  notes: String
+  tags: [TagRecord]
+  version: String
+  publisher: String
+  group: String
+  supportedOs: [OSEnum]
+  supportedCpuArchitectures: [CPUArchitectureEnum]
+  softwareMetadata: SoftwareMetadata
+  hardwareMetadata: HardwareMetadata
+  quantity: Int
+  artifacts: [ID]
+  artifactDetails: [Artifact]
+  identifiers: [Identifier]
+}
+
+type Ticket {
+  uuid: ID
+  identifier: String
+  status: TicketStatus
+  org: ID
+  summary: String
+  content: String
+  doneInRelease: ID
+  dateDone: DateTime
+  uri: String
+}
+
+enum ProgrammaticType {
+  MANUAL
+  AUTO
+  MANUAL_AND_AUTO
+  API
+  TEST
+}
+
+type VcsRepository {
+  uuid: ID
+  name: String
+  org: ID
+  uri: String
+  type: String
+  createdType: ProgrammaticType
+  lastUpdatedBy: ID
+  createdDate: DateTime
+  """
+  Pull-request-level output triggers for this VCS repository. Currently
+  constrained to ≤1 entry of type EXTERNAL_VALIDATION -- used by the PR
+  aggregator to dispatch the aggregated check-run verdict to the SCM.
+  """
+  outputTriggers: [ReleaseOutputEvent]
+  """
+  Resolved PR-validation trigger for this repo. Per-repo
+  {@code outputTriggers} always wins; otherwise the org-wide rule
+  list is walked in order and the first match's trigger is returned.
+  {@code source} discriminates between the two; {@code ruleName} is
+  set only when source = ORG_RULE; {@code alsoMatchedRuleNames}
+  carries any later-list rules whose pattern also matched (for the
+  provenance UI's "rules X, Y also match; X wins" warning);
+  {@code staleRuleNames} flags rules that matched but reference a
+  missing/archived integration and were therefore skipped.
+  """
+  effectivePrValidationTrigger: EffectivePrValidationTrigger
+}
+
+type TagRecord {
+  key: String
+  value: String
+  removable: RemvovableType
+}
+
+type ReleaseApprovalEvent {
+  approvalEntry: ID
+  approvalEntryName: String
+  approvalRoleId: ID
+  state: ApprovalState
+  date: DateTime
+  wu: WhoUpdated
+  """
+  Optional free-form approver comment, sanitised server-side via
+  jsoup's Safelist.basic() (allows simple inline tags, strips
+  scripts/styles/event handlers). Capped at 4000 chars at the input
+  boundary; empty-after-clean is normalised to null.
+  """
+  comment: String
+}
+
+"""
+One approval request recorded on a release (requestReleaseApprovals).
+`resolvedAt` is stamped when every requested entry has reached a terminal
+state (satisfied or disapproved); null while the request is open.
+"""
+type ReleaseApprovalRequest {
+  uuid: ID
+  requestedBy: ID
+  approvalEntries: [ID!]
+  requestedAt: DateTime
+  resolvedAt: DateTime
+}
+
+type Variant {
+  uuid: ID
+  identifier: String
+  identifierPrefix: String
+  order: Int
+  version: String
+  marketingVersion: String
+  sku: String
+  type: VariantType
+  org: ID
+  orgDetails: Organization
+  release: ID
+  outboundDeliverables: [ID]
+  outboundDeliverableDetails: [Deliverable]
+  notes: String
+  endpoint: String
+  tags: [TagRecord]
+}
+
+type ReleaseUpdateEvent {
+  rus: ReleaseUpdateScopeEnum
+  rua: ReleaseUpdateActionEnum
+  oldValue: String
+  newValue: String
+  objectId: ID
+  """
+  Human-readable reason for this event, populated when the
+  change carries context the oldValue/newValue tuple cannot
+  convey on its own. For LIFECYCLE events fired by a
+  component-level CEL input trigger, this carries the trigger
+  name and the CEL expression that matched. null for events
+  whose meaning is fully captured by the structural fields.
+  """
+  message: String
+  date: DateTime
+  wu: WhoUpdated
+}
+
+type DependencyTrackMetrics {
+  dependencyTrackFullUri: String
+  dtrackSubmissionFailed: Boolean
+  dtrackSubmissionAttempts: Int
+  dtrackSubmissionFailureReason: String
+  dtrackFetchStatus: String
+  dtrackFetchFailureCount: Int
+  dtrackFetchFailureReason: String
+  dtrackFetchSkipUntil: String
+  lastScanned: DateTime
+  firstScanned: DateTime
+  critical: Int
+  high: Int
+  medium: Int
+  low: Int
+  unassigned: Int
+  vulnerabilities: Int
+  vulnerableComponents: Int
+  components: Int
+  suppressed: Int
+  findingsTotal: Int
+  findingsAudited: Int
+  findingsUnaudited: Int
+  inheritedRiskScore: Int
+  policyViolationsFail: Int
+  policyViolationsWarn: Int
+  policyViolationsInfo: Int
+  policyViolationsTotal: Int
+  policyViolationsAudited: Int
+  policyViolationsUnaudited: Int
+  policyViolationsSecurityTotal: Int
+  policyViolationsSecurityAudited: Int
+  policyViolationsSecurityUnaudited: Int
+  policyViolationsLicenseTotal: Int
+  policyViolationsLicenseAudited: Int
+  policyViolationsLicenseUnaudited: Int
+  policyViolationsOperationalTotal: Int
+  policyViolationsOperationalAudited: Int
+  policyViolationsOperationalUnaudited: Int
+  vulnerabilityDetails: [Vulnerability]
+  violationDetails: [Violation]
+  weaknessDetails: [Weakness]
+}
+
+type Identifier {
+  idType: IdentifierType
+  idValue: String
+}
+
+"""
+Version-specific GUDID record for a UDI-bearing release.
+"""
+type GudidRecord {
+  brandName: String
+  versionModel: String
+  gmdnCode: String
+  sterile: Boolean
+  singleUse: Boolean
+  mriSafety: Boolean
+}
+
+"""
+GUDID submission workflow state for a UDI-bearing release.
+"""
+enum GudidStatus {
+  NOT_SUBMITTED
+  SUBMITTED
+  PUBLISHED
+}
+
+type ReleaseCollection {
+  uuid: ID
+  artifactComparison: ArtifactComparison
+}
+
+type IntermediateFailedRelease {
+  releaseUuid: ID!
+  releaseVersion: String!
+  releaseLifecycle: ReleaseLifecycleEnum!
+  releaseCreatedDate: DateTime
+  commits: [SourceCodeEntry]
+}
+
+enum SbomProbingStatus {
+  PENDING
+  ENRICHING
+  DONE
+  FAILED
+}
+
+input TagRecordInput {
+  key: String
+  value: String
+}
+
+input ConditionGroupOnGetLatestReleaseInput {
+  matchOperator: MatchOperator
+  conditions: [ConditionOnGetLatestReleaseInput]
+}
+
+type KeyValue {
+  key: String
+  value: String
+  lastUpdated: Int
+}
+
+type NamedRef {
+  uuid: ID!
+  name: String!
+}
+
+enum IntegrateType {
+  FOLLOW
+  INTEGRATE
+  UNINSTALL
+  TARGET
+  NONE
+}
+
+type FeatureSetReleaseRef {
+  uuid: ID!
+  version: String!
+  lifecycle: String
+  createdDate: DateTime
+  """
+  True when the release carries an approval for the instance plan's environment (or the plan has
+  no environment, in which case FOLLOW takes the newest release regardless).
+  """
+  approvedForInstanceEnvironment: Boolean!
+}
+
+"""
+A feature set the caller could switch a deployment to, with the releases it could target.
+"""
+type FeatureSetOption {
+  uuid: ID!
+  name: String!
+  """
+  Newest first, ASSEMBLED or later lifecycles only, capped server-side. Any of these is a valid
+  value for switchInstanceProductFeatureSet.release.
+  """
+  releases: [FeatureSetReleaseRef!]!
+}
+
+enum AgentInboxEventKind {
+  """
+  A release's lifecycle moved (e.g. ASSEMBLED → REJECTED, PENDING → ASSEMBLED).
+  """
+  LIFECYCLE_CHANGE
+  """
+  An approval entry on a release flipped (APPROVED / DISAPPROVED / withdrawn).
+  """
+  APPROVAL
+  """
+  A new PolicyEvent landed on the session itself (post-init artifact-attach / commit-attribution re-eval).
+  """
+  POLICY_VERDICT
+}
+
+enum AgentInboxSource {
+  """
+  A human user performed the action (approval, manual lifecycle change).
+  """
+  HUMAN
+  """
+  An automated component-level output trigger fired (CEL gate matched).
+  """
+  POLICY_GATE
+  """
+  Lifecycle progressed by the system without an explicit trigger (e.g. initial release-created PENDING).
+  """
+  RELEASE_AUTO
+}
+
+enum SessionStatus {
+  OPEN
+  CLOSED
+  """
+  A BLOCK-severity INPUT policy failed on sessionInitializeProgrammatic.
+  The row is persisted so the audit / dashboard show the rejected
+  attempt with its policyEvents, but the trailer-attribution
+  resolver refuses to bind commits against it -- trailers carrying
+  this clientSessionId surface as REJECTED attribution. Terminal:
+  the agent must mint a fresh, unique clientSessionId to retry.
+  """
+  BLOCKED
+}
+
+"""
+A single agent-policy evaluation outcome on a session. SAAS-only --
+on CE deployments the session's {@code policyEvents} list is always
+empty. Persisted append-only on AgentSession.
+"""
+type PolicyEvent {
+  """
+  UUID of the AgentPolicy that produced this verdict.
+  """
+  policyUuid: ID
+  """
+  Snapshot of the policy's name at evaluation time (denormalised so a renamed/deleted policy still surfaces sensibly).
+  """
+  policyName: String
+  kind: PolicyKind
+  severity: PolicySeverity
+  state: PolicyState
+  """
+  Operator-facing failure message; null on PASSED verdicts.
+  """
+  message: String
+  evaluatedAt: DateTime
+  """
+  Full snapshot of the AgentPolicy that produced this verdict (CEL,
+  description, current enabled flag). Lets a calling agent decide
+  whether the failure is recoverable on its own (e.g. attach an
+  orientation artifact and retry) or needs operator action (e.g.
+  a "model must equal claude-opus" policy when the agent runs
+  another model). Resolved at read time from the policyUuid; null
+  if the policy was deleted after the event.
+  """
+  policy: AgentPolicy
+}
+
+"""
+How much trust a session's recorded model carries -- see
+Session.modelAssertion.
+"""
+enum ModelAssertionState {
+  """
+  Agent self-reported the model string via the CLI; trusted but unverified.
+  """
+  DECLARED
+  """
+  Model read from the runtime's own record (e.g. Claude Code transcript). Reserved for Path-B hooks; not yet emitted.
+  """
+  RUNTIME_OBSERVED
+}
+
+type DeclarativeChange {
+  """
+  Entity kind: component | branch
+  """
+  kind: String!
+  name: String!
+  action: DeclarativeAction!
+  """
+  Fields that differ (UPDATE) or would be set (CREATE).
+  """
+  fields: [String!]
+  message: String
+}
+
+input CatalogComponentInput {
+  name: String!
+  type: ComponentType!
+  kind: ComponentKind
+  versionSchema: String
+  marketingVersionSchema: String
+  versionType: VersionType
+  featureBranchVersioning: String
+  """
+  Base branch name on create only (main by default).
+  """
+  defaultBranch: String
+  """
+  VCS repository by URI; created in the org when missing.
+  """
+  vcsUri: String
+  vcsType: String
+  repoPath: String
+  nature: ComponentNature
+  deviceClass: DeviceClass
+  branchSuffixMode: BranchSuffixMode
+  identifiers: [IdentifierInput!]
+}
+
+input BranchSpecInput {
+  name: String!
+  type: BranchType
+  versionSchema: String
+  marketingVersionSchema: String
+  vcsBranch: String
+  autoIntegrate: AutoIntegrateState
+  findingAnalyticsParticipation: FindingAnalyticsParticipation
+  dependencies: [DependencySpecInput!]
+  dependencyPatterns: [DependencyPatternSpecInput!]
+}
+
+type PullRequestValidationEvent {
+  date: DateTime
+  validationState: ValidationState
+  comment: String
+  sourceCodeEntry: ID
+  attributedReleases: [ID]
+}
+
+type ReleaseValidationEvent {
+  release: ID
+  date: DateTime
+  validationResult: ValidationState
+}
+
+enum ValidationState {
+  SUCCESS
+  FAILURE
+  NEUTRAL
+  SKIPPED
+  CANCELLED
+  """
+  Internal "verdict not yet computable" state -- recorded on
+  pr_validation_events when at least one release attributed to the
+  PR has no validation event yet. Never dispatched to the SCM
+  (GitHub doesn't have a matching check-run conclusion); the prior
+  terminal verdict's check-run stays in place until a new terminal
+  verdict supersedes it.
+  """
+  PENDING
+}
+
+input SourceCodeEntryInput {
+  branch: ID
+  vcs: ID
+  organizationUuid: ID
+  uri: String
+  type: String
+  commit: String
+  commits: [String]
+  commitMessage: String
+  commitAuthor: String
+  commitEmail: String
+  vcsTag: String
+  dateActual: String
+  vcsBranch: String
+  notes: String
+  artifacts: [ArtifactInput]
+}
+
+"""
+PR metadata supplied by CI alongside an addReleaseProgrammatic call.
+The caller (rearm-actions or any CI integration) populates these fields
+from the SCM event context. Identity is opaque string ((targetVcs,
+identity) is the uniqueness boundary) -- supports GitHub PR numbers as
+strings, GitLab MR iids, and Gerrit change-IDs uniformly.
+"""
+input PullRequestInfoInput {
+  """
+  SCM-side PR / MR / change-list identity (e.g. GitHub PR number "42",
+  GitLab MR iid "42", Gerrit change-id). Required.
+  """
+  identity: String!
+  """
+  "OPEN", "CLOSED", or "MERGED". Case-insensitive -- converted to
+  PullRequestState server-side.
+  """
+  state: String!
+  title: String
+  sourceBranchName: String
+  targetBranchName: String
+  """
+  Link back to the PR in the upstream SCM (e.g., GitHub PR URL).
+  """
+  endpoint: String
+}
+
+input ArtifactInput {
+  type: ArtifactType
+  displayIdentifier: String
+  downloadLinks: [LinkInput]
+  inventoryTypes: [InventoryType]
+  bomFormat: String
+  storedIn: String
+  tags: [TagRecordInput]
+  status: String
+  version: String
+  file: Upload
+  fileSce: Upload
+  stripBom: StripBomEnum
+  digestRecords: [DigestRecordInput]
+  artifacts: [ArtifactInput]
+  vexScope: AnalysisScope
+  vexImportMode: VexImportMode
+  userIssuerClassOverride: IssuerClass
+}
+
+input DeliverableInput {
+  displayIdentifier: String
+  branch: ID
+  type: CdxType
+  notes: String
+  tags: [TagRecordInput]
+  version: String
+  publisher: String
+  group: String
+  supportedOs: [OSEnum]
+  supportedCpuArchitectures: [CPUArchitectureEnum]
+  softwareMetadata: SoftwareMetadataInput
+  hardwareMetadata: HardwareMetadataInput
+  quantity: Int
+  artifacts: [ArtifactInput]
+  identifiers: [IdentifierInput]
+}
+
+input IdentifierInput {
+  idType: IdentifierType
+  idValue: String
+}
+
+input GudidRecordInput {
+  brandName: String
+  versionModel: String
+  gmdnCode: String
+  sterile: Boolean
+  singleUse: Boolean
+  mriSafety: Boolean
+}
+
+enum ComponentType {
+  COMPONENT
+  PRODUCT
+  ANY
+}
+
+enum ComponentKind {
+  HELM
+  GENERIC
+}
+
+enum VersionType {
+  DEV
+  MARKETING
+}
+
+enum VisibilitySetting {
+  PUBLIC
+  ORG_INTERNAL
+  ADMIN_INVITATION
+}
+
+type ApprovalPolicy {
+  uuid: String
+  org: String
+  policyName: String
+  resourceGroup: String
+  approvalMappings: [ApprovalMapping]
+  approvalEntries: [ID]
+  approvalEntryDetails: [ApprovalEntry]
+  status: Status
+  globalInputEvents: [ReleaseInputEvent]
+  globalOutputEvents: [ReleaseOutputEvent]
+}
+
+"""
+Resolved approval policy snapshot for a Component. See
+{@link Component.effectiveApprovalPolicy}.
+"""
+type EffectiveApprovalPolicy {
+  source: ApprovalPolicySource
+  approvalPolicy: ID
+  approvalPolicyDetails: ApprovalPolicy
+  ruleName: String
+  alsoMatchedRuleNames: [String]
+  perComponentPolicyArchived: Boolean
+}
+
+type ReleaseInputEvent {
+  uuid: ID
+  name: String
+  """
+  Output events fired when {@link #celExpression} evaluates to TRUE.
+  """
+  outputEvents: [ID]
+  """
+  Output events fired when {@link #celExpression} evaluates to FALSE.
+  Optional -- leaving this empty preserves the legacy single-branch
+  behavior (rule does nothing when CEL is false). When set, this gives
+  operators a way to express "if X then A else B" in one rule instead
+  of two competing rules. Both branches are skipped together when the
+  rule is disabled or when the component opts out via its
+  GlobalInputEventRef.
+  """
+  outputEventsOnFalse: [ID]
+  scope: EventScope
+  celExpression: String
+  """
+  Rule-level enable/disable. Defaults true. When false, the rule is
+  skipped at evaluation time for every release that resolves against
+  the owning approval policy, overriding any per-component
+  GlobalInputEventRef.disabled state. Applies identically to component-
+  local rules under Component.releaseInputTriggers.
+  """
+  enabled: Boolean
+  """
+  Optional rule-level precondition CEL. When non-empty, evaluated
+  BEFORE {@link #celExpression}; if the precondition returns false
+  (or throws), the rule is skipped entirely (neither matched- nor
+  else-branch actions fire) and the PR conditions snapshot renders
+  PENDING. Lets operators express "is this rule applicable yet?"
+  separately from "did the condition match?". Necessary for rules
+  with {@link #outputEventsOnFalse} populated because the false
+  branch would otherwise fire on releases with missing data --
+  canonical example: gate metrics-based rules on
+  {@code release.firstScanned == true}.
+  """
+  preconditionCelExpression: String
+}
+
+type ReleaseOutputEvent {
+  uuid: ID
+  name: String
+  type: EventType
+  toReleaseLifecycle: ReleaseLifecycleEnum
+  integration: ID
+  users: [ID]
+  notificationMessage: String
+  vcs: ID
+  eventType: String
+  clientPayload: String
+  celClientPayload: String
+  schedule: String
+  scope: EventScope
+  includeSuppressed: Boolean
+  snapshotApprovalEntry: ID
+  snapshotLifecycle: ReleaseLifecycleEnum
+  approvedEnvironment: String
+  """
+  Override the check-run name reported to the SCM for EXTERNAL_VALIDATION
+  events. Defaults to `rearm/<componentName>` when null/empty. Set this
+  when an org-wide branch-protection rule needs a single unified
+  required-check entry (GitHub matches by exact string -- no wildcards).
+  """
+  checkName: String
+}
+
+"""
+Physical-ness axis of a component (Distribution module).
+"""
+enum ComponentNature {
+  SOFTWARE
+  HARDWARE
+}
+
+"""
+Regulatory classification of a component / device (Distribution module).
+"""
+enum DeviceClass {
+  NONE
+  MEDICAL_UNTRACKED
+  MEDICAL_TRACKED
+}
+
+"""
+Regulatory metadata for a medical-device component.
+"""
+type MedicalProfile {
+  issuingAgency: IssuingAgency
+  udiBearing: Boolean
+  gudidDefaults: GudidDefaults
+}
+
+"""
+Controls whether non-base branches append a branch-derived suffix to
+semver, four-part, and calver versions.
+- APPEND: append branch namespace (e.g., 1.2.3-feat_x)
+- NO_APPEND: do not append; conflicts resolved via -0, -1, ... suffix
+- APPEND_EXCEPT_FOLLOW_VERSION: append for all branches and feature sets,
+  except those with at least one follow-version dependency (treated as NO_APPEND for such branches)
+- INHERIT: component-level only; defer to organization setting. Not valid at organization level.
+"""
+enum BranchSuffixMode {
+  APPEND
+  NO_APPEND
+  APPEND_EXCEPT_FOLLOW_VERSION
+  INHERIT
+}
+
+type GlobalInputEventRef {
+  uuid: ID
+  """
+  Opt-out flag -- under the opt-out semantics introduced May 2026, every
+  policy rule fires for every component using the policy unless the
+  component has a ref with disabled=true. See ComponentData.GlobalInputEventRef.
+  """
+  disabled: Boolean
+  overrideOutputEventsLocally: Boolean
+  outputEventsOverride: [ID]
+}
+
+type Perspective {
+  uuid: ID
+  org: ID
+  name: String
+  createdDate: DateTime
+  type: PerspectiveType
+  """
+  Perspective-level sid override (SaaS only, real perspectives only). Null/INHERIT
+  defers to the org. Only writeable when the org is in ENABLED_FLEXIBLE.
+  """
+  sidPurlOverride: SidPurlOverride
+  """
+  Perspective-level decoded authority segments (SaaS only).
+  """
+  sidAuthoritySegments: [String!]
+}
+
+"""
+Component- and perspective-level sid override. Only honored when the org is in
+ENABLED_FLEXIBLE; the mutation layer rejects ENABLE/DISABLE writes when the org
+is STRICT or DISABLED. INHERIT (and null) defer to the next level up.
+"""
+enum SidPurlOverride {
+  INHERIT
+  ENABLE
+  DISABLE
+}
+
+"""
+Internal/external classification of a component (D16). EXTERNAL components are
+third-party dependencies tracked inside the tenant's org and never receive a
+platform-stamped sid PURL -- stamping the tenant's authority on third-party
+software would be a falsified vendor claim. Defaults to INTERNAL on create.
+"""
+enum BelongsToOrganization {
+  INTERNAL
+  EXTERNAL
+}
+
+type OrgUserData {
+  uuid: ID
+  name: String
+  email: String
+  githubId: String
+  permissions: Permissions
+  combinedUserOrgPermissions: Permissions
+  status: UserStatus
+}
+
+"""
+A freeform stakeholder contact for someone who is not a registered ReARM user.
+"""
+type ComponentContact {
+  name: String
+  contact: String
+}
+
+"""
+A component's stored durable owner reference (a Team/UserGroup or a single user).
+"""
+type ComponentOwner {
+  ownerType: ComponentOwnerType!
+  ownerRef: ID!
+}
+
+"""
+Resolved ownership view of a component (status/durability/derived suggestion).
+"""
+type ComponentOwnership {
+  ownerType: ComponentOwnerType
+  ownerRef: ID
+  durable: Boolean!
+  status: ComponentOwnershipStatus!
+  derived: Boolean!
+  reason: String
+}
+
+input VcsRepositoryInput {
+  org: ID
+  name: String
+  uri: String
+  type: String
+}
+
+input MedicalProfileInput {
+  issuingAgency: IssuingAgency
+  udiBearing: Boolean
+  gudidDefaults: GudidDefaultsInput
+}
+
+input DeliverableArtifactInput {
+  deliverable: ID!
+  variant: ID
+  artifacts: [ArtifactInput]!
+}
+
+input SceArtifactInput {
+  sce: ID!
+  artifacts: [ArtifactInput]!
+}
+
+input ReleaseApprovalInput {
+  approvalEntry: ID!
+  approvalRoleId: String!
+  state: ApprovalState!
+  """
+  Optional free-form approver comment. Server sanitises via jsoup
+  Safelist.basic() and caps at 4000 chars; empty-after-clean is treated
+  as null. Reused for both the manual mutation and the programmatic
+  one -- for the latter, approvalEntry may be either a UUID or an
+  approval-entry name (per existing semantics).
+  """
+  comment: String
+}
+
+enum DeploymentPhase {
+  VALUES_MERGE
+  TAG_REPLACE
+  SECRETS
+  HELM_INSTALL
+  HELM_UNINSTALL
+  WATCHER_INSTALL
+  BACKUP
+  UNKNOWN
+}
+
+enum DeploymentFailureClass {
+  RBAC_FORBIDDEN
+  CHART_NOT_FOUND
+  TIMEOUT
+  IMAGE_PULL
+  VALUES_INVALID
+  PRECONDITION_MISSING
+  UNKNOWN
+}
+
+enum InstanceType {
+  STANDALONE_INSTANCE
+  CLUSTER_INSTANCE
+  CLUSTER
+}
+
+enum SpawnType {
+  MANUAL
+  RELIZA_AUTO
+}
+
+type InstancePropertyRecord {
+  uuid: ID
+  type: PropertyConfigurableType
+  value: String
+  namespace: String
+  product: ID
+  property: Property
+  productDetails: Component
+}
+
+type DeployedRelease {
+  timeSent: DateTime
+  release: ID
+  deliverable: ID
+  type: ProgrammaticType
+  namespace: String
+  properties: Object
+  state: ServiceState
+  replicas: [DeployedReplica]
+  isInError: Boolean
+  partOf: String
+  releaseDetails: Release
+}
+
+type UnmatchedImage {
+  image: String
+  digestRecords: [DigestRecord]
+  namespace: String
+  pod: String
+  lastSeen: DateTime
+  state: ServiceState
+  replicas: [DeployedReplica]
+}
+
+type InstanceDeploymentFailure {
+  uuid: ID
+  namespace: String
+  deploymentName: String
+  phase: DeploymentPhase
+  failureClass: DeploymentFailureClass
+  message: String
+  detail: String
+  featureSet: ID
+  featureSetDetails: Branch
+  product: ID
+  targetRelease: ID
+  senderId: String
+  firstSeen: DateTime
+  lastSeen: DateTime
+  occurrenceCount: Int
+}
+
+enum DeploymentHealth {
+  HEALTHY
+  DEGRADED
+  FAILING
+}
+
+type InstanceProductMapPlan {
+  featureSet: ID
+  featureSetDetails: Branch
+  type: IntegrateType
+  namespace: String
+  targetRelease: ID
+  targetReleaseDetails: Release
+  identifier: String
+  configuration: String
+  alertsEnabled: Boolean
+}
+
+type InstanceProductMapActual {
+  featureSet: ID
+  featureSetDetails: Branch
+  matchedRelease: ID
+  matchedReleaseDetails: Release
+  namespace: String
+  identifier: String
+  notMatchingSince: DateTime
+}
+
+enum BranchType {
+  BASE
+  FEATURE
+  REGULAR
+  RELEASE
+  PULL_REQUEST
+  TAG
+  DEVELOP
+  HOTFIX
+}
+
+type ChildComponent {
+  uuid: ID
+  status: Status
+  branch: ID
+  release: ID
+  componentDetails: Component
+  branchDetails: Branch
+  releaseDetails: Release
+  isFollowVersion: Boolean
+}
+
+type DependencyPattern {
+  uuid: ID!
+  pattern: String!
+  targetBranchName: String
+  defaultStatus: Status!
+  fallbackToBase: FallbackToBase
+}
+
+type EffectiveDependency {
+  component: Component!
+  branch: Branch!
+  status: Status!
+  source: DependencySource!
+  sourcePattern: DependencyPattern
+  release: ID
+  releaseDetails: Release
+  isFollowVersion: Boolean
+}
+
+enum AutoIntegrateState {
+  ENABLED
+  DISABLED
+}
+
+enum FindingAnalyticsParticipation {
+  INCLUDED
+  EXCLUDED
+}
+
+enum AgentStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum AgentType {
+  ROOT
+  SUB
+}
+
+type AgentSessionCounts {
+  openSessions: Int
+  closedSessions: Int
+}
+
+type ApiKey {
+  uuid: ID
+  org: ID
+  permissions: Permissions
+  object: ID
+  type: ApiTypeEnum
+  keyOrder: String
+  lastUpdatedBy: ID
+  createdBy: ID
+  accessDate: DateTime
+  createdDate: DateTime
+  notes: String
+  """
+  Root agents this key is bound to via the agent-identity it
+  resolves to (agent_identity_credentials). Empty until an agent
+  has authenticated with this key at least once. FREEFORM keys only.
+  """
+  boundAgents: [Agent]
+}
+
+"""
+Expected/asserted state of a device (defaults from its shipment's release).
+"""
+type DevicePlan {
+  expectedRelease: ID
+}
+
+"""
+Phone-home / observed actual state (optional, expected-empty). Per-device.
+"""
+type ActualReport {
+  reportedRelease: ID
+  reportedAt: DateTime
+  source: ReportSource
+}
+
+"""
+821 tracking block -- meaningful for MEDICAL_TRACKED devices only. Per-device.
+"""
+type TrackingRecord {
+  receivedDate: String
+  patientId: String
+  disposition: Disposition
+  dispositionDate: String
+}
+
+"""
+Latest observed software state, reconciled against the expected release tree.
+"""
+type ObservedState {
+  reportedAt: DateTime
+  source: ReportSource
+  items: [ObservedItem]
+  matchedCount: Int
+  driftedCount: Int
+  unknownCount: Int
+}
+
+"""
+Where an actual report came from.
+"""
+enum ReportSource {
+  PHONE_HOME
+  MANUAL
+  SUPPORT_TICKET
+}
+
+input ObservedDigestInput {
+  identifier: String
+  digest: String!
+}
+
+enum SignatureFormat {
+  SSH
+  GPG
+  """
+  Reserved for v2 -- trust anchored at CA, not per-key.
+  """
+  X509
+}
+
+enum SigningKeyOwnerType {
+  AGENT
+  COMMITTER
+}
+
+type DeclarativeProvenance {
+  """
+  SHA-256 of the canonical JSON of the spec that last touched this row.
+  """
+  specHash: String
+  appliedAt: DateTime
+  source: DeclarativeSource
+}
+
+type DependencySpec {
+  component: String!
+  branch: String
+  release: String
+  status: Status
+  isFollowVersion: Boolean
+}
+
+enum OrganizationType {
+  DEFAULT
+  REGULAR
+}
+
+type ApprovalRole {
+  id: String
+  displayView: String
+}
+
+type Terminology {
+  featureSetLabel: String
+}
+
+type IgnoreViolation {
+  licenseViolationRegexIgnore: [String]
+  securityViolationRegexIgnore: [String]
+  operationalViolationRegexIgnore: [String]
+}
+
+type Settings {
+  declarativePrune: DeclarativePruneMode
+  justificationMandatory: Boolean
+  branchSuffixMode: BranchSuffixMode
+  vexComplianceFramework: VexComplianceFramework
+  """
+  Org-level mode for sid (Software IDentification) PURL emission. See SidPurlMode docs.
+  Null is treated as DISABLED at resolution time.
+  """
+  sidPurlMode: SidPurlMode
+  """
+  Decoded authority segments used when emitting platform sid PURLs. The first segment is
+  the authority (domain or registered name); subsequent segments are publisher / business
+  unit / product line context. Required when sidPurlMode == ENABLED_STRICT; optional under
+  ENABLED_FLEXIBLE (used as a fallback when components/perspectives don't supply their own);
+  must be null/empty under DISABLED.
+  """
+  sidAuthoritySegments: [String!]
+  """
+  Retention window, in days, for the org's notification rows (outbox events,
+  deliveries, read marks). Null means the 90-day default.
+  """
+  notificationRetentionDays: Int
+  """
+  Org-wide default UI view (Security or DevOps) for users who have not
+  picked one in their browser. Null means SECURITY.
+  """
+  defaultView: DashboardView
+}
+
+"""
+Org-wide PR-validation trigger rule. See
+{@link Organization.globalPrValidationTriggerRules} for the priority
+contract; see {@link VcsRepository.effectivePrValidationTrigger} for
+how rules are resolved per repo.
+"""
+type GlobalPrValidationTriggerRule {
+  """
+  Display name; unique within the org.
+  """
+  name: String
+  """
+  Java regex matched against {@code VcsRepositoryData.uri} via
+  {@code Pattern.matcher(uri).matches()} -- fully anchored. Operators
+  write {@code github.com/myorg/.*} (no leading {@code ^}, no
+  trailing {@code $}) and the engine anchors automatically.
+  """
+  uriPattern: String
+  """
+  Trigger spec. Same shape as a per-VCS trigger; must be of type
+  EXTERNAL_VALIDATION and reference a GITHUB integration with the
+  PR_VALIDATE capability in the same org.
+  """
+  trigger: ReleaseOutputEvent
+}
+
+"""
+Org-wide approval-policy assignment rule. See
+{@link Organization.globalApprovalPolicyRules} for the priority
+contract and {@link Component.effectiveApprovalPolicy} for how rules
+are resolved per component.
+"""
+type GlobalApprovalPolicyRule {
+  """
+  Display name; unique within the org.
+  """
+  name: String
+  """
+  Java regex matched against {@code Component.name} via
+  {@code Pattern.matcher(name).matches()} -- fully anchored. Operators
+  write {@code frontend-.*} (no leading {@code ^}, no trailing
+  {@code $}) and the engine anchors automatically.
+  """
+  namePattern: String
+  """
+  Type filter. {@code COMPONENT} / {@code PRODUCT} restrict the
+  match; {@code ANY} (also the default when null) matches both
+  concrete component types.
+  """
+  componentType: ComponentType
+  """
+  Referenced approval policy UUID.
+  """
+  approvalPolicy: ID
+  """
+  Hydrated approval policy. Null when the referenced policy is missing/archived.
+  """
+  approvalPolicyDetails: ApprovalPolicy
+}
+
+"""
+Org-wide team-assignment rule (T2). See
+{@link Organization.globalTeamAssignmentRules} for the priority contract.
+"""
+type GlobalTeamAssignmentRule {
+  """
+  Display name; unique within the org.
+  """
+  name: String
+  """
+  Java regex matched against {@code ComponentData.name} via
+  {@code Pattern.matcher(name).matches()} -- fully anchored. Operators write
+  {@code frontend-.*} (no leading {@code ^}, no trailing {@code $}).
+  """
+  namePattern: String
+  """
+  Type filter; ANY (or null) matches both COMPONENT and PRODUCT.
+  """
+  componentType: ComponentType
+  """
+  Owner team (UserGroup) UUID; must exist and be active in this org.
+  """
+  ownerTeam: ID
+}
+
+"""
+Compact CEL-facing view of an SCE's signature verdict. Surfaced as
+{@code SourceCodeEntry.signature}; the underlying row lives in
+signature_verifications.
+"""
+type SceSignature {
+  state: SignatureVerificationState
+  format: SignatureFormat
+  signedByOwnerType: SigningKeyOwnerType
+  signedByOwnerUuid: ID
+  verifiedAt: DateTime
+  keyFingerprint: String
+}
+
+enum AttributionState {
+  UNATTRIBUTED
+  RESOLVED
+  REJECTED
+}
+
+"""
+Where an artifact's bytes are stored.
+- REARM: bytes live in ReARM's blob store; downloadable in-place
+  via /api/manual/v1/artifact/<uuid>/rawdownload.
+- EXTERNALLY: only metadata + downloadLinks recorded; the UI must
+  send the user to one of the registered downloadLinks instead.
+"""
+enum ArtifactStoredIn {
+  REARM
+  EXTERNALLY
+}
+
+type DigestRecord {
+  algo: TeaArtifactChecksumType
+  digest: String
+  scope: DigestScope
+}
+
+enum ArtifactBelonging {
+  INTERNAL
+  EXTERNAL
+}
+
+enum ArtifactType {
+  BOM
+  ATTESTATION
+  VDR
+  BOV
+  VEX
+  USER_DOCUMENT
+  DEVELOPMENT_DOCUMENT
+  PROJECT_DOCUMENT
+  MARKETING_DOCUMENT
+  TEST_REPORT
+  CODE_SCANNING_RESULT
+  SARIF
+  BUILD_META
+  CERTIFICATION
+  FORMULATION
+  LICENSE
+  RELEASE_NOTES
+  SECURITY_TXT
+  THREAT_MODEL
+  SIGNATURE
+  SIGNED_PAYLOAD
+  PUBLIC_KEY
+  CERTIFICATE_X_509
+  CERTIFICATE_PGP
+  RISK_ASSESSMENT
+  """
+  AI-agent self-reported artifact attached to an AgentSession -- orientation briefs, mid-session checkpoints, end-of-session summaries. Used as the data source for agentic policies.
+  """
+  AGENTIC_REPORT
+  OTHER
+}
+
+enum BomFormat {
+  CYCLONEDX
+  SPDX
+}
+
+enum SpecVersion {
+  CYCLONEDX_1_0
+  CYCLONEDX_1_1
+  CYCLONEDX_1_2
+  CYCLONEDX_1_3
+  CYCLONEDX_1_4
+  CYCLONEDX_1_5
+  CYCLONEDX_1_6
+  CYCLONEDX_1_7
+  CYCLONEDX_2_0
+  SPDX_2_0
+  SPDX_2_1
+  SPDX_2_2
+  SPDX_2_3
+  SPDX_3_0
+  SARIF_2_0
+  SARIF_2_1
+  OPENVEX_0_2
+  CSAF_2_0
+  CSAF_2_1
+}
+
+enum SerializationFormat {
+  JSON
+  YAML
+  XML
+  OTHER
+}
+
+scalar Long
+
+enum PackageType {
+  MAVEN
+  NPM
+  NUGET
+  GEM
+  PYPI
+  CONTAINER
+}
+
+type InternalBom {
+  id: ID
+  belongsTo: String
+}
+
+type Downloadlink {
+  uri: String
+  content: String
+}
+
+enum EnrichmentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  SKIPPED
+}
+
+type VexImportSummary {
+  statementsTotal: Int
+  proposalsCreated: Int
+  proposalsAutoAccepted: Int
+  proposalsAutoRejected: Int
+  attestationsDeferred: Int
+  statementsUnmatched: Int
+  statementsErrored: Int
+  errorMessages: [String]
+}
+
+enum OSEnum {
+  WINDOWS
+  MACOS
+  LINUX
+  ANDROID
+  CHROMEOS
+  IOS
+  OTHER
+}
+
+enum CPUArchitectureEnum {
+  AMD64
+  I386
+  PPC
+  ARMV7
+  ARMV8
+  IA32
+  MIPS
+  RISCV64
+  S390
+  S390X
+  OTHER
+}
+
+type SoftwareMetadata {
+  buildId: String
+  buildUri: String
+  cicdMeta: String
+  digests: [String]
+  digestRecords: [DigestRecord]
+  dateFrom: DateTime
+  dateTo: DateTime
+  duration: Long
+  packageType: PackageType
+  downloadLinks: [Downloadlink]
+}
+
+"""
+CDX-aligned production facts for a hardware deliverable (a produced lot).
+"""
+type HardwareMetadata {
+  parties: [Party]
+  origin: Origin
+  manufactureDate: String
+  externalRefs: [ExternalRef]
+  extensions: Object
+}
+
+enum TicketStatus {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  TESTING
+  DEPLOYING
+  DONE
+}
+
+"""
+Resolved PR-validation trigger snapshot for a VCS repository. See
+{@link VcsRepository.effectivePrValidationTrigger}.
+"""
+type EffectivePrValidationTrigger {
+  source: PrValidationTriggerSource
+  trigger: ReleaseOutputEvent
+  ruleName: String
+  alsoMatchedRuleNames: [String]
+  staleRuleNames: [String]
+}
+
+enum RemvovableType {
+  YES
+  NO
+}
+
+enum ApprovalState {
+  APPROVED
+  DISAPPROVED
+  UNSET
+}
+
+type WhoUpdated {
+  createdType: ProgrammaticType
+  lastUpdatedBy: String
+}
+
+enum VariantType {
+  BASE
+  CUSTOM
+}
+
+enum ReleaseUpdateScopeEnum {
+  RELEASE_CREATED
+  LIFECYCLE
+  SOURCE_CODE_ENTRY
+  PARENT_RELEASE
+  ARTIFACT
+  INBOUND_DELIVERY
+  OUTBOUND_DELIVERY
+  VARIANT
+  VERSION
+  NOTES
+  TAGS
+  MARKETING_VERSION
+  TRIGGER
+  INPUT_TRIGGER
+  APPROVED_ENVIRONMENT
+}
+
+enum ReleaseUpdateActionEnum {
+  ADDED
+  REMOVED
+  CHANGED
+}
+
+type Vulnerability {
+  purl: String
+  vulnId: String
+  severity: VulnerabilitySeverity
+  aliases: [VulnerabilityAliasDto]
+  sources: [FindingSourceDto]
+  severities: [SeveritySourceDto]
+  analysisState: AnalysisState
+  analysisDate: DateTime
+  attributedAt: DateTime
+  "True when this vulnerability (by CVE id or alias) is in the CISA KEV catalog"
+  knownExploited: Boolean
+}
+
+type Violation {
+  purl: String
+  type: ViolationType
+  license: String
+  violationDetails: String
+  sources: [FindingSourceDto]
+  analysisState: AnalysisState
+  analysisDate: DateTime
+  attributedAt: DateTime
+}
+
+type Weakness {
+  cweId: String
+  ruleId: String
+  location: String
+  fingerprint: String
+  severity: VulnerabilitySeverity
+  sources: [FindingSourceDto]
+  analysisState: AnalysisState
+  analysisDate: DateTime
+  attributedAt: DateTime
+}
+
+enum IdentifierType {
+  PURL
+  CPE
+  TEI
+  COMPLIANCE_DOCUMENT
+  UDI
+  UDI_DI
+  UDI_PI
+  SERIAL
+  LOT
+  SWID
+  SWHID
+  OMNIBORID
+  GTIN
+  GMN
+  MPN
+  PART_NUMBER
+  MODEL_NUMBER
+  SKU
+  ASSET_TAG
+  FCC_ID
+  IMEI
+  MAC_ADDRESS
+}
+
+type ArtifactComparison {
+  changelog: ArtifactChangelog
+  comparedReleaseUuid: ID
+}
+
+enum MatchOperator {
+  OR
+  AND
+}
+
+input ConditionOnGetLatestReleaseInput {
+  approvalEntry: String
+  approvalState: ApprovalState
+}
+
+enum PolicyKind {
+  """
+  Evaluated on session initialize + on artifact attach.
+  """
+  INPUT
+  """
+  Evaluated on commit attribution and on artifact attach. Verdict locks at commit-attribution time.
+  """
+  OUTPUT
+  """
+  Stays AWAITING through the entire session lifetime; verdict locks
+  only at session close. Use when the gate depends on an artifact
+  the agent doesn't file until its final step -- for example, a
+  FINAL agentic-report tag that by definition arrives after the
+  last commit. OUTPUT in that case would harden to FAILED before
+  the report ever lands.
+  """
+  CLOSE
+}
+
+enum PolicySeverity {
+  """
+  Input failure rejects session init.
+  """
+  BLOCK
+  """
+  Failure is recorded as a WARNING verdict; never throws.
+  """
+  WARN
+}
+
+enum PolicyState {
+  PASSED
+  WARNING
+  FAILED
+  """
+  Soft signal: the policy hasn't reached a terminal verdict for this
+  session yet. Emitted at session init / artifact attach for OUTPUT
+  policies that haven't been satisfied, and as a fallback when the
+  evaluator hits a runtime error (the policy will be retried at the
+  next eligible event). Renamed from PENDING to avoid name collision
+  with rebom's EnrichmentStatus.PENDING in adjacent code.
+  """
+  AWAITING
+}
+
+"""
+SAAS-only AI-Agent policy. CEL expression evaluates against the
+session context -- {@code session.*}, {@code agent.*},
+{@code model.*}. **Match-to-block semantics** (same as component-level
+CEL gates): the CEL describes the *failure* condition. Returns true
+when the failure matches → the verdict on the session goes to FAILED
+/ WARNING / PENDING per {@link #severity} + {@link #kind}. Returns
+false → PASSED.
+"""
+type AgentPolicy {
+  uuid: ID
+  org: ID
+  name: String
+  description: String
+  kind: PolicyKind
+  severity: PolicySeverity
+  """
+  CEL boolean expression -- true means the failure matches.
+  """
+  cel: String
+  enabled: Boolean
+  createdDate: DateTime
+}
+
+enum DeclarativeAction {
+  CREATE
+  UPDATE
+  UNCHANGED
+  ARCHIVE
+  ERROR
+}
+
+input DependencySpecInput {
+  """
+  Component name.
+  """
+  component: String!
+  """
+  Branch name of that component; omitted = follow its base branch semantics as today.
+  """
+  branch: String
+  """
+  Pin to a release by version.
+  """
+  release: String
+  status: Status
+  isFollowVersion: Boolean
+}
+
+input DependencyPatternSpecInput {
+  pattern: String!
+  targetBranchName: String
+  defaultStatus: Status
+  fallbackToBase: FallbackToBase
+}
+
+input LinkInput {
+  uri: String
+  content: String
+}
+
+enum InventoryType {
+  SOFTWARE
+  HARDWARE
+  CRYPTOGRAPHY
+  SERVICE
+  VULNERABILITY
+}
+
+scalar Upload
+
+enum StripBomEnum {
+  TRUE
+  FALSE
+}
+
+input DigestRecordInput {
+  algo: TeaArtifactChecksumType
+  digest: String
+  scope: DigestScope
+}
+
+enum AnalysisScope {
+  ORG
+  RESOURCE_GROUP
+  COMPONENT
+  BRANCH
+  RELEASE
+}
+
+enum VexImportMode {
+  AUTO_ACCEPT
+  STAGE
+  REJECT
+}
+
+enum IssuerClass {
+  SELF
+  VENDOR
+  THIRD_PARTY
+}
+
+enum CdxType {
+  CONTAINER
+  PLATFORM
+  FILE
+  LIBRARY
+  APPLICATION
+  FRAMEWORK
+  OPERATING_SYSTEM
+  DEVICE
+  DEVICE_DRIVER
+  FIRMWARE
+  MACHINE_LEARNING_MODEL
+  DATA
+  CRYPTOGRAPHIC_ASSET
+}
+
+input SoftwareMetadataInput {
+  buildId: String
+  buildUri: String
+  cicdMeta: String
+  digests: [String]
+  digestRecords: [DigestRecordInput]
+  dateFrom: DateTime
+  dateTo: DateTime
+  duration: Long
+  packageType: PackageType
+  downloadLinks: [LinkInput]
+}
+
+input HardwareMetadataInput {
+  parties: [PartyInput]
+  origin: OriginInput
+  manufactureDate: String
+  externalRefs: [ExternalRefInput]
+  extensions: Object
+}
+
+type ApprovalMapping {
+  mappingClass: ApprovalMappingClass
+  mapTo: String
+  approvalEntries: [ID]
+}
+
+type ApprovalEntry {
+  uuid: ID
+  org: ID
+  approvalRequirements: [ApprovalRequirement]
+  approvalName: String
+  status: Status
+}
+
+enum ApprovalPolicySource {
+  """
+  Per-component approvalPolicy reference is set and the policy still exists.
+  """
+  PER_COMPONENT
+  """
+  Inherited from an org-wide GlobalApprovalPolicyRule.
+  """
+  ORG_RULE
+  """
+  Neither per-component nor any matching org rule -- no approval policy is in effect.
+  """
+  NONE
+}
+
+enum EventScope {
+  LOCAL
+  GLOBAL
+}
+
+enum EventType {
+  RELEASE_LIFECYCLE_CHANGE
+  MARKETING_RELEASE_LIFECYCLE_CHANGE
+  INTEGRATION_TRIGGER
+  EMAIL_NOTIFICATION
+  VDR_SNAPSHOT_ARTIFACT
+  ADD_APPROVED_ENVIRONMENT
+  EXTERNAL_VALIDATION
+  VALIDATE_PR
+  INVALIDATE_PR
+  PR_COMMENT
+}
+
+"""
+UDI issuing agency (Distribution module).
+"""
+enum IssuingAgency {
+  GS1
+  HIBCC
+  ICCBBA
+}
+
+"""
+Stable GUDID descriptors carried at component level, inherited by releases.
+"""
+type GudidDefaults {
+  brandName: String
+  companyName: String
+  gmdnCode: String
+}
+
+enum PerspectiveType {
+  PERSPECTIVE
+  PRODUCT
+}
+
+type Permissions {
+  permissions: [UserPermission]
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+"""
+The kind of durable owner a component points at (RFC Phase 4).
+"""
+enum ComponentOwnerType {
+  TEAM
+  USER
+}
+
+"""
+Computed ownership state of a component. Pure recompute; never blocks releases.
+"""
+enum ComponentOwnershipStatus {
+  OWNED
+  NON_DURABLE
+  DEGRADED
+  UNSET
+  ORPHANED
+}
+
+input GudidDefaultsInput {
+  brandName: String
+  companyName: String
+  gmdnCode: String
+}
+
+enum PropertyConfigurableType {
+  CONFIGURABLE
+  INFO
+}
+
+type Property {
+  uuid: ID
+  name: String
+  org: ID
+  dataType: PropertyDataType
+  targetType: PropertyTargetType
+  defaultValue: String
+  createdType: ProgrammaticType
+  lastUpdatedBy: ID
+  createdDate: DateTime
+}
+
+enum ServiceState {
+  COMPLETED
+  CRASHLOOPBACKOFF
+  ERROR
+  IMAGEPULLBACKOFF
+  OOMKILLED
+  PENDING
+  WAITING
+  RUNNING
+  SUCCEEDED
+  FAILED
+  TERMINATING
+  TERMINATED
+  UNKNOWN
+  UNSET
+}
+
+type DeployedReplica {
+  id: String
+  state: ServiceState
+}
+
+enum FallbackToBase {
+  ENABLED
+  DISABLED
+}
+
+enum DependencySource {
+  MANUAL
+  PATTERN
+}
+
+enum ApiTypeEnum {
+  APPROVAL
+  INSTANCE
+  CLUSTER
+  COMPONENT
+  ORGANIZATION
+  ORGANIZATION_RW
+  FREEFORM
+}
+
+"""
+821 disposition lifecycle of a shipped (tracked) unit.
+"""
+enum Disposition {
+  SHIPPED
+  RECEIVED
+  RETURNED
+  EXPLANTED
+  DISPOSED
+  DONATED
+  LOST
+}
+
+"""
+One reconciled observed item (e.g. a running container image digest).
+"""
+type ObservedItem {
+  identifier: String
+  digest: String
+  status: ObservedItemStatus
+  deliverable: ID
+  component: ID
+  componentName: String
+  observedRelease: ID
+  observedVersion: String
+  expectedRelease: ID
+  expectedVersion: String
+}
+
+type DeclarativeSource {
+  repo: String
+  path: String
+  commit: String
+}
+
+"""
+How rows absent from an applied spec are treated. LEAVE (default) reports them; ARCHIVE archives them.
+"""
+enum DeclarativePruneMode {
+  LEAVE
+  ARCHIVE
+}
+
+"""
+VEX compliance framework layered on top of the CycloneDX baseline data model.
+NONE  = pure CycloneDX, no extra validation.
+CISA  = CISA VEX minimum requirements
+        (https://www.cisa.gov/sites/default/files/2023-04/minimum-requirements-for-vex-508c.pdf).
+"""
+enum VexComplianceFramework {
+  NONE
+  CISA
+}
+
+"""
+Org-level sid PURL emission policy. D11 / D15.
+- DISABLED: no sid emission; tenant-supplied pkg:sid/... values pass through unchanged.
+- ENABLED_STRICT: sid emitted org-wide; component/perspective overrides not honored;
+  the org authority applies to every internal component.
+- ENABLED_FLEXIBLE: sid emitted org-wide, but components and (SaaS) perspectives
+  may override the per-component decision and supply their own authority.
+
+Enabling sid is forward-only -- releases created before the toggle retain their
+existing identifiers unchanged.
+"""
+enum SidPurlMode {
+  DISABLED
+  ENABLED_STRICT
+  ENABLED_FLEXIBLE
+}
+
+"""
+UI views the dashboard and component pages can show. Selected per browser
+in the header; the org's default (Settings.defaultView) applies when the
+browser has no choice stored.
+"""
+enum DashboardView {
+  SECURITY
+  DEVOPS
+}
+
+enum SignatureVerificationState {
+  """
+  No signature artifact attached.
+  """
+  UNSIGNED
+  """
+  Cryptographic check passed and signer resolved to an enrolled key.
+  """
+  VERIFIED
+  """
+  Cryptographic check failed.
+  """
+  INVALID_SIGNATURE
+  """
+  Signature parsed but the signer key is not enrolled in this org.
+  """
+  UNKNOWN_KEY
+  """
+  Signer key was matched but is revoked.
+  """
+  KEY_REVOKED
+  """
+  Reserved for v2 -- attribution constraint failure decoupled from trust-store scope (e.g. image / attestation flows where the verifier's scope and the expected attribution can legitimately differ). Not produced in v1; the verifier narrows scope upfront from the SCE so a mismatched owner can't reach this branch.
+  """
+  WRONG_SIGNER
+  """
+  Verification was scheduled but has not yet run.
+  """
+  PENDING
+  """
+  Verifier subprocess errored -- see {@code details} for diagnostics.
+  """
+  ERRORED
+}
+
+enum TeaArtifactChecksumType {
+  MD5
+  SHA_1
+  SHA_256
+  SHA_384
+  SHA_512
+  SHA3_256
+  SHA3_384
+  SHA3_512
+  BLAKE2B_256
+  BLAKE2B_384
+  BLAKE2B_512
+  BLAKE3
+}
+
+enum DigestScope {
+  ORIGINAL_FILE
+  OCI_STORAGE
+  REARM
+}
+
+"""
+A CDX-2.0 party (entity with roles), per spec PR #930.
+"""
+type Party {
+  roles: [PartyRole]
+  bomRef: String
+  priority: Int
+  name: String
+  address: Address
+  contacts: [PartyContact]
+  url: String
+  origin: Origin
+}
+
+"""
+Country-of-origin + multi-source split (HBOM extension; emitted as a CDX property).
+"""
+type Origin {
+  basis: String
+  origins: [OriginShare]
+}
+
+type ExternalRef {
+  type: String
+  url: String
+  comment: String
+}
+
+enum PrValidationTriggerSource {
+  """
+  Per-repo trigger configured directly on this VCS row.
+  """
+  PER_VCS
+  """
+  Inherited from an org-wide GlobalPrValidationTriggerRule.
+  """
+  ORG_RULE
+  """
+  Neither per-repo nor any matching org rule -- no verdict will be dispatched.
+  """
+  NONE
+}
+
+enum VulnerabilitySeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+  UNASSIGNED
+}
+
+type VulnerabilityAliasDto {
+  type: VulnerabilityAliasType
+  aliasId: String
+}
+
+type FindingSourceDto {
+  artifact: ID
+  release: ID
+  variant: ID
+  analysisState: AnalysisState
+  analysisDate: DateTime
+  releaseDetails: Release
+  artifactDetails: Artifact
+}
+
+type SeveritySourceDto {
+  source: SeveritySource
+  severity: VulnerabilitySeverity
+}
+
+enum AnalysisState {
+  EXPLOITABLE
+  IN_TRIAGE
+  FALSE_POSITIVE
+  NOT_AFFECTED
+  RESOLVED
+}
+
+enum ViolationType {
+  LICENSE
+  SECURITY
+  OPERATIONAL
+}
+
+type ArtifactChangelog {
+  added: [DiffComponent]
+  removed: [DiffComponent]
+}
+
+input PartyInput {
+  roles: [PartyRole]
+  bomRef: String
+  priority: Int
+  name: String
+  address: AddressInput
+  contacts: [PartyContactInput]
+  url: String
+  origin: OriginInput
+}
+
+input OriginInput {
+  basis: String
+  origins: [OriginShareInput]
+}
+
+input ExternalRefInput {
+  type: String
+  url: String
+  comment: String
+}
+
+enum ApprovalMappingClass {
+  RELEASE_LIFECYCLE
+  MARKETING_RELEASE_LIFECYCLE
+  ENVIRONMENT_TYPE
+}
+
+type ApprovalRequirement {
+  org: ID
+  allowedApprovalRoleIds: [ID]
+  allowedApprovalRoleIdExpanded: [ApprovalRole]
+  requiredNumberOfApprovals: Int
+  permittedNumberOfDisapprovals: Int
+}
+
+type UserPermission {
+  org: ID
+  scope: PermissionScope
+  object: ID
+  type: PermissionType
+  functions: [PermissionFunction]
+  meta: String
+  approvals: [String]
+}
+
+enum PropertyDataType {
+  STRING
+  JSON
+  INTEGER
+  YAML
+  BOOLEAN
+}
+
+enum PropertyTargetType {
+  INSTANCE
+  COMPONENT
+}
+
+enum ObservedItemStatus {
+  MATCHED
+  DRIFTED
+  FOREIGN_COMPONENT
+  UNKNOWN
+}
+
+enum PartyRole {
+  MANUFACTURER
+  ASSEMBLER
+  SUPPLIER
+  QUALITY_CONTROL
+  DISTRIBUTOR
+  OTHER
+}
+
+type Address {
+  streetAddress: String
+  city: String
+  region: String
+  postalCode: String
+  country: String
+  isoCode: String
+  coords: Coords
+}
+
+type PartyContact {
+  name: String
+  email: String
+  phone: String
+}
+
+type OriginShare {
+  originCode: String
+  percentage: Float
+}
+
+enum VulnerabilityAliasType {
+  CVE
+  GHSA
+  GO
+  PYSEC
+  RUST
+  OSV
+  DSA
+  DLA
+  RHSA
+  RHBA
+  RHEA
+  ALAS
+  ALAS2
+  ALPINE
+  CGA
+  MAL
+  GSD
+  OTHER
+}
+
+enum SeveritySource {
+  NVD
+  GHSA
+  ANALYSIS
+  OTHER
+}
+
+type DiffComponent {
+  purl: String
+  version: String
+}
+
+input AddressInput {
+  streetAddress: String
+  city: String
+  region: String
+  postalCode: String
+  country: String
+  isoCode: String
+  coords: CoordsInput
+}
+
+input PartyContactInput {
+  name: String
+  email: String
+  phone: String
+}
+
+input OriginShareInput {
+  originCode: String
+  percentage: Float
+}
+
+enum PermissionScope {
+  ORGANIZATION
+  INSTANCE
+  PERSPECTIVE
+  COMPONENT
+  BRANCH
+  RELEASE
+}
+
+enum PermissionType {
+  ADMIN
+  READ_ONLY
+  READ_WRITE
+  ESSENTIAL_READ
+  NONE
+}
+
+enum PermissionFunction {
+  RESOURCE
+  FINDING_ANALYSIS_READ
+  FINDING_ANALYSIS_WRITE
+  ARTIFACT_DOWNLOAD
+  SBOM_PROBING
+  LIFECYCLE_UPDATE
+  DEVOPS_READ
+  DEVOPS_WRITE
+  VERSION_FEATURESET
+  AGENT
+  DISTRIBUTION
+  """
+  Export declarative configuration (Catalog, Branches) through the programmatic API.
+  """
+  CONFIGURATION_READ
+  """
+  Apply declarative configuration through the programmatic API; implies CONFIGURATION_READ.
+  """
+  CONFIGURATION_WRITE
+}
+
+type Coords {
+  latitude: Float
+  longitude: Float
+}
+
+input CoordsInput {
+  latitude: Float
+  longitude: Float
+}
+
