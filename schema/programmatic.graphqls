@@ -1981,9 +1981,9 @@ enum ModelAssertionState {
 
 type DeclarativeChange {
   """
-  Entity kind: component | branch
+  Slice the entry belongs to: CATALOG entries are components, BRANCHES entries are branches.
   """
-  kind: String!
+  kind: DeclarativeKind!
   name: String!
   action: DeclarativeAction!
   """

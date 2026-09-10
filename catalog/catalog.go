@@ -34,9 +34,10 @@ type BranchesFile struct {
 	rearm.BranchesSpecInput
 }
 
-// Change is one entity-level outcome of an apply.
+// Change is one entity-level outcome of an apply; Kind says which slice (and so which entity
+// type) the entry is about.
 type Change struct {
-	Kind    string
+	Kind    Kind
 	Name    string
 	Action  rearm.DeclarativeAction
 	Fields  []string
@@ -187,7 +188,7 @@ func Format(r *Result) string {
 	fmt.Fprintf(&b, "%s (%s): %d to create, %d to update, %d unchanged, %d to archive, %d errors\n",
 		r.Kind, mode, r.Created, r.Updated, r.Unchanged, r.Archived, r.Errors)
 	for _, ch := range r.Changes {
-		line := fmt.Sprintf("  %-9s %s %s", ch.Action, ch.Kind, ch.Name)
+		line := fmt.Sprintf("  %-9s %-9s %s", ch.Action, entityOf(ch.Kind), ch.Name)
 		if len(ch.Fields) > 0 {
 			line += " [" + strings.Join(ch.Fields, ", ") + "]"
 		}
@@ -197,6 +198,18 @@ func Format(r *Result) string {
 		b.WriteString(line + "\n")
 	}
 	return b.String()
+}
+
+// entityOf names the entity type a change entry refers to, for humans.
+func entityOf(k Kind) string {
+	switch k {
+	case rearm.DeclarativeKindCatalog:
+		return "component"
+	case rearm.DeclarativeKindBranches:
+		return "branch"
+	default:
+		return string(k)
+	}
 }
 
 func fromResult(r *rearm.ApplyResultFields) *Result {

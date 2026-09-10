@@ -317,7 +317,9 @@ type ApplyResultFieldsChangesDeclarativeChange struct {
 }
 
 // GetKind returns ApplyResultFieldsChangesDeclarativeChange.Kind, and is useful for accessing the field via an interface.
-func (v *ApplyResultFieldsChangesDeclarativeChange) GetKind() string { return v.ChangeFields.Kind }
+func (v *ApplyResultFieldsChangesDeclarativeChange) GetKind() DeclarativeKind {
+	return v.ChangeFields.Kind
+}
 
 // GetName returns ApplyResultFieldsChangesDeclarativeChange.Name, and is useful for accessing the field via an interface.
 func (v *ApplyResultFieldsChangesDeclarativeChange) GetName() string { return v.ChangeFields.Name }
@@ -363,7 +365,7 @@ func (v *ApplyResultFieldsChangesDeclarativeChange) UnmarshalJSON(b []byte) erro
 }
 
 type __premarshalApplyResultFieldsChangesDeclarativeChange struct {
-	Kind string `json:"kind"`
+	Kind DeclarativeKind `json:"kind"`
 
 	Name string `json:"name"`
 
@@ -617,8 +619,8 @@ func (v *CatalogSpecInput) GetComponents() []*CatalogComponentInput { return v.C
 
 // ChangeFields includes the GraphQL fields of DeclarativeChange requested by the fragment ChangeFields.
 type ChangeFields struct {
-	// Entity kind: component | branch
-	Kind   string            `json:"kind"`
+	// Slice the entry belongs to: CATALOG entries are components, BRANCHES entries are branches.
+	Kind   DeclarativeKind   `json:"kind"`
 	Name   string            `json:"name"`
 	Action DeclarativeAction `json:"action"`
 	// Fields that differ (UPDATE) or would be set (CREATE).
@@ -627,7 +629,7 @@ type ChangeFields struct {
 }
 
 // GetKind returns ChangeFields.Kind, and is useful for accessing the field via an interface.
-func (v *ChangeFields) GetKind() string { return v.Kind }
+func (v *ChangeFields) GetKind() DeclarativeKind { return v.Kind }
 
 // GetName returns ChangeFields.Name, and is useful for accessing the field via an interface.
 func (v *ChangeFields) GetName() string { return v.Name }
