@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -30,6 +31,12 @@ const ProgrammaticPath = "/api/programmatic/graphql"
 // requires the CSRF session handshake, which the client performs when it falls back here.
 const LegacyPath = "/graphql"
 
+// TokenPath is the OAuth 2.0 token endpoint where an API key is exchanged for a short-lived
+// bearer access token (grant_type=client_credentials, key id and secret as HTTP Basic). The
+// client prefers this over presenting the key secret on every request; servers without it
+// (404) are used with Basic directly.
+const TokenPath = "/api/programmatic/token"
+
 // Client wraps a genqlient graphql.Client with ReARM API-key auth.
 type Client struct {
 	graphql.Client
@@ -43,6 +50,7 @@ type options struct {
 	httpClient *http.Client
 	userAgent  string
 	legacy     bool
+	noExchange bool
 }
 
 // WithHTTPClient sets the underlying HTTP client (timeouts, proxies, TLS).
@@ -50,6 +58,11 @@ func WithHTTPClient(h *http.Client) Option { return func(o *options) { o.httpCli
 
 // WithUserAgent sets the User-Agent header sent with every request.
 func WithUserAgent(ua string) Option { return func(o *options) { o.userAgent = ua } }
+
+// WithoutTokenExchange keeps presenting the API key secret as Basic on every request instead of
+// exchanging it for an access token. Only for pinning behaviour against an old server; the
+// exchange is preferred and the direct form is deprecated server-side.
+func WithoutTokenExchange() Option { return func(o *options) { o.noExchange = true } }
 
 // WithLegacyEndpoint forces the shared /graphql endpoint (with the CSRF handshake) instead of
 // the programmatic endpoint. Only needed to pin behaviour against an old server; by default
@@ -79,7 +92,8 @@ func New(baseURL, apiKeyID, apiKey string, opts ...Option) (*Client, error) {
 	}
 	auth := "Basic " + base64.StdEncoding.EncodeToString([]byte(apiKeyID+":"+apiKey))
 	t := &authTransport{next: transportOf(base), auth: auth, userAgent: o.userAgent,
-		csrfURL: root + "/api/manual/v1/fetchCsrf", legacyURL: root + LegacyPath, legacy: o.legacy}
+		csrfURL: root + "/api/manual/v1/fetchCsrf", legacyURL: root + LegacyPath, legacy: o.legacy,
+		tokenURL: root + TokenPath, exchange: !o.legacy && !o.noExchange}
 	hc := &http.Client{Timeout: base.Timeout, Transport: t}
 	endpoint := root + ProgrammaticPath
 	if o.legacy {
@@ -110,10 +124,14 @@ type authTransport struct {
 	userAgent string
 	csrfURL   string
 	legacyURL string
+	tokenURL  string
 
-	mu      sync.Mutex
-	legacy  bool
-	session *csrfSession
+	mu        sync.Mutex
+	legacy    bool
+	exchange  bool      // try the token endpoint; cleared for good when the server has none
+	bearer    string    // current access token
+	bearerExp time.Time // when to fetch a new one (a minute before the server's expiry)
+	session   *csrfSession
 }
 
 type csrfSession struct {
@@ -133,6 +151,9 @@ func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		body = b
 	}
 	if !t.isLegacy() {
+		if err := t.ensureToken(req.Context()); err != nil {
+			return nil, err
+		}
 		resp, err := t.send(req, body, nil)
 		if err != nil {
 			return nil, err
@@ -164,7 +185,73 @@ func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 }
 
 func (t *authTransport) isLegacy() bool { t.mu.Lock(); defer t.mu.Unlock(); return t.legacy }
-func (t *authTransport) setLegacy()     { t.mu.Lock(); defer t.mu.Unlock(); t.legacy = true }
+
+func (t *authTransport) currentBearer() string {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	return t.bearer
+}
+
+// ensureToken exchanges the API key for an access token when the client has none or it is
+// about to expire. A 404 from the token endpoint means an older server: the exchange is
+// switched off and the key is presented as Basic from then on.
+func (t *authTransport) ensureToken(ctx context.Context) error {
+	t.mu.Lock()
+	need := t.exchange && (t.bearer == "" || time.Now().After(t.bearerExp))
+	t.mu.Unlock()
+	if !need {
+		return nil
+	}
+	form := strings.NewReader("grant_type=client_credentials")
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, t.tokenURL, form)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Authorization", t.auth)
+	req.Header.Set("User-Agent", t.userAgent)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Accept", "application/json")
+	resp, err := t.next.RoundTrip(req)
+	if err != nil {
+		return fmt.Errorf("rearm: token exchange: %w", err)
+	}
+	defer resp.Body.Close()
+	raw, _ := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	switch resp.StatusCode {
+	case http.StatusOK:
+		var tok struct {
+			AccessToken string `json:"access_token"`
+			TokenType   string `json:"token_type"`
+			ExpiresIn   int64  `json:"expires_in"`
+		}
+		if err := json.Unmarshal(raw, &tok); err != nil || tok.AccessToken == "" {
+			return fmt.Errorf("rearm: token exchange: malformed token response")
+		}
+		t.bearer = tok.AccessToken
+		ttl := time.Duration(tok.ExpiresIn) * time.Second
+		if ttl <= 2*time.Minute {
+			ttl = 3 * time.Minute
+		}
+		t.bearerExp = time.Now().Add(ttl - time.Minute)
+		return nil
+	case http.StatusNotFound:
+		t.exchange = false // older server without the token endpoint: keep using Basic
+		return nil
+	default:
+		var e struct {
+			Error       string `json:"error"`
+			Description string `json:"error_description"`
+		}
+		_ = json.Unmarshal(raw, &e)
+		if e.Error == "" {
+			return fmt.Errorf("rearm: token exchange failed with status %d", resp.StatusCode)
+		}
+		return fmt.Errorf("rearm: token exchange failed: %s: %s", e.Error, e.Description)
+	}
+}
+func (t *authTransport) setLegacy() { t.mu.Lock(); defer t.mu.Unlock(); t.legacy = true }
 
 func (t *authTransport) send(req *http.Request, body []byte, sess *csrfSession) (*http.Response, error) {
 	r := req.Clone(req.Context())
@@ -181,7 +268,11 @@ func (t *authTransport) send(req *http.Request, body []byte, sess *csrfSession) 
 		r.ContentLength = int64(len(body))
 		r.GetBody = func() (io.ReadCloser, error) { return io.NopCloser(bytes.NewReader(body)), nil }
 	}
-	r.Header.Set("Authorization", t.auth)
+	if b := t.currentBearer(); b != "" && !t.isLegacy() {
+		r.Header.Set("Authorization", "Bearer "+b)
+	} else {
+		r.Header.Set("Authorization", t.auth)
+	}
 	r.Header.Set("User-Agent", t.userAgent)
 	r.Header.Set("Accept", "application/json")
 	if sess != nil {

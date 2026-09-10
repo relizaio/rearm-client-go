@@ -17,10 +17,16 @@ func TestProgrammaticEndpointNeedsNoHandshake(t *testing.T) {
 		switch r.URL.Path {
 		case "/api/manual/v1/fetchCsrf":
 			csrfCalls++
+		case TokenPath:
+			if !strings.HasPrefix(r.Header.Get("Authorization"), "Basic ") || r.Method != http.MethodPost {
+				t.Errorf("token endpoint must get the key as Basic on a POST")
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write([]byte(`{"access_token":"tok-1","token_type":"Bearer","expires_in":3600}`))
 		case ProgrammaticPath:
 			calls++
-			if !strings.HasPrefix(r.Header.Get("Authorization"), "Basic ") {
-				t.Errorf("missing basic auth")
+			if r.Header.Get("Authorization") != "Bearer tok-1" {
+				t.Errorf("resource endpoint must get the exchanged bearer token, got %q", r.Header.Get("Authorization"))
 			}
 			if r.Header.Get("X-XSRF-TOKEN") != "" || r.Header.Get("Cookie") != "" {
 				t.Errorf("programmatic endpoint must not receive csrf headers")
@@ -52,8 +58,10 @@ func TestFallsBackToLegacyEndpointWithHandshake(t *testing.T) {
 	var csrfCalls, legacyCalls, progCalls int
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case ProgrammaticPath:
-			progCalls++
+		case TokenPath, ProgrammaticPath:
+			if r.URL.Path == ProgrammaticPath {
+				progCalls++
+			}
 			w.WriteHeader(http.StatusNotFound)
 		case "/api/manual/v1/fetchCsrf":
 			csrfCalls++
@@ -85,5 +93,34 @@ func TestFallsBackToLegacyEndpointWithHandshake(t *testing.T) {
 	}
 	if progCalls != 1 || csrfCalls != 1 || legacyCalls != 2 {
 		t.Fatalf("expected one 404 probe, one handshake and two legacy calls; got prog=%d csrf=%d legacy=%d", progCalls, csrfCalls, legacyCalls)
+	}
+}
+
+// A server with the programmatic endpoint but no token endpoint keeps working with Basic.
+func TestBasicWhenTokenEndpointIsAbsent(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case TokenPath:
+			w.WriteHeader(http.StatusNotFound)
+		case ProgrammaticPath:
+			if !strings.HasPrefix(r.Header.Get("Authorization"), "Basic ") {
+				t.Errorf("expected Basic after a 404 from the token endpoint, got %q", r.Header.Get("Authorization"))
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write([]byte(`{"data":{"__typename":"Query"}}`))
+		default:
+			t.Errorf("unexpected path %s", r.URL.Path)
+		}
+	}))
+	defer srv.Close()
+	c, err := New(srv.URL, "id", "secret")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var resp struct {
+		Typename string `json:"__typename"`
+	}
+	if err := c.MakeRequest(context.Background(), &graphql.Request{Query: "{__typename}"}, &graphql.Response{Data: &resp}); err != nil {
+		t.Fatal(err)
 	}
 }
