@@ -15,6 +15,8 @@ import (
 	"gopkg.in/yaml.v3"
 
 	rearm "github.com/relizaio/rearm-client-go"
+	"errors"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 // Kind values are the DeclarativeKind enum of the programmatic schema (CATALOG, BRANCHES);
@@ -309,4 +311,36 @@ func toNode(v any, top bool) *yaml.Node {
 		_ = n.Encode(v)
 		return n
 	}
+}
+
+// IsNotFound reports whether err is ReARM saying that the entity does not exist: a GraphQL error
+// classified NOT_FOUND, or one whose message says so. Callers (the Terraform provider, scripts)
+// use it to tell "gone" apart from a real failure instead of matching message text themselves.
+func IsNotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+	var list gqlerror.List
+	if errors.As(err, &list) {
+		for _, e := range list {
+			if e == nil {
+				continue
+			}
+			if t, ok := e.Extensions["errorType"].(string); ok && strings.EqualFold(t, "NOT_FOUND") {
+				return true
+			}
+			if strings.Contains(strings.ToLower(e.Message), "not found") {
+				return true
+			}
+		}
+		return false
+	}
+	var single *gqlerror.Error
+	if errors.As(err, &single) && single != nil {
+		if t, ok := single.Extensions["errorType"].(string); ok && strings.EqualFold(t, "NOT_FOUND") {
+			return true
+		}
+		return strings.Contains(strings.ToLower(single.Message), "not found")
+	}
+	return strings.Contains(strings.ToLower(err.Error()), "not found")
 }
