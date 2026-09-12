@@ -9,6 +9,1729 @@ import (
 	"github.com/Khan/genqlient/graphql"
 )
 
+type AddArtifactInput struct {
+	Release              *string                     `json:"release"`
+	Component            *string                     `json:"component"`
+	Version              *string                     `json:"version"`
+	ReleaseArtifacts     []*ArtifactInput            `json:"releaseArtifacts,omitempty"`
+	DeliverableArtifacts []*DeliverableArtifactInput `json:"deliverableArtifacts,omitempty"`
+	SceArtifacts         []*SceArtifactInput         `json:"sceArtifacts,omitempty"`
+}
+
+// GetRelease returns AddArtifactInput.Release, and is useful for accessing the field via an interface.
+func (v *AddArtifactInput) GetRelease() *string { return v.Release }
+
+// GetComponent returns AddArtifactInput.Component, and is useful for accessing the field via an interface.
+func (v *AddArtifactInput) GetComponent() *string { return v.Component }
+
+// GetVersion returns AddArtifactInput.Version, and is useful for accessing the field via an interface.
+func (v *AddArtifactInput) GetVersion() *string { return v.Version }
+
+// GetReleaseArtifacts returns AddArtifactInput.ReleaseArtifacts, and is useful for accessing the field via an interface.
+func (v *AddArtifactInput) GetReleaseArtifacts() []*ArtifactInput { return v.ReleaseArtifacts }
+
+// GetDeliverableArtifacts returns AddArtifactInput.DeliverableArtifacts, and is useful for accessing the field via an interface.
+func (v *AddArtifactInput) GetDeliverableArtifacts() []*DeliverableArtifactInput {
+	return v.DeliverableArtifacts
+}
+
+// GetSceArtifacts returns AddArtifactInput.SceArtifacts, and is useful for accessing the field via an interface.
+func (v *AddArtifactInput) GetSceArtifacts() []*SceArtifactInput { return v.SceArtifacts }
+
+// AddArtifactProgrammaticAddArtifactProgrammaticRelease includes the requested fields of the GraphQL type Release.
+type AddArtifactProgrammaticAddArtifactProgrammaticRelease struct {
+	Uuid      *string               `json:"uuid"`
+	Version   *string               `json:"version"`
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+	Artifacts []*string             `json:"artifacts"`
+}
+
+// GetUuid returns AddArtifactProgrammaticAddArtifactProgrammaticRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AddArtifactProgrammaticAddArtifactProgrammaticRelease) GetUuid() *string { return v.Uuid }
+
+// GetVersion returns AddArtifactProgrammaticAddArtifactProgrammaticRelease.Version, and is useful for accessing the field via an interface.
+func (v *AddArtifactProgrammaticAddArtifactProgrammaticRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns AddArtifactProgrammaticAddArtifactProgrammaticRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AddArtifactProgrammaticAddArtifactProgrammaticRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetArtifacts returns AddArtifactProgrammaticAddArtifactProgrammaticRelease.Artifacts, and is useful for accessing the field via an interface.
+func (v *AddArtifactProgrammaticAddArtifactProgrammaticRelease) GetArtifacts() []*string {
+	return v.Artifacts
+}
+
+// AddArtifactProgrammaticResponse is returned by AddArtifactProgrammatic on success.
+type AddArtifactProgrammaticResponse struct {
+	AddArtifactProgrammatic *AddArtifactProgrammaticAddArtifactProgrammaticRelease `json:"addArtifactProgrammatic"`
+}
+
+// GetAddArtifactProgrammatic returns AddArtifactProgrammaticResponse.AddArtifactProgrammatic, and is useful for accessing the field via an interface.
+func (v *AddArtifactProgrammaticResponse) GetAddArtifactProgrammatic() *AddArtifactProgrammaticAddArtifactProgrammaticRelease {
+	return v.AddArtifactProgrammatic
+}
+
+type AddODeliverableInput struct {
+	Release      *string             `json:"release"`
+	Component    *string             `json:"component"`
+	Variant      *string             `json:"variant"`
+	Version      *string             `json:"version"`
+	Deliverables []*DeliverableInput `json:"deliverables,omitempty"`
+}
+
+// GetRelease returns AddODeliverableInput.Release, and is useful for accessing the field via an interface.
+func (v *AddODeliverableInput) GetRelease() *string { return v.Release }
+
+// GetComponent returns AddODeliverableInput.Component, and is useful for accessing the field via an interface.
+func (v *AddODeliverableInput) GetComponent() *string { return v.Component }
+
+// GetVariant returns AddODeliverableInput.Variant, and is useful for accessing the field via an interface.
+func (v *AddODeliverableInput) GetVariant() *string { return v.Variant }
+
+// GetVersion returns AddODeliverableInput.Version, and is useful for accessing the field via an interface.
+func (v *AddODeliverableInput) GetVersion() *string { return v.Version }
+
+// GetDeliverables returns AddODeliverableInput.Deliverables, and is useful for accessing the field via an interface.
+func (v *AddODeliverableInput) GetDeliverables() []*DeliverableInput { return v.Deliverables }
+
+// AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease includes the requested fields of the GraphQL type Release.
+type AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease struct {
+	Uuid            *string                                                                                                     `json:"uuid"`
+	CreatedType     *ProgrammaticType                                                                                           `json:"createdType"`
+	LastUpdatedBy   *string                                                                                                     `json:"lastUpdatedBy"`
+	CreatedDate     *string                                                                                                     `json:"createdDate"`
+	Version         *string                                                                                                     `json:"version"`
+	Lifecycle       *ReleaseLifecycleEnum                                                                                       `json:"lifecycle"`
+	Org             *string                                                                                                     `json:"org"`
+	Component       *string                                                                                                     `json:"component"`
+	Branch          *string                                                                                                     `json:"branch"`
+	ParentReleases  []*AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticReleaseParentReleasesParentRelease `json:"parentReleases"`
+	SourceCodeEntry *string                                                                                                     `json:"sourceCodeEntry"`
+	Artifacts       []*string                                                                                                   `json:"artifacts"`
+	Notes           *string                                                                                                     `json:"notes"`
+	Endpoint        *string                                                                                                     `json:"endpoint"`
+	Commits         []*string                                                                                                   `json:"commits"`
+}
+
+// GetUuid returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetCreatedType returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.CreatedType, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetCreatedType() *ProgrammaticType {
+	return v.CreatedType
+}
+
+// GetLastUpdatedBy returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.LastUpdatedBy, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetLastUpdatedBy() *string {
+	return v.LastUpdatedBy
+}
+
+// GetCreatedDate returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetVersion returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.Version, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetOrg returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.Org, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetOrg() *string {
+	return v.Org
+}
+
+// GetComponent returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.Component, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetComponent() *string {
+	return v.Component
+}
+
+// GetBranch returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.Branch, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetBranch() *string {
+	return v.Branch
+}
+
+// GetParentReleases returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.ParentReleases, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetParentReleases() []*AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticReleaseParentReleasesParentRelease {
+	return v.ParentReleases
+}
+
+// GetSourceCodeEntry returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.SourceCodeEntry, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetSourceCodeEntry() *string {
+	return v.SourceCodeEntry
+}
+
+// GetArtifacts returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.Artifacts, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetArtifacts() []*string {
+	return v.Artifacts
+}
+
+// GetNotes returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.Notes, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetNotes() *string {
+	return v.Notes
+}
+
+// GetEndpoint returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.Endpoint, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetEndpoint() *string {
+	return v.Endpoint
+}
+
+// GetCommits returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease.Commits, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease) GetCommits() []*string {
+	return v.Commits
+}
+
+// AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticReleaseParentReleasesParentRelease includes the requested fields of the GraphQL type ParentRelease.
+type AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticReleaseParentReleasesParentRelease struct {
+	Release *string `json:"release"`
+}
+
+// GetRelease returns AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticReleaseParentReleasesParentRelease.Release, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticReleaseParentReleasesParentRelease) GetRelease() *string {
+	return v.Release
+}
+
+// AddOutboundDeliverablesProgrammaticResponse is returned by AddOutboundDeliverablesProgrammatic on success.
+type AddOutboundDeliverablesProgrammaticResponse struct {
+	AddOutboundDeliverablesProgrammatic *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease `json:"addOutboundDeliverablesProgrammatic"`
+}
+
+// GetAddOutboundDeliverablesProgrammatic returns AddOutboundDeliverablesProgrammaticResponse.AddOutboundDeliverablesProgrammatic, and is useful for accessing the field via an interface.
+func (v *AddOutboundDeliverablesProgrammaticResponse) GetAddOutboundDeliverablesProgrammatic() *AddOutboundDeliverablesProgrammaticAddOutboundDeliverablesProgrammaticRelease {
+	return v.AddOutboundDeliverablesProgrammatic
+}
+
+// AddReleaseProgrammaticAddReleaseProgrammaticRelease includes the requested fields of the GraphQL type Release.
+type AddReleaseProgrammaticAddReleaseProgrammaticRelease struct {
+	Uuid            *string                                                                           `json:"uuid"`
+	CreatedType     *ProgrammaticType                                                                 `json:"createdType"`
+	LastUpdatedBy   *string                                                                           `json:"lastUpdatedBy"`
+	CreatedDate     *string                                                                           `json:"createdDate"`
+	Version         *string                                                                           `json:"version"`
+	Lifecycle       *ReleaseLifecycleEnum                                                             `json:"lifecycle"`
+	Org             *string                                                                           `json:"org"`
+	Component       *string                                                                           `json:"component"`
+	Branch          *string                                                                           `json:"branch"`
+	ParentReleases  []*AddReleaseProgrammaticAddReleaseProgrammaticReleaseParentReleasesParentRelease `json:"parentReleases"`
+	SourceCodeEntry *string                                                                           `json:"sourceCodeEntry"`
+	Artifacts       []*string                                                                         `json:"artifacts"`
+	Notes           *string                                                                           `json:"notes"`
+	Endpoint        *string                                                                           `json:"endpoint"`
+	Commits         []*string                                                                         `json:"commits"`
+}
+
+// GetUuid returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetUuid() *string { return v.Uuid }
+
+// GetCreatedType returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.CreatedType, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetCreatedType() *ProgrammaticType {
+	return v.CreatedType
+}
+
+// GetLastUpdatedBy returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.LastUpdatedBy, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetLastUpdatedBy() *string {
+	return v.LastUpdatedBy
+}
+
+// GetCreatedDate returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetVersion returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.Version, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetVersion() *string { return v.Version }
+
+// GetLifecycle returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetOrg returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.Org, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetOrg() *string { return v.Org }
+
+// GetComponent returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.Component, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetComponent() *string {
+	return v.Component
+}
+
+// GetBranch returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.Branch, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetBranch() *string { return v.Branch }
+
+// GetParentReleases returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.ParentReleases, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetParentReleases() []*AddReleaseProgrammaticAddReleaseProgrammaticReleaseParentReleasesParentRelease {
+	return v.ParentReleases
+}
+
+// GetSourceCodeEntry returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.SourceCodeEntry, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetSourceCodeEntry() *string {
+	return v.SourceCodeEntry
+}
+
+// GetArtifacts returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.Artifacts, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetArtifacts() []*string {
+	return v.Artifacts
+}
+
+// GetNotes returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.Notes, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetNotes() *string { return v.Notes }
+
+// GetEndpoint returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.Endpoint, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetEndpoint() *string {
+	return v.Endpoint
+}
+
+// GetCommits returns AddReleaseProgrammaticAddReleaseProgrammaticRelease.Commits, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticRelease) GetCommits() []*string {
+	return v.Commits
+}
+
+// AddReleaseProgrammaticAddReleaseProgrammaticReleaseParentReleasesParentRelease includes the requested fields of the GraphQL type ParentRelease.
+type AddReleaseProgrammaticAddReleaseProgrammaticReleaseParentReleasesParentRelease struct {
+	Release *string `json:"release"`
+}
+
+// GetRelease returns AddReleaseProgrammaticAddReleaseProgrammaticReleaseParentReleasesParentRelease.Release, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticAddReleaseProgrammaticReleaseParentReleasesParentRelease) GetRelease() *string {
+	return v.Release
+}
+
+// AddReleaseProgrammaticResponse is returned by AddReleaseProgrammatic on success.
+type AddReleaseProgrammaticResponse struct {
+	AddReleaseProgrammatic *AddReleaseProgrammaticAddReleaseProgrammaticRelease `json:"addReleaseProgrammatic"`
+}
+
+// GetAddReleaseProgrammatic returns AddReleaseProgrammaticResponse.AddReleaseProgrammatic, and is useful for accessing the field via an interface.
+func (v *AddReleaseProgrammaticResponse) GetAddReleaseProgrammatic() *AddReleaseProgrammaticAddReleaseProgrammaticRelease {
+	return v.AddReleaseProgrammatic
+}
+
+// AddReleasesProgrammaticAddReleasesProgrammaticRelease includes the requested fields of the GraphQL type Release.
+type AddReleasesProgrammaticAddReleasesProgrammaticRelease struct {
+	Uuid            *string                                                                             `json:"uuid"`
+	CreatedType     *ProgrammaticType                                                                   `json:"createdType"`
+	LastUpdatedBy   *string                                                                             `json:"lastUpdatedBy"`
+	CreatedDate     *string                                                                             `json:"createdDate"`
+	Version         *string                                                                             `json:"version"`
+	Lifecycle       *ReleaseLifecycleEnum                                                               `json:"lifecycle"`
+	Org             *string                                                                             `json:"org"`
+	Component       *string                                                                             `json:"component"`
+	Branch          *string                                                                             `json:"branch"`
+	ParentReleases  []*AddReleasesProgrammaticAddReleasesProgrammaticReleaseParentReleasesParentRelease `json:"parentReleases"`
+	SourceCodeEntry *string                                                                             `json:"sourceCodeEntry"`
+	Artifacts       []*string                                                                           `json:"artifacts"`
+	Notes           *string                                                                             `json:"notes"`
+	Endpoint        *string                                                                             `json:"endpoint"`
+	Commits         []*string                                                                           `json:"commits"`
+}
+
+// GetUuid returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetUuid() *string { return v.Uuid }
+
+// GetCreatedType returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.CreatedType, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetCreatedType() *ProgrammaticType {
+	return v.CreatedType
+}
+
+// GetLastUpdatedBy returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.LastUpdatedBy, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetLastUpdatedBy() *string {
+	return v.LastUpdatedBy
+}
+
+// GetCreatedDate returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetVersion returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.Version, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetOrg returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.Org, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetOrg() *string { return v.Org }
+
+// GetComponent returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.Component, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetComponent() *string {
+	return v.Component
+}
+
+// GetBranch returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.Branch, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetBranch() *string { return v.Branch }
+
+// GetParentReleases returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.ParentReleases, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetParentReleases() []*AddReleasesProgrammaticAddReleasesProgrammaticReleaseParentReleasesParentRelease {
+	return v.ParentReleases
+}
+
+// GetSourceCodeEntry returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.SourceCodeEntry, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetSourceCodeEntry() *string {
+	return v.SourceCodeEntry
+}
+
+// GetArtifacts returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.Artifacts, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetArtifacts() []*string {
+	return v.Artifacts
+}
+
+// GetNotes returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.Notes, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetNotes() *string { return v.Notes }
+
+// GetEndpoint returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.Endpoint, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetEndpoint() *string {
+	return v.Endpoint
+}
+
+// GetCommits returns AddReleasesProgrammaticAddReleasesProgrammaticRelease.Commits, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticRelease) GetCommits() []*string {
+	return v.Commits
+}
+
+// AddReleasesProgrammaticAddReleasesProgrammaticReleaseParentReleasesParentRelease includes the requested fields of the GraphQL type ParentRelease.
+type AddReleasesProgrammaticAddReleasesProgrammaticReleaseParentReleasesParentRelease struct {
+	Release *string `json:"release"`
+}
+
+// GetRelease returns AddReleasesProgrammaticAddReleasesProgrammaticReleaseParentReleasesParentRelease.Release, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticAddReleasesProgrammaticReleaseParentReleasesParentRelease) GetRelease() *string {
+	return v.Release
+}
+
+// AddReleasesProgrammaticResponse is returned by AddReleasesProgrammatic on success.
+type AddReleasesProgrammaticResponse struct {
+	// Batch counterpart to addReleaseProgrammatic. Creates every supplied
+	// release in a single all-or-nothing transaction -- if any entry fails,
+	// none are persisted. Auto-integration of products is deferred until all
+	// releases are created, then fired once per affected feature set (deduped
+	// across the whole batch) instead of once per release. Use this when a CI
+	// run builds several component releases at once and you want a single
+	// product auto-integrate rather than one per component version.
+	AddReleasesProgrammatic []*AddReleasesProgrammaticAddReleasesProgrammaticRelease `json:"addReleasesProgrammatic"`
+}
+
+// GetAddReleasesProgrammatic returns AddReleasesProgrammaticResponse.AddReleasesProgrammatic, and is useful for accessing the field via an interface.
+func (v *AddReleasesProgrammaticResponse) GetAddReleasesProgrammatic() []*AddReleasesProgrammaticAddReleasesProgrammaticRelease {
+	return v.AddReleasesProgrammatic
+}
+
+type AddressInput struct {
+	StreetAddress *string      `json:"streetAddress"`
+	City          *string      `json:"city"`
+	Region        *string      `json:"region"`
+	PostalCode    *string      `json:"postalCode"`
+	Country       *string      `json:"country"`
+	IsoCode       *string      `json:"isoCode"`
+	Coords        *CoordsInput `json:"coords,omitempty"`
+}
+
+// GetStreetAddress returns AddressInput.StreetAddress, and is useful for accessing the field via an interface.
+func (v *AddressInput) GetStreetAddress() *string { return v.StreetAddress }
+
+// GetCity returns AddressInput.City, and is useful for accessing the field via an interface.
+func (v *AddressInput) GetCity() *string { return v.City }
+
+// GetRegion returns AddressInput.Region, and is useful for accessing the field via an interface.
+func (v *AddressInput) GetRegion() *string { return v.Region }
+
+// GetPostalCode returns AddressInput.PostalCode, and is useful for accessing the field via an interface.
+func (v *AddressInput) GetPostalCode() *string { return v.PostalCode }
+
+// GetCountry returns AddressInput.Country, and is useful for accessing the field via an interface.
+func (v *AddressInput) GetCountry() *string { return v.Country }
+
+// GetIsoCode returns AddressInput.IsoCode, and is useful for accessing the field via an interface.
+func (v *AddressInput) GetIsoCode() *string { return v.IsoCode }
+
+// GetCoords returns AddressInput.Coords, and is useful for accessing the field via an interface.
+func (v *AddressInput) GetCoords() *CoordsInput { return v.Coords }
+
+type AgentInboxEventKind string
+
+const (
+	// A release's lifecycle moved (e.g. ASSEMBLED → REJECTED, PENDING → ASSEMBLED).
+	AgentInboxEventKindLifecycleChange AgentInboxEventKind = "LIFECYCLE_CHANGE"
+	// An approval entry on a release flipped (APPROVED / DISAPPROVED / withdrawn).
+	AgentInboxEventKindApproval AgentInboxEventKind = "APPROVAL"
+	// A new PolicyEvent landed on the session itself (post-init artifact-attach / commit-attribution re-eval).
+	AgentInboxEventKindPolicyVerdict AgentInboxEventKind = "POLICY_VERDICT"
+)
+
+var AllAgentInboxEventKind = []AgentInboxEventKind{
+	AgentInboxEventKindLifecycleChange,
+	AgentInboxEventKindApproval,
+	AgentInboxEventKindPolicyVerdict,
+}
+
+type AgentInboxSource string
+
+const (
+	// A human user performed the action (approval, manual lifecycle change).
+	AgentInboxSourceHuman AgentInboxSource = "HUMAN"
+	// An automated component-level output trigger fired (CEL gate matched).
+	AgentInboxSourcePolicyGate AgentInboxSource = "POLICY_GATE"
+	// Lifecycle progressed by the system without an explicit trigger (e.g. initial release-created PENDING).
+	AgentInboxSourceReleaseAuto AgentInboxSource = "RELEASE_AUTO"
+)
+
+var AllAgentInboxSource = []AgentInboxSource{
+	AgentInboxSourceHuman,
+	AgentInboxSourcePolicyGate,
+	AgentInboxSourceReleaseAuto,
+}
+
+type AgentSessionInboxInput struct {
+	SessionUuid string `json:"sessionUuid"`
+	// Opaque cursor from a prior poll. Null = "from session start".
+	// Server returns events strictly after this cursor.
+	Since *string `json:"since"`
+	// Optional filter; null = all kinds.
+	Kinds []AgentInboxEventKind `json:"kinds"`
+	// Default 50; capped at 200.
+	Limit *int `json:"limit"`
+}
+
+// GetSessionUuid returns AgentSessionInboxInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetSince returns AgentSessionInboxInput.Since, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxInput) GetSince() *string { return v.Since }
+
+// GetKinds returns AgentSessionInboxInput.Kinds, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxInput) GetKinds() []AgentInboxEventKind { return v.Kinds }
+
+// GetLimit returns AgentSessionInboxInput.Limit, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxInput) GetLimit() *int { return v.Limit }
+
+// AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent includes the requested fields of the GraphQL type AgentSessionInboxEvent.
+// The GraphQL type's documentation follows.
+//
+// One actionable event the agent owning a session needs to react to --
+// typically a release minted from the session's commits changing
+// lifecycle (REJECTED by a CEL gate, ASSEMBLED, etc.) or carrying a
+// new approval (DISAPPROVED with reviewer comment is the canonical
+// "agent fix loop" trigger). Polled by the agent via
+// {@code agentSessionInboxProgrammatic} with a cursor it stores
+// client-side.
+type AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent struct {
+	// Opaque, monotone cursor token. Pass back as the {@code since}
+	// field on the next poll to fetch strictly newer events. Stable --
+	// the same event always returns the same cursor.
+	Cursor     string              `json:"cursor"`
+	OccurredAt string              `json:"occurredAt"`
+	Kind       AgentInboxEventKind `json:"kind"`
+	// Release this event is about, when {@code kind} is release-side
+	// (LIFECYCLE_CHANGE / APPROVAL). Null on session-side events
+	// (POLICY_VERDICT).
+	Release *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEventRelease `json:"release"`
+	// Previous value, when meaningful (e.g. prior lifecycle).
+	OldValue *string `json:"oldValue"`
+	// New value (e.g. new lifecycle, "DISAPPROVED").
+	NewValue *string `json:"newValue"`
+	// Free-form human-readable reason for the event:
+	// - LIFECYCLE_CHANGE: the matching ReleaseUpdateEvent.message
+	// (e.g. "Triggered by 'Reject when any commit is not VERIFIED'
+	// (CEL: …)") -- what *caused* the lifecycle change.
+	// - APPROVAL: the reviewer's free-text comment when
+	// DISAPPROVED; null on APPROVED unless a comment was left.
+	// - POLICY_VERDICT: the failing policy's failure message.
+	Reason *string          `json:"reason"`
+	Source AgentInboxSource `json:"source"`
+	// User uuid that authored the change, when {@code source = HUMAN}.
+	// Null for automated / policy-driven events.
+	ActorUuid *string `json:"actorUuid"`
+	// Approval role id ({@code ApprovalEntry.roleId} snapshot), when {@code kind = APPROVAL}.
+	ActorRoleId *string `json:"actorRoleId"`
+}
+
+// GetCursor returns AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent.Cursor, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent) GetCursor() string {
+	return v.Cursor
+}
+
+// GetOccurredAt returns AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent.OccurredAt, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent) GetOccurredAt() string {
+	return v.OccurredAt
+}
+
+// GetKind returns AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent.Kind, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent) GetKind() AgentInboxEventKind {
+	return v.Kind
+}
+
+// GetRelease returns AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent.Release, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent) GetRelease() *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEventRelease {
+	return v.Release
+}
+
+// GetOldValue returns AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent.OldValue, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent) GetOldValue() *string {
+	return v.OldValue
+}
+
+// GetNewValue returns AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent.NewValue, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent) GetNewValue() *string {
+	return v.NewValue
+}
+
+// GetReason returns AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent.Reason, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent) GetReason() *string {
+	return v.Reason
+}
+
+// GetSource returns AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent.Source, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent) GetSource() AgentInboxSource {
+	return v.Source
+}
+
+// GetActorUuid returns AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent.ActorUuid, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent) GetActorUuid() *string {
+	return v.ActorUuid
+}
+
+// GetActorRoleId returns AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent.ActorRoleId, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent) GetActorRoleId() *string {
+	return v.ActorRoleId
+}
+
+// AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEventRelease includes the requested fields of the GraphQL type Release.
+type AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEventRelease struct {
+	Uuid      *string               `json:"uuid"`
+	Version   *string               `json:"version"`
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+}
+
+// GetUuid returns AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEventRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEventRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetVersion returns AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEventRelease.Version, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEventRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEventRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEventRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// AgentSessionInboxProgrammaticResponse is returned by AgentSessionInboxProgrammatic on success.
+type AgentSessionInboxProgrammaticResponse struct {
+	// Programmatic poll endpoint for an agent's session -- returns
+	// actionable events (lifecycle changes on attributed releases,
+	// approval flips, new session policy verdicts) strictly after the
+	// supplied cursor. Auth: FREEFORM key bound to the session's owning
+	// agent identity. Designed for closed-loop "disapproval → agent
+	// fix" flows; see {@code /api/agents/orientation.md} for the
+	// canonical polling cadence.
+	AgentSessionInboxProgrammatic []*AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent `json:"agentSessionInboxProgrammatic"`
+}
+
+// GetAgentSessionInboxProgrammatic returns AgentSessionInboxProgrammaticResponse.AgentSessionInboxProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentSessionInboxProgrammaticResponse) GetAgentSessionInboxProgrammatic() []*AgentSessionInboxProgrammaticAgentSessionInboxProgrammaticAgentSessionInboxEvent {
+	return v.AgentSessionInboxProgrammatic
+}
+
+// Programmatic (FREEFORM-auth'd) variant of SigningKeyInput with no {@code org}
+// field: the org is always the one the calling key resolves to, so accepting a
+// client-supplied org is redundant and a footgun (a mismatched value previously
+// surfaced as an opaque "Not authorized"). Used only by
+// {@code enrollSigningKeyProgrammatic}.
+type AgentSigningKeyInput struct {
+	Format    SignatureFormat     `json:"format"`
+	OwnerType SigningKeyOwnerType `json:"ownerType"`
+	OwnerUuid string              `json:"ownerUuid"`
+	// SHA256:... for SSH; long key id for GPG. Derived from pubKey when omitted.
+	Fingerprint *string `json:"fingerprint"`
+	// Optional override; defaults to the agent's identity where applicable.
+	Identity *string `json:"identity"`
+	// Single-line SSH or ASCII-armoured GPG block.
+	PubKey string `json:"pubKey"`
+}
+
+// GetFormat returns AgentSigningKeyInput.Format, and is useful for accessing the field via an interface.
+func (v *AgentSigningKeyInput) GetFormat() SignatureFormat { return v.Format }
+
+// GetOwnerType returns AgentSigningKeyInput.OwnerType, and is useful for accessing the field via an interface.
+func (v *AgentSigningKeyInput) GetOwnerType() SigningKeyOwnerType { return v.OwnerType }
+
+// GetOwnerUuid returns AgentSigningKeyInput.OwnerUuid, and is useful for accessing the field via an interface.
+func (v *AgentSigningKeyInput) GetOwnerUuid() string { return v.OwnerUuid }
+
+// GetFingerprint returns AgentSigningKeyInput.Fingerprint, and is useful for accessing the field via an interface.
+func (v *AgentSigningKeyInput) GetFingerprint() *string { return v.Fingerprint }
+
+// GetIdentity returns AgentSigningKeyInput.Identity, and is useful for accessing the field via an interface.
+func (v *AgentSigningKeyInput) GetIdentity() *string { return v.Identity }
+
+// GetPubKey returns AgentSigningKeyInput.PubKey, and is useful for accessing the field via an interface.
+func (v *AgentSigningKeyInput) GetPubKey() string { return v.PubKey }
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease includes the requested fields of the GraphQL type Release.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease struct {
+	Uuid                   *string                                                                                           `json:"uuid"`
+	Version                *string                                                                                           `json:"version"`
+	Lifecycle              *ReleaseLifecycleEnum                                                                             `json:"lifecycle"`
+	UpdateEvents           []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent      `json:"updateEvents"`
+	ApprovalEvents         []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent  `json:"approvalEvents"`
+	SourceCodeEntryDetails *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry `json:"sourceCodeEntryDetails"`
+	Metrics                *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics         `json:"metrics"`
+	ArtifactDetails        []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact             `json:"artifactDetails"`
+	VariantDetails         []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariant               `json:"variantDetails"`
+}
+
+// GetUuid returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetVersion returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease.Version, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetUpdateEvents returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease.UpdateEvents, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease) GetUpdateEvents() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent {
+	return v.UpdateEvents
+}
+
+// GetApprovalEvents returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease.ApprovalEvents, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease) GetApprovalEvents() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent {
+	return v.ApprovalEvents
+}
+
+// GetSourceCodeEntryDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease.SourceCodeEntryDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease) GetSourceCodeEntryDetails() *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry {
+	return v.SourceCodeEntryDetails
+}
+
+// GetMetrics returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease.Metrics, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease) GetMetrics() *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics {
+	return v.Metrics
+}
+
+// GetArtifactDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease.ArtifactDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease) GetArtifactDetails() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact {
+	return v.ArtifactDetails
+}
+
+// GetVariantDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease.VariantDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease) GetVariantDetails() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariant {
+	return v.VariantDetails
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent includes the requested fields of the GraphQL type ReleaseApprovalEvent.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent struct {
+	ApprovalEntry  *string        `json:"approvalEntry"`
+	ApprovalRoleId *string        `json:"approvalRoleId"`
+	State          *ApprovalState `json:"state"`
+	// Optional free-form approver comment, sanitised server-side via
+	// jsoup's Safelist.basic() (allows simple inline tags, strips
+	// scripts/styles/event handlers). Capped at 4000 chars at the input
+	// boundary; empty-after-clean is normalised to null.
+	Comment *string `json:"comment"`
+	Date    *string `json:"date"`
+}
+
+// GetApprovalEntry returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent.ApprovalEntry, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent) GetApprovalEntry() *string {
+	return v.ApprovalEntry
+}
+
+// GetApprovalRoleId returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent.ApprovalRoleId, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent) GetApprovalRoleId() *string {
+	return v.ApprovalRoleId
+}
+
+// GetState returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent.State, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent) GetState() *ApprovalState {
+	return v.State
+}
+
+// GetComment returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent.Comment, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent) GetComment() *string {
+	return v.Comment
+}
+
+// GetDate returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent.Date, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseApprovalEventsReleaseApprovalEvent) GetDate() *string {
+	return v.Date
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact includes the requested fields of the GraphQL type Artifact.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact struct {
+	Uuid              *string                                                                                                          `json:"uuid"`
+	DisplayIdentifier *string                                                                                                          `json:"displayIdentifier"`
+	Type              *ArtifactType                                                                                                    `json:"type"`
+	BomFormat         *BomFormat                                                                                                       `json:"bomFormat"`
+	Tags              []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord               `json:"tags"`
+	Metrics           *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics `json:"metrics"`
+}
+
+// GetUuid returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact.Uuid, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetDisplayIdentifier returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact.DisplayIdentifier, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact) GetDisplayIdentifier() *string {
+	return v.DisplayIdentifier
+}
+
+// GetType returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact.Type, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact) GetType() *ArtifactType {
+	return v.Type
+}
+
+// GetBomFormat returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact.BomFormat, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact) GetBomFormat() *BomFormat {
+	return v.BomFormat
+}
+
+// GetTags returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact.Tags, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact) GetTags() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord {
+	return v.Tags
+}
+
+// GetMetrics returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact.Metrics, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifact) GetMetrics() *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics {
+	return v.Metrics
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics includes the requested fields of the GraphQL type DependencyTrackMetrics.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics struct {
+	FirstScanned                     *string                                                                                                                                             `json:"firstScanned"`
+	LastScanned                      *string                                                                                                                                             `json:"lastScanned"`
+	Critical                         *int                                                                                                                                                `json:"critical"`
+	High                             *int                                                                                                                                                `json:"high"`
+	Medium                           *int                                                                                                                                                `json:"medium"`
+	Low                              *int                                                                                                                                                `json:"low"`
+	Unassigned                       *int                                                                                                                                                `json:"unassigned"`
+	PolicyViolationsSecurityTotal    *int                                                                                                                                                `json:"policyViolationsSecurityTotal"`
+	PolicyViolationsLicenseTotal     *int                                                                                                                                                `json:"policyViolationsLicenseTotal"`
+	PolicyViolationsOperationalTotal *int                                                                                                                                                `json:"policyViolationsOperationalTotal"`
+	VulnerabilityDetails             []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability `json:"vulnerabilityDetails"`
+	ViolationDetails                 []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation         `json:"violationDetails"`
+}
+
+// GetFirstScanned returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics.FirstScanned, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetFirstScanned() *string {
+	return v.FirstScanned
+}
+
+// GetLastScanned returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics.LastScanned, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetLastScanned() *string {
+	return v.LastScanned
+}
+
+// GetCritical returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics.Critical, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetCritical() *int {
+	return v.Critical
+}
+
+// GetHigh returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics.High, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetHigh() *int {
+	return v.High
+}
+
+// GetMedium returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics.Medium, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetMedium() *int {
+	return v.Medium
+}
+
+// GetLow returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics.Low, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetLow() *int {
+	return v.Low
+}
+
+// GetUnassigned returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics.Unassigned, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetUnassigned() *int {
+	return v.Unassigned
+}
+
+// GetPolicyViolationsSecurityTotal returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics.PolicyViolationsSecurityTotal, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetPolicyViolationsSecurityTotal() *int {
+	return v.PolicyViolationsSecurityTotal
+}
+
+// GetPolicyViolationsLicenseTotal returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics.PolicyViolationsLicenseTotal, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetPolicyViolationsLicenseTotal() *int {
+	return v.PolicyViolationsLicenseTotal
+}
+
+// GetPolicyViolationsOperationalTotal returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics.PolicyViolationsOperationalTotal, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetPolicyViolationsOperationalTotal() *int {
+	return v.PolicyViolationsOperationalTotal
+}
+
+// GetVulnerabilityDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics.VulnerabilityDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetVulnerabilityDetails() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability {
+	return v.VulnerabilityDetails
+}
+
+// GetViolationDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics.ViolationDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetViolationDetails() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation {
+	return v.ViolationDetails
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation includes the requested fields of the GraphQL type Violation.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation struct {
+	Purl             *string        `json:"purl"`
+	Type             *ViolationType `json:"type"`
+	License          *string        `json:"license"`
+	ViolationDetails *string        `json:"violationDetails"`
+	AnalysisState    *AnalysisState `json:"analysisState"`
+}
+
+// GetPurl returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.Purl, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetPurl() *string {
+	return v.Purl
+}
+
+// GetType returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.Type, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetType() *ViolationType {
+	return v.Type
+}
+
+// GetLicense returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.License, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetLicense() *string {
+	return v.License
+}
+
+// GetViolationDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.ViolationDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetViolationDetails() *string {
+	return v.ViolationDetails
+}
+
+// GetAnalysisState returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.AnalysisState, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability includes the requested fields of the GraphQL type Vulnerability.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability struct {
+	Purl          *string                `json:"purl"`
+	VulnId        *string                `json:"vulnId"`
+	Severity      *VulnerabilitySeverity `json:"severity"`
+	AnalysisState *AnalysisState         `json:"analysisState"`
+}
+
+// GetPurl returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.Purl, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetPurl() *string {
+	return v.Purl
+}
+
+// GetVulnId returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.VulnId, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetVulnId() *string {
+	return v.VulnId
+}
+
+// GetSeverity returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.Severity, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetSeverity() *VulnerabilitySeverity {
+	return v.Severity
+}
+
+// GetAnalysisState returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.AnalysisState, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord struct {
+	Key   *string `json:"key"`
+	Value *string `json:"value"`
+}
+
+// GetKey returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics includes the requested fields of the GraphQL type DependencyTrackMetrics.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics struct {
+	LastScanned                      *string                                                                                                                      `json:"lastScanned"`
+	FirstScanned                     *string                                                                                                                      `json:"firstScanned"`
+	Critical                         *int                                                                                                                         `json:"critical"`
+	High                             *int                                                                                                                         `json:"high"`
+	Medium                           *int                                                                                                                         `json:"medium"`
+	Low                              *int                                                                                                                         `json:"low"`
+	Unassigned                       *int                                                                                                                         `json:"unassigned"`
+	PolicyViolationsSecurityTotal    *int                                                                                                                         `json:"policyViolationsSecurityTotal"`
+	PolicyViolationsLicenseTotal     *int                                                                                                                         `json:"policyViolationsLicenseTotal"`
+	PolicyViolationsOperationalTotal *int                                                                                                                         `json:"policyViolationsOperationalTotal"`
+	VulnerabilityDetails             []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability `json:"vulnerabilityDetails"`
+	ViolationDetails                 []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation         `json:"violationDetails"`
+}
+
+// GetLastScanned returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics.LastScanned, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics) GetLastScanned() *string {
+	return v.LastScanned
+}
+
+// GetFirstScanned returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics.FirstScanned, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics) GetFirstScanned() *string {
+	return v.FirstScanned
+}
+
+// GetCritical returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics.Critical, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics) GetCritical() *int {
+	return v.Critical
+}
+
+// GetHigh returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics.High, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics) GetHigh() *int {
+	return v.High
+}
+
+// GetMedium returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics.Medium, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics) GetMedium() *int {
+	return v.Medium
+}
+
+// GetLow returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics.Low, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics) GetLow() *int {
+	return v.Low
+}
+
+// GetUnassigned returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics.Unassigned, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics) GetUnassigned() *int {
+	return v.Unassigned
+}
+
+// GetPolicyViolationsSecurityTotal returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics.PolicyViolationsSecurityTotal, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics) GetPolicyViolationsSecurityTotal() *int {
+	return v.PolicyViolationsSecurityTotal
+}
+
+// GetPolicyViolationsLicenseTotal returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics.PolicyViolationsLicenseTotal, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics) GetPolicyViolationsLicenseTotal() *int {
+	return v.PolicyViolationsLicenseTotal
+}
+
+// GetPolicyViolationsOperationalTotal returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics.PolicyViolationsOperationalTotal, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics) GetPolicyViolationsOperationalTotal() *int {
+	return v.PolicyViolationsOperationalTotal
+}
+
+// GetVulnerabilityDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics.VulnerabilityDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics) GetVulnerabilityDetails() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability {
+	return v.VulnerabilityDetails
+}
+
+// GetViolationDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics.ViolationDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics) GetViolationDetails() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation {
+	return v.ViolationDetails
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation includes the requested fields of the GraphQL type Violation.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation struct {
+	Purl             *string        `json:"purl"`
+	Type             *ViolationType `json:"type"`
+	License          *string        `json:"license"`
+	ViolationDetails *string        `json:"violationDetails"`
+	AnalysisState    *AnalysisState `json:"analysisState"`
+}
+
+// GetPurl returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation.Purl, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation) GetPurl() *string {
+	return v.Purl
+}
+
+// GetType returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation.Type, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation) GetType() *ViolationType {
+	return v.Type
+}
+
+// GetLicense returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation.License, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation) GetLicense() *string {
+	return v.License
+}
+
+// GetViolationDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation.ViolationDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation) GetViolationDetails() *string {
+	return v.ViolationDetails
+}
+
+// GetAnalysisState returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation.AnalysisState, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsViolationDetailsViolation) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability includes the requested fields of the GraphQL type Vulnerability.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability struct {
+	Purl          *string                `json:"purl"`
+	VulnId        *string                `json:"vulnId"`
+	Severity      *VulnerabilitySeverity `json:"severity"`
+	AnalysisState *AnalysisState         `json:"analysisState"`
+}
+
+// GetPurl returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.Purl, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetPurl() *string {
+	return v.Purl
+}
+
+// GetVulnId returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.VulnId, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetVulnId() *string {
+	return v.VulnId
+}
+
+// GetSeverity returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.Severity, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetSeverity() *VulnerabilitySeverity {
+	return v.Severity
+}
+
+// GetAnalysisState returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.AnalysisState, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry includes the requested fields of the GraphQL type SourceCodeEntry.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry struct {
+	Uuid   *string `json:"uuid"`
+	Commit *string `json:"commit"`
+	// Outcome of the agent-attribution trailer resolution for this commit.
+	// UNATTRIBUTED on non-agent commits; RESOLVED when both trailers parsed
+	// and the agent / session were found; REJECTED when the trailers were
+	// present but the claim could not be resolved (malformed clientSessionId,
+	// unknown agent / session, cross-org, etc.). Used by CEL via
+	// {@code commit.attribution.state} -- symmetric with
+	// {@code commit.signature.state} for the unsigned-commit gate.
+	AttributionState *AttributionState `json:"attributionState"`
+	// Human-readable reason explaining a REJECTED attribution. Null on
+	// UNATTRIBUTED and RESOLVED.
+	AttributionReason *string `json:"attributionReason"`
+	// Latest signature-verification verdict for this commit (or null when
+	// no signature artifact has been attached). Backed by the
+	// signature_verifications row pointed at by this SCE -- read-time
+	// pick of the most-recent verdict for (SCE, subjectUuid). Used by
+	// CEL via {@code commit.signature.*}.
+	Signature       *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature     `json:"signature"`
+	ArtifactDetails []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact `json:"artifactDetails"`
+}
+
+// GetUuid returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.Uuid, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetCommit returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.Commit, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetCommit() *string {
+	return v.Commit
+}
+
+// GetAttributionState returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.AttributionState, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetAttributionState() *AttributionState {
+	return v.AttributionState
+}
+
+// GetAttributionReason returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.AttributionReason, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetAttributionReason() *string {
+	return v.AttributionReason
+}
+
+// GetSignature returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.Signature, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetSignature() *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature {
+	return v.Signature
+}
+
+// GetArtifactDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.ArtifactDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetArtifactDetails() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact {
+	return v.ArtifactDetails
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact includes the requested fields of the GraphQL type Artifact.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact struct {
+	Uuid              *string                                                                                                                                               `json:"uuid"`
+	DisplayIdentifier *string                                                                                                                                               `json:"displayIdentifier"`
+	Type              *ArtifactType                                                                                                                                         `json:"type"`
+	BomFormat         *BomFormat                                                                                                                                            `json:"bomFormat"`
+	Tags              []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactTagsTagRecord               `json:"tags"`
+	Metrics           *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics `json:"metrics"`
+}
+
+// GetUuid returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact.Uuid, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetDisplayIdentifier returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact.DisplayIdentifier, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact) GetDisplayIdentifier() *string {
+	return v.DisplayIdentifier
+}
+
+// GetType returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact.Type, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact) GetType() *ArtifactType {
+	return v.Type
+}
+
+// GetBomFormat returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact.BomFormat, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact) GetBomFormat() *BomFormat {
+	return v.BomFormat
+}
+
+// GetTags returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact.Tags, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact) GetTags() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactTagsTagRecord {
+	return v.Tags
+}
+
+// GetMetrics returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact.Metrics, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifact) GetMetrics() *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics {
+	return v.Metrics
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics includes the requested fields of the GraphQL type DependencyTrackMetrics.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics struct {
+	FirstScanned                     *string                                                                                                                                                                                  `json:"firstScanned"`
+	LastScanned                      *string                                                                                                                                                                                  `json:"lastScanned"`
+	Critical                         *int                                                                                                                                                                                     `json:"critical"`
+	High                             *int                                                                                                                                                                                     `json:"high"`
+	Medium                           *int                                                                                                                                                                                     `json:"medium"`
+	Low                              *int                                                                                                                                                                                     `json:"low"`
+	Unassigned                       *int                                                                                                                                                                                     `json:"unassigned"`
+	PolicyViolationsSecurityTotal    *int                                                                                                                                                                                     `json:"policyViolationsSecurityTotal"`
+	PolicyViolationsLicenseTotal     *int                                                                                                                                                                                     `json:"policyViolationsLicenseTotal"`
+	PolicyViolationsOperationalTotal *int                                                                                                                                                                                     `json:"policyViolationsOperationalTotal"`
+	VulnerabilityDetails             []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability `json:"vulnerabilityDetails"`
+	ViolationDetails                 []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation         `json:"violationDetails"`
+}
+
+// GetFirstScanned returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics.FirstScanned, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetFirstScanned() *string {
+	return v.FirstScanned
+}
+
+// GetLastScanned returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics.LastScanned, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetLastScanned() *string {
+	return v.LastScanned
+}
+
+// GetCritical returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics.Critical, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetCritical() *int {
+	return v.Critical
+}
+
+// GetHigh returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics.High, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetHigh() *int {
+	return v.High
+}
+
+// GetMedium returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics.Medium, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetMedium() *int {
+	return v.Medium
+}
+
+// GetLow returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics.Low, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetLow() *int {
+	return v.Low
+}
+
+// GetUnassigned returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics.Unassigned, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetUnassigned() *int {
+	return v.Unassigned
+}
+
+// GetPolicyViolationsSecurityTotal returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics.PolicyViolationsSecurityTotal, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetPolicyViolationsSecurityTotal() *int {
+	return v.PolicyViolationsSecurityTotal
+}
+
+// GetPolicyViolationsLicenseTotal returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics.PolicyViolationsLicenseTotal, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetPolicyViolationsLicenseTotal() *int {
+	return v.PolicyViolationsLicenseTotal
+}
+
+// GetPolicyViolationsOperationalTotal returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics.PolicyViolationsOperationalTotal, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetPolicyViolationsOperationalTotal() *int {
+	return v.PolicyViolationsOperationalTotal
+}
+
+// GetVulnerabilityDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics.VulnerabilityDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetVulnerabilityDetails() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability {
+	return v.VulnerabilityDetails
+}
+
+// GetViolationDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics.ViolationDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetViolationDetails() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation {
+	return v.ViolationDetails
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation includes the requested fields of the GraphQL type Violation.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation struct {
+	Purl             *string        `json:"purl"`
+	Type             *ViolationType `json:"type"`
+	License          *string        `json:"license"`
+	ViolationDetails *string        `json:"violationDetails"`
+	AnalysisState    *AnalysisState `json:"analysisState"`
+}
+
+// GetPurl returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.Purl, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetPurl() *string {
+	return v.Purl
+}
+
+// GetType returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.Type, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetType() *ViolationType {
+	return v.Type
+}
+
+// GetLicense returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.License, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetLicense() *string {
+	return v.License
+}
+
+// GetViolationDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.ViolationDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetViolationDetails() *string {
+	return v.ViolationDetails
+}
+
+// GetAnalysisState returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.AnalysisState, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability includes the requested fields of the GraphQL type Vulnerability.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability struct {
+	Purl          *string                `json:"purl"`
+	VulnId        *string                `json:"vulnId"`
+	Severity      *VulnerabilitySeverity `json:"severity"`
+	AnalysisState *AnalysisState         `json:"analysisState"`
+}
+
+// GetPurl returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.Purl, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetPurl() *string {
+	return v.Purl
+}
+
+// GetVulnId returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.VulnId, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetVulnId() *string {
+	return v.VulnId
+}
+
+// GetSeverity returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.Severity, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetSeverity() *VulnerabilitySeverity {
+	return v.Severity
+}
+
+// GetAnalysisState returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.AnalysisState, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactTagsTagRecord struct {
+	Key   *string `json:"key"`
+	Value *string `json:"value"`
+}
+
+// GetKey returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature includes the requested fields of the GraphQL type SceSignature.
+// The GraphQL type's documentation follows.
+//
+// Compact CEL-facing view of an SCE's signature verdict. Surfaced as
+// {@code SourceCodeEntry.signature}; the underlying row lives in
+// signature_verifications.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature struct {
+	State             *SignatureVerificationState `json:"state"`
+	Format            *SignatureFormat            `json:"format"`
+	SignedByOwnerType *SigningKeyOwnerType        `json:"signedByOwnerType"`
+	SignedByOwnerUuid *string                     `json:"signedByOwnerUuid"`
+	VerifiedAt        *string                     `json:"verifiedAt"`
+	KeyFingerprint    *string                     `json:"keyFingerprint"`
+}
+
+// GetState returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature.State, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature) GetState() *SignatureVerificationState {
+	return v.State
+}
+
+// GetFormat returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature.Format, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature) GetFormat() *SignatureFormat {
+	return v.Format
+}
+
+// GetSignedByOwnerType returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature.SignedByOwnerType, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature) GetSignedByOwnerType() *SigningKeyOwnerType {
+	return v.SignedByOwnerType
+}
+
+// GetSignedByOwnerUuid returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature.SignedByOwnerUuid, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature) GetSignedByOwnerUuid() *string {
+	return v.SignedByOwnerUuid
+}
+
+// GetVerifiedAt returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature.VerifiedAt, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature) GetVerifiedAt() *string {
+	return v.VerifiedAt
+}
+
+// GetKeyFingerprint returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature.KeyFingerprint, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntrySignatureSceSignature) GetKeyFingerprint() *string {
+	return v.KeyFingerprint
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent includes the requested fields of the GraphQL type ReleaseUpdateEvent.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent struct {
+	Rus      *ReleaseUpdateScopeEnum  `json:"rus"`
+	Rua      *ReleaseUpdateActionEnum `json:"rua"`
+	OldValue *string                  `json:"oldValue"`
+	NewValue *string                  `json:"newValue"`
+	// Human-readable reason for this event, populated when the
+	// change carries context the oldValue/newValue tuple cannot
+	// convey on its own. For LIFECYCLE events fired by a
+	// component-level CEL input trigger, this carries the trigger
+	// name and the CEL expression that matched. null for events
+	// whose meaning is fully captured by the structural fields.
+	Message *string `json:"message"`
+	Date    *string `json:"date"`
+}
+
+// GetRus returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent.Rus, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent) GetRus() *ReleaseUpdateScopeEnum {
+	return v.Rus
+}
+
+// GetRua returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent.Rua, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent) GetRua() *ReleaseUpdateActionEnum {
+	return v.Rua
+}
+
+// GetOldValue returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent.OldValue, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent) GetOldValue() *string {
+	return v.OldValue
+}
+
+// GetNewValue returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent.NewValue, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent) GetNewValue() *string {
+	return v.NewValue
+}
+
+// GetMessage returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent.Message, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent) GetMessage() *string {
+	return v.Message
+}
+
+// GetDate returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent.Date, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseUpdateEventsReleaseUpdateEvent) GetDate() *string {
+	return v.Date
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariant includes the requested fields of the GraphQL type Variant.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariant struct {
+	OutboundDeliverableDetails []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverable `json:"outboundDeliverableDetails"`
+}
+
+// GetOutboundDeliverableDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariant.OutboundDeliverableDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariant) GetOutboundDeliverableDetails() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverable {
+	return v.OutboundDeliverableDetails
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverable includes the requested fields of the GraphQL type Deliverable.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverable struct {
+	Uuid              *string                                                                                                                                         `json:"uuid"`
+	DisplayIdentifier *string                                                                                                                                         `json:"displayIdentifier"`
+	ArtifactDetails   []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact `json:"artifactDetails"`
+}
+
+// GetUuid returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverable.Uuid, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverable) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetDisplayIdentifier returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverable.DisplayIdentifier, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverable) GetDisplayIdentifier() *string {
+	return v.DisplayIdentifier
+}
+
+// GetArtifactDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverable.ArtifactDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverable) GetArtifactDetails() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact {
+	return v.ArtifactDetails
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact includes the requested fields of the GraphQL type Artifact.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact struct {
+	Uuid              *string                                                                                                                                                                    `json:"uuid"`
+	DisplayIdentifier *string                                                                                                                                                                    `json:"displayIdentifier"`
+	Type              *ArtifactType                                                                                                                                                              `json:"type"`
+	BomFormat         *BomFormat                                                                                                                                                                 `json:"bomFormat"`
+	Tags              []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactTagsTagRecord               `json:"tags"`
+	Metrics           *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics `json:"metrics"`
+}
+
+// GetUuid returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact.Uuid, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetDisplayIdentifier returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact.DisplayIdentifier, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact) GetDisplayIdentifier() *string {
+	return v.DisplayIdentifier
+}
+
+// GetType returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact.Type, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact) GetType() *ArtifactType {
+	return v.Type
+}
+
+// GetBomFormat returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact.BomFormat, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact) GetBomFormat() *BomFormat {
+	return v.BomFormat
+}
+
+// GetTags returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact.Tags, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact) GetTags() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactTagsTagRecord {
+	return v.Tags
+}
+
+// GetMetrics returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact.Metrics, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifact) GetMetrics() *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics {
+	return v.Metrics
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics includes the requested fields of the GraphQL type DependencyTrackMetrics.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics struct {
+	FirstScanned                     *string                                                                                                                                                                                                       `json:"firstScanned"`
+	LastScanned                      *string                                                                                                                                                                                                       `json:"lastScanned"`
+	Critical                         *int                                                                                                                                                                                                          `json:"critical"`
+	High                             *int                                                                                                                                                                                                          `json:"high"`
+	Medium                           *int                                                                                                                                                                                                          `json:"medium"`
+	Low                              *int                                                                                                                                                                                                          `json:"low"`
+	Unassigned                       *int                                                                                                                                                                                                          `json:"unassigned"`
+	PolicyViolationsSecurityTotal    *int                                                                                                                                                                                                          `json:"policyViolationsSecurityTotal"`
+	PolicyViolationsLicenseTotal     *int                                                                                                                                                                                                          `json:"policyViolationsLicenseTotal"`
+	PolicyViolationsOperationalTotal *int                                                                                                                                                                                                          `json:"policyViolationsOperationalTotal"`
+	VulnerabilityDetails             []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability `json:"vulnerabilityDetails"`
+	ViolationDetails                 []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation         `json:"violationDetails"`
+}
+
+// GetFirstScanned returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics.FirstScanned, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetFirstScanned() *string {
+	return v.FirstScanned
+}
+
+// GetLastScanned returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics.LastScanned, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetLastScanned() *string {
+	return v.LastScanned
+}
+
+// GetCritical returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics.Critical, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetCritical() *int {
+	return v.Critical
+}
+
+// GetHigh returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics.High, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetHigh() *int {
+	return v.High
+}
+
+// GetMedium returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics.Medium, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetMedium() *int {
+	return v.Medium
+}
+
+// GetLow returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics.Low, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetLow() *int {
+	return v.Low
+}
+
+// GetUnassigned returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics.Unassigned, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetUnassigned() *int {
+	return v.Unassigned
+}
+
+// GetPolicyViolationsSecurityTotal returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics.PolicyViolationsSecurityTotal, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetPolicyViolationsSecurityTotal() *int {
+	return v.PolicyViolationsSecurityTotal
+}
+
+// GetPolicyViolationsLicenseTotal returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics.PolicyViolationsLicenseTotal, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetPolicyViolationsLicenseTotal() *int {
+	return v.PolicyViolationsLicenseTotal
+}
+
+// GetPolicyViolationsOperationalTotal returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics.PolicyViolationsOperationalTotal, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetPolicyViolationsOperationalTotal() *int {
+	return v.PolicyViolationsOperationalTotal
+}
+
+// GetVulnerabilityDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics.VulnerabilityDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetVulnerabilityDetails() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability {
+	return v.VulnerabilityDetails
+}
+
+// GetViolationDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics.ViolationDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics) GetViolationDetails() []*AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation {
+	return v.ViolationDetails
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation includes the requested fields of the GraphQL type Violation.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation struct {
+	Purl             *string        `json:"purl"`
+	Type             *ViolationType `json:"type"`
+	License          *string        `json:"license"`
+	ViolationDetails *string        `json:"violationDetails"`
+	AnalysisState    *AnalysisState `json:"analysisState"`
+}
+
+// GetPurl returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.Purl, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetPurl() *string {
+	return v.Purl
+}
+
+// GetType returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.Type, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetType() *ViolationType {
+	return v.Type
+}
+
+// GetLicense returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.License, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetLicense() *string {
+	return v.License
+}
+
+// GetViolationDetails returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.ViolationDetails, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetViolationDetails() *string {
+	return v.ViolationDetails
+}
+
+// GetAnalysisState returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation.AnalysisState, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsViolationDetailsViolation) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability includes the requested fields of the GraphQL type Vulnerability.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability struct {
+	Purl          *string                `json:"purl"`
+	VulnId        *string                `json:"vulnId"`
+	Severity      *VulnerabilitySeverity `json:"severity"`
+	AnalysisState *AnalysisState         `json:"analysisState"`
+}
+
+// GetPurl returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.Purl, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetPurl() *string {
+	return v.Purl
+}
+
+// GetVulnId returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.VulnId, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetVulnId() *string {
+	return v.VulnId
+}
+
+// GetSeverity returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.Severity, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetSeverity() *VulnerabilitySeverity {
+	return v.Severity
+}
+
+// GetAnalysisState returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.AnalysisState, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactTagsTagRecord struct {
+	Key   *string `json:"key"`
+	Value *string `json:"value"`
+}
+
+// GetKey returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// AgenticReleaseProgrammaticResponse is returned by AgenticReleaseProgrammatic on success.
+type AgenticReleaseProgrammaticResponse struct {
+	// FREEFORM-auth read of a single release by uuid, scoped to the
+	// calling agent's session. The caller must pass either {@code
+	// sessionUuid} (the row uuid returned by {@code sessionInitializeProgrammatic})
+	// or {@code clientSessionId} (the agent-chosen id). Authorization
+	// chain: (a) calling key carries {@code PermissionFunction.AGENT}
+	// at {@code ORGANIZATION} scope; (b) the session's owning agent
+	// belongs to the calling key's identity; (c) the requested release
+	// is attributed to that session (its commits trace through to this
+	// release). Any failure throws {@code AccessDeniedException} and
+	// is logged SECURITY-level. Used by agents after a LIFECYCLE_CHANGE
+	// / APPROVAL inbox event to pull updateEvents + approvalEvents on
+	// the release.
+	AgenticReleaseProgrammatic *AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease `json:"agenticReleaseProgrammatic"`
+}
+
+// GetAgenticReleaseProgrammatic returns AgenticReleaseProgrammaticResponse.AgenticReleaseProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgenticReleaseProgrammaticResponse) GetAgenticReleaseProgrammatic() *AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease {
+	return v.AgenticReleaseProgrammatic
+}
+
+type AnalysisScope string
+
+const (
+	AnalysisScopeOrg           AnalysisScope = "ORG"
+	AnalysisScopeResourceGroup AnalysisScope = "RESOURCE_GROUP"
+	AnalysisScopeComponent     AnalysisScope = "COMPONENT"
+	AnalysisScopeBranch        AnalysisScope = "BRANCH"
+	AnalysisScopeRelease       AnalysisScope = "RELEASE"
+)
+
+var AllAnalysisScope = []AnalysisScope{
+	AnalysisScopeOrg,
+	AnalysisScopeResourceGroup,
+	AnalysisScopeComponent,
+	AnalysisScopeBranch,
+	AnalysisScopeRelease,
+}
+
+type AnalysisState string
+
+const (
+	AnalysisStateExploitable   AnalysisState = "EXPLOITABLE"
+	AnalysisStateInTriage      AnalysisState = "IN_TRIAGE"
+	AnalysisStateFalsePositive AnalysisState = "FALSE_POSITIVE"
+	AnalysisStateNotAffected   AnalysisState = "NOT_AFFECTED"
+	AnalysisStateResolved      AnalysisState = "RESOLVED"
+)
+
+var AllAnalysisState = []AnalysisState{
+	AnalysisStateExploitable,
+	AnalysisStateInTriage,
+	AnalysisStateFalsePositive,
+	AnalysisStateNotAffected,
+	AnalysisStateResolved,
+}
+
 // ApplyBranchesApplyBranchesProgrammaticDeclarativeApplyResult includes the requested fields of the GraphQL type DeclarativeApplyResult.
 type ApplyBranchesApplyBranchesProgrammaticDeclarativeApplyResult struct {
 	ApplyResultFields `json:"-"`
@@ -395,6 +2118,280 @@ func (v *ApplyResultFieldsChangesDeclarativeChange) __premarshalJSON() (*__prema
 	return &retval, nil
 }
 
+type ApprovalState string
+
+const (
+	ApprovalStateApproved    ApprovalState = "APPROVED"
+	ApprovalStateDisapproved ApprovalState = "DISAPPROVED"
+	ApprovalStateUnset       ApprovalState = "UNSET"
+)
+
+var AllApprovalState = []ApprovalState{
+	ApprovalStateApproved,
+	ApprovalStateDisapproved,
+	ApprovalStateUnset,
+}
+
+// ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease includes the requested fields of the GraphQL type Release.
+type ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease struct {
+	Uuid            *string                                                                                   `json:"uuid"`
+	CreatedType     *ProgrammaticType                                                                         `json:"createdType"`
+	LastUpdatedBy   *string                                                                                   `json:"lastUpdatedBy"`
+	CreatedDate     *string                                                                                   `json:"createdDate"`
+	Version         *string                                                                                   `json:"version"`
+	Lifecycle       *ReleaseLifecycleEnum                                                                     `json:"lifecycle"`
+	Org             *string                                                                                   `json:"org"`
+	Component       *string                                                                                   `json:"component"`
+	Branch          *string                                                                                   `json:"branch"`
+	ParentReleases  []*ApproveReleaseProgrammaticApproveReleaseProgrammaticReleaseParentReleasesParentRelease `json:"parentReleases"`
+	SourceCodeEntry *string                                                                                   `json:"sourceCodeEntry"`
+	Artifacts       []*string                                                                                 `json:"artifacts"`
+	Notes           *string                                                                                   `json:"notes"`
+	Endpoint        *string                                                                                   `json:"endpoint"`
+	Commits         []*string                                                                                 `json:"commits"`
+}
+
+// GetUuid returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetCreatedType returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.CreatedType, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetCreatedType() *ProgrammaticType {
+	return v.CreatedType
+}
+
+// GetLastUpdatedBy returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.LastUpdatedBy, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetLastUpdatedBy() *string {
+	return v.LastUpdatedBy
+}
+
+// GetCreatedDate returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.CreatedDate, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetVersion returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.Version, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetOrg returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.Org, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetOrg() *string { return v.Org }
+
+// GetComponent returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.Component, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetComponent() *string {
+	return v.Component
+}
+
+// GetBranch returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.Branch, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetBranch() *string {
+	return v.Branch
+}
+
+// GetParentReleases returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.ParentReleases, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetParentReleases() []*ApproveReleaseProgrammaticApproveReleaseProgrammaticReleaseParentReleasesParentRelease {
+	return v.ParentReleases
+}
+
+// GetSourceCodeEntry returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.SourceCodeEntry, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetSourceCodeEntry() *string {
+	return v.SourceCodeEntry
+}
+
+// GetArtifacts returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.Artifacts, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetArtifacts() []*string {
+	return v.Artifacts
+}
+
+// GetNotes returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.Notes, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetNotes() *string {
+	return v.Notes
+}
+
+// GetEndpoint returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.Endpoint, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetEndpoint() *string {
+	return v.Endpoint
+}
+
+// GetCommits returns ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease.Commits, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease) GetCommits() []*string {
+	return v.Commits
+}
+
+// ApproveReleaseProgrammaticApproveReleaseProgrammaticReleaseParentReleasesParentRelease includes the requested fields of the GraphQL type ParentRelease.
+type ApproveReleaseProgrammaticApproveReleaseProgrammaticReleaseParentReleasesParentRelease struct {
+	Release *string `json:"release"`
+}
+
+// GetRelease returns ApproveReleaseProgrammaticApproveReleaseProgrammaticReleaseParentReleasesParentRelease.Release, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticApproveReleaseProgrammaticReleaseParentReleasesParentRelease) GetRelease() *string {
+	return v.Release
+}
+
+// ApproveReleaseProgrammaticResponse is returned by ApproveReleaseProgrammatic on success.
+type ApproveReleaseProgrammaticResponse struct {
+	ApproveReleaseProgrammatic *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease `json:"approveReleaseProgrammatic"`
+}
+
+// GetApproveReleaseProgrammatic returns ApproveReleaseProgrammaticResponse.ApproveReleaseProgrammatic, and is useful for accessing the field via an interface.
+func (v *ApproveReleaseProgrammaticResponse) GetApproveReleaseProgrammatic() *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease {
+	return v.ApproveReleaseProgrammatic
+}
+
+type ArtifactInput struct {
+	Type                    *ArtifactType        `json:"type"`
+	DisplayIdentifier       *string              `json:"displayIdentifier"`
+	DownloadLinks           []*LinkInput         `json:"downloadLinks,omitempty"`
+	InventoryTypes          []*InventoryType     `json:"inventoryTypes"`
+	BomFormat               *string              `json:"bomFormat"`
+	StoredIn                *string              `json:"storedIn"`
+	Tags                    []*TagRecordInput    `json:"tags,omitempty"`
+	Status                  *string              `json:"status"`
+	Version                 *string              `json:"version"`
+	File                    *string              `json:"file"`
+	FileSce                 *string              `json:"fileSce"`
+	StripBom                *StripBomEnum        `json:"stripBom"`
+	DigestRecords           []*DigestRecordInput `json:"digestRecords,omitempty"`
+	Artifacts               []*ArtifactInput     `json:"artifacts,omitempty"`
+	VexScope                *AnalysisScope       `json:"vexScope"`
+	VexImportMode           *VexImportMode       `json:"vexImportMode"`
+	UserIssuerClassOverride *IssuerClass         `json:"userIssuerClassOverride"`
+}
+
+// GetType returns ArtifactInput.Type, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetType() *ArtifactType { return v.Type }
+
+// GetDisplayIdentifier returns ArtifactInput.DisplayIdentifier, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetDisplayIdentifier() *string { return v.DisplayIdentifier }
+
+// GetDownloadLinks returns ArtifactInput.DownloadLinks, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetDownloadLinks() []*LinkInput { return v.DownloadLinks }
+
+// GetInventoryTypes returns ArtifactInput.InventoryTypes, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetInventoryTypes() []*InventoryType { return v.InventoryTypes }
+
+// GetBomFormat returns ArtifactInput.BomFormat, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetBomFormat() *string { return v.BomFormat }
+
+// GetStoredIn returns ArtifactInput.StoredIn, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetStoredIn() *string { return v.StoredIn }
+
+// GetTags returns ArtifactInput.Tags, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetTags() []*TagRecordInput { return v.Tags }
+
+// GetStatus returns ArtifactInput.Status, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetStatus() *string { return v.Status }
+
+// GetVersion returns ArtifactInput.Version, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetVersion() *string { return v.Version }
+
+// GetFile returns ArtifactInput.File, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetFile() *string { return v.File }
+
+// GetFileSce returns ArtifactInput.FileSce, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetFileSce() *string { return v.FileSce }
+
+// GetStripBom returns ArtifactInput.StripBom, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetStripBom() *StripBomEnum { return v.StripBom }
+
+// GetDigestRecords returns ArtifactInput.DigestRecords, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetDigestRecords() []*DigestRecordInput { return v.DigestRecords }
+
+// GetArtifacts returns ArtifactInput.Artifacts, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetArtifacts() []*ArtifactInput { return v.Artifacts }
+
+// GetVexScope returns ArtifactInput.VexScope, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetVexScope() *AnalysisScope { return v.VexScope }
+
+// GetVexImportMode returns ArtifactInput.VexImportMode, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetVexImportMode() *VexImportMode { return v.VexImportMode }
+
+// GetUserIssuerClassOverride returns ArtifactInput.UserIssuerClassOverride, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetUserIssuerClassOverride() *IssuerClass { return v.UserIssuerClassOverride }
+
+type ArtifactType string
+
+const (
+	ArtifactTypeBom                 ArtifactType = "BOM"
+	ArtifactTypeAttestation         ArtifactType = "ATTESTATION"
+	ArtifactTypeVdr                 ArtifactType = "VDR"
+	ArtifactTypeBov                 ArtifactType = "BOV"
+	ArtifactTypeVex                 ArtifactType = "VEX"
+	ArtifactTypeUserDocument        ArtifactType = "USER_DOCUMENT"
+	ArtifactTypeDevelopmentDocument ArtifactType = "DEVELOPMENT_DOCUMENT"
+	ArtifactTypeProjectDocument     ArtifactType = "PROJECT_DOCUMENT"
+	ArtifactTypeMarketingDocument   ArtifactType = "MARKETING_DOCUMENT"
+	ArtifactTypeTestReport          ArtifactType = "TEST_REPORT"
+	ArtifactTypeCodeScanningResult  ArtifactType = "CODE_SCANNING_RESULT"
+	ArtifactTypeSarif               ArtifactType = "SARIF"
+	ArtifactTypeBuildMeta           ArtifactType = "BUILD_META"
+	ArtifactTypeCertification       ArtifactType = "CERTIFICATION"
+	ArtifactTypeFormulation         ArtifactType = "FORMULATION"
+	ArtifactTypeLicense             ArtifactType = "LICENSE"
+	ArtifactTypeReleaseNotes        ArtifactType = "RELEASE_NOTES"
+	ArtifactTypeSecurityTxt         ArtifactType = "SECURITY_TXT"
+	ArtifactTypeThreatModel         ArtifactType = "THREAT_MODEL"
+	ArtifactTypeSignature           ArtifactType = "SIGNATURE"
+	ArtifactTypeSignedPayload       ArtifactType = "SIGNED_PAYLOAD"
+	ArtifactTypePublicKey           ArtifactType = "PUBLIC_KEY"
+	ArtifactTypeCertificateX509     ArtifactType = "CERTIFICATE_X_509"
+	ArtifactTypeCertificatePgp      ArtifactType = "CERTIFICATE_PGP"
+	ArtifactTypeRiskAssessment      ArtifactType = "RISK_ASSESSMENT"
+	// AI-agent self-reported artifact attached to an AgentSession -- orientation briefs, mid-session checkpoints, end-of-session summaries. Used as the data source for agentic policies.
+	ArtifactTypeAgenticReport ArtifactType = "AGENTIC_REPORT"
+	ArtifactTypeOther         ArtifactType = "OTHER"
+)
+
+var AllArtifactType = []ArtifactType{
+	ArtifactTypeBom,
+	ArtifactTypeAttestation,
+	ArtifactTypeVdr,
+	ArtifactTypeBov,
+	ArtifactTypeVex,
+	ArtifactTypeUserDocument,
+	ArtifactTypeDevelopmentDocument,
+	ArtifactTypeProjectDocument,
+	ArtifactTypeMarketingDocument,
+	ArtifactTypeTestReport,
+	ArtifactTypeCodeScanningResult,
+	ArtifactTypeSarif,
+	ArtifactTypeBuildMeta,
+	ArtifactTypeCertification,
+	ArtifactTypeFormulation,
+	ArtifactTypeLicense,
+	ArtifactTypeReleaseNotes,
+	ArtifactTypeSecurityTxt,
+	ArtifactTypeThreatModel,
+	ArtifactTypeSignature,
+	ArtifactTypeSignedPayload,
+	ArtifactTypePublicKey,
+	ArtifactTypeCertificateX509,
+	ArtifactTypeCertificatePgp,
+	ArtifactTypeRiskAssessment,
+	ArtifactTypeAgenticReport,
+	ArtifactTypeOther,
+}
+
+type AttributionState string
+
+const (
+	AttributionStateUnattributed AttributionState = "UNATTRIBUTED"
+	AttributionStateResolved     AttributionState = "RESOLVED"
+	AttributionStateRejected     AttributionState = "REJECTED"
+)
+
+var AllAttributionState = []AttributionState{
+	AttributionStateUnattributed,
+	AttributionStateResolved,
+	AttributionStateRejected,
+}
+
 type AutoIntegrateState string
 
 const (
@@ -405,6 +2402,34 @@ const (
 var AllAutoIntegrateState = []AutoIntegrateState{
 	AutoIntegrateStateEnabled,
 	AutoIntegrateStateDisabled,
+}
+
+// Internal/external classification of a component (D16). EXTERNAL components are
+// third-party dependencies tracked inside the tenant's org and never receive a
+// platform-stamped sid PURL -- stamping the tenant's authority on third-party
+// software would be a falsified vendor claim. Defaults to INTERNAL on create.
+type BelongsToOrganization string
+
+const (
+	BelongsToOrganizationInternal BelongsToOrganization = "INTERNAL"
+	BelongsToOrganizationExternal BelongsToOrganization = "EXTERNAL"
+)
+
+var AllBelongsToOrganization = []BelongsToOrganization{
+	BelongsToOrganizationInternal,
+	BelongsToOrganizationExternal,
+}
+
+type BomFormat string
+
+const (
+	BomFormatCyclonedx BomFormat = "CYCLONEDX"
+	BomFormatSpdx      BomFormat = "SPDX"
+)
+
+var AllBomFormat = []BomFormat{
+	BomFormatCyclonedx,
+	BomFormatSpdx,
 }
 
 type BranchSpecInput struct {
@@ -526,6 +2551,36 @@ func (v *BranchesSpecInput) GetAuthoritative() *bool { return v.Authoritative }
 // GetBranches returns BranchesSpecInput.Branches, and is useful for accessing the field via an interface.
 func (v *BranchesSpecInput) GetBranches() []*BranchSpecInput { return v.Branches }
 
+type CPUArchitectureEnum string
+
+const (
+	CPUArchitectureEnumAmd64   CPUArchitectureEnum = "AMD64"
+	CPUArchitectureEnumI386    CPUArchitectureEnum = "I386"
+	CPUArchitectureEnumPpc     CPUArchitectureEnum = "PPC"
+	CPUArchitectureEnumArmv7   CPUArchitectureEnum = "ARMV7"
+	CPUArchitectureEnumArmv8   CPUArchitectureEnum = "ARMV8"
+	CPUArchitectureEnumIa32    CPUArchitectureEnum = "IA32"
+	CPUArchitectureEnumMips    CPUArchitectureEnum = "MIPS"
+	CPUArchitectureEnumRiscv64 CPUArchitectureEnum = "RISCV64"
+	CPUArchitectureEnumS390    CPUArchitectureEnum = "S390"
+	CPUArchitectureEnumS390x   CPUArchitectureEnum = "S390X"
+	CPUArchitectureEnumOther   CPUArchitectureEnum = "OTHER"
+)
+
+var AllCPUArchitectureEnum = []CPUArchitectureEnum{
+	CPUArchitectureEnumAmd64,
+	CPUArchitectureEnumI386,
+	CPUArchitectureEnumPpc,
+	CPUArchitectureEnumArmv7,
+	CPUArchitectureEnumArmv8,
+	CPUArchitectureEnumIa32,
+	CPUArchitectureEnumMips,
+	CPUArchitectureEnumRiscv64,
+	CPUArchitectureEnumS390,
+	CPUArchitectureEnumS390x,
+	CPUArchitectureEnumOther,
+}
+
 type CatalogComponentInput struct {
 	Name                    string         `json:"name"`
 	Type                    ComponentType  `json:"type"`
@@ -617,6 +2672,40 @@ func (v *CatalogSpecInput) GetAuthoritative() *bool { return v.Authoritative }
 // GetComponents returns CatalogSpecInput.Components, and is useful for accessing the field via an interface.
 func (v *CatalogSpecInput) GetComponents() []*CatalogComponentInput { return v.Components }
 
+type CdxType string
+
+const (
+	CdxTypeContainer            CdxType = "CONTAINER"
+	CdxTypePlatform             CdxType = "PLATFORM"
+	CdxTypeFile                 CdxType = "FILE"
+	CdxTypeLibrary              CdxType = "LIBRARY"
+	CdxTypeApplication          CdxType = "APPLICATION"
+	CdxTypeFramework            CdxType = "FRAMEWORK"
+	CdxTypeOperatingSystem      CdxType = "OPERATING_SYSTEM"
+	CdxTypeDevice               CdxType = "DEVICE"
+	CdxTypeDeviceDriver         CdxType = "DEVICE_DRIVER"
+	CdxTypeFirmware             CdxType = "FIRMWARE"
+	CdxTypeMachineLearningModel CdxType = "MACHINE_LEARNING_MODEL"
+	CdxTypeData                 CdxType = "DATA"
+	CdxTypeCryptographicAsset   CdxType = "CRYPTOGRAPHIC_ASSET"
+)
+
+var AllCdxType = []CdxType{
+	CdxTypeContainer,
+	CdxTypePlatform,
+	CdxTypeFile,
+	CdxTypeLibrary,
+	CdxTypeApplication,
+	CdxTypeFramework,
+	CdxTypeOperatingSystem,
+	CdxTypeDevice,
+	CdxTypeDeviceDriver,
+	CdxTypeFirmware,
+	CdxTypeMachineLearningModel,
+	CdxTypeData,
+	CdxTypeCryptographicAsset,
+}
+
 // ChangeFields includes the GraphQL fields of DeclarativeChange requested by the fragment ChangeFields.
 type ChangeFields struct {
 	// Slice the entry belongs to: CATALOG entries are components, BRANCHES entries are branches.
@@ -682,6 +2771,321 @@ var AllComponentType = []ComponentType{
 	ComponentTypeAny,
 }
 
+type ConditionGroupOnGetLatestReleaseInput struct {
+	MatchOperator *MatchOperator                      `json:"matchOperator"`
+	Conditions    []*ConditionOnGetLatestReleaseInput `json:"conditions,omitempty"`
+}
+
+// GetMatchOperator returns ConditionGroupOnGetLatestReleaseInput.MatchOperator, and is useful for accessing the field via an interface.
+func (v *ConditionGroupOnGetLatestReleaseInput) GetMatchOperator() *MatchOperator {
+	return v.MatchOperator
+}
+
+// GetConditions returns ConditionGroupOnGetLatestReleaseInput.Conditions, and is useful for accessing the field via an interface.
+func (v *ConditionGroupOnGetLatestReleaseInput) GetConditions() []*ConditionOnGetLatestReleaseInput {
+	return v.Conditions
+}
+
+type ConditionOnGetLatestReleaseInput struct {
+	ApprovalEntry *string        `json:"approvalEntry"`
+	ApprovalState *ApprovalState `json:"approvalState"`
+}
+
+// GetApprovalEntry returns ConditionOnGetLatestReleaseInput.ApprovalEntry, and is useful for accessing the field via an interface.
+func (v *ConditionOnGetLatestReleaseInput) GetApprovalEntry() *string { return v.ApprovalEntry }
+
+// GetApprovalState returns ConditionOnGetLatestReleaseInput.ApprovalState, and is useful for accessing the field via an interface.
+func (v *ConditionOnGetLatestReleaseInput) GetApprovalState() *ApprovalState { return v.ApprovalState }
+
+type CoordsInput struct {
+	Latitude  *float64 `json:"latitude"`
+	Longitude *float64 `json:"longitude"`
+}
+
+// GetLatitude returns CoordsInput.Latitude, and is useful for accessing the field via an interface.
+func (v *CoordsInput) GetLatitude() *float64 { return v.Latitude }
+
+// GetLongitude returns CoordsInput.Longitude, and is useful for accessing the field via an interface.
+func (v *CoordsInput) GetLongitude() *float64 { return v.Longitude }
+
+// CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent includes the requested fields of the GraphQL type Component.
+type CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent struct {
+	Uuid                    *string                                                                                                                     `json:"uuid"`
+	Name                    *string                                                                                                                     `json:"name"`
+	Org                     *string                                                                                                                     `json:"org"`
+	Type                    *ComponentType                                                                                                              `json:"type"`
+	VersionSchema           *string                                                                                                                     `json:"versionSchema"`
+	VcsRepositoryDetails    *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponentVcsRepositoryDetailsVcsRepository `json:"vcsRepositoryDetails"`
+	FeatureBranchVersioning *string                                                                                                                     `json:"featureBranchVersioning"`
+	Status                  *Status                                                                                                                     `json:"status"`
+	ApiKeyId                *string                                                                                                                     `json:"apiKeyId"`
+	ApiKey                  *string                                                                                                                     `json:"apiKey"`
+}
+
+// GetUuid returns CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent.Uuid, and is useful for accessing the field via an interface.
+func (v *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetName returns CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent.Name, and is useful for accessing the field via an interface.
+func (v *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent) GetName() *string {
+	return v.Name
+}
+
+// GetOrg returns CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent.Org, and is useful for accessing the field via an interface.
+func (v *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent) GetOrg() *string {
+	return v.Org
+}
+
+// GetType returns CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent.Type, and is useful for accessing the field via an interface.
+func (v *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent) GetType() *ComponentType {
+	return v.Type
+}
+
+// GetVersionSchema returns CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent.VersionSchema, and is useful for accessing the field via an interface.
+func (v *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent) GetVersionSchema() *string {
+	return v.VersionSchema
+}
+
+// GetVcsRepositoryDetails returns CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent.VcsRepositoryDetails, and is useful for accessing the field via an interface.
+func (v *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent) GetVcsRepositoryDetails() *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponentVcsRepositoryDetailsVcsRepository {
+	return v.VcsRepositoryDetails
+}
+
+// GetFeatureBranchVersioning returns CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent.FeatureBranchVersioning, and is useful for accessing the field via an interface.
+func (v *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent) GetFeatureBranchVersioning() *string {
+	return v.FeatureBranchVersioning
+}
+
+// GetStatus returns CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent.Status, and is useful for accessing the field via an interface.
+func (v *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent) GetStatus() *Status {
+	return v.Status
+}
+
+// GetApiKeyId returns CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent.ApiKeyId, and is useful for accessing the field via an interface.
+func (v *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent) GetApiKeyId() *string {
+	return v.ApiKeyId
+}
+
+// GetApiKey returns CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent.ApiKey, and is useful for accessing the field via an interface.
+func (v *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent) GetApiKey() *string {
+	return v.ApiKey
+}
+
+// CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponentVcsRepositoryDetailsVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponentVcsRepositoryDetailsVcsRepository struct {
+	Uri  *string `json:"uri"`
+	Type *string `json:"type"`
+}
+
+// GetUri returns CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponentVcsRepositoryDetailsVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponentVcsRepositoryDetailsVcsRepository) GetUri() *string {
+	return v.Uri
+}
+
+// GetType returns CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponentVcsRepositoryDetailsVcsRepository.Type, and is useful for accessing the field via an interface.
+func (v *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponentVcsRepositoryDetailsVcsRepository) GetType() *string {
+	return v.Type
+}
+
+// CreateComponentInPerspectiveProgrammaticResponse is returned by CreateComponentInPerspectiveProgrammatic on success.
+type CreateComponentInPerspectiveProgrammaticResponse struct {
+	// Programmatic counterpart to createComponentInPerspective. Requires a FREEFORM API key
+	// with WRITE permission on the supplied perspective (or a broader scope that covers it).
+	// Only real perspectives (PerspectiveType.PERSPECTIVE) are accepted -- product-derived
+	// perspectives are rejected.
+	CreateComponentInPerspectiveProgrammatic *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent `json:"createComponentInPerspectiveProgrammatic"`
+}
+
+// GetCreateComponentInPerspectiveProgrammatic returns CreateComponentInPerspectiveProgrammaticResponse.CreateComponentInPerspectiveProgrammatic, and is useful for accessing the field via an interface.
+func (v *CreateComponentInPerspectiveProgrammaticResponse) GetCreateComponentInPerspectiveProgrammatic() *CreateComponentInPerspectiveProgrammaticCreateComponentInPerspectiveProgrammaticComponent {
+	return v.CreateComponentInPerspectiveProgrammatic
+}
+
+type CreateComponentInput struct {
+	Org                     *string              `json:"org"`
+	Name                    string               `json:"name"`
+	Type                    ComponentType        `json:"type"`
+	DefaultBranch           *string              `json:"defaultBranch"`
+	VersionSchema           *string              `json:"versionSchema"`
+	MarketingVersionSchema  *string              `json:"marketingVersionSchema"`
+	VersionType             *VersionType         `json:"versionType"`
+	FeatureBranchVersioning *string              `json:"featureBranchVersioning"`
+	Vcs                     *string              `json:"vcs"`
+	VcsRepository           *VcsRepositoryInput  `json:"vcsRepository,omitempty"`
+	IncludeApi              *bool                `json:"includeApi"`
+	ApprovalPolicy          *string              `json:"approvalPolicy"`
+	Identifiers             []*IdentifierInput   `json:"identifiers,omitempty"`
+	Nature                  *ComponentNature     `json:"nature"`
+	DeviceClass             *DeviceClass         `json:"deviceClass"`
+	MedicalProfile          *MedicalProfileInput `json:"medicalProfile,omitempty"`
+	RepoPath                *string              `json:"repoPath"`
+	BranchSuffixMode        *BranchSuffixMode    `json:"branchSuffixMode"`
+	// Component-level sid override. Only writeable when the org is in ENABLED_FLEXIBLE;
+	// the mutation layer rejects ENABLE/DISABLE writes otherwise (D3).
+	SidPurlOverride *SidPurlOverride `json:"sidPurlOverride"`
+	// Component-level authority segments. May be set even when sidPurlOverride is INHERIT --
+	// the segments only take effect once a higher level enables sid for this component.
+	SidAuthoritySegments []string `json:"sidAuthoritySegments"`
+	// Whether this component is the tenant's own software (INTERNAL) or a tracked
+	// third-party dependency (EXTERNAL). Defaults to INTERNAL when null. EXTERNAL
+	// components never receive a platform-stamped sid PURL (D16).
+	IsInternal *BelongsToOrganization `json:"isInternal"`
+}
+
+// GetOrg returns CreateComponentInput.Org, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetOrg() *string { return v.Org }
+
+// GetName returns CreateComponentInput.Name, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetName() string { return v.Name }
+
+// GetType returns CreateComponentInput.Type, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetType() ComponentType { return v.Type }
+
+// GetDefaultBranch returns CreateComponentInput.DefaultBranch, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetDefaultBranch() *string { return v.DefaultBranch }
+
+// GetVersionSchema returns CreateComponentInput.VersionSchema, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetVersionSchema() *string { return v.VersionSchema }
+
+// GetMarketingVersionSchema returns CreateComponentInput.MarketingVersionSchema, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetMarketingVersionSchema() *string { return v.MarketingVersionSchema }
+
+// GetVersionType returns CreateComponentInput.VersionType, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetVersionType() *VersionType { return v.VersionType }
+
+// GetFeatureBranchVersioning returns CreateComponentInput.FeatureBranchVersioning, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetFeatureBranchVersioning() *string { return v.FeatureBranchVersioning }
+
+// GetVcs returns CreateComponentInput.Vcs, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetVcs() *string { return v.Vcs }
+
+// GetVcsRepository returns CreateComponentInput.VcsRepository, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetVcsRepository() *VcsRepositoryInput { return v.VcsRepository }
+
+// GetIncludeApi returns CreateComponentInput.IncludeApi, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetIncludeApi() *bool { return v.IncludeApi }
+
+// GetApprovalPolicy returns CreateComponentInput.ApprovalPolicy, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetApprovalPolicy() *string { return v.ApprovalPolicy }
+
+// GetIdentifiers returns CreateComponentInput.Identifiers, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetIdentifiers() []*IdentifierInput { return v.Identifiers }
+
+// GetNature returns CreateComponentInput.Nature, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetNature() *ComponentNature { return v.Nature }
+
+// GetDeviceClass returns CreateComponentInput.DeviceClass, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetDeviceClass() *DeviceClass { return v.DeviceClass }
+
+// GetMedicalProfile returns CreateComponentInput.MedicalProfile, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetMedicalProfile() *MedicalProfileInput { return v.MedicalProfile }
+
+// GetRepoPath returns CreateComponentInput.RepoPath, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetRepoPath() *string { return v.RepoPath }
+
+// GetBranchSuffixMode returns CreateComponentInput.BranchSuffixMode, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetBranchSuffixMode() *BranchSuffixMode { return v.BranchSuffixMode }
+
+// GetSidPurlOverride returns CreateComponentInput.SidPurlOverride, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetSidPurlOverride() *SidPurlOverride { return v.SidPurlOverride }
+
+// GetSidAuthoritySegments returns CreateComponentInput.SidAuthoritySegments, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetSidAuthoritySegments() []string { return v.SidAuthoritySegments }
+
+// GetIsInternal returns CreateComponentInput.IsInternal, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetIsInternal() *BelongsToOrganization { return v.IsInternal }
+
+// CreateComponentProgrammaticCreateComponentProgrammaticComponent includes the requested fields of the GraphQL type Component.
+type CreateComponentProgrammaticCreateComponentProgrammaticComponent struct {
+	Uuid                    *string                                                                                           `json:"uuid"`
+	Name                    *string                                                                                           `json:"name"`
+	Org                     *string                                                                                           `json:"org"`
+	Type                    *ComponentType                                                                                    `json:"type"`
+	VersionSchema           *string                                                                                           `json:"versionSchema"`
+	VcsRepositoryDetails    *CreateComponentProgrammaticCreateComponentProgrammaticComponentVcsRepositoryDetailsVcsRepository `json:"vcsRepositoryDetails"`
+	FeatureBranchVersioning *string                                                                                           `json:"featureBranchVersioning"`
+	Status                  *Status                                                                                           `json:"status"`
+	ApiKeyId                *string                                                                                           `json:"apiKeyId"`
+	ApiKey                  *string                                                                                           `json:"apiKey"`
+}
+
+// GetUuid returns CreateComponentProgrammaticCreateComponentProgrammaticComponent.Uuid, and is useful for accessing the field via an interface.
+func (v *CreateComponentProgrammaticCreateComponentProgrammaticComponent) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetName returns CreateComponentProgrammaticCreateComponentProgrammaticComponent.Name, and is useful for accessing the field via an interface.
+func (v *CreateComponentProgrammaticCreateComponentProgrammaticComponent) GetName() *string {
+	return v.Name
+}
+
+// GetOrg returns CreateComponentProgrammaticCreateComponentProgrammaticComponent.Org, and is useful for accessing the field via an interface.
+func (v *CreateComponentProgrammaticCreateComponentProgrammaticComponent) GetOrg() *string {
+	return v.Org
+}
+
+// GetType returns CreateComponentProgrammaticCreateComponentProgrammaticComponent.Type, and is useful for accessing the field via an interface.
+func (v *CreateComponentProgrammaticCreateComponentProgrammaticComponent) GetType() *ComponentType {
+	return v.Type
+}
+
+// GetVersionSchema returns CreateComponentProgrammaticCreateComponentProgrammaticComponent.VersionSchema, and is useful for accessing the field via an interface.
+func (v *CreateComponentProgrammaticCreateComponentProgrammaticComponent) GetVersionSchema() *string {
+	return v.VersionSchema
+}
+
+// GetVcsRepositoryDetails returns CreateComponentProgrammaticCreateComponentProgrammaticComponent.VcsRepositoryDetails, and is useful for accessing the field via an interface.
+func (v *CreateComponentProgrammaticCreateComponentProgrammaticComponent) GetVcsRepositoryDetails() *CreateComponentProgrammaticCreateComponentProgrammaticComponentVcsRepositoryDetailsVcsRepository {
+	return v.VcsRepositoryDetails
+}
+
+// GetFeatureBranchVersioning returns CreateComponentProgrammaticCreateComponentProgrammaticComponent.FeatureBranchVersioning, and is useful for accessing the field via an interface.
+func (v *CreateComponentProgrammaticCreateComponentProgrammaticComponent) GetFeatureBranchVersioning() *string {
+	return v.FeatureBranchVersioning
+}
+
+// GetStatus returns CreateComponentProgrammaticCreateComponentProgrammaticComponent.Status, and is useful for accessing the field via an interface.
+func (v *CreateComponentProgrammaticCreateComponentProgrammaticComponent) GetStatus() *Status {
+	return v.Status
+}
+
+// GetApiKeyId returns CreateComponentProgrammaticCreateComponentProgrammaticComponent.ApiKeyId, and is useful for accessing the field via an interface.
+func (v *CreateComponentProgrammaticCreateComponentProgrammaticComponent) GetApiKeyId() *string {
+	return v.ApiKeyId
+}
+
+// GetApiKey returns CreateComponentProgrammaticCreateComponentProgrammaticComponent.ApiKey, and is useful for accessing the field via an interface.
+func (v *CreateComponentProgrammaticCreateComponentProgrammaticComponent) GetApiKey() *string {
+	return v.ApiKey
+}
+
+// CreateComponentProgrammaticCreateComponentProgrammaticComponentVcsRepositoryDetailsVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type CreateComponentProgrammaticCreateComponentProgrammaticComponentVcsRepositoryDetailsVcsRepository struct {
+	Uri  *string `json:"uri"`
+	Type *string `json:"type"`
+}
+
+// GetUri returns CreateComponentProgrammaticCreateComponentProgrammaticComponentVcsRepositoryDetailsVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *CreateComponentProgrammaticCreateComponentProgrammaticComponentVcsRepositoryDetailsVcsRepository) GetUri() *string {
+	return v.Uri
+}
+
+// GetType returns CreateComponentProgrammaticCreateComponentProgrammaticComponentVcsRepositoryDetailsVcsRepository.Type, and is useful for accessing the field via an interface.
+func (v *CreateComponentProgrammaticCreateComponentProgrammaticComponentVcsRepositoryDetailsVcsRepository) GetType() *string {
+	return v.Type
+}
+
+// CreateComponentProgrammaticResponse is returned by CreateComponentProgrammatic on success.
+type CreateComponentProgrammaticResponse struct {
+	CreateComponentProgrammatic *CreateComponentProgrammaticCreateComponentProgrammaticComponent `json:"createComponentProgrammatic"`
+}
+
+// GetCreateComponentProgrammatic returns CreateComponentProgrammaticResponse.CreateComponentProgrammatic, and is useful for accessing the field via an interface.
+func (v *CreateComponentProgrammaticResponse) GetCreateComponentProgrammatic() *CreateComponentProgrammaticCreateComponentProgrammaticComponent {
+	return v.CreateComponentProgrammatic
+}
+
 type DeclarativeAction string
 
 const (
@@ -729,6 +3133,118 @@ func (v *DeclarativeSourceInput) GetPath() *string { return v.Path }
 // GetCommit returns DeclarativeSourceInput.Commit, and is useful for accessing the field via an interface.
 func (v *DeclarativeSourceInput) GetCommit() *string { return v.Commit }
 
+type DeliverableArtifactInput struct {
+	Deliverable string           `json:"deliverable"`
+	Variant     *string          `json:"variant"`
+	Artifacts   []*ArtifactInput `json:"artifacts,omitempty"`
+}
+
+// GetDeliverable returns DeliverableArtifactInput.Deliverable, and is useful for accessing the field via an interface.
+func (v *DeliverableArtifactInput) GetDeliverable() string { return v.Deliverable }
+
+// GetVariant returns DeliverableArtifactInput.Variant, and is useful for accessing the field via an interface.
+func (v *DeliverableArtifactInput) GetVariant() *string { return v.Variant }
+
+// GetArtifacts returns DeliverableArtifactInput.Artifacts, and is useful for accessing the field via an interface.
+func (v *DeliverableArtifactInput) GetArtifacts() []*ArtifactInput { return v.Artifacts }
+
+// DeliverableDownloadSecretsDeliverableDownloadSecretsComponentAuthentication includes the requested fields of the GraphQL type ComponentAuthentication.
+type DeliverableDownloadSecretsDeliverableDownloadSecretsComponentAuthentication struct {
+	Login    *string `json:"login"`
+	Password *string `json:"password"`
+	Type     *string `json:"type"`
+}
+
+// GetLogin returns DeliverableDownloadSecretsDeliverableDownloadSecretsComponentAuthentication.Login, and is useful for accessing the field via an interface.
+func (v *DeliverableDownloadSecretsDeliverableDownloadSecretsComponentAuthentication) GetLogin() *string {
+	return v.Login
+}
+
+// GetPassword returns DeliverableDownloadSecretsDeliverableDownloadSecretsComponentAuthentication.Password, and is useful for accessing the field via an interface.
+func (v *DeliverableDownloadSecretsDeliverableDownloadSecretsComponentAuthentication) GetPassword() *string {
+	return v.Password
+}
+
+// GetType returns DeliverableDownloadSecretsDeliverableDownloadSecretsComponentAuthentication.Type, and is useful for accessing the field via an interface.
+func (v *DeliverableDownloadSecretsDeliverableDownloadSecretsComponentAuthentication) GetType() *string {
+	return v.Type
+}
+
+// DeliverableDownloadSecretsResponse is returned by DeliverableDownloadSecrets on success.
+type DeliverableDownloadSecretsResponse struct {
+	DeliverableDownloadSecrets *DeliverableDownloadSecretsDeliverableDownloadSecretsComponentAuthentication `json:"deliverableDownloadSecrets"`
+}
+
+// GetDeliverableDownloadSecrets returns DeliverableDownloadSecretsResponse.DeliverableDownloadSecrets, and is useful for accessing the field via an interface.
+func (v *DeliverableDownloadSecretsResponse) GetDeliverableDownloadSecrets() *DeliverableDownloadSecretsDeliverableDownloadSecretsComponentAuthentication {
+	return v.DeliverableDownloadSecrets
+}
+
+type DeliverableInput struct {
+	DisplayIdentifier         *string                `json:"displayIdentifier"`
+	Branch                    *string                `json:"branch"`
+	Type                      *CdxType               `json:"type"`
+	Notes                     *string                `json:"notes"`
+	Tags                      []*TagRecordInput      `json:"tags,omitempty"`
+	Version                   *string                `json:"version"`
+	Publisher                 *string                `json:"publisher"`
+	Group                     *string                `json:"group"`
+	SupportedOs               []*OSEnum              `json:"supportedOs"`
+	SupportedCpuArchitectures []*CPUArchitectureEnum `json:"supportedCpuArchitectures"`
+	SoftwareMetadata          *SoftwareMetadataInput `json:"softwareMetadata,omitempty"`
+	HardwareMetadata          *HardwareMetadataInput `json:"hardwareMetadata,omitempty"`
+	Quantity                  *int                   `json:"quantity"`
+	Artifacts                 []*ArtifactInput       `json:"artifacts,omitempty"`
+	Identifiers               []*IdentifierInput     `json:"identifiers,omitempty"`
+}
+
+// GetDisplayIdentifier returns DeliverableInput.DisplayIdentifier, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetDisplayIdentifier() *string { return v.DisplayIdentifier }
+
+// GetBranch returns DeliverableInput.Branch, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetBranch() *string { return v.Branch }
+
+// GetType returns DeliverableInput.Type, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetType() *CdxType { return v.Type }
+
+// GetNotes returns DeliverableInput.Notes, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetNotes() *string { return v.Notes }
+
+// GetTags returns DeliverableInput.Tags, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetTags() []*TagRecordInput { return v.Tags }
+
+// GetVersion returns DeliverableInput.Version, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetVersion() *string { return v.Version }
+
+// GetPublisher returns DeliverableInput.Publisher, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetPublisher() *string { return v.Publisher }
+
+// GetGroup returns DeliverableInput.Group, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetGroup() *string { return v.Group }
+
+// GetSupportedOs returns DeliverableInput.SupportedOs, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetSupportedOs() []*OSEnum { return v.SupportedOs }
+
+// GetSupportedCpuArchitectures returns DeliverableInput.SupportedCpuArchitectures, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetSupportedCpuArchitectures() []*CPUArchitectureEnum {
+	return v.SupportedCpuArchitectures
+}
+
+// GetSoftwareMetadata returns DeliverableInput.SoftwareMetadata, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetSoftwareMetadata() *SoftwareMetadataInput { return v.SoftwareMetadata }
+
+// GetHardwareMetadata returns DeliverableInput.HardwareMetadata, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetHardwareMetadata() *HardwareMetadataInput { return v.HardwareMetadata }
+
+// GetQuantity returns DeliverableInput.Quantity, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetQuantity() *int { return v.Quantity }
+
+// GetArtifacts returns DeliverableInput.Artifacts, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetArtifacts() []*ArtifactInput { return v.Artifacts }
+
+// GetIdentifiers returns DeliverableInput.Identifiers, and is useful for accessing the field via an interface.
+func (v *DeliverableInput) GetIdentifiers() []*IdentifierInput { return v.Identifiers }
+
 type DependencyPatternSpecInput struct {
 	Pattern          string          `json:"pattern"`
 	TargetBranchName *string         `json:"targetBranchName"`
@@ -774,6 +3290,52 @@ func (v *DependencySpecInput) GetStatus() *Status { return v.Status }
 // GetIsFollowVersion returns DependencySpecInput.IsFollowVersion, and is useful for accessing the field via an interface.
 func (v *DependencySpecInput) GetIsFollowVersion() *bool { return v.IsFollowVersion }
 
+type DeploymentFailureClass string
+
+const (
+	DeploymentFailureClassRbacForbidden       DeploymentFailureClass = "RBAC_FORBIDDEN"
+	DeploymentFailureClassChartNotFound       DeploymentFailureClass = "CHART_NOT_FOUND"
+	DeploymentFailureClassTimeout             DeploymentFailureClass = "TIMEOUT"
+	DeploymentFailureClassImagePull           DeploymentFailureClass = "IMAGE_PULL"
+	DeploymentFailureClassValuesInvalid       DeploymentFailureClass = "VALUES_INVALID"
+	DeploymentFailureClassPreconditionMissing DeploymentFailureClass = "PRECONDITION_MISSING"
+	DeploymentFailureClassUnknown             DeploymentFailureClass = "UNKNOWN"
+)
+
+var AllDeploymentFailureClass = []DeploymentFailureClass{
+	DeploymentFailureClassRbacForbidden,
+	DeploymentFailureClassChartNotFound,
+	DeploymentFailureClassTimeout,
+	DeploymentFailureClassImagePull,
+	DeploymentFailureClassValuesInvalid,
+	DeploymentFailureClassPreconditionMissing,
+	DeploymentFailureClassUnknown,
+}
+
+type DeploymentPhase string
+
+const (
+	DeploymentPhaseValuesMerge    DeploymentPhase = "VALUES_MERGE"
+	DeploymentPhaseTagReplace     DeploymentPhase = "TAG_REPLACE"
+	DeploymentPhaseSecrets        DeploymentPhase = "SECRETS"
+	DeploymentPhaseHelmInstall    DeploymentPhase = "HELM_INSTALL"
+	DeploymentPhaseHelmUninstall  DeploymentPhase = "HELM_UNINSTALL"
+	DeploymentPhaseWatcherInstall DeploymentPhase = "WATCHER_INSTALL"
+	DeploymentPhaseBackup         DeploymentPhase = "BACKUP"
+	DeploymentPhaseUnknown        DeploymentPhase = "UNKNOWN"
+)
+
+var AllDeploymentPhase = []DeploymentPhase{
+	DeploymentPhaseValuesMerge,
+	DeploymentPhaseTagReplace,
+	DeploymentPhaseSecrets,
+	DeploymentPhaseHelmInstall,
+	DeploymentPhaseHelmUninstall,
+	DeploymentPhaseWatcherInstall,
+	DeploymentPhaseBackup,
+	DeploymentPhaseUnknown,
+}
+
 // Regulatory classification of a component / device (Distribution module).
 type DeviceClass string
 
@@ -787,6 +3349,98 @@ var AllDeviceClass = []DeviceClass{
 	DeviceClassNone,
 	DeviceClassMedicalUntracked,
 	DeviceClassMedicalTracked,
+}
+
+type DigestRecordInput struct {
+	Algo   *TeaArtifactChecksumType `json:"algo"`
+	Digest *string                  `json:"digest"`
+	Scope  *DigestScope             `json:"scope"`
+}
+
+// GetAlgo returns DigestRecordInput.Algo, and is useful for accessing the field via an interface.
+func (v *DigestRecordInput) GetAlgo() *TeaArtifactChecksumType { return v.Algo }
+
+// GetDigest returns DigestRecordInput.Digest, and is useful for accessing the field via an interface.
+func (v *DigestRecordInput) GetDigest() *string { return v.Digest }
+
+// GetScope returns DigestRecordInput.Scope, and is useful for accessing the field via an interface.
+func (v *DigestRecordInput) GetScope() *DigestScope { return v.Scope }
+
+type DigestScope string
+
+const (
+	DigestScopeOriginalFile DigestScope = "ORIGINAL_FILE"
+	DigestScopeOciStorage   DigestScope = "OCI_STORAGE"
+	DigestScopeRearm        DigestScope = "REARM"
+)
+
+var AllDigestScope = []DigestScope{
+	DigestScopeOriginalFile,
+	DigestScopeOciStorage,
+	DigestScopeRearm,
+}
+
+// EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey includes the requested fields of the GraphQL type SigningKey.
+// The GraphQL type's documentation follows.
+//
+// Enrolled public key bound to an Agent or Committer. The verifier
+// matches signatures by fingerprint to this row and never trusts the
+// key embedded in a signature blob.
+type EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey struct {
+	Uuid      *string              `json:"uuid"`
+	Format    *SignatureFormat     `json:"format"`
+	OwnerType *SigningKeyOwnerType `json:"ownerType"`
+	OwnerUuid *string              `json:"ownerUuid"`
+	// Normalised fingerprint -- SHA256:... for SSH, long key id for GPG.
+	Fingerprint *string `json:"fingerprint"`
+	// Principal string ssh-keygen expects via -I, or GPG user-id.
+	Identity    *string `json:"identity"`
+	CreatedDate *string `json:"createdDate"`
+}
+
+// GetUuid returns EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey.Uuid, and is useful for accessing the field via an interface.
+func (v *EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetFormat returns EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey.Format, and is useful for accessing the field via an interface.
+func (v *EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey) GetFormat() *SignatureFormat {
+	return v.Format
+}
+
+// GetOwnerType returns EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey.OwnerType, and is useful for accessing the field via an interface.
+func (v *EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey) GetOwnerType() *SigningKeyOwnerType {
+	return v.OwnerType
+}
+
+// GetOwnerUuid returns EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey.OwnerUuid, and is useful for accessing the field via an interface.
+func (v *EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey) GetOwnerUuid() *string {
+	return v.OwnerUuid
+}
+
+// GetFingerprint returns EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey.Fingerprint, and is useful for accessing the field via an interface.
+func (v *EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey) GetFingerprint() *string {
+	return v.Fingerprint
+}
+
+// GetIdentity returns EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey.Identity, and is useful for accessing the field via an interface.
+func (v *EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey) GetIdentity() *string {
+	return v.Identity
+}
+
+// GetCreatedDate returns EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey.CreatedDate, and is useful for accessing the field via an interface.
+func (v *EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// EnrollSigningKeyProgrammaticResponse is returned by EnrollSigningKeyProgrammatic on success.
+type EnrollSigningKeyProgrammaticResponse struct {
+	EnrollSigningKeyProgrammatic *EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey `json:"enrollSigningKeyProgrammatic"`
+}
+
+// GetEnrollSigningKeyProgrammatic returns EnrollSigningKeyProgrammaticResponse.EnrollSigningKeyProgrammatic, and is useful for accessing the field via an interface.
+func (v *EnrollSigningKeyProgrammaticResponse) GetEnrollSigningKeyProgrammatic() *EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey {
+	return v.EnrollSigningKeyProgrammatic
 }
 
 // ExportBranchesExportBranchesProgrammaticBranchesSpec includes the requested fields of the GraphQL type BranchesSpec.
@@ -1243,6 +3897,21 @@ func (v *ExportCatalogResponse) GetExportCatalogProgrammatic() *ExportCatalogExp
 	return v.ExportCatalogProgrammatic
 }
 
+type ExternalRefInput struct {
+	Type    *string `json:"type"`
+	Url     *string `json:"url"`
+	Comment *string `json:"comment"`
+}
+
+// GetType returns ExternalRefInput.Type, and is useful for accessing the field via an interface.
+func (v *ExternalRefInput) GetType() *string { return v.Type }
+
+// GetUrl returns ExternalRefInput.Url, and is useful for accessing the field via an interface.
+func (v *ExternalRefInput) GetUrl() *string { return v.Url }
+
+// GetComment returns ExternalRefInput.Comment, and is useful for accessing the field via an interface.
+func (v *ExternalRefInput) GetComment() *string { return v.Comment }
+
 type FallbackToBase string
 
 const (
@@ -1266,6 +3935,1102 @@ var AllFindingAnalyticsParticipation = []FindingAnalyticsParticipation{
 	FindingAnalyticsParticipationIncluded,
 	FindingAnalyticsParticipationExcluded,
 }
+
+// GetInstancePropSecretsGetInstancePropSecrets includes the requested fields of the GraphQL type PropSecrets.
+type GetInstancePropSecretsGetInstancePropSecrets struct {
+	Properties []*GetInstancePropSecretsGetInstancePropSecretsPropertiesKeyValue `json:"properties"`
+	Secrets    []*GetInstancePropSecretsGetInstancePropSecretsSecretsKeyValue    `json:"secrets"`
+}
+
+// GetProperties returns GetInstancePropSecretsGetInstancePropSecrets.Properties, and is useful for accessing the field via an interface.
+func (v *GetInstancePropSecretsGetInstancePropSecrets) GetProperties() []*GetInstancePropSecretsGetInstancePropSecretsPropertiesKeyValue {
+	return v.Properties
+}
+
+// GetSecrets returns GetInstancePropSecretsGetInstancePropSecrets.Secrets, and is useful for accessing the field via an interface.
+func (v *GetInstancePropSecretsGetInstancePropSecrets) GetSecrets() []*GetInstancePropSecretsGetInstancePropSecretsSecretsKeyValue {
+	return v.Secrets
+}
+
+// GetInstancePropSecretsGetInstancePropSecretsPropertiesKeyValue includes the requested fields of the GraphQL type KeyValue.
+type GetInstancePropSecretsGetInstancePropSecretsPropertiesKeyValue struct {
+	Key   *string `json:"key"`
+	Value *string `json:"value"`
+}
+
+// GetKey returns GetInstancePropSecretsGetInstancePropSecretsPropertiesKeyValue.Key, and is useful for accessing the field via an interface.
+func (v *GetInstancePropSecretsGetInstancePropSecretsPropertiesKeyValue) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns GetInstancePropSecretsGetInstancePropSecretsPropertiesKeyValue.Value, and is useful for accessing the field via an interface.
+func (v *GetInstancePropSecretsGetInstancePropSecretsPropertiesKeyValue) GetValue() *string {
+	return v.Value
+}
+
+// GetInstancePropSecretsGetInstancePropSecretsSecretsKeyValue includes the requested fields of the GraphQL type KeyValue.
+type GetInstancePropSecretsGetInstancePropSecretsSecretsKeyValue struct {
+	Key         *string `json:"key"`
+	Value       *string `json:"value"`
+	LastUpdated *int    `json:"lastUpdated"`
+}
+
+// GetKey returns GetInstancePropSecretsGetInstancePropSecretsSecretsKeyValue.Key, and is useful for accessing the field via an interface.
+func (v *GetInstancePropSecretsGetInstancePropSecretsSecretsKeyValue) GetKey() *string { return v.Key }
+
+// GetValue returns GetInstancePropSecretsGetInstancePropSecretsSecretsKeyValue.Value, and is useful for accessing the field via an interface.
+func (v *GetInstancePropSecretsGetInstancePropSecretsSecretsKeyValue) GetValue() *string {
+	return v.Value
+}
+
+// GetLastUpdated returns GetInstancePropSecretsGetInstancePropSecretsSecretsKeyValue.LastUpdated, and is useful for accessing the field via an interface.
+func (v *GetInstancePropSecretsGetInstancePropSecretsSecretsKeyValue) GetLastUpdated() *int {
+	return v.LastUpdated
+}
+
+// GetInstancePropSecretsResponse is returned by GetInstancePropSecrets on success.
+type GetInstancePropSecretsResponse struct {
+	GetInstancePropSecrets *GetInstancePropSecretsGetInstancePropSecrets `json:"getInstancePropSecrets"`
+}
+
+// GetGetInstancePropSecrets returns GetInstancePropSecretsResponse.GetInstancePropSecrets, and is useful for accessing the field via an interface.
+func (v *GetInstancePropSecretsResponse) GetGetInstancePropSecrets() *GetInstancePropSecretsGetInstancePropSecrets {
+	return v.GetInstancePropSecrets
+}
+
+// GetInstanceRevisionCycloneDxExportProgResponse is returned by GetInstanceRevisionCycloneDxExportProg on success.
+type GetInstanceRevisionCycloneDxExportProgResponse struct {
+	GetInstanceRevisionCycloneDxExportProg *string `json:"getInstanceRevisionCycloneDxExportProg"`
+}
+
+// GetGetInstanceRevisionCycloneDxExportProg returns GetInstanceRevisionCycloneDxExportProgResponse.GetInstanceRevisionCycloneDxExportProg, and is useful for accessing the field via an interface.
+func (v *GetInstanceRevisionCycloneDxExportProgResponse) GetGetInstanceRevisionCycloneDxExportProg() *string {
+	return v.GetInstanceRevisionCycloneDxExportProg
+}
+
+type GetLatestReleaseInput struct {
+	// Component / product uuid, or -- with an organization-scoped key -- its name:
+	// matched case-insensitively against the org's active components and products,
+	// exactly one hit required (unknown or ambiguous names error).
+	Component   *string                                `json:"component"`
+	Product     *string                                `json:"product"`
+	Branch      *string                                `json:"branch"`
+	Tags        []*TagRecordInput                      `json:"tags,omitempty"`
+	Lifecycle   *ReleaseLifecycleEnum                  `json:"lifecycle"`
+	Conditions  *ConditionGroupOnGetLatestReleaseInput `json:"conditions,omitempty"`
+	VcsUri      *string                                `json:"vcsUri"`
+	RepoPath    *string                                `json:"repoPath"`
+	UpToVersion *string                                `json:"upToVersion"`
+	// Only consider releases whose approvedEnvironments contains this built-in
+	// environment (DEV, BUILD, TEST, SIT, UAT, PAT, STAGING, PRODUCTION; case-insensitive).
+	// Orthogonal to lifecycle and conditions: they are applied on top when set.
+	// Environment approvals are granted by an ADD_APPROVED_ENVIRONMENT trigger or an
+	// admin override; a later policy disapproval does not revoke them (only an admin
+	// override removes), so combine with approval-entry conditions when the current
+	// approval state matters. Like conditions, this scans the newest 300 releases
+	// of the branch.
+	ApprovedEnvironment *string `json:"approvedEnvironment"`
+}
+
+// GetComponent returns GetLatestReleaseInput.Component, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseInput) GetComponent() *string { return v.Component }
+
+// GetProduct returns GetLatestReleaseInput.Product, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseInput) GetProduct() *string { return v.Product }
+
+// GetBranch returns GetLatestReleaseInput.Branch, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseInput) GetBranch() *string { return v.Branch }
+
+// GetTags returns GetLatestReleaseInput.Tags, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseInput) GetTags() []*TagRecordInput { return v.Tags }
+
+// GetLifecycle returns GetLatestReleaseInput.Lifecycle, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseInput) GetLifecycle() *ReleaseLifecycleEnum { return v.Lifecycle }
+
+// GetConditions returns GetLatestReleaseInput.Conditions, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseInput) GetConditions() *ConditionGroupOnGetLatestReleaseInput {
+	return v.Conditions
+}
+
+// GetVcsUri returns GetLatestReleaseInput.VcsUri, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseInput) GetVcsUri() *string { return v.VcsUri }
+
+// GetRepoPath returns GetLatestReleaseInput.RepoPath, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseInput) GetRepoPath() *string { return v.RepoPath }
+
+// GetUpToVersion returns GetLatestReleaseInput.UpToVersion, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseInput) GetUpToVersion() *string { return v.UpToVersion }
+
+// GetApprovedEnvironment returns GetLatestReleaseInput.ApprovedEnvironment, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseInput) GetApprovedEnvironment() *string { return v.ApprovedEnvironment }
+
+// GetLatestReleaseProgrammaticCdxResponse is returned by GetLatestReleaseProgrammaticCdx on success.
+type GetLatestReleaseProgrammaticCdxResponse struct {
+	GetLatestReleaseProgrammaticCdx *string `json:"getLatestReleaseProgrammaticCdx"`
+}
+
+// GetGetLatestReleaseProgrammaticCdx returns GetLatestReleaseProgrammaticCdxResponse.GetLatestReleaseProgrammaticCdx, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticCdxResponse) GetGetLatestReleaseProgrammaticCdx() *string {
+	return v.GetLatestReleaseProgrammaticCdx
+}
+
+// GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease includes the requested fields of the GraphQL type Release.
+type GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease struct {
+	Uuid            *string                                                                                       `json:"uuid"`
+	CreatedType     *ProgrammaticType                                                                             `json:"createdType"`
+	LastUpdatedBy   *string                                                                                       `json:"lastUpdatedBy"`
+	CreatedDate     *string                                                                                       `json:"createdDate"`
+	Version         *string                                                                                       `json:"version"`
+	Lifecycle       *ReleaseLifecycleEnum                                                                         `json:"lifecycle"`
+	Org             *string                                                                                       `json:"org"`
+	Component       *string                                                                                       `json:"component"`
+	Branch          *string                                                                                       `json:"branch"`
+	ParentReleases  []*GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleasesParentRelease `json:"parentReleases"`
+	SourceCodeEntry *string                                                                                       `json:"sourceCodeEntry"`
+	Artifacts       []*string                                                                                     `json:"artifacts"`
+	Notes           *string                                                                                       `json:"notes"`
+	Endpoint        *string                                                                                       `json:"endpoint"`
+	Commits         []*string                                                                                     `json:"commits"`
+}
+
+// GetUuid returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetCreatedType returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.CreatedType, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetCreatedType() *ProgrammaticType {
+	return v.CreatedType
+}
+
+// GetLastUpdatedBy returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.LastUpdatedBy, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetLastUpdatedBy() *string {
+	return v.LastUpdatedBy
+}
+
+// GetCreatedDate returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.CreatedDate, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetVersion returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.Version, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetOrg returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.Org, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetOrg() *string {
+	return v.Org
+}
+
+// GetComponent returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.Component, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetComponent() *string {
+	return v.Component
+}
+
+// GetBranch returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.Branch, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetBranch() *string {
+	return v.Branch
+}
+
+// GetParentReleases returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.ParentReleases, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetParentReleases() []*GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleasesParentRelease {
+	return v.ParentReleases
+}
+
+// GetSourceCodeEntry returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.SourceCodeEntry, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetSourceCodeEntry() *string {
+	return v.SourceCodeEntry
+}
+
+// GetArtifacts returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.Artifacts, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetArtifacts() []*string {
+	return v.Artifacts
+}
+
+// GetNotes returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.Notes, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetNotes() *string {
+	return v.Notes
+}
+
+// GetEndpoint returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.Endpoint, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetEndpoint() *string {
+	return v.Endpoint
+}
+
+// GetCommits returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.Commits, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetCommits() []*string {
+	return v.Commits
+}
+
+// GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleasesParentRelease includes the requested fields of the GraphQL type ParentRelease.
+type GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleasesParentRelease struct {
+	Release *string `json:"release"`
+}
+
+// GetRelease returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleasesParentRelease.Release, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleasesParentRelease) GetRelease() *string {
+	return v.Release
+}
+
+// GetLatestReleaseProgrammaticResponse is returned by GetLatestReleaseProgrammatic on success.
+type GetLatestReleaseProgrammaticResponse struct {
+	GetLatestReleaseProgrammatic *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease `json:"getLatestReleaseProgrammatic"`
+}
+
+// GetGetLatestReleaseProgrammatic returns GetLatestReleaseProgrammaticResponse.GetLatestReleaseProgrammatic, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticResponse) GetGetLatestReleaseProgrammatic() *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease {
+	return v.GetLatestReleaseProgrammatic
+}
+
+type GetNewVersionInput struct {
+	Component                                 *string                 `json:"component"`
+	Branch                                    string                  `json:"branch"`
+	Modifier                                  *string                 `json:"modifier"`
+	Action                                    *string                 `json:"action"`
+	Metadata                                  *string                 `json:"metadata"`
+	VersionSchema                             *string                 `json:"versionSchema"`
+	Lifecycle                                 *ReleaseLifecycleEnum   `json:"lifecycle"`
+	OnlyVersion                               *bool                   `json:"onlyVersion"`
+	SourceCodeEntry                           *SourceCodeEntryInput   `json:"sourceCodeEntry,omitempty"`
+	Commits                                   []*SourceCodeEntryInput `json:"commits,omitempty"`
+	VcsUri                                    *string                 `json:"vcsUri"`
+	RepoPath                                  *string                 `json:"repoPath"`
+	VcsDisplayName                            *string                 `json:"vcsDisplayName"`
+	CreateComponentIfMissing                  *bool                   `json:"createComponentIfMissing"`
+	CreateComponentName                       *string                 `json:"createComponentName"`
+	CreateComponentVersionSchema              *string                 `json:"createComponentVersionSchema"`
+	CreateComponentFeatureBranchVersionSchema *string                 `json:"createComponentFeatureBranchVersionSchema"`
+	// Optional perspective UUID. When supplied with createComponentIfMissing
+	// and the component does not yet exist, the new component is created and
+	// assigned to this perspective; authorization with a FREEFORM key requires
+	// WRITE on the perspective. Ignored when the component already exists.
+	Perspective *string `json:"perspective"`
+	// Optional PR metadata bundled with the call. When supplied on
+	// addReleaseProgrammatic, a first-class PullRequest entity is upserted
+	// by (targetVcsRepository, identity) and its head is advanced to the
+	// release's SCE. The PR aggregator picks up the release on subsequent
+	// VALIDATE_PR firings. Ignored on calls that do not create a release.
+	PullRequest *PullRequestInfoInput `json:"pullRequest,omitempty"`
+	// Opt-in dedup override for the commit-keyed gate on
+	// (component, branch, commit). When a version_assignment already
+	// exists for the supplied commit on this branch:
+	// - rebuild = false (default) → mutation fails with an error so the
+	// duplicate CI run can fail fast instead of minting a second
+	// release on the same head.
+	// - rebuild = true → return the existing version assignment so the
+	// caller intentionally reuses the same version (e.g. a re-issue
+	// of an artifact for the same commit).
+	// No effect when no commit is supplied (manual mints, marketing
+	// versions, commit-less callers).
+	Rebuild *bool `json:"rebuild"`
+}
+
+// GetComponent returns GetNewVersionInput.Component, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetComponent() *string { return v.Component }
+
+// GetBranch returns GetNewVersionInput.Branch, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetBranch() string { return v.Branch }
+
+// GetModifier returns GetNewVersionInput.Modifier, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetModifier() *string { return v.Modifier }
+
+// GetAction returns GetNewVersionInput.Action, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetAction() *string { return v.Action }
+
+// GetMetadata returns GetNewVersionInput.Metadata, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetMetadata() *string { return v.Metadata }
+
+// GetVersionSchema returns GetNewVersionInput.VersionSchema, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetVersionSchema() *string { return v.VersionSchema }
+
+// GetLifecycle returns GetNewVersionInput.Lifecycle, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetLifecycle() *ReleaseLifecycleEnum { return v.Lifecycle }
+
+// GetOnlyVersion returns GetNewVersionInput.OnlyVersion, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetOnlyVersion() *bool { return v.OnlyVersion }
+
+// GetSourceCodeEntry returns GetNewVersionInput.SourceCodeEntry, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetSourceCodeEntry() *SourceCodeEntryInput { return v.SourceCodeEntry }
+
+// GetCommits returns GetNewVersionInput.Commits, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetCommits() []*SourceCodeEntryInput { return v.Commits }
+
+// GetVcsUri returns GetNewVersionInput.VcsUri, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetVcsUri() *string { return v.VcsUri }
+
+// GetRepoPath returns GetNewVersionInput.RepoPath, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetRepoPath() *string { return v.RepoPath }
+
+// GetVcsDisplayName returns GetNewVersionInput.VcsDisplayName, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetVcsDisplayName() *string { return v.VcsDisplayName }
+
+// GetCreateComponentIfMissing returns GetNewVersionInput.CreateComponentIfMissing, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetCreateComponentIfMissing() *bool { return v.CreateComponentIfMissing }
+
+// GetCreateComponentName returns GetNewVersionInput.CreateComponentName, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetCreateComponentName() *string { return v.CreateComponentName }
+
+// GetCreateComponentVersionSchema returns GetNewVersionInput.CreateComponentVersionSchema, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetCreateComponentVersionSchema() *string {
+	return v.CreateComponentVersionSchema
+}
+
+// GetCreateComponentFeatureBranchVersionSchema returns GetNewVersionInput.CreateComponentFeatureBranchVersionSchema, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetCreateComponentFeatureBranchVersionSchema() *string {
+	return v.CreateComponentFeatureBranchVersionSchema
+}
+
+// GetPerspective returns GetNewVersionInput.Perspective, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetPerspective() *string { return v.Perspective }
+
+// GetPullRequest returns GetNewVersionInput.PullRequest, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetPullRequest() *PullRequestInfoInput { return v.PullRequest }
+
+// GetRebuild returns GetNewVersionInput.Rebuild, and is useful for accessing the field via an interface.
+func (v *GetNewVersionInput) GetRebuild() *bool { return v.Rebuild }
+
+// GetNewVersionProgrammaticGetNewVersionProgrammaticVersion includes the requested fields of the GraphQL type Version.
+type GetNewVersionProgrammaticGetNewVersionProgrammaticVersion struct {
+	Version              *string `json:"version"`
+	DockerTagSafeVersion *string `json:"dockerTagSafeVersion"`
+	ReleaseAlreadyExists *bool   `json:"releaseAlreadyExists"`
+}
+
+// GetVersion returns GetNewVersionProgrammaticGetNewVersionProgrammaticVersion.Version, and is useful for accessing the field via an interface.
+func (v *GetNewVersionProgrammaticGetNewVersionProgrammaticVersion) GetVersion() *string {
+	return v.Version
+}
+
+// GetDockerTagSafeVersion returns GetNewVersionProgrammaticGetNewVersionProgrammaticVersion.DockerTagSafeVersion, and is useful for accessing the field via an interface.
+func (v *GetNewVersionProgrammaticGetNewVersionProgrammaticVersion) GetDockerTagSafeVersion() *string {
+	return v.DockerTagSafeVersion
+}
+
+// GetReleaseAlreadyExists returns GetNewVersionProgrammaticGetNewVersionProgrammaticVersion.ReleaseAlreadyExists, and is useful for accessing the field via an interface.
+func (v *GetNewVersionProgrammaticGetNewVersionProgrammaticVersion) GetReleaseAlreadyExists() *bool {
+	return v.ReleaseAlreadyExists
+}
+
+// GetNewVersionProgrammaticResponse is returned by GetNewVersionProgrammatic on success.
+type GetNewVersionProgrammaticResponse struct {
+	GetNewVersionProgrammatic *GetNewVersionProgrammaticGetNewVersionProgrammaticVersion `json:"getNewVersionProgrammatic"`
+}
+
+// GetGetNewVersionProgrammatic returns GetNewVersionProgrammaticResponse.GetNewVersionProgrammatic, and is useful for accessing the field via an interface.
+func (v *GetNewVersionProgrammaticResponse) GetGetNewVersionProgrammatic() *GetNewVersionProgrammaticGetNewVersionProgrammaticVersion {
+	return v.GetNewVersionProgrammatic
+}
+
+// GetNewVersionProgrammaticWithLifecycleGetNewVersionProgrammaticVersion includes the requested fields of the GraphQL type Version.
+type GetNewVersionProgrammaticWithLifecycleGetNewVersionProgrammaticVersion struct {
+	Version              *string `json:"version"`
+	DockerTagSafeVersion *string `json:"dockerTagSafeVersion"`
+	ReleaseAlreadyExists *bool   `json:"releaseAlreadyExists"`
+	// Lifecycle of the resolved release at the time getNewVersion returned.
+	// Reflects the state AFTER any synchronous component-trigger run during
+	// release creation -- so a CEL gate that pre-emptively moves the release
+	// to REJECTED is visible here. Callers (CLI / CI actions) should abort
+	// downstream build steps when this is a terminal state (REJECTED,
+	// CANCELLED) instead of charging into a subsequent addrelease that will
+	// collide on the (component, version) dedup gate. Null on the
+	// onlyVersion path (no release row was created).
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+}
+
+// GetVersion returns GetNewVersionProgrammaticWithLifecycleGetNewVersionProgrammaticVersion.Version, and is useful for accessing the field via an interface.
+func (v *GetNewVersionProgrammaticWithLifecycleGetNewVersionProgrammaticVersion) GetVersion() *string {
+	return v.Version
+}
+
+// GetDockerTagSafeVersion returns GetNewVersionProgrammaticWithLifecycleGetNewVersionProgrammaticVersion.DockerTagSafeVersion, and is useful for accessing the field via an interface.
+func (v *GetNewVersionProgrammaticWithLifecycleGetNewVersionProgrammaticVersion) GetDockerTagSafeVersion() *string {
+	return v.DockerTagSafeVersion
+}
+
+// GetReleaseAlreadyExists returns GetNewVersionProgrammaticWithLifecycleGetNewVersionProgrammaticVersion.ReleaseAlreadyExists, and is useful for accessing the field via an interface.
+func (v *GetNewVersionProgrammaticWithLifecycleGetNewVersionProgrammaticVersion) GetReleaseAlreadyExists() *bool {
+	return v.ReleaseAlreadyExists
+}
+
+// GetLifecycle returns GetNewVersionProgrammaticWithLifecycleGetNewVersionProgrammaticVersion.Lifecycle, and is useful for accessing the field via an interface.
+func (v *GetNewVersionProgrammaticWithLifecycleGetNewVersionProgrammaticVersion) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetNewVersionProgrammaticWithLifecycleResponse is returned by GetNewVersionProgrammaticWithLifecycle on success.
+type GetNewVersionProgrammaticWithLifecycleResponse struct {
+	GetNewVersionProgrammatic *GetNewVersionProgrammaticWithLifecycleGetNewVersionProgrammaticVersion `json:"getNewVersionProgrammatic"`
+}
+
+// GetGetNewVersionProgrammatic returns GetNewVersionProgrammaticWithLifecycleResponse.GetNewVersionProgrammatic, and is useful for accessing the field via an interface.
+func (v *GetNewVersionProgrammaticWithLifecycleResponse) GetGetNewVersionProgrammatic() *GetNewVersionProgrammaticWithLifecycleGetNewVersionProgrammaticVersion {
+	return v.GetNewVersionProgrammatic
+}
+
+// GetReleaseByHashProgrammaticResponse is returned by GetReleaseByHashProgrammatic on success.
+type GetReleaseByHashProgrammaticResponse struct {
+	GetReleaseByHashProgrammatic *string `json:"getReleaseByHashProgrammatic"`
+}
+
+// GetGetReleaseByHashProgrammatic returns GetReleaseByHashProgrammaticResponse.GetReleaseByHashProgrammatic, and is useful for accessing the field via an interface.
+func (v *GetReleaseByHashProgrammaticResponse) GetGetReleaseByHashProgrammatic() *string {
+	return v.GetReleaseByHashProgrammatic
+}
+
+// GetReleaseByReleaseVersionProgrammaticResponse is returned by GetReleaseByReleaseVersionProgrammatic on success.
+type GetReleaseByReleaseVersionProgrammaticResponse struct {
+	// Exact-version lookup. Returns the release's OBOM (CycloneDX 1.6: the release
+	// plus every dependency release unwound, with deliverables) as a JSON string,
+	// or "{}" when the version does not exist on the component / product.
+	// Lifecycle and approvals are not consulted: the named version is returned as is.
+	// componentId is the component / product uuid, or -- with an organization-scoped
+	// key -- its name: matched case-insensitively against the org's active components
+	// and products, exactly one hit required (unknown or ambiguous names error).
+	GetReleaseByReleaseVersionProgrammatic *string `json:"getReleaseByReleaseVersionProgrammatic"`
+}
+
+// GetGetReleaseByReleaseVersionProgrammatic returns GetReleaseByReleaseVersionProgrammaticResponse.GetReleaseByReleaseVersionProgrammatic, and is useful for accessing the field via an interface.
+func (v *GetReleaseByReleaseVersionProgrammaticResponse) GetGetReleaseByReleaseVersionProgrammatic() *string {
+	return v.GetReleaseByReleaseVersionProgrammatic
+}
+
+// GetSbomProbingResultGetSbomProbingResult includes the requested fields of the GraphQL type SbomProbingResult.
+type GetSbomProbingResultGetSbomProbingResult struct {
+	Status  SbomProbingStatus                                                      `json:"status"`
+	Metrics *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics `json:"metrics"`
+}
+
+// GetStatus returns GetSbomProbingResultGetSbomProbingResult.Status, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResult) GetStatus() SbomProbingStatus { return v.Status }
+
+// GetMetrics returns GetSbomProbingResultGetSbomProbingResult.Metrics, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResult) GetMetrics() *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics {
+	return v.Metrics
+}
+
+// GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics includes the requested fields of the GraphQL type DependencyTrackMetrics.
+type GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics struct {
+	DependencyTrackFullUri               *string                                                                                                   `json:"dependencyTrackFullUri"`
+	DtrackSubmissionFailed               *bool                                                                                                     `json:"dtrackSubmissionFailed"`
+	DtrackSubmissionAttempts             *int                                                                                                      `json:"dtrackSubmissionAttempts"`
+	DtrackSubmissionFailureReason        *string                                                                                                   `json:"dtrackSubmissionFailureReason"`
+	LastScanned                          *string                                                                                                   `json:"lastScanned"`
+	FirstScanned                         *string                                                                                                   `json:"firstScanned"`
+	Critical                             *int                                                                                                      `json:"critical"`
+	High                                 *int                                                                                                      `json:"high"`
+	Medium                               *int                                                                                                      `json:"medium"`
+	Low                                  *int                                                                                                      `json:"low"`
+	Unassigned                           *int                                                                                                      `json:"unassigned"`
+	Vulnerabilities                      *int                                                                                                      `json:"vulnerabilities"`
+	VulnerableComponents                 *int                                                                                                      `json:"vulnerableComponents"`
+	Components                           *int                                                                                                      `json:"components"`
+	Suppressed                           *int                                                                                                      `json:"suppressed"`
+	FindingsTotal                        *int                                                                                                      `json:"findingsTotal"`
+	FindingsAudited                      *int                                                                                                      `json:"findingsAudited"`
+	FindingsUnaudited                    *int                                                                                                      `json:"findingsUnaudited"`
+	InheritedRiskScore                   *int                                                                                                      `json:"inheritedRiskScore"`
+	PolicyViolationsFail                 *int                                                                                                      `json:"policyViolationsFail"`
+	PolicyViolationsWarn                 *int                                                                                                      `json:"policyViolationsWarn"`
+	PolicyViolationsInfo                 *int                                                                                                      `json:"policyViolationsInfo"`
+	PolicyViolationsTotal                *int                                                                                                      `json:"policyViolationsTotal"`
+	PolicyViolationsAudited              *int                                                                                                      `json:"policyViolationsAudited"`
+	PolicyViolationsUnaudited            *int                                                                                                      `json:"policyViolationsUnaudited"`
+	PolicyViolationsSecurityTotal        *int                                                                                                      `json:"policyViolationsSecurityTotal"`
+	PolicyViolationsSecurityAudited      *int                                                                                                      `json:"policyViolationsSecurityAudited"`
+	PolicyViolationsSecurityUnaudited    *int                                                                                                      `json:"policyViolationsSecurityUnaudited"`
+	PolicyViolationsLicenseTotal         *int                                                                                                      `json:"policyViolationsLicenseTotal"`
+	PolicyViolationsLicenseAudited       *int                                                                                                      `json:"policyViolationsLicenseAudited"`
+	PolicyViolationsLicenseUnaudited     *int                                                                                                      `json:"policyViolationsLicenseUnaudited"`
+	PolicyViolationsOperationalTotal     *int                                                                                                      `json:"policyViolationsOperationalTotal"`
+	PolicyViolationsOperationalAudited   *int                                                                                                      `json:"policyViolationsOperationalAudited"`
+	PolicyViolationsOperationalUnaudited *int                                                                                                      `json:"policyViolationsOperationalUnaudited"`
+	VulnerabilityDetails                 []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability `json:"vulnerabilityDetails"`
+	ViolationDetails                     []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation         `json:"violationDetails"`
+	WeaknessDetails                      []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness           `json:"weaknessDetails"`
+}
+
+// GetDependencyTrackFullUri returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.DependencyTrackFullUri, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetDependencyTrackFullUri() *string {
+	return v.DependencyTrackFullUri
+}
+
+// GetDtrackSubmissionFailed returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.DtrackSubmissionFailed, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetDtrackSubmissionFailed() *bool {
+	return v.DtrackSubmissionFailed
+}
+
+// GetDtrackSubmissionAttempts returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.DtrackSubmissionAttempts, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetDtrackSubmissionAttempts() *int {
+	return v.DtrackSubmissionAttempts
+}
+
+// GetDtrackSubmissionFailureReason returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.DtrackSubmissionFailureReason, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetDtrackSubmissionFailureReason() *string {
+	return v.DtrackSubmissionFailureReason
+}
+
+// GetLastScanned returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.LastScanned, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetLastScanned() *string {
+	return v.LastScanned
+}
+
+// GetFirstScanned returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.FirstScanned, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetFirstScanned() *string {
+	return v.FirstScanned
+}
+
+// GetCritical returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.Critical, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetCritical() *int {
+	return v.Critical
+}
+
+// GetHigh returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.High, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetHigh() *int {
+	return v.High
+}
+
+// GetMedium returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.Medium, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetMedium() *int {
+	return v.Medium
+}
+
+// GetLow returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.Low, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetLow() *int {
+	return v.Low
+}
+
+// GetUnassigned returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.Unassigned, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetUnassigned() *int {
+	return v.Unassigned
+}
+
+// GetVulnerabilities returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.Vulnerabilities, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetVulnerabilities() *int {
+	return v.Vulnerabilities
+}
+
+// GetVulnerableComponents returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.VulnerableComponents, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetVulnerableComponents() *int {
+	return v.VulnerableComponents
+}
+
+// GetComponents returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.Components, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetComponents() *int {
+	return v.Components
+}
+
+// GetSuppressed returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.Suppressed, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetSuppressed() *int {
+	return v.Suppressed
+}
+
+// GetFindingsTotal returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.FindingsTotal, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetFindingsTotal() *int {
+	return v.FindingsTotal
+}
+
+// GetFindingsAudited returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.FindingsAudited, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetFindingsAudited() *int {
+	return v.FindingsAudited
+}
+
+// GetFindingsUnaudited returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.FindingsUnaudited, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetFindingsUnaudited() *int {
+	return v.FindingsUnaudited
+}
+
+// GetInheritedRiskScore returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.InheritedRiskScore, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetInheritedRiskScore() *int {
+	return v.InheritedRiskScore
+}
+
+// GetPolicyViolationsFail returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsFail, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsFail() *int {
+	return v.PolicyViolationsFail
+}
+
+// GetPolicyViolationsWarn returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsWarn, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsWarn() *int {
+	return v.PolicyViolationsWarn
+}
+
+// GetPolicyViolationsInfo returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsInfo, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsInfo() *int {
+	return v.PolicyViolationsInfo
+}
+
+// GetPolicyViolationsTotal returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsTotal, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsTotal() *int {
+	return v.PolicyViolationsTotal
+}
+
+// GetPolicyViolationsAudited returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsAudited, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsAudited() *int {
+	return v.PolicyViolationsAudited
+}
+
+// GetPolicyViolationsUnaudited returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsUnaudited, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsUnaudited() *int {
+	return v.PolicyViolationsUnaudited
+}
+
+// GetPolicyViolationsSecurityTotal returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsSecurityTotal, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsSecurityTotal() *int {
+	return v.PolicyViolationsSecurityTotal
+}
+
+// GetPolicyViolationsSecurityAudited returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsSecurityAudited, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsSecurityAudited() *int {
+	return v.PolicyViolationsSecurityAudited
+}
+
+// GetPolicyViolationsSecurityUnaudited returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsSecurityUnaudited, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsSecurityUnaudited() *int {
+	return v.PolicyViolationsSecurityUnaudited
+}
+
+// GetPolicyViolationsLicenseTotal returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsLicenseTotal, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsLicenseTotal() *int {
+	return v.PolicyViolationsLicenseTotal
+}
+
+// GetPolicyViolationsLicenseAudited returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsLicenseAudited, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsLicenseAudited() *int {
+	return v.PolicyViolationsLicenseAudited
+}
+
+// GetPolicyViolationsLicenseUnaudited returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsLicenseUnaudited, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsLicenseUnaudited() *int {
+	return v.PolicyViolationsLicenseUnaudited
+}
+
+// GetPolicyViolationsOperationalTotal returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsOperationalTotal, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsOperationalTotal() *int {
+	return v.PolicyViolationsOperationalTotal
+}
+
+// GetPolicyViolationsOperationalAudited returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsOperationalAudited, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsOperationalAudited() *int {
+	return v.PolicyViolationsOperationalAudited
+}
+
+// GetPolicyViolationsOperationalUnaudited returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.PolicyViolationsOperationalUnaudited, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetPolicyViolationsOperationalUnaudited() *int {
+	return v.PolicyViolationsOperationalUnaudited
+}
+
+// GetVulnerabilityDetails returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.VulnerabilityDetails, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetVulnerabilityDetails() []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability {
+	return v.VulnerabilityDetails
+}
+
+// GetViolationDetails returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.ViolationDetails, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetViolationDetails() []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation {
+	return v.ViolationDetails
+}
+
+// GetWeaknessDetails returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics.WeaknessDetails, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics) GetWeaknessDetails() []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness {
+	return v.WeaknessDetails
+}
+
+// GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation includes the requested fields of the GraphQL type Violation.
+type GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation struct {
+	Purl             *string                                                                                                                  `json:"purl"`
+	Type             *ViolationType                                                                                                           `json:"type"`
+	License          *string                                                                                                                  `json:"license"`
+	ViolationDetails *string                                                                                                                  `json:"violationDetails"`
+	AnalysisState    *AnalysisState                                                                                                           `json:"analysisState"`
+	AnalysisDate     *string                                                                                                                  `json:"analysisDate"`
+	AttributedAt     *string                                                                                                                  `json:"attributedAt"`
+	Sources          []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto `json:"sources"`
+}
+
+// GetPurl returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation.Purl, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation) GetPurl() *string {
+	return v.Purl
+}
+
+// GetType returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation.Type, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation) GetType() *ViolationType {
+	return v.Type
+}
+
+// GetLicense returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation.License, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation) GetLicense() *string {
+	return v.License
+}
+
+// GetViolationDetails returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation.ViolationDetails, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation) GetViolationDetails() *string {
+	return v.ViolationDetails
+}
+
+// GetAnalysisState returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation.AnalysisState, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// GetAnalysisDate returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation.AnalysisDate, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation) GetAnalysisDate() *string {
+	return v.AnalysisDate
+}
+
+// GetAttributedAt returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation.AttributedAt, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation) GetAttributedAt() *string {
+	return v.AttributedAt
+}
+
+// GetSources returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation.Sources, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolation) GetSources() []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto {
+	return v.Sources
+}
+
+// GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto includes the requested fields of the GraphQL type FindingSourceDto.
+type GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto struct {
+	Artifact      *string        `json:"artifact"`
+	Release       *string        `json:"release"`
+	Variant       *string        `json:"variant"`
+	AnalysisState *AnalysisState `json:"analysisState"`
+	AnalysisDate  *string        `json:"analysisDate"`
+}
+
+// GetArtifact returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto.Artifact, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto) GetArtifact() *string {
+	return v.Artifact
+}
+
+// GetRelease returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto.Release, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto) GetRelease() *string {
+	return v.Release
+}
+
+// GetVariant returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto.Variant, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto) GetVariant() *string {
+	return v.Variant
+}
+
+// GetAnalysisState returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto.AnalysisState, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// GetAnalysisDate returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto.AnalysisDate, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsViolationDetailsViolationSourcesFindingSourceDto) GetAnalysisDate() *string {
+	return v.AnalysisDate
+}
+
+// GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability includes the requested fields of the GraphQL type Vulnerability.
+type GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability struct {
+	Purl          *string                                                                                                                               `json:"purl"`
+	VulnId        *string                                                                                                                               `json:"vulnId"`
+	Severity      *VulnerabilitySeverity                                                                                                                `json:"severity"`
+	AnalysisState *AnalysisState                                                                                                                        `json:"analysisState"`
+	AnalysisDate  *string                                                                                                                               `json:"analysisDate"`
+	AttributedAt  *string                                                                                                                               `json:"attributedAt"`
+	Aliases       []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilityAliasesVulnerabilityAliasDto `json:"aliases"`
+	Sources       []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto      `json:"sources"`
+	Severities    []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySeveritiesSeveritySourceDto  `json:"severities"`
+}
+
+// GetPurl returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.Purl, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetPurl() *string {
+	return v.Purl
+}
+
+// GetVulnId returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.VulnId, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetVulnId() *string {
+	return v.VulnId
+}
+
+// GetSeverity returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.Severity, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetSeverity() *VulnerabilitySeverity {
+	return v.Severity
+}
+
+// GetAnalysisState returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.AnalysisState, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// GetAnalysisDate returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.AnalysisDate, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetAnalysisDate() *string {
+	return v.AnalysisDate
+}
+
+// GetAttributedAt returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.AttributedAt, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetAttributedAt() *string {
+	return v.AttributedAt
+}
+
+// GetAliases returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.Aliases, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetAliases() []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilityAliasesVulnerabilityAliasDto {
+	return v.Aliases
+}
+
+// GetSources returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.Sources, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetSources() []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto {
+	return v.Sources
+}
+
+// GetSeverities returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability.Severities, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerability) GetSeverities() []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySeveritiesSeveritySourceDto {
+	return v.Severities
+}
+
+// GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilityAliasesVulnerabilityAliasDto includes the requested fields of the GraphQL type VulnerabilityAliasDto.
+type GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilityAliasesVulnerabilityAliasDto struct {
+	Type    *VulnerabilityAliasType `json:"type"`
+	AliasId *string                 `json:"aliasId"`
+}
+
+// GetType returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilityAliasesVulnerabilityAliasDto.Type, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilityAliasesVulnerabilityAliasDto) GetType() *VulnerabilityAliasType {
+	return v.Type
+}
+
+// GetAliasId returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilityAliasesVulnerabilityAliasDto.AliasId, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilityAliasesVulnerabilityAliasDto) GetAliasId() *string {
+	return v.AliasId
+}
+
+// GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySeveritiesSeveritySourceDto includes the requested fields of the GraphQL type SeveritySourceDto.
+type GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySeveritiesSeveritySourceDto struct {
+	Source   *SeveritySource        `json:"source"`
+	Severity *VulnerabilitySeverity `json:"severity"`
+}
+
+// GetSource returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySeveritiesSeveritySourceDto.Source, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySeveritiesSeveritySourceDto) GetSource() *SeveritySource {
+	return v.Source
+}
+
+// GetSeverity returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySeveritiesSeveritySourceDto.Severity, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySeveritiesSeveritySourceDto) GetSeverity() *VulnerabilitySeverity {
+	return v.Severity
+}
+
+// GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto includes the requested fields of the GraphQL type FindingSourceDto.
+type GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto struct {
+	Artifact      *string        `json:"artifact"`
+	Release       *string        `json:"release"`
+	Variant       *string        `json:"variant"`
+	AnalysisState *AnalysisState `json:"analysisState"`
+	AnalysisDate  *string        `json:"analysisDate"`
+}
+
+// GetArtifact returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto.Artifact, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto) GetArtifact() *string {
+	return v.Artifact
+}
+
+// GetRelease returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto.Release, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto) GetRelease() *string {
+	return v.Release
+}
+
+// GetVariant returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto.Variant, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto) GetVariant() *string {
+	return v.Variant
+}
+
+// GetAnalysisState returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto.AnalysisState, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// GetAnalysisDate returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto.AnalysisDate, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsVulnerabilityDetailsVulnerabilitySourcesFindingSourceDto) GetAnalysisDate() *string {
+	return v.AnalysisDate
+}
+
+// GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness includes the requested fields of the GraphQL type Weakness.
+type GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness struct {
+	CweId         *string                                                                                                                `json:"cweId"`
+	RuleId        *string                                                                                                                `json:"ruleId"`
+	Location      *string                                                                                                                `json:"location"`
+	Fingerprint   *string                                                                                                                `json:"fingerprint"`
+	Severity      *VulnerabilitySeverity                                                                                                 `json:"severity"`
+	AnalysisState *AnalysisState                                                                                                         `json:"analysisState"`
+	AnalysisDate  *string                                                                                                                `json:"analysisDate"`
+	AttributedAt  *string                                                                                                                `json:"attributedAt"`
+	Sources       []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto `json:"sources"`
+}
+
+// GetCweId returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness.CweId, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness) GetCweId() *string {
+	return v.CweId
+}
+
+// GetRuleId returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness.RuleId, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness) GetRuleId() *string {
+	return v.RuleId
+}
+
+// GetLocation returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness.Location, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness) GetLocation() *string {
+	return v.Location
+}
+
+// GetFingerprint returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness.Fingerprint, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness) GetFingerprint() *string {
+	return v.Fingerprint
+}
+
+// GetSeverity returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness.Severity, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness) GetSeverity() *VulnerabilitySeverity {
+	return v.Severity
+}
+
+// GetAnalysisState returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness.AnalysisState, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// GetAnalysisDate returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness.AnalysisDate, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness) GetAnalysisDate() *string {
+	return v.AnalysisDate
+}
+
+// GetAttributedAt returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness.AttributedAt, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness) GetAttributedAt() *string {
+	return v.AttributedAt
+}
+
+// GetSources returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness.Sources, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeakness) GetSources() []*GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto {
+	return v.Sources
+}
+
+// GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto includes the requested fields of the GraphQL type FindingSourceDto.
+type GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto struct {
+	Artifact      *string        `json:"artifact"`
+	Release       *string        `json:"release"`
+	Variant       *string        `json:"variant"`
+	AnalysisState *AnalysisState `json:"analysisState"`
+	AnalysisDate  *string        `json:"analysisDate"`
+}
+
+// GetArtifact returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto.Artifact, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto) GetArtifact() *string {
+	return v.Artifact
+}
+
+// GetRelease returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto.Release, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto) GetRelease() *string {
+	return v.Release
+}
+
+// GetVariant returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto.Variant, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto) GetVariant() *string {
+	return v.Variant
+}
+
+// GetAnalysisState returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto.AnalysisState, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto) GetAnalysisState() *AnalysisState {
+	return v.AnalysisState
+}
+
+// GetAnalysisDate returns GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto.AnalysisDate, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetricsWeaknessDetailsWeaknessSourcesFindingSourceDto) GetAnalysisDate() *string {
+	return v.AnalysisDate
+}
+
+// GetSbomProbingResultResponse is returned by GetSbomProbingResult on success.
+type GetSbomProbingResultResponse struct {
+	GetSbomProbingResult *GetSbomProbingResultGetSbomProbingResult `json:"getSbomProbingResult"`
+}
+
+// GetGetSbomProbingResult returns GetSbomProbingResultResponse.GetSbomProbingResult, and is useful for accessing the field via an interface.
+func (v *GetSbomProbingResultResponse) GetGetSbomProbingResult() *GetSbomProbingResultGetSbomProbingResult {
+	return v.GetSbomProbingResult
+}
+
+type GudidDefaultsInput struct {
+	BrandName   *string `json:"brandName"`
+	CompanyName *string `json:"companyName"`
+	GmdnCode    *string `json:"gmdnCode"`
+}
+
+// GetBrandName returns GudidDefaultsInput.BrandName, and is useful for accessing the field via an interface.
+func (v *GudidDefaultsInput) GetBrandName() *string { return v.BrandName }
+
+// GetCompanyName returns GudidDefaultsInput.CompanyName, and is useful for accessing the field via an interface.
+func (v *GudidDefaultsInput) GetCompanyName() *string { return v.CompanyName }
+
+// GetGmdnCode returns GudidDefaultsInput.GmdnCode, and is useful for accessing the field via an interface.
+func (v *GudidDefaultsInput) GetGmdnCode() *string { return v.GmdnCode }
+
+type GudidRecordInput struct {
+	BrandName    *string `json:"brandName"`
+	VersionModel *string `json:"versionModel"`
+	GmdnCode     *string `json:"gmdnCode"`
+	Sterile      *bool   `json:"sterile"`
+	SingleUse    *bool   `json:"singleUse"`
+	MriSafety    *bool   `json:"mriSafety"`
+}
+
+// GetBrandName returns GudidRecordInput.BrandName, and is useful for accessing the field via an interface.
+func (v *GudidRecordInput) GetBrandName() *string { return v.BrandName }
+
+// GetVersionModel returns GudidRecordInput.VersionModel, and is useful for accessing the field via an interface.
+func (v *GudidRecordInput) GetVersionModel() *string { return v.VersionModel }
+
+// GetGmdnCode returns GudidRecordInput.GmdnCode, and is useful for accessing the field via an interface.
+func (v *GudidRecordInput) GetGmdnCode() *string { return v.GmdnCode }
+
+// GetSterile returns GudidRecordInput.Sterile, and is useful for accessing the field via an interface.
+func (v *GudidRecordInput) GetSterile() *bool { return v.Sterile }
+
+// GetSingleUse returns GudidRecordInput.SingleUse, and is useful for accessing the field via an interface.
+func (v *GudidRecordInput) GetSingleUse() *bool { return v.SingleUse }
+
+// GetMriSafety returns GudidRecordInput.MriSafety, and is useful for accessing the field via an interface.
+func (v *GudidRecordInput) GetMriSafety() *bool { return v.MriSafety }
+
+// GUDID submission workflow state for a UDI-bearing release.
+type GudidStatus string
+
+const (
+	GudidStatusNotSubmitted GudidStatus = "NOT_SUBMITTED"
+	GudidStatusSubmitted    GudidStatus = "SUBMITTED"
+	GudidStatusPublished    GudidStatus = "PUBLISHED"
+)
+
+var AllGudidStatus = []GudidStatus{
+	GudidStatusNotSubmitted,
+	GudidStatusSubmitted,
+	GudidStatusPublished,
+}
+
+type HardwareMetadataInput struct {
+	Parties         []*PartyInput       `json:"parties,omitempty"`
+	Origin          *OriginInput        `json:"origin,omitempty"`
+	ManufactureDate *string             `json:"manufactureDate"`
+	ExternalRefs    []*ExternalRefInput `json:"externalRefs,omitempty"`
+	Extensions      *json.RawMessage    `json:"extensions"`
+}
+
+// GetParties returns HardwareMetadataInput.Parties, and is useful for accessing the field via an interface.
+func (v *HardwareMetadataInput) GetParties() []*PartyInput { return v.Parties }
+
+// GetOrigin returns HardwareMetadataInput.Origin, and is useful for accessing the field via an interface.
+func (v *HardwareMetadataInput) GetOrigin() *OriginInput { return v.Origin }
+
+// GetManufactureDate returns HardwareMetadataInput.ManufactureDate, and is useful for accessing the field via an interface.
+func (v *HardwareMetadataInput) GetManufactureDate() *string { return v.ManufactureDate }
+
+// GetExternalRefs returns HardwareMetadataInput.ExternalRefs, and is useful for accessing the field via an interface.
+func (v *HardwareMetadataInput) GetExternalRefs() []*ExternalRefInput { return v.ExternalRefs }
+
+// GetExtensions returns HardwareMetadataInput.Extensions, and is useful for accessing the field via an interface.
+func (v *HardwareMetadataInput) GetExtensions() *json.RawMessage { return v.Extensions }
 
 type IdentifierInput struct {
 	IdType  *IdentifierType `json:"idType"`
@@ -1330,6 +5095,793 @@ var AllIdentifierType = []IdentifierType{
 	IdentifierTypeMacAddress,
 }
 
+// InstDataResponse is returned by InstData on success.
+type InstDataResponse struct {
+	InstData *json.RawMessage `json:"instData"`
+}
+
+// GetInstData returns InstDataResponse.InstData, and is useful for accessing the field via an interface.
+func (v *InstDataResponse) GetInstData() *json.RawMessage { return v.InstData }
+
+type InstanceDataInput struct {
+	Uuid        *string            `json:"uuid"`
+	Namespace   *string            `json:"namespace"`
+	SenderId    *string            `json:"senderId"`
+	TimeSent    *string            `json:"timeSent"`
+	Images      []*json.RawMessage `json:"images"`
+	Type        *string            `json:"type"`
+	Labels      *json.RawMessage   `json:"labels"`
+	Annotations *json.RawMessage   `json:"annotations"`
+}
+
+// GetUuid returns InstanceDataInput.Uuid, and is useful for accessing the field via an interface.
+func (v *InstanceDataInput) GetUuid() *string { return v.Uuid }
+
+// GetNamespace returns InstanceDataInput.Namespace, and is useful for accessing the field via an interface.
+func (v *InstanceDataInput) GetNamespace() *string { return v.Namespace }
+
+// GetSenderId returns InstanceDataInput.SenderId, and is useful for accessing the field via an interface.
+func (v *InstanceDataInput) GetSenderId() *string { return v.SenderId }
+
+// GetTimeSent returns InstanceDataInput.TimeSent, and is useful for accessing the field via an interface.
+func (v *InstanceDataInput) GetTimeSent() *string { return v.TimeSent }
+
+// GetImages returns InstanceDataInput.Images, and is useful for accessing the field via an interface.
+func (v *InstanceDataInput) GetImages() []*json.RawMessage { return v.Images }
+
+// GetType returns InstanceDataInput.Type, and is useful for accessing the field via an interface.
+func (v *InstanceDataInput) GetType() *string { return v.Type }
+
+// GetLabels returns InstanceDataInput.Labels, and is useful for accessing the field via an interface.
+func (v *InstanceDataInput) GetLabels() *json.RawMessage { return v.Labels }
+
+// GetAnnotations returns InstanceDataInput.Annotations, and is useful for accessing the field via an interface.
+func (v *InstanceDataInput) GetAnnotations() *json.RawMessage { return v.Annotations }
+
+type InstanceDeploymentEventInput struct {
+	Instance       *string                 `json:"instance"`
+	Namespace      *string                 `json:"namespace"`
+	SenderId       *string                 `json:"senderId"`
+	DeploymentName string                  `json:"deploymentName"`
+	FeatureSet     *string                 `json:"featureSet"`
+	Product        *string                 `json:"product"`
+	TargetRelease  *string                 `json:"targetRelease"`
+	Phase          *DeploymentPhase        `json:"phase"`
+	FailureClass   *DeploymentFailureClass `json:"failureClass"`
+	Message        *string                 `json:"message"`
+	Detail         *string                 `json:"detail"`
+	AttemptedAt    *string                 `json:"attemptedAt"`
+	Fingerprint    *string                 `json:"fingerprint"`
+}
+
+// GetInstance returns InstanceDeploymentEventInput.Instance, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventInput) GetInstance() *string { return v.Instance }
+
+// GetNamespace returns InstanceDeploymentEventInput.Namespace, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventInput) GetNamespace() *string { return v.Namespace }
+
+// GetSenderId returns InstanceDeploymentEventInput.SenderId, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventInput) GetSenderId() *string { return v.SenderId }
+
+// GetDeploymentName returns InstanceDeploymentEventInput.DeploymentName, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventInput) GetDeploymentName() string { return v.DeploymentName }
+
+// GetFeatureSet returns InstanceDeploymentEventInput.FeatureSet, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventInput) GetFeatureSet() *string { return v.FeatureSet }
+
+// GetProduct returns InstanceDeploymentEventInput.Product, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventInput) GetProduct() *string { return v.Product }
+
+// GetTargetRelease returns InstanceDeploymentEventInput.TargetRelease, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventInput) GetTargetRelease() *string { return v.TargetRelease }
+
+// GetPhase returns InstanceDeploymentEventInput.Phase, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventInput) GetPhase() *DeploymentPhase { return v.Phase }
+
+// GetFailureClass returns InstanceDeploymentEventInput.FailureClass, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventInput) GetFailureClass() *DeploymentFailureClass {
+	return v.FailureClass
+}
+
+// GetMessage returns InstanceDeploymentEventInput.Message, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventInput) GetMessage() *string { return v.Message }
+
+// GetDetail returns InstanceDeploymentEventInput.Detail, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventInput) GetDetail() *string { return v.Detail }
+
+// GetAttemptedAt returns InstanceDeploymentEventInput.AttemptedAt, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventInput) GetAttemptedAt() *string { return v.AttemptedAt }
+
+// GetFingerprint returns InstanceDeploymentEventInput.Fingerprint, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventInput) GetFingerprint() *string { return v.Fingerprint }
+
+// InstanceDeploymentEventsProgrammaticResponse is returned by InstanceDeploymentEventsProgrammatic on success.
+type InstanceDeploymentEventsProgrammaticResponse struct {
+	InstanceDeploymentEventsProgrammatic *json.RawMessage `json:"instanceDeploymentEventsProgrammatic"`
+}
+
+// GetInstanceDeploymentEventsProgrammatic returns InstanceDeploymentEventsProgrammaticResponse.InstanceDeploymentEventsProgrammatic, and is useful for accessing the field via an interface.
+func (v *InstanceDeploymentEventsProgrammaticResponse) GetInstanceDeploymentEventsProgrammatic() *json.RawMessage {
+	return v.InstanceDeploymentEventsProgrammatic
+}
+
+type InstanceStateType string
+
+const (
+	InstanceStateTypePlan   InstanceStateType = "PLAN"
+	InstanceStateTypeActual InstanceStateType = "ACTUAL"
+)
+
+var AllInstanceStateType = []InstanceStateType{
+	InstanceStateTypePlan,
+	InstanceStateTypeActual,
+}
+
+type IntegrateType string
+
+const (
+	IntegrateTypeFollow    IntegrateType = "FOLLOW"
+	IntegrateTypeIntegrate IntegrateType = "INTEGRATE"
+	IntegrateTypeUninstall IntegrateType = "UNINSTALL"
+	IntegrateTypeTarget    IntegrateType = "TARGET"
+	IntegrateTypeNone      IntegrateType = "NONE"
+)
+
+var AllIntegrateType = []IntegrateType{
+	IntegrateTypeFollow,
+	IntegrateTypeIntegrate,
+	IntegrateTypeUninstall,
+	IntegrateTypeTarget,
+	IntegrateTypeNone,
+}
+
+type InventoryType string
+
+const (
+	InventoryTypeSoftware      InventoryType = "SOFTWARE"
+	InventoryTypeHardware      InventoryType = "HARDWARE"
+	InventoryTypeCryptography  InventoryType = "CRYPTOGRAPHY"
+	InventoryTypeService       InventoryType = "SERVICE"
+	InventoryTypeVulnerability InventoryType = "VULNERABILITY"
+)
+
+var AllInventoryType = []InventoryType{
+	InventoryTypeSoftware,
+	InventoryTypeHardware,
+	InventoryTypeCryptography,
+	InventoryTypeService,
+	InventoryTypeVulnerability,
+}
+
+// IsInstanceHasSealedSecretCertResponse is returned by IsInstanceHasSealedSecretCert on success.
+type IsInstanceHasSealedSecretCertResponse struct {
+	IsInstanceHasSealedSecretCert *bool `json:"isInstanceHasSealedSecretCert"`
+}
+
+// GetIsInstanceHasSealedSecretCert returns IsInstanceHasSealedSecretCertResponse.IsInstanceHasSealedSecretCert, and is useful for accessing the field via an interface.
+func (v *IsInstanceHasSealedSecretCertResponse) GetIsInstanceHasSealedSecretCert() *bool {
+	return v.IsInstanceHasSealedSecretCert
+}
+
+type IssuerClass string
+
+const (
+	IssuerClassSelf       IssuerClass = "SELF"
+	IssuerClassVendor     IssuerClass = "VENDOR"
+	IssuerClassThirdParty IssuerClass = "THIRD_PARTY"
+)
+
+var AllIssuerClass = []IssuerClass{
+	IssuerClassSelf,
+	IssuerClassVendor,
+	IssuerClassThirdParty,
+}
+
+// UDI issuing agency (Distribution module).
+type IssuingAgency string
+
+const (
+	IssuingAgencyGs1    IssuingAgency = "GS1"
+	IssuingAgencyHibcc  IssuingAgency = "HIBCC"
+	IssuingAgencyIccbba IssuingAgency = "ICCBBA"
+)
+
+var AllIssuingAgency = []IssuingAgency{
+	IssuingAgencyGs1,
+	IssuingAgencyHibcc,
+	IssuingAgencyIccbba,
+}
+
+type LinkInput struct {
+	Uri     *string `json:"uri"`
+	Content *string `json:"content"`
+}
+
+// GetUri returns LinkInput.Uri, and is useful for accessing the field via an interface.
+func (v *LinkInput) GetUri() *string { return v.Uri }
+
+// GetContent returns LinkInput.Content, and is useful for accessing the field via an interface.
+func (v *LinkInput) GetContent() *string { return v.Content }
+
+// ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSets includes the requested fields of the GraphQL type InstanceProductFeatureSets.
+type ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSets struct {
+	Namespace            *string                                                                                                        `json:"namespace"`
+	Product              *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsProductNamedRef                        `json:"product"`
+	CurrentFeatureSet    *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef              `json:"currentFeatureSet"`
+	AvailableFeatureSets []*ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption `json:"availableFeatureSets"`
+}
+
+// GetNamespace returns ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSets.Namespace, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSets) GetNamespace() *string {
+	return v.Namespace
+}
+
+// GetProduct returns ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSets.Product, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSets) GetProduct() *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsProductNamedRef {
+	return v.Product
+}
+
+// GetCurrentFeatureSet returns ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSets.CurrentFeatureSet, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSets) GetCurrentFeatureSet() *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef {
+	return v.CurrentFeatureSet
+}
+
+// GetAvailableFeatureSets returns ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSets.AvailableFeatureSets, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSets) GetAvailableFeatureSets() []*ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption {
+	return v.AvailableFeatureSets
+}
+
+// ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption includes the requested fields of the GraphQL type FeatureSetOption.
+// The GraphQL type's documentation follows.
+//
+// A feature set the caller could switch a deployment to, with the releases it could target.
+type ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption struct {
+	Uuid string `json:"uuid"`
+	Name string `json:"name"`
+}
+
+// GetUuid returns ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption.Uuid, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption) GetUuid() string {
+	return v.Uuid
+}
+
+// GetName returns ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption.Name, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption) GetName() string {
+	return v.Name
+}
+
+// ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef includes the requested fields of the GraphQL type NamedRef.
+type ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef struct {
+	Uuid string `json:"uuid"`
+	Name string `json:"name"`
+}
+
+// GetUuid returns ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef.Uuid, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef) GetUuid() string {
+	return v.Uuid
+}
+
+// GetName returns ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef.Name, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef) GetName() string {
+	return v.Name
+}
+
+// ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsProductNamedRef includes the requested fields of the GraphQL type NamedRef.
+type ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsProductNamedRef struct {
+	Uuid string `json:"uuid"`
+	Name string `json:"name"`
+}
+
+// GetUuid returns ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsProductNamedRef.Uuid, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsProductNamedRef) GetUuid() string {
+	return v.Uuid
+}
+
+// GetName returns ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsProductNamedRef.Name, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSetsProductNamedRef) GetName() string {
+	return v.Name
+}
+
+// ListInstanceProductFeatureSetsFeaturesetsResponse is returned by ListInstanceProductFeatureSetsFeaturesets on success.
+type ListInstanceProductFeatureSetsFeaturesetsResponse struct {
+	ListInstanceProductFeatureSets []*ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSets `json:"listInstanceProductFeatureSets"`
+}
+
+// GetListInstanceProductFeatureSets returns ListInstanceProductFeatureSetsFeaturesetsResponse.ListInstanceProductFeatureSets, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsFeaturesetsResponse) GetListInstanceProductFeatureSets() []*ListInstanceProductFeatureSetsFeaturesetsListInstanceProductFeatureSets {
+	return v.ListInstanceProductFeatureSets
+}
+
+// ListInstanceProductFeatureSetsListInstanceProductFeatureSets includes the requested fields of the GraphQL type InstanceProductFeatureSets.
+type ListInstanceProductFeatureSetsListInstanceProductFeatureSets struct {
+	Namespace         *string                                                                                `json:"namespace"`
+	Product           *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsProductNamedRef           `json:"product"`
+	CurrentFeatureSet *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef `json:"currentFeatureSet"`
+	// Integrate type of the plan entry: FOLLOW (latest release approved for the instance environment),
+	// TARGET (pinned release), INTEGRATE, NONE or UNINSTALL.
+	IntegrateType *IntegrateType `json:"integrateType"`
+	// Release the plan currently aims at: the FOLLOW-resolved release or the pinned TARGET release.
+	// Null when nothing is selected yet (TARGET without a release, or no approved release).
+	TargetRelease *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef `json:"targetRelease"`
+	// Release the instance actually reports as running for this product (matched from agent data).
+	// Null when nothing has matched yet.
+	DeployedRelease      *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef    `json:"deployedRelease"`
+	AvailableFeatureSets []*ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption `json:"availableFeatureSets"`
+}
+
+// GetNamespace returns ListInstanceProductFeatureSetsListInstanceProductFeatureSets.Namespace, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSets) GetNamespace() *string {
+	return v.Namespace
+}
+
+// GetProduct returns ListInstanceProductFeatureSetsListInstanceProductFeatureSets.Product, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSets) GetProduct() *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsProductNamedRef {
+	return v.Product
+}
+
+// GetCurrentFeatureSet returns ListInstanceProductFeatureSetsListInstanceProductFeatureSets.CurrentFeatureSet, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSets) GetCurrentFeatureSet() *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef {
+	return v.CurrentFeatureSet
+}
+
+// GetIntegrateType returns ListInstanceProductFeatureSetsListInstanceProductFeatureSets.IntegrateType, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSets) GetIntegrateType() *IntegrateType {
+	return v.IntegrateType
+}
+
+// GetTargetRelease returns ListInstanceProductFeatureSetsListInstanceProductFeatureSets.TargetRelease, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSets) GetTargetRelease() *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef {
+	return v.TargetRelease
+}
+
+// GetDeployedRelease returns ListInstanceProductFeatureSetsListInstanceProductFeatureSets.DeployedRelease, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSets) GetDeployedRelease() *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef {
+	return v.DeployedRelease
+}
+
+// GetAvailableFeatureSets returns ListInstanceProductFeatureSetsListInstanceProductFeatureSets.AvailableFeatureSets, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSets) GetAvailableFeatureSets() []*ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption {
+	return v.AvailableFeatureSets
+}
+
+// ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption includes the requested fields of the GraphQL type FeatureSetOption.
+// The GraphQL type's documentation follows.
+//
+// A feature set the caller could switch a deployment to, with the releases it could target.
+type ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption struct {
+	Uuid string `json:"uuid"`
+	Name string `json:"name"`
+	// Newest first, ASSEMBLED or later lifecycles only, capped server-side. Any of these is a valid
+	// value for switchInstanceProductFeatureSet.release.
+	Releases []*ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef `json:"releases"`
+}
+
+// GetUuid returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption.Uuid, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption) GetUuid() string {
+	return v.Uuid
+}
+
+// GetName returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption.Name, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption) GetName() string {
+	return v.Name
+}
+
+// GetReleases returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption.Releases, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOption) GetReleases() []*ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef {
+	return v.Releases
+}
+
+// ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef includes the requested fields of the GraphQL type FeatureSetReleaseRef.
+type ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef struct {
+	Uuid        string  `json:"uuid"`
+	Version     string  `json:"version"`
+	Lifecycle   *string `json:"lifecycle"`
+	CreatedDate *string `json:"createdDate"`
+	// True when the release carries an approval for the instance plan's environment (or the plan has
+	// no environment, in which case FOLLOW takes the newest release regardless).
+	ApprovedForInstanceEnvironment bool `json:"approvedForInstanceEnvironment"`
+}
+
+// GetUuid returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef.Uuid, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef) GetUuid() string {
+	return v.Uuid
+}
+
+// GetVersion returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef.Version, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef) GetVersion() string {
+	return v.Version
+}
+
+// GetLifecycle returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef.Lifecycle, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef) GetLifecycle() *string {
+	return v.Lifecycle
+}
+
+// GetCreatedDate returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef.CreatedDate, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetApprovedForInstanceEnvironment returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef.ApprovedForInstanceEnvironment, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsAvailableFeatureSetsFeatureSetOptionReleasesFeatureSetReleaseRef) GetApprovedForInstanceEnvironment() bool {
+	return v.ApprovedForInstanceEnvironment
+}
+
+// ListInstanceProductFeatureSetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef includes the requested fields of the GraphQL type NamedRef.
+type ListInstanceProductFeatureSetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef struct {
+	Uuid string `json:"uuid"`
+	Name string `json:"name"`
+}
+
+// GetUuid returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef.Uuid, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef) GetUuid() string {
+	return v.Uuid
+}
+
+// GetName returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef.Name, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsCurrentFeatureSetNamedRef) GetName() string {
+	return v.Name
+}
+
+// ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef includes the requested fields of the GraphQL type FeatureSetReleaseRef.
+type ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef struct {
+	Uuid        string  `json:"uuid"`
+	Version     string  `json:"version"`
+	Lifecycle   *string `json:"lifecycle"`
+	CreatedDate *string `json:"createdDate"`
+	// True when the release carries an approval for the instance plan's environment (or the plan has
+	// no environment, in which case FOLLOW takes the newest release regardless).
+	ApprovedForInstanceEnvironment bool `json:"approvedForInstanceEnvironment"`
+}
+
+// GetUuid returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef.Uuid, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef) GetUuid() string {
+	return v.Uuid
+}
+
+// GetVersion returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef.Version, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef) GetVersion() string {
+	return v.Version
+}
+
+// GetLifecycle returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef.Lifecycle, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef) GetLifecycle() *string {
+	return v.Lifecycle
+}
+
+// GetCreatedDate returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef.CreatedDate, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetApprovedForInstanceEnvironment returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef.ApprovedForInstanceEnvironment, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsDeployedReleaseFeatureSetReleaseRef) GetApprovedForInstanceEnvironment() bool {
+	return v.ApprovedForInstanceEnvironment
+}
+
+// ListInstanceProductFeatureSetsListInstanceProductFeatureSetsProductNamedRef includes the requested fields of the GraphQL type NamedRef.
+type ListInstanceProductFeatureSetsListInstanceProductFeatureSetsProductNamedRef struct {
+	Uuid string `json:"uuid"`
+	Name string `json:"name"`
+}
+
+// GetUuid returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsProductNamedRef.Uuid, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsProductNamedRef) GetUuid() string {
+	return v.Uuid
+}
+
+// GetName returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsProductNamedRef.Name, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsProductNamedRef) GetName() string {
+	return v.Name
+}
+
+// ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef includes the requested fields of the GraphQL type FeatureSetReleaseRef.
+type ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef struct {
+	Uuid        string  `json:"uuid"`
+	Version     string  `json:"version"`
+	Lifecycle   *string `json:"lifecycle"`
+	CreatedDate *string `json:"createdDate"`
+	// True when the release carries an approval for the instance plan's environment (or the plan has
+	// no environment, in which case FOLLOW takes the newest release regardless).
+	ApprovedForInstanceEnvironment bool `json:"approvedForInstanceEnvironment"`
+}
+
+// GetUuid returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef.Uuid, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef) GetUuid() string {
+	return v.Uuid
+}
+
+// GetVersion returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef.Version, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef) GetVersion() string {
+	return v.Version
+}
+
+// GetLifecycle returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef.Lifecycle, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef) GetLifecycle() *string {
+	return v.Lifecycle
+}
+
+// GetCreatedDate returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef.CreatedDate, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetApprovedForInstanceEnvironment returns ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef.ApprovedForInstanceEnvironment, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsListInstanceProductFeatureSetsTargetReleaseFeatureSetReleaseRef) GetApprovedForInstanceEnvironment() bool {
+	return v.ApprovedForInstanceEnvironment
+}
+
+// ListInstanceProductFeatureSetsResponse is returned by ListInstanceProductFeatureSets on success.
+type ListInstanceProductFeatureSetsResponse struct {
+	ListInstanceProductFeatureSets []*ListInstanceProductFeatureSetsListInstanceProductFeatureSets `json:"listInstanceProductFeatureSets"`
+}
+
+// GetListInstanceProductFeatureSets returns ListInstanceProductFeatureSetsResponse.ListInstanceProductFeatureSets, and is useful for accessing the field via an interface.
+func (v *ListInstanceProductFeatureSetsResponse) GetListInstanceProductFeatureSets() []*ListInstanceProductFeatureSetsListInstanceProductFeatureSets {
+	return v.ListInstanceProductFeatureSets
+}
+
+type MatchOperator string
+
+const (
+	MatchOperatorOr  MatchOperator = "OR"
+	MatchOperatorAnd MatchOperator = "AND"
+)
+
+var AllMatchOperator = []MatchOperator{
+	MatchOperatorOr,
+	MatchOperatorAnd,
+}
+
+type MedicalProfileInput struct {
+	IssuingAgency *IssuingAgency      `json:"issuingAgency"`
+	UdiBearing    *bool               `json:"udiBearing"`
+	GudidDefaults *GudidDefaultsInput `json:"gudidDefaults,omitempty"`
+}
+
+// GetIssuingAgency returns MedicalProfileInput.IssuingAgency, and is useful for accessing the field via an interface.
+func (v *MedicalProfileInput) GetIssuingAgency() *IssuingAgency { return v.IssuingAgency }
+
+// GetUdiBearing returns MedicalProfileInput.UdiBearing, and is useful for accessing the field via an interface.
+func (v *MedicalProfileInput) GetUdiBearing() *bool { return v.UdiBearing }
+
+// GetGudidDefaults returns MedicalProfileInput.GudidDefaults, and is useful for accessing the field via an interface.
+func (v *MedicalProfileInput) GetGudidDefaults() *GudidDefaultsInput { return v.GudidDefaults }
+
+type OSEnum string
+
+const (
+	OSEnumWindows  OSEnum = "WINDOWS"
+	OSEnumMacos    OSEnum = "MACOS"
+	OSEnumLinux    OSEnum = "LINUX"
+	OSEnumAndroid  OSEnum = "ANDROID"
+	OSEnumChromeos OSEnum = "CHROMEOS"
+	OSEnumIos      OSEnum = "IOS"
+	OSEnumOther    OSEnum = "OTHER"
+)
+
+var AllOSEnum = []OSEnum{
+	OSEnumWindows,
+	OSEnumMacos,
+	OSEnumLinux,
+	OSEnumAndroid,
+	OSEnumChromeos,
+	OSEnumIos,
+	OSEnumOther,
+}
+
+type OriginInput struct {
+	Basis   *string             `json:"basis"`
+	Origins []*OriginShareInput `json:"origins,omitempty"`
+}
+
+// GetBasis returns OriginInput.Basis, and is useful for accessing the field via an interface.
+func (v *OriginInput) GetBasis() *string { return v.Basis }
+
+// GetOrigins returns OriginInput.Origins, and is useful for accessing the field via an interface.
+func (v *OriginInput) GetOrigins() []*OriginShareInput { return v.Origins }
+
+type OriginShareInput struct {
+	OriginCode *string  `json:"originCode"`
+	Percentage *float64 `json:"percentage"`
+}
+
+// GetOriginCode returns OriginShareInput.OriginCode, and is useful for accessing the field via an interface.
+func (v *OriginShareInput) GetOriginCode() *string { return v.OriginCode }
+
+// GetPercentage returns OriginShareInput.Percentage, and is useful for accessing the field via an interface.
+func (v *OriginShareInput) GetPercentage() *float64 { return v.Percentage }
+
+type PackageType string
+
+const (
+	PackageTypeMaven     PackageType = "MAVEN"
+	PackageTypeNpm       PackageType = "NPM"
+	PackageTypeNuget     PackageType = "NUGET"
+	PackageTypeGem       PackageType = "GEM"
+	PackageTypePypi      PackageType = "PYPI"
+	PackageTypeContainer PackageType = "CONTAINER"
+)
+
+var AllPackageType = []PackageType{
+	PackageTypeMaven,
+	PackageTypeNpm,
+	PackageTypeNuget,
+	PackageTypeGem,
+	PackageTypePypi,
+	PackageTypeContainer,
+}
+
+type PartyContactInput struct {
+	Name  *string `json:"name"`
+	Email *string `json:"email"`
+	Phone *string `json:"phone"`
+}
+
+// GetName returns PartyContactInput.Name, and is useful for accessing the field via an interface.
+func (v *PartyContactInput) GetName() *string { return v.Name }
+
+// GetEmail returns PartyContactInput.Email, and is useful for accessing the field via an interface.
+func (v *PartyContactInput) GetEmail() *string { return v.Email }
+
+// GetPhone returns PartyContactInput.Phone, and is useful for accessing the field via an interface.
+func (v *PartyContactInput) GetPhone() *string { return v.Phone }
+
+type PartyInput struct {
+	Roles    []*PartyRole         `json:"roles"`
+	BomRef   *string              `json:"bomRef"`
+	Priority *int                 `json:"priority"`
+	Name     *string              `json:"name"`
+	Address  *AddressInput        `json:"address,omitempty"`
+	Contacts []*PartyContactInput `json:"contacts,omitempty"`
+	Url      *string              `json:"url"`
+	Origin   *OriginInput         `json:"origin,omitempty"`
+}
+
+// GetRoles returns PartyInput.Roles, and is useful for accessing the field via an interface.
+func (v *PartyInput) GetRoles() []*PartyRole { return v.Roles }
+
+// GetBomRef returns PartyInput.BomRef, and is useful for accessing the field via an interface.
+func (v *PartyInput) GetBomRef() *string { return v.BomRef }
+
+// GetPriority returns PartyInput.Priority, and is useful for accessing the field via an interface.
+func (v *PartyInput) GetPriority() *int { return v.Priority }
+
+// GetName returns PartyInput.Name, and is useful for accessing the field via an interface.
+func (v *PartyInput) GetName() *string { return v.Name }
+
+// GetAddress returns PartyInput.Address, and is useful for accessing the field via an interface.
+func (v *PartyInput) GetAddress() *AddressInput { return v.Address }
+
+// GetContacts returns PartyInput.Contacts, and is useful for accessing the field via an interface.
+func (v *PartyInput) GetContacts() []*PartyContactInput { return v.Contacts }
+
+// GetUrl returns PartyInput.Url, and is useful for accessing the field via an interface.
+func (v *PartyInput) GetUrl() *string { return v.Url }
+
+// GetOrigin returns PartyInput.Origin, and is useful for accessing the field via an interface.
+func (v *PartyInput) GetOrigin() *OriginInput { return v.Origin }
+
+type PartyRole string
+
+const (
+	PartyRoleManufacturer   PartyRole = "MANUFACTURER"
+	PartyRoleAssembler      PartyRole = "ASSEMBLER"
+	PartyRoleSupplier       PartyRole = "SUPPLIER"
+	PartyRoleQualityControl PartyRole = "QUALITY_CONTROL"
+	PartyRoleDistributor    PartyRole = "DISTRIBUTOR"
+	PartyRoleOther          PartyRole = "OTHER"
+)
+
+var AllPartyRole = []PartyRole{
+	PartyRoleManufacturer,
+	PartyRoleAssembler,
+	PartyRoleSupplier,
+	PartyRoleQualityControl,
+	PartyRoleDistributor,
+	PartyRoleOther,
+}
+
+type PolicyKind string
+
+const (
+	// Evaluated on session initialize + on artifact attach.
+	PolicyKindInput PolicyKind = "INPUT"
+	// Evaluated on commit attribution and on artifact attach. Verdict locks at commit-attribution time.
+	PolicyKindOutput PolicyKind = "OUTPUT"
+	// Stays AWAITING through the entire session lifetime; verdict locks
+	// only at session close. Use when the gate depends on an artifact
+	// the agent doesn't file until its final step -- for example, a
+	// FINAL agentic-report tag that by definition arrives after the
+	// last commit. OUTPUT in that case would harden to FAILED before
+	// the report ever lands.
+	PolicyKindClose PolicyKind = "CLOSE"
+)
+
+var AllPolicyKind = []PolicyKind{
+	PolicyKindInput,
+	PolicyKindOutput,
+	PolicyKindClose,
+}
+
+type PolicySeverity string
+
+const (
+	// Input failure rejects session init.
+	PolicySeverityBlock PolicySeverity = "BLOCK"
+	// Failure is recorded as a WARNING verdict; never throws.
+	PolicySeverityWarn PolicySeverity = "WARN"
+)
+
+var AllPolicySeverity = []PolicySeverity{
+	PolicySeverityBlock,
+	PolicySeverityWarn,
+}
+
+type PolicyState string
+
+const (
+	PolicyStatePassed  PolicyState = "PASSED"
+	PolicyStateWarning PolicyState = "WARNING"
+	PolicyStateFailed  PolicyState = "FAILED"
+	// Soft signal: the policy hasn't reached a terminal verdict for this
+	// session yet. Emitted at session init / artifact attach for OUTPUT
+	// policies that haven't been satisfied, and as a fallback when the
+	// evaluator hits a runtime error (the policy will be retried at the
+	// next eligible event). Renamed from PENDING to avoid name collision
+	// with rebom's EnrichmentStatus.PENDING in adjacent code.
+	PolicyStateAwaiting PolicyState = "AWAITING"
+)
+
+var AllPolicyState = []PolicyState{
+	PolicyStatePassed,
+	PolicyStateWarning,
+	PolicyStateFailed,
+	PolicyStateAwaiting,
+}
+
+// ProbeSbomProgrammaticProbeSbomProgrammaticSbomProbingRun includes the requested fields of the GraphQL type SbomProbingRun.
+type ProbeSbomProgrammaticProbeSbomProgrammaticSbomProbingRun struct {
+	RunId  string            `json:"runId"`
+	Status SbomProbingStatus `json:"status"`
+}
+
+// GetRunId returns ProbeSbomProgrammaticProbeSbomProgrammaticSbomProbingRun.RunId, and is useful for accessing the field via an interface.
+func (v *ProbeSbomProgrammaticProbeSbomProgrammaticSbomProbingRun) GetRunId() string { return v.RunId }
+
+// GetStatus returns ProbeSbomProgrammaticProbeSbomProgrammaticSbomProbingRun.Status, and is useful for accessing the field via an interface.
+func (v *ProbeSbomProgrammaticProbeSbomProgrammaticSbomProbingRun) GetStatus() SbomProbingStatus {
+	return v.Status
+}
+
+// ProbeSbomProgrammaticResponse is returned by ProbeSbomProgrammatic on success.
+type ProbeSbomProgrammaticResponse struct {
+	ProbeSbomProgrammatic *ProbeSbomProgrammaticProbeSbomProgrammaticSbomProbingRun `json:"probeSbomProgrammatic"`
+}
+
+// GetProbeSbomProgrammatic returns ProbeSbomProgrammaticResponse.ProbeSbomProgrammatic, and is useful for accessing the field via an interface.
+func (v *ProbeSbomProgrammaticResponse) GetProbeSbomProgrammatic() *ProbeSbomProgrammaticProbeSbomProgrammaticSbomProbingRun {
+	return v.ProbeSbomProgrammatic
+}
+
+type ProgrammaticType string
+
+const (
+	ProgrammaticTypeManual        ProgrammaticType = "MANUAL"
+	ProgrammaticTypeAuto          ProgrammaticType = "AUTO"
+	ProgrammaticTypeManualAndAuto ProgrammaticType = "MANUAL_AND_AUTO"
+	ProgrammaticTypeApi           ProgrammaticType = "API"
+	ProgrammaticTypeTest          ProgrammaticType = "TEST"
+)
+
+var AllProgrammaticType = []ProgrammaticType{
+	ProgrammaticTypeManual,
+	ProgrammaticTypeAuto,
+	ProgrammaticTypeManualAndAuto,
+	ProgrammaticTypeApi,
+	ProgrammaticTypeTest,
+}
+
 // ProvenanceFields includes the GraphQL fields of DeclarativeProvenance requested by the fragment ProvenanceFields.
 type ProvenanceFields struct {
 	// SHA-256 of the canonical JSON of the spec that last touched this row.
@@ -1363,6 +5915,1327 @@ func (v *ProvenanceFieldsSourceDeclarativeSource) GetPath() *string { return v.P
 // GetCommit returns ProvenanceFieldsSourceDeclarativeSource.Commit, and is useful for accessing the field via an interface.
 func (v *ProvenanceFieldsSourceDeclarativeSource) GetCommit() *string { return v.Commit }
 
+// PR metadata supplied by CI alongside an addReleaseProgrammatic call.
+// The caller (rearm-actions or any CI integration) populates these fields
+// from the SCM event context. Identity is opaque string ((targetVcs,
+// identity) is the uniqueness boundary) -- supports GitHub PR numbers as
+// strings, GitLab MR iids, and Gerrit change-IDs uniformly.
+type PullRequestInfoInput struct {
+	// SCM-side PR / MR / change-list identity (e.g. GitHub PR number "42",
+	// GitLab MR iid "42", Gerrit change-id). Required.
+	Identity string `json:"identity"`
+	// "OPEN", "CLOSED", or "MERGED". Case-insensitive -- converted to
+	// PullRequestState server-side.
+	State            string  `json:"state"`
+	Title            *string `json:"title"`
+	SourceBranchName *string `json:"sourceBranchName"`
+	TargetBranchName *string `json:"targetBranchName"`
+	// Link back to the PR in the upstream SCM (e.g., GitHub PR URL).
+	Endpoint *string `json:"endpoint"`
+}
+
+// GetIdentity returns PullRequestInfoInput.Identity, and is useful for accessing the field via an interface.
+func (v *PullRequestInfoInput) GetIdentity() string { return v.Identity }
+
+// GetState returns PullRequestInfoInput.State, and is useful for accessing the field via an interface.
+func (v *PullRequestInfoInput) GetState() string { return v.State }
+
+// GetTitle returns PullRequestInfoInput.Title, and is useful for accessing the field via an interface.
+func (v *PullRequestInfoInput) GetTitle() *string { return v.Title }
+
+// GetSourceBranchName returns PullRequestInfoInput.SourceBranchName, and is useful for accessing the field via an interface.
+func (v *PullRequestInfoInput) GetSourceBranchName() *string { return v.SourceBranchName }
+
+// GetTargetBranchName returns PullRequestInfoInput.TargetBranchName, and is useful for accessing the field via an interface.
+func (v *PullRequestInfoInput) GetTargetBranchName() *string { return v.TargetBranchName }
+
+// GetEndpoint returns PullRequestInfoInput.Endpoint, and is useful for accessing the field via an interface.
+func (v *PullRequestInfoInput) GetEndpoint() *string { return v.Endpoint }
+
+type PullRequestUpsertProgrammaticInput struct {
+	Identity         string  `json:"identity"`
+	State            string  `json:"state"`
+	Title            *string `json:"title"`
+	SourceBranchName *string `json:"sourceBranchName"`
+	TargetBranchName *string `json:"targetBranchName"`
+	Endpoint         *string `json:"endpoint"`
+	// Target VCS resolution. With a COMPONENT API key the component is
+	// implicit (the key identifies it) -- `component` / `vcsUri` are not
+	// needed. With an ORGANIZATION_RW or FREEFORM key, supply either
+	// `component` (UUID of the target component, whose VCS is used) or
+	// the (`vcsUri`, `repoPath`) pair plus optionally `vcsDisplayName`.
+	// When both are present, `component` wins and vcsUri/repoPath are
+	// ignored.
+	Component      *string `json:"component"`
+	VcsUri         *string `json:"vcsUri"`
+	RepoPath       *string `json:"repoPath"`
+	VcsDisplayName *string `json:"vcsDisplayName"`
+	// When supplied, the backend looks up the SCE for (targetVcs, commit)
+	// and advances the PR head to it if found. If no SCE exists yet for
+	// that commit, the PR row is registered without a head -- the
+	// subsequent addReleaseProgrammatic call carrying the same PR input
+	// will advance the head once the SCE is persisted.
+	Commit *string `json:"commit"`
+}
+
+// GetIdentity returns PullRequestUpsertProgrammaticInput.Identity, and is useful for accessing the field via an interface.
+func (v *PullRequestUpsertProgrammaticInput) GetIdentity() string { return v.Identity }
+
+// GetState returns PullRequestUpsertProgrammaticInput.State, and is useful for accessing the field via an interface.
+func (v *PullRequestUpsertProgrammaticInput) GetState() string { return v.State }
+
+// GetTitle returns PullRequestUpsertProgrammaticInput.Title, and is useful for accessing the field via an interface.
+func (v *PullRequestUpsertProgrammaticInput) GetTitle() *string { return v.Title }
+
+// GetSourceBranchName returns PullRequestUpsertProgrammaticInput.SourceBranchName, and is useful for accessing the field via an interface.
+func (v *PullRequestUpsertProgrammaticInput) GetSourceBranchName() *string { return v.SourceBranchName }
+
+// GetTargetBranchName returns PullRequestUpsertProgrammaticInput.TargetBranchName, and is useful for accessing the field via an interface.
+func (v *PullRequestUpsertProgrammaticInput) GetTargetBranchName() *string { return v.TargetBranchName }
+
+// GetEndpoint returns PullRequestUpsertProgrammaticInput.Endpoint, and is useful for accessing the field via an interface.
+func (v *PullRequestUpsertProgrammaticInput) GetEndpoint() *string { return v.Endpoint }
+
+// GetComponent returns PullRequestUpsertProgrammaticInput.Component, and is useful for accessing the field via an interface.
+func (v *PullRequestUpsertProgrammaticInput) GetComponent() *string { return v.Component }
+
+// GetVcsUri returns PullRequestUpsertProgrammaticInput.VcsUri, and is useful for accessing the field via an interface.
+func (v *PullRequestUpsertProgrammaticInput) GetVcsUri() *string { return v.VcsUri }
+
+// GetRepoPath returns PullRequestUpsertProgrammaticInput.RepoPath, and is useful for accessing the field via an interface.
+func (v *PullRequestUpsertProgrammaticInput) GetRepoPath() *string { return v.RepoPath }
+
+// GetVcsDisplayName returns PullRequestUpsertProgrammaticInput.VcsDisplayName, and is useful for accessing the field via an interface.
+func (v *PullRequestUpsertProgrammaticInput) GetVcsDisplayName() *string { return v.VcsDisplayName }
+
+// GetCommit returns PullRequestUpsertProgrammaticInput.Commit, and is useful for accessing the field via an interface.
+func (v *PullRequestUpsertProgrammaticInput) GetCommit() *string { return v.Commit }
+
+type ReleaseApprovalInput struct {
+	ApprovalEntry  string        `json:"approvalEntry"`
+	ApprovalRoleId string        `json:"approvalRoleId"`
+	State          ApprovalState `json:"state"`
+	// Optional free-form approver comment. Server sanitises via jsoup
+	// Safelist.basic() and caps at 4000 chars; empty-after-clean is treated
+	// as null. Reused for both the manual mutation and the programmatic
+	// one -- for the latter, approvalEntry may be either a UUID or an
+	// approval-entry name (per existing semantics).
+	Comment *string `json:"comment"`
+}
+
+// GetApprovalEntry returns ReleaseApprovalInput.ApprovalEntry, and is useful for accessing the field via an interface.
+func (v *ReleaseApprovalInput) GetApprovalEntry() string { return v.ApprovalEntry }
+
+// GetApprovalRoleId returns ReleaseApprovalInput.ApprovalRoleId, and is useful for accessing the field via an interface.
+func (v *ReleaseApprovalInput) GetApprovalRoleId() string { return v.ApprovalRoleId }
+
+// GetState returns ReleaseApprovalInput.State, and is useful for accessing the field via an interface.
+func (v *ReleaseApprovalInput) GetState() ApprovalState { return v.State }
+
+// GetComment returns ReleaseApprovalInput.Comment, and is useful for accessing the field via an interface.
+func (v *ReleaseApprovalInput) GetComment() *string { return v.Comment }
+
+type ReleaseApprovalProgrammaticInput struct {
+	Approvals []*ReleaseApprovalInput `json:"approvals,omitempty"`
+	Release   *string                 `json:"release"`
+	Component *string                 `json:"component"`
+	Version   *string                 `json:"version"`
+}
+
+// GetApprovals returns ReleaseApprovalProgrammaticInput.Approvals, and is useful for accessing the field via an interface.
+func (v *ReleaseApprovalProgrammaticInput) GetApprovals() []*ReleaseApprovalInput { return v.Approvals }
+
+// GetRelease returns ReleaseApprovalProgrammaticInput.Release, and is useful for accessing the field via an interface.
+func (v *ReleaseApprovalProgrammaticInput) GetRelease() *string { return v.Release }
+
+// GetComponent returns ReleaseApprovalProgrammaticInput.Component, and is useful for accessing the field via an interface.
+func (v *ReleaseApprovalProgrammaticInput) GetComponent() *string { return v.Component }
+
+// GetVersion returns ReleaseApprovalProgrammaticInput.Version, and is useful for accessing the field via an interface.
+func (v *ReleaseApprovalProgrammaticInput) GetVersion() *string { return v.Version }
+
+type ReleaseInputProg struct {
+	Version              string                  `json:"version"`
+	Lifecycle            *ReleaseLifecycleEnum   `json:"lifecycle"`
+	Component            *string                 `json:"component"`
+	Branch               *string                 `json:"branch"`
+	SourceCodeEntry      *SourceCodeEntryInput   `json:"sourceCodeEntry,omitempty"`
+	Artifacts            []*ArtifactInput        `json:"artifacts,omitempty"`
+	InboundDeliverables  []*DeliverableInput     `json:"inboundDeliverables,omitempty"`
+	OutboundDeliverables []*DeliverableInput     `json:"outboundDeliverables,omitempty"`
+	Endpoint             *string                 `json:"endpoint"`
+	Commits              []*SourceCodeEntryInput `json:"commits,omitempty"`
+	// DEPRECATED -- silently dropped by addReleaseProgrammatic. The resolver
+	// only consumes source-code-entry artifacts from `sourceCodeEntry.artifacts`
+	// (or each `commits[i].artifacts` for multi-commit inputs). Nest the
+	// artifacts there instead. The server logs a WARN whenever this field
+	// is supplied so we can track remaining callers before removing it.
+	SceArts     []*ArtifactInput   `json:"sceArts,omitempty"`
+	Identifiers []*IdentifierInput `json:"identifiers,omitempty"`
+	GudidRecord *GudidRecordInput  `json:"gudidRecord,omitempty"`
+	GudidStatus *GudidStatus       `json:"gudidStatus"`
+	// Release lifecycle date: the CLE END_OF_SUPPORT projection (TeaTransformerService).
+	// NOT the device support window -- that is declared on the device model at
+	// ComponentData.medicalProfile.deviceSupportWindow and resolved by DeviceLifecycleResolver.
+	Eos *string `json:"eos"`
+	// Release lifecycle date: the CLE END_OF_LIFE projection (TeaTransformerService).
+	// NOT the device support window -- that is declared on the device model at
+	// ComponentData.medicalProfile.deviceSupportWindow and resolved by DeviceLifecycleResolver.
+	Eol                                       *string `json:"eol"`
+	VcsUri                                    *string `json:"vcsUri"`
+	RepoPath                                  *string `json:"repoPath"`
+	VcsDisplayName                            *string `json:"vcsDisplayName"`
+	CreateComponentIfMissing                  *bool   `json:"createComponentIfMissing"`
+	CreateComponentName                       *string `json:"createComponentName"`
+	CreateComponentVersionSchema              *string `json:"createComponentVersionSchema"`
+	CreateComponentFeatureBranchVersionSchema *string `json:"createComponentFeatureBranchVersionSchema"`
+	// Optional perspective UUID. When supplied together with createComponentIfMissing=true and
+	// the component does not yet exist, the new component is created and assigned to this
+	// perspective. Required scope on the API key is WRITE on the perspective (FREEFORM keys)
+	// or any broader scope that covers it. Ignored when the component already exists.
+	Perspective    *string `json:"perspective"`
+	RebuildRelease *bool   `json:"rebuildRelease"`
+	// Optional PR metadata bundled with the call. When supplied on
+	// addReleaseProgrammatic, a first-class PullRequest entity is upserted
+	// by (targetVcsRepository, identity) and its head is advanced to the
+	// release's SCE. The PR aggregator picks up the release on subsequent
+	// VALIDATE_PR firings. Ignored on calls that do not create a release.
+	PullRequest *PullRequestInfoInput `json:"pullRequest,omitempty"`
+}
+
+// GetVersion returns ReleaseInputProg.Version, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetVersion() string { return v.Version }
+
+// GetLifecycle returns ReleaseInputProg.Lifecycle, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetLifecycle() *ReleaseLifecycleEnum { return v.Lifecycle }
+
+// GetComponent returns ReleaseInputProg.Component, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetComponent() *string { return v.Component }
+
+// GetBranch returns ReleaseInputProg.Branch, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetBranch() *string { return v.Branch }
+
+// GetSourceCodeEntry returns ReleaseInputProg.SourceCodeEntry, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetSourceCodeEntry() *SourceCodeEntryInput { return v.SourceCodeEntry }
+
+// GetArtifacts returns ReleaseInputProg.Artifacts, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetArtifacts() []*ArtifactInput { return v.Artifacts }
+
+// GetInboundDeliverables returns ReleaseInputProg.InboundDeliverables, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetInboundDeliverables() []*DeliverableInput { return v.InboundDeliverables }
+
+// GetOutboundDeliverables returns ReleaseInputProg.OutboundDeliverables, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetOutboundDeliverables() []*DeliverableInput {
+	return v.OutboundDeliverables
+}
+
+// GetEndpoint returns ReleaseInputProg.Endpoint, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetEndpoint() *string { return v.Endpoint }
+
+// GetCommits returns ReleaseInputProg.Commits, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetCommits() []*SourceCodeEntryInput { return v.Commits }
+
+// GetSceArts returns ReleaseInputProg.SceArts, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetSceArts() []*ArtifactInput { return v.SceArts }
+
+// GetIdentifiers returns ReleaseInputProg.Identifiers, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetIdentifiers() []*IdentifierInput { return v.Identifiers }
+
+// GetGudidRecord returns ReleaseInputProg.GudidRecord, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetGudidRecord() *GudidRecordInput { return v.GudidRecord }
+
+// GetGudidStatus returns ReleaseInputProg.GudidStatus, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetGudidStatus() *GudidStatus { return v.GudidStatus }
+
+// GetEos returns ReleaseInputProg.Eos, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetEos() *string { return v.Eos }
+
+// GetEol returns ReleaseInputProg.Eol, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetEol() *string { return v.Eol }
+
+// GetVcsUri returns ReleaseInputProg.VcsUri, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetVcsUri() *string { return v.VcsUri }
+
+// GetRepoPath returns ReleaseInputProg.RepoPath, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetRepoPath() *string { return v.RepoPath }
+
+// GetVcsDisplayName returns ReleaseInputProg.VcsDisplayName, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetVcsDisplayName() *string { return v.VcsDisplayName }
+
+// GetCreateComponentIfMissing returns ReleaseInputProg.CreateComponentIfMissing, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetCreateComponentIfMissing() *bool { return v.CreateComponentIfMissing }
+
+// GetCreateComponentName returns ReleaseInputProg.CreateComponentName, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetCreateComponentName() *string { return v.CreateComponentName }
+
+// GetCreateComponentVersionSchema returns ReleaseInputProg.CreateComponentVersionSchema, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetCreateComponentVersionSchema() *string {
+	return v.CreateComponentVersionSchema
+}
+
+// GetCreateComponentFeatureBranchVersionSchema returns ReleaseInputProg.CreateComponentFeatureBranchVersionSchema, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetCreateComponentFeatureBranchVersionSchema() *string {
+	return v.CreateComponentFeatureBranchVersionSchema
+}
+
+// GetPerspective returns ReleaseInputProg.Perspective, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetPerspective() *string { return v.Perspective }
+
+// GetRebuildRelease returns ReleaseInputProg.RebuildRelease, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetRebuildRelease() *bool { return v.RebuildRelease }
+
+// GetPullRequest returns ReleaseInputProg.PullRequest, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetPullRequest() *PullRequestInfoInput { return v.PullRequest }
+
+type ReleaseLifecycleEnum string
+
+const (
+	ReleaseLifecycleEnumCancelled           ReleaseLifecycleEnum = "CANCELLED"
+	ReleaseLifecycleEnumRejected            ReleaseLifecycleEnum = "REJECTED"
+	ReleaseLifecycleEnumPending             ReleaseLifecycleEnum = "PENDING"
+	ReleaseLifecycleEnumDraft               ReleaseLifecycleEnum = "DRAFT"
+	ReleaseLifecycleEnumAssembled           ReleaseLifecycleEnum = "ASSEMBLED"
+	ReleaseLifecycleEnumReadyToShip         ReleaseLifecycleEnum = "READY_TO_SHIP"
+	ReleaseLifecycleEnumGeneralAvailability ReleaseLifecycleEnum = "GENERAL_AVAILABILITY"
+	ReleaseLifecycleEnumEndOfMarketing      ReleaseLifecycleEnum = "END_OF_MARKETING"
+	ReleaseLifecycleEnumEndOfDistribution   ReleaseLifecycleEnum = "END_OF_DISTRIBUTION"
+	ReleaseLifecycleEnumEndOfSupport        ReleaseLifecycleEnum = "END_OF_SUPPORT"
+	ReleaseLifecycleEnumEndOfLife           ReleaseLifecycleEnum = "END_OF_LIFE"
+)
+
+var AllReleaseLifecycleEnum = []ReleaseLifecycleEnum{
+	ReleaseLifecycleEnumCancelled,
+	ReleaseLifecycleEnumRejected,
+	ReleaseLifecycleEnumPending,
+	ReleaseLifecycleEnumDraft,
+	ReleaseLifecycleEnumAssembled,
+	ReleaseLifecycleEnumReadyToShip,
+	ReleaseLifecycleEnumGeneralAvailability,
+	ReleaseLifecycleEnumEndOfMarketing,
+	ReleaseLifecycleEnumEndOfDistribution,
+	ReleaseLifecycleEnumEndOfSupport,
+	ReleaseLifecycleEnumEndOfLife,
+}
+
+type ReleaseUpdateActionEnum string
+
+const (
+	ReleaseUpdateActionEnumAdded   ReleaseUpdateActionEnum = "ADDED"
+	ReleaseUpdateActionEnumRemoved ReleaseUpdateActionEnum = "REMOVED"
+	ReleaseUpdateActionEnumChanged ReleaseUpdateActionEnum = "CHANGED"
+)
+
+var AllReleaseUpdateActionEnum = []ReleaseUpdateActionEnum{
+	ReleaseUpdateActionEnumAdded,
+	ReleaseUpdateActionEnumRemoved,
+	ReleaseUpdateActionEnumChanged,
+}
+
+type ReleaseUpdateScopeEnum string
+
+const (
+	ReleaseUpdateScopeEnumReleaseCreated      ReleaseUpdateScopeEnum = "RELEASE_CREATED"
+	ReleaseUpdateScopeEnumLifecycle           ReleaseUpdateScopeEnum = "LIFECYCLE"
+	ReleaseUpdateScopeEnumSourceCodeEntry     ReleaseUpdateScopeEnum = "SOURCE_CODE_ENTRY"
+	ReleaseUpdateScopeEnumParentRelease       ReleaseUpdateScopeEnum = "PARENT_RELEASE"
+	ReleaseUpdateScopeEnumArtifact            ReleaseUpdateScopeEnum = "ARTIFACT"
+	ReleaseUpdateScopeEnumInboundDelivery     ReleaseUpdateScopeEnum = "INBOUND_DELIVERY"
+	ReleaseUpdateScopeEnumOutboundDelivery    ReleaseUpdateScopeEnum = "OUTBOUND_DELIVERY"
+	ReleaseUpdateScopeEnumVariant             ReleaseUpdateScopeEnum = "VARIANT"
+	ReleaseUpdateScopeEnumVersion             ReleaseUpdateScopeEnum = "VERSION"
+	ReleaseUpdateScopeEnumNotes               ReleaseUpdateScopeEnum = "NOTES"
+	ReleaseUpdateScopeEnumTags                ReleaseUpdateScopeEnum = "TAGS"
+	ReleaseUpdateScopeEnumMarketingVersion    ReleaseUpdateScopeEnum = "MARKETING_VERSION"
+	ReleaseUpdateScopeEnumTrigger             ReleaseUpdateScopeEnum = "TRIGGER"
+	ReleaseUpdateScopeEnumInputTrigger        ReleaseUpdateScopeEnum = "INPUT_TRIGGER"
+	ReleaseUpdateScopeEnumApprovedEnvironment ReleaseUpdateScopeEnum = "APPROVED_ENVIRONMENT"
+	ReleaseUpdateScopeEnumSupportWindow       ReleaseUpdateScopeEnum = "SUPPORT_WINDOW"
+	ReleaseUpdateScopeEnumFdaNarrative        ReleaseUpdateScopeEnum = "FDA_NARRATIVE"
+)
+
+var AllReleaseUpdateScopeEnum = []ReleaseUpdateScopeEnum{
+	ReleaseUpdateScopeEnumReleaseCreated,
+	ReleaseUpdateScopeEnumLifecycle,
+	ReleaseUpdateScopeEnumSourceCodeEntry,
+	ReleaseUpdateScopeEnumParentRelease,
+	ReleaseUpdateScopeEnumArtifact,
+	ReleaseUpdateScopeEnumInboundDelivery,
+	ReleaseUpdateScopeEnumOutboundDelivery,
+	ReleaseUpdateScopeEnumVariant,
+	ReleaseUpdateScopeEnumVersion,
+	ReleaseUpdateScopeEnumNotes,
+	ReleaseUpdateScopeEnumTags,
+	ReleaseUpdateScopeEnumMarketingVersion,
+	ReleaseUpdateScopeEnumTrigger,
+	ReleaseUpdateScopeEnumInputTrigger,
+	ReleaseUpdateScopeEnumApprovedEnvironment,
+	ReleaseUpdateScopeEnumSupportWindow,
+	ReleaseUpdateScopeEnumFdaNarrative,
+}
+
+// ReleasecompletionfinalizerProgrammaticResponse is returned by ReleasecompletionfinalizerProgrammatic on success.
+type ReleasecompletionfinalizerProgrammaticResponse struct {
+	ReleasecompletionfinalizerProgrammatic *bool `json:"releasecompletionfinalizerProgrammatic"`
+}
+
+// GetReleasecompletionfinalizerProgrammatic returns ReleasecompletionfinalizerProgrammaticResponse.ReleasecompletionfinalizerProgrammatic, and is useful for accessing the field via an interface.
+func (v *ReleasecompletionfinalizerProgrammaticResponse) GetReleasecompletionfinalizerProgrammatic() *bool {
+	return v.ReleasecompletionfinalizerProgrammatic
+}
+
+type SbomProbingStatus string
+
+const (
+	SbomProbingStatusPending   SbomProbingStatus = "PENDING"
+	SbomProbingStatusEnriching SbomProbingStatus = "ENRICHING"
+	SbomProbingStatusDone      SbomProbingStatus = "DONE"
+	SbomProbingStatusFailed    SbomProbingStatus = "FAILED"
+)
+
+var AllSbomProbingStatus = []SbomProbingStatus{
+	SbomProbingStatusPending,
+	SbomProbingStatusEnriching,
+	SbomProbingStatusDone,
+	SbomProbingStatusFailed,
+}
+
+type SceArtifactInput struct {
+	Sce       string           `json:"sce"`
+	Artifacts []*ArtifactInput `json:"artifacts,omitempty"`
+}
+
+// GetSce returns SceArtifactInput.Sce, and is useful for accessing the field via an interface.
+func (v *SceArtifactInput) GetSce() string { return v.Sce }
+
+// GetArtifacts returns SceArtifactInput.Artifacts, and is useful for accessing the field via an interface.
+func (v *SceArtifactInput) GetArtifacts() []*ArtifactInput { return v.Artifacts }
+
+// Upload one or more artifacts and bind them to an agent session.
+// Each {@code ArtifactInput.file} is a separate multipart part on the
+// HTTP body per the Apollo upload spec. The resulting artifact rows
+// carry {@code belongsTo=AGENT_SESSION} and live only on the session --
+// they do not appear on any release or component.
+type SessionAddArtifactInput struct {
+	SessionUuid string           `json:"sessionUuid"`
+	Artifacts   []*ArtifactInput `json:"artifacts,omitempty"`
+}
+
+// GetSessionUuid returns SessionAddArtifactInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *SessionAddArtifactInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetArtifacts returns SessionAddArtifactInput.Artifacts, and is useful for accessing the field via an interface.
+func (v *SessionAddArtifactInput) GetArtifacts() []*ArtifactInput { return v.Artifacts }
+
+// SessionAddArtifactResponse is returned by SessionAddArtifact on success.
+type SessionAddArtifactResponse struct {
+	SessionAddArtifactProgrammatic *SessionAddArtifactSessionAddArtifactProgrammaticSession `json:"sessionAddArtifactProgrammatic"`
+}
+
+// GetSessionAddArtifactProgrammatic returns SessionAddArtifactResponse.SessionAddArtifactProgrammatic, and is useful for accessing the field via an interface.
+func (v *SessionAddArtifactResponse) GetSessionAddArtifactProgrammatic() *SessionAddArtifactSessionAddArtifactProgrammaticSession {
+	return v.SessionAddArtifactProgrammatic
+}
+
+// SessionAddArtifactSessionAddArtifactProgrammaticSession includes the requested fields of the GraphQL type Session.
+// The GraphQL type's documentation follows.
+//
+// One ROOT Agent invocation. Many concurrent sessions per agent are
+// allowed on the same API key. Sub-agents of the root contribute
+// commits / artifacts to the same session via the commit-trailer
+// attribution path (PR 2).
+type SessionAddArtifactSessionAddArtifactProgrammaticSession struct {
+	Uuid   *string        `json:"uuid"`
+	Status *SessionStatus `json:"status"`
+	// Artifact UUIDs attached to this session (reuses rearm.artifacts).
+	Artifacts []*string `json:"artifacts"`
+	// Append-only log of agent-policy evaluations (PR 4). Empty on CE
+	// deployments and on sessions opened under an org with no policies.
+	PolicyEvents []*SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent `json:"policyEvents"`
+}
+
+// GetUuid returns SessionAddArtifactSessionAddArtifactProgrammaticSession.Uuid, and is useful for accessing the field via an interface.
+func (v *SessionAddArtifactSessionAddArtifactProgrammaticSession) GetUuid() *string { return v.Uuid }
+
+// GetStatus returns SessionAddArtifactSessionAddArtifactProgrammaticSession.Status, and is useful for accessing the field via an interface.
+func (v *SessionAddArtifactSessionAddArtifactProgrammaticSession) GetStatus() *SessionStatus {
+	return v.Status
+}
+
+// GetArtifacts returns SessionAddArtifactSessionAddArtifactProgrammaticSession.Artifacts, and is useful for accessing the field via an interface.
+func (v *SessionAddArtifactSessionAddArtifactProgrammaticSession) GetArtifacts() []*string {
+	return v.Artifacts
+}
+
+// GetPolicyEvents returns SessionAddArtifactSessionAddArtifactProgrammaticSession.PolicyEvents, and is useful for accessing the field via an interface.
+func (v *SessionAddArtifactSessionAddArtifactProgrammaticSession) GetPolicyEvents() []*SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent {
+	return v.PolicyEvents
+}
+
+// SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent includes the requested fields of the GraphQL type PolicyEvent.
+// The GraphQL type's documentation follows.
+//
+// A single agent-policy evaluation outcome on a session. SAAS-only --
+// on CE deployments the session's {@code policyEvents} list is always
+// empty. Persisted append-only on AgentSession.
+type SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent struct {
+	// Snapshot of the policy's name at evaluation time (denormalised so a renamed/deleted policy still surfaces sensibly).
+	PolicyName *string         `json:"policyName"`
+	State      *PolicyState    `json:"state"`
+	Severity   *PolicySeverity `json:"severity"`
+	// Operator-facing failure message; null on PASSED verdicts.
+	Message     *string `json:"message"`
+	EvaluatedAt *string `json:"evaluatedAt"`
+}
+
+// GetPolicyName returns SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent.PolicyName, and is useful for accessing the field via an interface.
+func (v *SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent) GetPolicyName() *string {
+	return v.PolicyName
+}
+
+// GetState returns SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent.State, and is useful for accessing the field via an interface.
+func (v *SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent) GetState() *PolicyState {
+	return v.State
+}
+
+// GetSeverity returns SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent.Severity, and is useful for accessing the field via an interface.
+func (v *SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent) GetSeverity() *PolicySeverity {
+	return v.Severity
+}
+
+// GetMessage returns SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent.Message, and is useful for accessing the field via an interface.
+func (v *SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent) GetMessage() *string {
+	return v.Message
+}
+
+// GetEvaluatedAt returns SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent.EvaluatedAt, and is useful for accessing the field via an interface.
+func (v *SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPolicyEvent) GetEvaluatedAt() *string {
+	return v.EvaluatedAt
+}
+
+// SessionCloseProgrammaticResponse is returned by SessionCloseProgrammatic on success.
+type SessionCloseProgrammaticResponse struct {
+	SessionCloseProgrammatic *SessionCloseProgrammaticSessionCloseProgrammaticSession `json:"sessionCloseProgrammatic"`
+}
+
+// GetSessionCloseProgrammatic returns SessionCloseProgrammaticResponse.SessionCloseProgrammatic, and is useful for accessing the field via an interface.
+func (v *SessionCloseProgrammaticResponse) GetSessionCloseProgrammatic() *SessionCloseProgrammaticSessionCloseProgrammaticSession {
+	return v.SessionCloseProgrammatic
+}
+
+// SessionCloseProgrammaticSessionCloseProgrammaticSession includes the requested fields of the GraphQL type Session.
+// The GraphQL type's documentation follows.
+//
+// One ROOT Agent invocation. Many concurrent sessions per agent are
+// allowed on the same API key. Sub-agents of the root contribute
+// commits / artifacts to the same session via the commit-trailer
+// attribution path (PR 2).
+type SessionCloseProgrammaticSessionCloseProgrammaticSession struct {
+	Uuid     *string        `json:"uuid"`
+	Status   *SessionStatus `json:"status"`
+	ClosedAt *string        `json:"closedAt"`
+}
+
+// GetUuid returns SessionCloseProgrammaticSessionCloseProgrammaticSession.Uuid, and is useful for accessing the field via an interface.
+func (v *SessionCloseProgrammaticSessionCloseProgrammaticSession) GetUuid() *string { return v.Uuid }
+
+// GetStatus returns SessionCloseProgrammaticSessionCloseProgrammaticSession.Status, and is useful for accessing the field via an interface.
+func (v *SessionCloseProgrammaticSessionCloseProgrammaticSession) GetStatus() *SessionStatus {
+	return v.Status
+}
+
+// GetClosedAt returns SessionCloseProgrammaticSessionCloseProgrammaticSession.ClosedAt, and is useful for accessing the field via an interface.
+func (v *SessionCloseProgrammaticSessionCloseProgrammaticSession) GetClosedAt() *string {
+	return v.ClosedAt
+}
+
+type SessionInitializeInput struct {
+	// Display name the agent reports for itself ("Claude Code", "Cursor
+	// Agent"). Required -- used as the (org, lower(name)) lookup key.
+	AgentName string `json:"agentName"`
+	// Model name the agent reports running ("claude-sonnet",
+	// "composer-1"). Required -- used as the (org, lower(name), version)
+	// lookup key on the ModelOntology row.
+	AgentModel string `json:"agentModel"`
+	// Model version (e.g. "4.5"). Defaults to "unknown" if omitted.
+	AgentModelVersion *string `json:"agentModelVersion"`
+	// Publisher / vendor (e.g. "Anthropic"). Display-only; stored on the ModelOntology row.
+	AgentVendor   *string `json:"agentVendor"`
+	AgentIconKind *string `json:"agentIconKind"`
+	AgentColor    *string `json:"agentColor"`
+	// Optional client-side session id. Defaults server-side to the row
+	// uuid when omitted. **Unique forever within (org, agent)**: an id
+	// previously used by ANY session (OPEN, CLOSED, or BLOCKED) cannot
+	// be re-used; sessionInitializeProgrammatic errors with
+	// clientSessionId-conflict. Agents that retry after a BLOCKED /
+	// CLOSED predecessor must mint a fresh id.
+	ClientSessionId *string `json:"clientSessionId"`
+	Title           *string `json:"title"`
+	// Optional pointer to a prior session this one continues from.
+	// Set when an agent retries after a BLOCKED or CLOSED predecessor
+	// so the audit trail threads the related attempts. Null on first-
+	// time sessions.
+	ParentSession *string `json:"parentSession"`
+}
+
+// GetAgentName returns SessionInitializeInput.AgentName, and is useful for accessing the field via an interface.
+func (v *SessionInitializeInput) GetAgentName() string { return v.AgentName }
+
+// GetAgentModel returns SessionInitializeInput.AgentModel, and is useful for accessing the field via an interface.
+func (v *SessionInitializeInput) GetAgentModel() string { return v.AgentModel }
+
+// GetAgentModelVersion returns SessionInitializeInput.AgentModelVersion, and is useful for accessing the field via an interface.
+func (v *SessionInitializeInput) GetAgentModelVersion() *string { return v.AgentModelVersion }
+
+// GetAgentVendor returns SessionInitializeInput.AgentVendor, and is useful for accessing the field via an interface.
+func (v *SessionInitializeInput) GetAgentVendor() *string { return v.AgentVendor }
+
+// GetAgentIconKind returns SessionInitializeInput.AgentIconKind, and is useful for accessing the field via an interface.
+func (v *SessionInitializeInput) GetAgentIconKind() *string { return v.AgentIconKind }
+
+// GetAgentColor returns SessionInitializeInput.AgentColor, and is useful for accessing the field via an interface.
+func (v *SessionInitializeInput) GetAgentColor() *string { return v.AgentColor }
+
+// GetClientSessionId returns SessionInitializeInput.ClientSessionId, and is useful for accessing the field via an interface.
+func (v *SessionInitializeInput) GetClientSessionId() *string { return v.ClientSessionId }
+
+// GetTitle returns SessionInitializeInput.Title, and is useful for accessing the field via an interface.
+func (v *SessionInitializeInput) GetTitle() *string { return v.Title }
+
+// GetParentSession returns SessionInitializeInput.ParentSession, and is useful for accessing the field via an interface.
+func (v *SessionInitializeInput) GetParentSession() *string { return v.ParentSession }
+
+// SessionInitializeProgrammaticResponse is returned by SessionInitializeProgrammatic on success.
+type SessionInitializeProgrammaticResponse struct {
+	SessionInitializeProgrammatic *SessionInitializeProgrammaticSessionInitializeProgrammaticSession `json:"sessionInitializeProgrammatic"`
+}
+
+// GetSessionInitializeProgrammatic returns SessionInitializeProgrammaticResponse.SessionInitializeProgrammatic, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticResponse) GetSessionInitializeProgrammatic() *SessionInitializeProgrammaticSessionInitializeProgrammaticSession {
+	return v.SessionInitializeProgrammatic
+}
+
+// SessionInitializeProgrammaticSessionInitializeProgrammaticSession includes the requested fields of the GraphQL type Session.
+// The GraphQL type's documentation follows.
+//
+// One ROOT Agent invocation. Many concurrent sessions per agent are
+// allowed on the same API key. Sub-agents of the root contribute
+// commits / artifacts to the same session via the commit-trailer
+// attribution path (PR 2).
+type SessionInitializeProgrammaticSessionInitializeProgrammaticSession struct {
+	Uuid *string `json:"uuid"`
+	// Owning ROOT agent uuid.
+	Agent *string `json:"agent"`
+	// Agent-supplied natural session id. Defaults to the row uuid when
+	// the agent didn't pick one on initialize. The two-line commit
+	// trailer references this value, not the row uuid.
+	ClientSessionId *string        `json:"clientSessionId"`
+	Status          *SessionStatus `json:"status"`
+	Title           *string        `json:"title"`
+	StartedAt       *string        `json:"startedAt"`
+	// Append-only log of agent-policy evaluations (PR 4). Empty on CE
+	// deployments and on sessions opened under an org with no policies.
+	PolicyEvents []*SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent `json:"policyEvents"`
+}
+
+// GetUuid returns SessionInitializeProgrammaticSessionInitializeProgrammaticSession.Uuid, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSession) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetAgent returns SessionInitializeProgrammaticSessionInitializeProgrammaticSession.Agent, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSession) GetAgent() *string {
+	return v.Agent
+}
+
+// GetClientSessionId returns SessionInitializeProgrammaticSessionInitializeProgrammaticSession.ClientSessionId, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSession) GetClientSessionId() *string {
+	return v.ClientSessionId
+}
+
+// GetStatus returns SessionInitializeProgrammaticSessionInitializeProgrammaticSession.Status, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSession) GetStatus() *SessionStatus {
+	return v.Status
+}
+
+// GetTitle returns SessionInitializeProgrammaticSessionInitializeProgrammaticSession.Title, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSession) GetTitle() *string {
+	return v.Title
+}
+
+// GetStartedAt returns SessionInitializeProgrammaticSessionInitializeProgrammaticSession.StartedAt, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSession) GetStartedAt() *string {
+	return v.StartedAt
+}
+
+// GetPolicyEvents returns SessionInitializeProgrammaticSessionInitializeProgrammaticSession.PolicyEvents, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSession) GetPolicyEvents() []*SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent {
+	return v.PolicyEvents
+}
+
+// SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent includes the requested fields of the GraphQL type PolicyEvent.
+// The GraphQL type's documentation follows.
+//
+// A single agent-policy evaluation outcome on a session. SAAS-only --
+// on CE deployments the session's {@code policyEvents} list is always
+// empty. Persisted append-only on AgentSession.
+type SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent struct {
+	// Snapshot of the policy's name at evaluation time (denormalised so a renamed/deleted policy still surfaces sensibly).
+	PolicyName *string         `json:"policyName"`
+	Kind       *PolicyKind     `json:"kind"`
+	State      *PolicyState    `json:"state"`
+	Severity   *PolicySeverity `json:"severity"`
+	// Operator-facing failure message; null on PASSED verdicts.
+	Message     *string `json:"message"`
+	EvaluatedAt *string `json:"evaluatedAt"`
+	// Full snapshot of the AgentPolicy that produced this verdict (CEL,
+	// description, current enabled flag). Lets a calling agent decide
+	// whether the failure is recoverable on its own (e.g. attach an
+	// orientation artifact and retry) or needs operator action (e.g.
+	// a "model must equal claude-opus" policy when the agent runs
+	// another model). Resolved at read time from the policyUuid; null
+	// if the policy was deleted after the event.
+	Policy *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy `json:"policy"`
+}
+
+// GetPolicyName returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent.PolicyName, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent) GetPolicyName() *string {
+	return v.PolicyName
+}
+
+// GetKind returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent.Kind, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent) GetKind() *PolicyKind {
+	return v.Kind
+}
+
+// GetState returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent.State, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent) GetState() *PolicyState {
+	return v.State
+}
+
+// GetSeverity returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent.Severity, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent) GetSeverity() *PolicySeverity {
+	return v.Severity
+}
+
+// GetMessage returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent.Message, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent) GetMessage() *string {
+	return v.Message
+}
+
+// GetEvaluatedAt returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent.EvaluatedAt, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent) GetEvaluatedAt() *string {
+	return v.EvaluatedAt
+}
+
+// GetPolicy returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent.Policy, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent) GetPolicy() *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy {
+	return v.Policy
+}
+
+// SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy includes the requested fields of the GraphQL type AgentPolicy.
+// The GraphQL type's documentation follows.
+//
+// SAAS-only AI-Agent policy. CEL expression evaluates against the
+// session context -- {@code session.*}, {@code agent.*},
+// {@code model.*}. **Match-to-block semantics** (same as component-level
+// CEL gates): the CEL describes the *failure* condition. Returns true
+// when the failure matches → the verdict on the session goes to FAILED
+// / WARNING / PENDING per {@link #severity} + {@link #kind}. Returns
+// false → PASSED.
+type SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy struct {
+	Uuid *string `json:"uuid"`
+	Name *string `json:"name"`
+	// CEL boolean expression -- true means the failure matches.
+	Cel         *string         `json:"cel"`
+	Description *string         `json:"description"`
+	Enabled     *bool           `json:"enabled"`
+	Severity    *PolicySeverity `json:"severity"`
+	Kind        *PolicyKind     `json:"kind"`
+}
+
+// GetUuid returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Uuid, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetName returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Name, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetName() *string {
+	return v.Name
+}
+
+// GetCel returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Cel, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetCel() *string {
+	return v.Cel
+}
+
+// GetDescription returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Description, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetDescription() *string {
+	return v.Description
+}
+
+// GetEnabled returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Enabled, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetEnabled() *bool {
+	return v.Enabled
+}
+
+// GetSeverity returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Severity, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetSeverity() *PolicySeverity {
+	return v.Severity
+}
+
+// GetKind returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Kind, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetKind() *PolicyKind {
+	return v.Kind
+}
+
+// SessionProgrammaticResponse is returned by SessionProgrammatic on success.
+type SessionProgrammaticResponse struct {
+	// FREEFORM-auth read of a single session by uuid. Returns null when
+	// the session does not exist or is owned by a different org than the
+	// calling key. The JWT-authenticated {@code session} query is the
+	// operator/UI path; this is the agent's path for fetching its own
+	// full session state (policy verdicts, releases, PRs) after an inbox
+	// event.
+	SessionProgrammatic *SessionProgrammaticSessionProgrammaticSession `json:"sessionProgrammatic"`
+}
+
+// GetSessionProgrammatic returns SessionProgrammaticResponse.SessionProgrammatic, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticResponse) GetSessionProgrammatic() *SessionProgrammaticSessionProgrammaticSession {
+	return v.SessionProgrammatic
+}
+
+// SessionProgrammaticSessionProgrammaticSession includes the requested fields of the GraphQL type Session.
+// The GraphQL type's documentation follows.
+//
+// One ROOT Agent invocation. Many concurrent sessions per agent are
+// allowed on the same API key. Sub-agents of the root contribute
+// commits / artifacts to the same session via the commit-trailer
+// attribution path (PR 2).
+type SessionProgrammaticSessionProgrammaticSession struct {
+	Uuid *string `json:"uuid"`
+	// Agent-supplied natural session id. Defaults to the row uuid when
+	// the agent didn't pick one on initialize. The two-line commit
+	// trailer references this value, not the row uuid.
+	ClientSessionId *string        `json:"clientSessionId"`
+	Status          *SessionStatus `json:"status"`
+	StartedAt       *string        `json:"startedAt"`
+	ClosedAt        *string        `json:"closedAt"`
+	LastActivityAt  *string        `json:"lastActivityAt"`
+	// Owning ROOT agent uuid.
+	Agent *string `json:"agent"`
+	Title *string `json:"title"`
+	// If this session was opened by an agent retrying after a prior
+	// BLOCKED / CLOSED predecessor, this is that predecessor's uuid.
+	// Null on first-time sessions.
+	ParentSession *string `json:"parentSession"`
+	// Artifact UUIDs attached to this session (reuses rearm.artifacts).
+	Artifacts []*string `json:"artifacts"`
+	// SCE UUIDs attributed to this session via the commit-trailer parser
+	// (PR 2). Order is append-order; head of list is the earliest commit.
+	Commits []*string `json:"commits"`
+	// Append-only log of agent-policy evaluations (PR 4). Empty on CE
+	// deployments and on sessions opened under an org with no policies.
+	PolicyEvents []*SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent `json:"policyEvents"`
+	// Releases produced from this session's commits. Computed at read
+	// time by walking `commits → Release.sourceCodeEntry` (and
+	// `commits[]` for multi-commit releases). Distinct on release uuid.
+	Releases []*SessionProgrammaticSessionProgrammaticSessionReleasesRelease `json:"releases"`
+	// Pull requests touched by this session's commits. Computed at read
+	// time by walking `commits → PullRequest.commits[]`. Distinct on
+	// PR uuid.
+	PullRequests []*SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest `json:"pullRequests"`
+}
+
+// GetUuid returns SessionProgrammaticSessionProgrammaticSession.Uuid, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetUuid() *string { return v.Uuid }
+
+// GetClientSessionId returns SessionProgrammaticSessionProgrammaticSession.ClientSessionId, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetClientSessionId() *string {
+	return v.ClientSessionId
+}
+
+// GetStatus returns SessionProgrammaticSessionProgrammaticSession.Status, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetStatus() *SessionStatus { return v.Status }
+
+// GetStartedAt returns SessionProgrammaticSessionProgrammaticSession.StartedAt, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetStartedAt() *string { return v.StartedAt }
+
+// GetClosedAt returns SessionProgrammaticSessionProgrammaticSession.ClosedAt, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetClosedAt() *string { return v.ClosedAt }
+
+// GetLastActivityAt returns SessionProgrammaticSessionProgrammaticSession.LastActivityAt, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetLastActivityAt() *string {
+	return v.LastActivityAt
+}
+
+// GetAgent returns SessionProgrammaticSessionProgrammaticSession.Agent, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetAgent() *string { return v.Agent }
+
+// GetTitle returns SessionProgrammaticSessionProgrammaticSession.Title, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetTitle() *string { return v.Title }
+
+// GetParentSession returns SessionProgrammaticSessionProgrammaticSession.ParentSession, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetParentSession() *string {
+	return v.ParentSession
+}
+
+// GetArtifacts returns SessionProgrammaticSessionProgrammaticSession.Artifacts, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetArtifacts() []*string { return v.Artifacts }
+
+// GetCommits returns SessionProgrammaticSessionProgrammaticSession.Commits, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetCommits() []*string { return v.Commits }
+
+// GetPolicyEvents returns SessionProgrammaticSessionProgrammaticSession.PolicyEvents, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetPolicyEvents() []*SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent {
+	return v.PolicyEvents
+}
+
+// GetReleases returns SessionProgrammaticSessionProgrammaticSession.Releases, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetReleases() []*SessionProgrammaticSessionProgrammaticSessionReleasesRelease {
+	return v.Releases
+}
+
+// GetPullRequests returns SessionProgrammaticSessionProgrammaticSession.PullRequests, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetPullRequests() []*SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest {
+	return v.PullRequests
+}
+
+// SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent includes the requested fields of the GraphQL type PolicyEvent.
+// The GraphQL type's documentation follows.
+//
+// A single agent-policy evaluation outcome on a session. SAAS-only --
+// on CE deployments the session's {@code policyEvents} list is always
+// empty. Persisted append-only on AgentSession.
+type SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent struct {
+	// Snapshot of the policy's name at evaluation time (denormalised so a renamed/deleted policy still surfaces sensibly).
+	PolicyName *string         `json:"policyName"`
+	Kind       *PolicyKind     `json:"kind"`
+	State      *PolicyState    `json:"state"`
+	Severity   *PolicySeverity `json:"severity"`
+	// Operator-facing failure message; null on PASSED verdicts.
+	Message     *string `json:"message"`
+	EvaluatedAt *string `json:"evaluatedAt"`
+	// Full snapshot of the AgentPolicy that produced this verdict (CEL,
+	// description, current enabled flag). Lets a calling agent decide
+	// whether the failure is recoverable on its own (e.g. attach an
+	// orientation artifact and retry) or needs operator action (e.g.
+	// a "model must equal claude-opus" policy when the agent runs
+	// another model). Resolved at read time from the policyUuid; null
+	// if the policy was deleted after the event.
+	Policy *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy `json:"policy"`
+}
+
+// GetPolicyName returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent.PolicyName, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent) GetPolicyName() *string {
+	return v.PolicyName
+}
+
+// GetKind returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent.Kind, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent) GetKind() *PolicyKind {
+	return v.Kind
+}
+
+// GetState returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent.State, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent) GetState() *PolicyState {
+	return v.State
+}
+
+// GetSeverity returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent.Severity, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent) GetSeverity() *PolicySeverity {
+	return v.Severity
+}
+
+// GetMessage returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent.Message, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent) GetMessage() *string {
+	return v.Message
+}
+
+// GetEvaluatedAt returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent.EvaluatedAt, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent) GetEvaluatedAt() *string {
+	return v.EvaluatedAt
+}
+
+// GetPolicy returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent.Policy, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent) GetPolicy() *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy {
+	return v.Policy
+}
+
+// SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy includes the requested fields of the GraphQL type AgentPolicy.
+// The GraphQL type's documentation follows.
+//
+// SAAS-only AI-Agent policy. CEL expression evaluates against the
+// session context -- {@code session.*}, {@code agent.*},
+// {@code model.*}. **Match-to-block semantics** (same as component-level
+// CEL gates): the CEL describes the *failure* condition. Returns true
+// when the failure matches → the verdict on the session goes to FAILED
+// / WARNING / PENDING per {@link #severity} + {@link #kind}. Returns
+// false → PASSED.
+type SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy struct {
+	Uuid *string `json:"uuid"`
+	Name *string `json:"name"`
+	// CEL boolean expression -- true means the failure matches.
+	Cel         *string         `json:"cel"`
+	Description *string         `json:"description"`
+	Enabled     *bool           `json:"enabled"`
+	Severity    *PolicySeverity `json:"severity"`
+	Kind        *PolicyKind     `json:"kind"`
+}
+
+// GetUuid returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Uuid, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetName returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Name, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetName() *string {
+	return v.Name
+}
+
+// GetCel returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Cel, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetCel() *string {
+	return v.Cel
+}
+
+// GetDescription returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Description, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetDescription() *string {
+	return v.Description
+}
+
+// GetEnabled returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Enabled, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetEnabled() *bool {
+	return v.Enabled
+}
+
+// GetSeverity returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Severity, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetSeverity() *PolicySeverity {
+	return v.Severity
+}
+
+// GetKind returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Kind, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetKind() *PolicyKind {
+	return v.Kind
+}
+
+// SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest includes the requested fields of the GraphQL type PullRequest.
+// The GraphQL type's documentation follows.
+//
+// First-class PullRequest entity. Owns its own identity at the SCM level
+// (target VCS + identity string), its own commit list (SCE UUIDs), and
+// both inbound (release_validation_events) and outbound
+// (pr_validation_events) event streams.
+type SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest struct {
+	Uuid     *string `json:"uuid"`
+	Identity *string `json:"identity"`
+	Title    *string `json:"title"`
+	State    *string `json:"state"`
+}
+
+// GetUuid returns SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest.Uuid, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetIdentity returns SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest.Identity, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest) GetIdentity() *string {
+	return v.Identity
+}
+
+// GetTitle returns SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest.Title, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest) GetTitle() *string {
+	return v.Title
+}
+
+// GetState returns SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest.State, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest) GetState() *string {
+	return v.State
+}
+
+// SessionProgrammaticSessionProgrammaticSessionReleasesRelease includes the requested fields of the GraphQL type Release.
+type SessionProgrammaticSessionProgrammaticSessionReleasesRelease struct {
+	Uuid      *string               `json:"uuid"`
+	Version   *string               `json:"version"`
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+}
+
+// GetUuid returns SessionProgrammaticSessionProgrammaticSessionReleasesRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionReleasesRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetVersion returns SessionProgrammaticSessionProgrammaticSessionReleasesRelease.Version, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionReleasesRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns SessionProgrammaticSessionProgrammaticSessionReleasesRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionReleasesRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+type SessionStatus string
+
+const (
+	SessionStatusOpen   SessionStatus = "OPEN"
+	SessionStatusClosed SessionStatus = "CLOSED"
+	// A BLOCK-severity INPUT policy failed on sessionInitializeProgrammatic.
+	// The row is persisted so the audit / dashboard show the rejected
+	// attempt with its policyEvents, but the trailer-attribution
+	// resolver refuses to bind commits against it -- trailers carrying
+	// this clientSessionId surface as REJECTED attribution. Terminal:
+	// the agent must mint a fresh, unique clientSessionId to retry.
+	SessionStatusBlocked SessionStatus = "BLOCKED"
+)
+
+var AllSessionStatus = []SessionStatus{
+	SessionStatusOpen,
+	SessionStatusClosed,
+	SessionStatusBlocked,
+}
+
+// SessionTouchProgrammaticResponse is returned by SessionTouchProgrammatic on success.
+type SessionTouchProgrammaticResponse struct {
+	SessionTouchProgrammatic *SessionTouchProgrammaticSessionTouchProgrammaticSession `json:"sessionTouchProgrammatic"`
+}
+
+// GetSessionTouchProgrammatic returns SessionTouchProgrammaticResponse.SessionTouchProgrammatic, and is useful for accessing the field via an interface.
+func (v *SessionTouchProgrammaticResponse) GetSessionTouchProgrammatic() *SessionTouchProgrammaticSessionTouchProgrammaticSession {
+	return v.SessionTouchProgrammatic
+}
+
+// SessionTouchProgrammaticSessionTouchProgrammaticSession includes the requested fields of the GraphQL type Session.
+// The GraphQL type's documentation follows.
+//
+// One ROOT Agent invocation. Many concurrent sessions per agent are
+// allowed on the same API key. Sub-agents of the root contribute
+// commits / artifacts to the same session via the commit-trailer
+// attribution path (PR 2).
+type SessionTouchProgrammaticSessionTouchProgrammaticSession struct {
+	Uuid           *string        `json:"uuid"`
+	Status         *SessionStatus `json:"status"`
+	LastActivityAt *string        `json:"lastActivityAt"`
+}
+
+// GetUuid returns SessionTouchProgrammaticSessionTouchProgrammaticSession.Uuid, and is useful for accessing the field via an interface.
+func (v *SessionTouchProgrammaticSessionTouchProgrammaticSession) GetUuid() *string { return v.Uuid }
+
+// GetStatus returns SessionTouchProgrammaticSessionTouchProgrammaticSession.Status, and is useful for accessing the field via an interface.
+func (v *SessionTouchProgrammaticSessionTouchProgrammaticSession) GetStatus() *SessionStatus {
+	return v.Status
+}
+
+// GetLastActivityAt returns SessionTouchProgrammaticSessionTouchProgrammaticSession.LastActivityAt, and is useful for accessing the field via an interface.
+func (v *SessionTouchProgrammaticSessionTouchProgrammaticSession) GetLastActivityAt() *string {
+	return v.LastActivityAt
+}
+
+// SetInstanceSealedSecretCertResponse is returned by SetInstanceSealedSecretCert on success.
+type SetInstanceSealedSecretCertResponse struct {
+	SetInstanceSealedSecretCert *bool `json:"setInstanceSealedSecretCert"`
+}
+
+// GetSetInstanceSealedSecretCert returns SetInstanceSealedSecretCertResponse.SetInstanceSealedSecretCert, and is useful for accessing the field via an interface.
+func (v *SetInstanceSealedSecretCertResponse) GetSetInstanceSealedSecretCert() *bool {
+	return v.SetInstanceSealedSecretCert
+}
+
+type SeveritySource string
+
+const (
+	SeveritySourceNvd      SeveritySource = "NVD"
+	SeveritySourceGhsa     SeveritySource = "GHSA"
+	SeveritySourceAnalysis SeveritySource = "ANALYSIS"
+	SeveritySourceOther    SeveritySource = "OTHER"
+)
+
+var AllSeveritySource = []SeveritySource{
+	SeveritySourceNvd,
+	SeveritySourceGhsa,
+	SeveritySourceAnalysis,
+	SeveritySourceOther,
+}
+
+// Component- and perspective-level sid override. Only honored when the org is in
+// ENABLED_FLEXIBLE; the mutation layer rejects ENABLE/DISABLE writes when the org
+// is STRICT or DISABLED. INHERIT (and null) defer to the next level up.
+type SidPurlOverride string
+
+const (
+	SidPurlOverrideInherit SidPurlOverride = "INHERIT"
+	SidPurlOverrideEnable  SidPurlOverride = "ENABLE"
+	SidPurlOverrideDisable SidPurlOverride = "DISABLE"
+)
+
+var AllSidPurlOverride = []SidPurlOverride{
+	SidPurlOverrideInherit,
+	SidPurlOverrideEnable,
+	SidPurlOverrideDisable,
+}
+
+type SignatureFormat string
+
+const (
+	SignatureFormatSsh SignatureFormat = "SSH"
+	SignatureFormatGpg SignatureFormat = "GPG"
+	// Reserved for v2 -- trust anchored at CA, not per-key.
+	SignatureFormatX509 SignatureFormat = "X509"
+)
+
+var AllSignatureFormat = []SignatureFormat{
+	SignatureFormatSsh,
+	SignatureFormatGpg,
+	SignatureFormatX509,
+}
+
+type SignatureVerificationState string
+
+const (
+	// No signature artifact attached.
+	SignatureVerificationStateUnsigned SignatureVerificationState = "UNSIGNED"
+	// Cryptographic check passed and signer resolved to an enrolled key.
+	SignatureVerificationStateVerified SignatureVerificationState = "VERIFIED"
+	// Cryptographic check failed.
+	SignatureVerificationStateInvalidSignature SignatureVerificationState = "INVALID_SIGNATURE"
+	// Signature parsed but the signer key is not enrolled in this org.
+	SignatureVerificationStateUnknownKey SignatureVerificationState = "UNKNOWN_KEY"
+	// Signer key was matched but is revoked.
+	SignatureVerificationStateKeyRevoked SignatureVerificationState = "KEY_REVOKED"
+	// Reserved for v2 -- attribution constraint failure decoupled from trust-store scope (e.g. image / attestation flows where the verifier's scope and the expected attribution can legitimately differ). Not produced in v1; the verifier narrows scope upfront from the SCE so a mismatched owner can't reach this branch.
+	SignatureVerificationStateWrongSigner SignatureVerificationState = "WRONG_SIGNER"
+	// Verification was scheduled but has not yet run.
+	SignatureVerificationStatePending SignatureVerificationState = "PENDING"
+	// Verifier subprocess errored -- see {@code details} for diagnostics.
+	SignatureVerificationStateErrored SignatureVerificationState = "ERRORED"
+)
+
+var AllSignatureVerificationState = []SignatureVerificationState{
+	SignatureVerificationStateUnsigned,
+	SignatureVerificationStateVerified,
+	SignatureVerificationStateInvalidSignature,
+	SignatureVerificationStateUnknownKey,
+	SignatureVerificationStateKeyRevoked,
+	SignatureVerificationStateWrongSigner,
+	SignatureVerificationStatePending,
+	SignatureVerificationStateErrored,
+}
+
+type SigningKeyOwnerType string
+
+const (
+	SigningKeyOwnerTypeAgent     SigningKeyOwnerType = "AGENT"
+	SigningKeyOwnerTypeCommitter SigningKeyOwnerType = "COMMITTER"
+)
+
+var AllSigningKeyOwnerType = []SigningKeyOwnerType{
+	SigningKeyOwnerTypeAgent,
+	SigningKeyOwnerTypeCommitter,
+}
+
+type SoftwareMetadataInput struct {
+	BuildId       *string              `json:"buildId"`
+	BuildUri      *string              `json:"buildUri"`
+	CicdMeta      *string              `json:"cicdMeta"`
+	Digests       []*string            `json:"digests"`
+	DigestRecords []*DigestRecordInput `json:"digestRecords,omitempty"`
+	DateFrom      *string              `json:"dateFrom"`
+	DateTo        *string              `json:"dateTo"`
+	Duration      *int64               `json:"duration"`
+	PackageType   *PackageType         `json:"packageType"`
+	DownloadLinks []*LinkInput         `json:"downloadLinks,omitempty"`
+}
+
+// GetBuildId returns SoftwareMetadataInput.BuildId, and is useful for accessing the field via an interface.
+func (v *SoftwareMetadataInput) GetBuildId() *string { return v.BuildId }
+
+// GetBuildUri returns SoftwareMetadataInput.BuildUri, and is useful for accessing the field via an interface.
+func (v *SoftwareMetadataInput) GetBuildUri() *string { return v.BuildUri }
+
+// GetCicdMeta returns SoftwareMetadataInput.CicdMeta, and is useful for accessing the field via an interface.
+func (v *SoftwareMetadataInput) GetCicdMeta() *string { return v.CicdMeta }
+
+// GetDigests returns SoftwareMetadataInput.Digests, and is useful for accessing the field via an interface.
+func (v *SoftwareMetadataInput) GetDigests() []*string { return v.Digests }
+
+// GetDigestRecords returns SoftwareMetadataInput.DigestRecords, and is useful for accessing the field via an interface.
+func (v *SoftwareMetadataInput) GetDigestRecords() []*DigestRecordInput { return v.DigestRecords }
+
+// GetDateFrom returns SoftwareMetadataInput.DateFrom, and is useful for accessing the field via an interface.
+func (v *SoftwareMetadataInput) GetDateFrom() *string { return v.DateFrom }
+
+// GetDateTo returns SoftwareMetadataInput.DateTo, and is useful for accessing the field via an interface.
+func (v *SoftwareMetadataInput) GetDateTo() *string { return v.DateTo }
+
+// GetDuration returns SoftwareMetadataInput.Duration, and is useful for accessing the field via an interface.
+func (v *SoftwareMetadataInput) GetDuration() *int64 { return v.Duration }
+
+// GetPackageType returns SoftwareMetadataInput.PackageType, and is useful for accessing the field via an interface.
+func (v *SoftwareMetadataInput) GetPackageType() *PackageType { return v.PackageType }
+
+// GetDownloadLinks returns SoftwareMetadataInput.DownloadLinks, and is useful for accessing the field via an interface.
+func (v *SoftwareMetadataInput) GetDownloadLinks() []*LinkInput { return v.DownloadLinks }
+
+type SourceCodeEntryInput struct {
+	Branch           *string          `json:"branch"`
+	Vcs              *string          `json:"vcs"`
+	OrganizationUuid *string          `json:"organizationUuid"`
+	Uri              *string          `json:"uri"`
+	Type             *string          `json:"type"`
+	Commit           *string          `json:"commit"`
+	Commits          []*string        `json:"commits"`
+	CommitMessage    *string          `json:"commitMessage"`
+	CommitAuthor     *string          `json:"commitAuthor"`
+	CommitEmail      *string          `json:"commitEmail"`
+	VcsTag           *string          `json:"vcsTag"`
+	DateActual       *string          `json:"dateActual"`
+	VcsBranch        *string          `json:"vcsBranch"`
+	Notes            *string          `json:"notes"`
+	Artifacts        []*ArtifactInput `json:"artifacts,omitempty"`
+}
+
+// GetBranch returns SourceCodeEntryInput.Branch, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetBranch() *string { return v.Branch }
+
+// GetVcs returns SourceCodeEntryInput.Vcs, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetVcs() *string { return v.Vcs }
+
+// GetOrganizationUuid returns SourceCodeEntryInput.OrganizationUuid, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetOrganizationUuid() *string { return v.OrganizationUuid }
+
+// GetUri returns SourceCodeEntryInput.Uri, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetUri() *string { return v.Uri }
+
+// GetType returns SourceCodeEntryInput.Type, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetType() *string { return v.Type }
+
+// GetCommit returns SourceCodeEntryInput.Commit, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetCommit() *string { return v.Commit }
+
+// GetCommits returns SourceCodeEntryInput.Commits, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetCommits() []*string { return v.Commits }
+
+// GetCommitMessage returns SourceCodeEntryInput.CommitMessage, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetCommitMessage() *string { return v.CommitMessage }
+
+// GetCommitAuthor returns SourceCodeEntryInput.CommitAuthor, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetCommitAuthor() *string { return v.CommitAuthor }
+
+// GetCommitEmail returns SourceCodeEntryInput.CommitEmail, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetCommitEmail() *string { return v.CommitEmail }
+
+// GetVcsTag returns SourceCodeEntryInput.VcsTag, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetVcsTag() *string { return v.VcsTag }
+
+// GetDateActual returns SourceCodeEntryInput.DateActual, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetDateActual() *string { return v.DateActual }
+
+// GetVcsBranch returns SourceCodeEntryInput.VcsBranch, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetVcsBranch() *string { return v.VcsBranch }
+
+// GetNotes returns SourceCodeEntryInput.Notes, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetNotes() *string { return v.Notes }
+
+// GetArtifacts returns SourceCodeEntryInput.Artifacts, and is useful for accessing the field via an interface.
+func (v *SourceCodeEntryInput) GetArtifacts() []*ArtifactInput { return v.Artifacts }
+
 type Status string
 
 const (
@@ -1395,6 +7268,261 @@ var AllStatus = []Status{
 	StatusTransient,
 }
 
+type StripBomEnum string
+
+const (
+	StripBomEnumTrue  StripBomEnum = "TRUE"
+	StripBomEnumFalse StripBomEnum = "FALSE"
+)
+
+var AllStripBomEnum = []StripBomEnum{
+	StripBomEnumTrue,
+	StripBomEnumFalse,
+}
+
+// SwitchInstanceProductFeatureSetResponse is returned by SwitchInstanceProductFeatureSet on success.
+type SwitchInstanceProductFeatureSetResponse struct {
+	// Switch a product deployment on the instance plan to another feature set of the same product.
+	// release: optional release uuid or version on the new feature set; pins the deployment to it
+	// (the plan entry becomes TARGET). follow: optional, true returns the entry to FOLLOW. Without
+	// either, the integrate type is kept and the previous target release is cleared.
+	SwitchInstanceProductFeatureSet *SwitchInstanceProductFeatureSetSwitchInstanceProductFeatureSetInstance `json:"switchInstanceProductFeatureSet"`
+}
+
+// GetSwitchInstanceProductFeatureSet returns SwitchInstanceProductFeatureSetResponse.SwitchInstanceProductFeatureSet, and is useful for accessing the field via an interface.
+func (v *SwitchInstanceProductFeatureSetResponse) GetSwitchInstanceProductFeatureSet() *SwitchInstanceProductFeatureSetSwitchInstanceProductFeatureSetInstance {
+	return v.SwitchInstanceProductFeatureSet
+}
+
+// SwitchInstanceProductFeatureSetSwitchInstanceProductFeatureSetInstance includes the requested fields of the GraphQL type Instance.
+type SwitchInstanceProductFeatureSetSwitchInstanceProductFeatureSetInstance struct {
+	Uuid *string `json:"uuid"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns SwitchInstanceProductFeatureSetSwitchInstanceProductFeatureSetInstance.Uuid, and is useful for accessing the field via an interface.
+func (v *SwitchInstanceProductFeatureSetSwitchInstanceProductFeatureSetInstance) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetName returns SwitchInstanceProductFeatureSetSwitchInstanceProductFeatureSetInstance.Name, and is useful for accessing the field via an interface.
+func (v *SwitchInstanceProductFeatureSetSwitchInstanceProductFeatureSetInstance) GetName() *string {
+	return v.Name
+}
+
+type SynchronizeBranchInput struct {
+	Component    *string   `json:"component"`
+	LiveBranches []*string `json:"liveBranches"`
+	VcsUri       *string   `json:"vcsUri"`
+	RepoPath     *string   `json:"repoPath"`
+}
+
+// GetComponent returns SynchronizeBranchInput.Component, and is useful for accessing the field via an interface.
+func (v *SynchronizeBranchInput) GetComponent() *string { return v.Component }
+
+// GetLiveBranches returns SynchronizeBranchInput.LiveBranches, and is useful for accessing the field via an interface.
+func (v *SynchronizeBranchInput) GetLiveBranches() []*string { return v.LiveBranches }
+
+// GetVcsUri returns SynchronizeBranchInput.VcsUri, and is useful for accessing the field via an interface.
+func (v *SynchronizeBranchInput) GetVcsUri() *string { return v.VcsUri }
+
+// GetRepoPath returns SynchronizeBranchInput.RepoPath, and is useful for accessing the field via an interface.
+func (v *SynchronizeBranchInput) GetRepoPath() *string { return v.RepoPath }
+
+// SynchronizeLiveBranchesResponse is returned by SynchronizeLiveBranches on success.
+type SynchronizeLiveBranchesResponse struct {
+	SynchronizeLiveBranches *bool `json:"synchronizeLiveBranches"`
+}
+
+// GetSynchronizeLiveBranches returns SynchronizeLiveBranchesResponse.SynchronizeLiveBranches, and is useful for accessing the field via an interface.
+func (v *SynchronizeLiveBranchesResponse) GetSynchronizeLiveBranches() *bool {
+	return v.SynchronizeLiveBranches
+}
+
+type TagRecordInput struct {
+	Key   *string `json:"key"`
+	Value *string `json:"value"`
+}
+
+// GetKey returns TagRecordInput.Key, and is useful for accessing the field via an interface.
+func (v *TagRecordInput) GetKey() *string { return v.Key }
+
+// GetValue returns TagRecordInput.Value, and is useful for accessing the field via an interface.
+func (v *TagRecordInput) GetValue() *string { return v.Value }
+
+type TeaArtifactChecksumType string
+
+const (
+	TeaArtifactChecksumTypeMd5        TeaArtifactChecksumType = "MD5"
+	TeaArtifactChecksumTypeSha1       TeaArtifactChecksumType = "SHA_1"
+	TeaArtifactChecksumTypeSha256     TeaArtifactChecksumType = "SHA_256"
+	TeaArtifactChecksumTypeSha384     TeaArtifactChecksumType = "SHA_384"
+	TeaArtifactChecksumTypeSha512     TeaArtifactChecksumType = "SHA_512"
+	TeaArtifactChecksumTypeSha3256    TeaArtifactChecksumType = "SHA3_256"
+	TeaArtifactChecksumTypeSha3384    TeaArtifactChecksumType = "SHA3_384"
+	TeaArtifactChecksumTypeSha3512    TeaArtifactChecksumType = "SHA3_512"
+	TeaArtifactChecksumTypeBlake2b256 TeaArtifactChecksumType = "BLAKE2B_256"
+	TeaArtifactChecksumTypeBlake2b384 TeaArtifactChecksumType = "BLAKE2B_384"
+	TeaArtifactChecksumTypeBlake2b512 TeaArtifactChecksumType = "BLAKE2B_512"
+	TeaArtifactChecksumTypeBlake3     TeaArtifactChecksumType = "BLAKE3"
+)
+
+var AllTeaArtifactChecksumType = []TeaArtifactChecksumType{
+	TeaArtifactChecksumTypeMd5,
+	TeaArtifactChecksumTypeSha1,
+	TeaArtifactChecksumTypeSha256,
+	TeaArtifactChecksumTypeSha384,
+	TeaArtifactChecksumTypeSha512,
+	TeaArtifactChecksumTypeSha3256,
+	TeaArtifactChecksumTypeSha3384,
+	TeaArtifactChecksumTypeSha3512,
+	TeaArtifactChecksumTypeBlake2b256,
+	TeaArtifactChecksumTypeBlake2b384,
+	TeaArtifactChecksumTypeBlake2b512,
+	TeaArtifactChecksumTypeBlake3,
+}
+
+// UpsertPullRequestProgrammaticResponse is returned by UpsertPullRequestProgrammatic on success.
+type UpsertPullRequestProgrammaticResponse struct {
+	// Programmatic (API-key) upsert of a PullRequest. CI registers the PR
+	// row independently of release creation so the registration survives
+	// push/pull_request races and DO_BUILD=false short-circuits.
+	// Idempotent on (targetVcsRepository, identity) -- safe to call
+	// multiple times per CI run (e.g. once per component in a monorepo).
+	// When `commit` is supplied and an SCE already exists for
+	// (targetVcs, commit), the head is advanced to that SCE in the same
+	// call; otherwise the PR row is registered without a head and the
+	// subsequent addReleaseProgrammatic call (which carries the same PR
+	// input) will advance the head once the SCE is persisted.
+	// Resolves the target VCS by `vcsUri`+`repoPath` (FREEFORM or
+	// ORGANIZATION_RW key) or by `component` UUID (COMPONENT,
+	// FREEFORM, or ORGANIZATION_RW key). Accepts COMPONENT, FREEFORM,
+	// or ORGANIZATION_RW API keys; other ORGANIZATION_* types are
+	// rejected.
+	UpsertPullRequestProgrammatic *UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest `json:"upsertPullRequestProgrammatic"`
+}
+
+// GetUpsertPullRequestProgrammatic returns UpsertPullRequestProgrammaticResponse.UpsertPullRequestProgrammatic, and is useful for accessing the field via an interface.
+func (v *UpsertPullRequestProgrammaticResponse) GetUpsertPullRequestProgrammatic() *UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest {
+	return v.UpsertPullRequestProgrammatic
+}
+
+// UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest includes the requested fields of the GraphQL type PullRequest.
+// The GraphQL type's documentation follows.
+//
+// First-class PullRequest entity. Owns its own identity at the SCM level
+// (target VCS + identity string), its own commit list (SCE UUIDs), and
+// both inbound (release_validation_events) and outbound
+// (pr_validation_events) event streams.
+type UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest struct {
+	Uuid                *string   `json:"uuid"`
+	Identity            *string   `json:"identity"`
+	State               *string   `json:"state"`
+	Title               *string   `json:"title"`
+	TargetVcsRepository *string   `json:"targetVcsRepository"`
+	Commits             []*string `json:"commits"`
+}
+
+// GetUuid returns UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest.Uuid, and is useful for accessing the field via an interface.
+func (v *UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetIdentity returns UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest.Identity, and is useful for accessing the field via an interface.
+func (v *UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest) GetIdentity() *string {
+	return v.Identity
+}
+
+// GetState returns UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest.State, and is useful for accessing the field via an interface.
+func (v *UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest) GetState() *string {
+	return v.State
+}
+
+// GetTitle returns UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest.Title, and is useful for accessing the field via an interface.
+func (v *UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest) GetTitle() *string {
+	return v.Title
+}
+
+// GetTargetVcsRepository returns UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest.TargetVcsRepository, and is useful for accessing the field via an interface.
+func (v *UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest) GetTargetVcsRepository() *string {
+	return v.TargetVcsRepository
+}
+
+// GetCommits returns UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest.Commits, and is useful for accessing the field via an interface.
+func (v *UpsertPullRequestProgrammaticUpsertPullRequestProgrammaticPullRequest) GetCommits() []*string {
+	return v.Commits
+}
+
+type VcsRepositoryInput struct {
+	Org  *string `json:"org"`
+	Name *string `json:"name"`
+	Uri  *string `json:"uri"`
+	Type *string `json:"type"`
+}
+
+// GetOrg returns VcsRepositoryInput.Org, and is useful for accessing the field via an interface.
+func (v *VcsRepositoryInput) GetOrg() *string { return v.Org }
+
+// GetName returns VcsRepositoryInput.Name, and is useful for accessing the field via an interface.
+func (v *VcsRepositoryInput) GetName() *string { return v.Name }
+
+// GetUri returns VcsRepositoryInput.Uri, and is useful for accessing the field via an interface.
+func (v *VcsRepositoryInput) GetUri() *string { return v.Uri }
+
+// GetType returns VcsRepositoryInput.Type, and is useful for accessing the field via an interface.
+func (v *VcsRepositoryInput) GetType() *string { return v.Type }
+
+type VersionFeatureSetOverride struct {
+	ComponentUuid *string `json:"componentUuid"`
+	VcsUri        *string `json:"vcsUri"`
+	RepoPath      *string `json:"repoPath"`
+	Branch        string  `json:"branch"`
+}
+
+// GetComponentUuid returns VersionFeatureSetOverride.ComponentUuid, and is useful for accessing the field via an interface.
+func (v *VersionFeatureSetOverride) GetComponentUuid() *string { return v.ComponentUuid }
+
+// GetVcsUri returns VersionFeatureSetOverride.VcsUri, and is useful for accessing the field via an interface.
+func (v *VersionFeatureSetOverride) GetVcsUri() *string { return v.VcsUri }
+
+// GetRepoPath returns VersionFeatureSetOverride.RepoPath, and is useful for accessing the field via an interface.
+func (v *VersionFeatureSetOverride) GetRepoPath() *string { return v.RepoPath }
+
+// GetBranch returns VersionFeatureSetOverride.Branch, and is useful for accessing the field via an interface.
+func (v *VersionFeatureSetOverride) GetBranch() string { return v.Branch }
+
+// VersionFeatureSetResponse is returned by VersionFeatureSet on success.
+type VersionFeatureSetResponse struct {
+	VersionFeatureSet *VersionFeatureSetVersionFeatureSetBranch `json:"versionFeatureSet"`
+}
+
+// GetVersionFeatureSet returns VersionFeatureSetResponse.VersionFeatureSet, and is useful for accessing the field via an interface.
+func (v *VersionFeatureSetResponse) GetVersionFeatureSet() *VersionFeatureSetVersionFeatureSetBranch {
+	return v.VersionFeatureSet
+}
+
+// VersionFeatureSetVersionFeatureSetBranch includes the requested fields of the GraphQL type Branch.
+type VersionFeatureSetVersionFeatureSetBranch struct {
+	Uuid          *string             `json:"uuid"`
+	Name          *string             `json:"name"`
+	Component     *string             `json:"component"`
+	AutoIntegrate *AutoIntegrateState `json:"autoIntegrate"`
+}
+
+// GetUuid returns VersionFeatureSetVersionFeatureSetBranch.Uuid, and is useful for accessing the field via an interface.
+func (v *VersionFeatureSetVersionFeatureSetBranch) GetUuid() *string { return v.Uuid }
+
+// GetName returns VersionFeatureSetVersionFeatureSetBranch.Name, and is useful for accessing the field via an interface.
+func (v *VersionFeatureSetVersionFeatureSetBranch) GetName() *string { return v.Name }
+
+// GetComponent returns VersionFeatureSetVersionFeatureSetBranch.Component, and is useful for accessing the field via an interface.
+func (v *VersionFeatureSetVersionFeatureSetBranch) GetComponent() *string { return v.Component }
+
+// GetAutoIntegrate returns VersionFeatureSetVersionFeatureSetBranch.AutoIntegrate, and is useful for accessing the field via an interface.
+func (v *VersionFeatureSetVersionFeatureSetBranch) GetAutoIntegrate() *AutoIntegrateState {
+	return v.AutoIntegrate
+}
+
 type VersionType string
 
 const (
@@ -1406,6 +7534,160 @@ var AllVersionType = []VersionType{
 	VersionTypeDev,
 	VersionTypeMarketing,
 }
+
+type VexImportMode string
+
+const (
+	VexImportModeAutoAccept VexImportMode = "AUTO_ACCEPT"
+	VexImportModeStage      VexImportMode = "STAGE"
+	VexImportModeReject     VexImportMode = "REJECT"
+)
+
+var AllVexImportMode = []VexImportMode{
+	VexImportModeAutoAccept,
+	VexImportModeStage,
+	VexImportModeReject,
+}
+
+type ViolationType string
+
+const (
+	ViolationTypeLicense     ViolationType = "LICENSE"
+	ViolationTypeSecurity    ViolationType = "SECURITY"
+	ViolationTypeOperational ViolationType = "OPERATIONAL"
+)
+
+var AllViolationType = []ViolationType{
+	ViolationTypeLicense,
+	ViolationTypeSecurity,
+	ViolationTypeOperational,
+}
+
+type VulnerabilityAliasType string
+
+const (
+	VulnerabilityAliasTypeCve    VulnerabilityAliasType = "CVE"
+	VulnerabilityAliasTypeGhsa   VulnerabilityAliasType = "GHSA"
+	VulnerabilityAliasTypeGo     VulnerabilityAliasType = "GO"
+	VulnerabilityAliasTypePysec  VulnerabilityAliasType = "PYSEC"
+	VulnerabilityAliasTypeRust   VulnerabilityAliasType = "RUST"
+	VulnerabilityAliasTypeOsv    VulnerabilityAliasType = "OSV"
+	VulnerabilityAliasTypeDsa    VulnerabilityAliasType = "DSA"
+	VulnerabilityAliasTypeDla    VulnerabilityAliasType = "DLA"
+	VulnerabilityAliasTypeRhsa   VulnerabilityAliasType = "RHSA"
+	VulnerabilityAliasTypeRhba   VulnerabilityAliasType = "RHBA"
+	VulnerabilityAliasTypeRhea   VulnerabilityAliasType = "RHEA"
+	VulnerabilityAliasTypeAlas   VulnerabilityAliasType = "ALAS"
+	VulnerabilityAliasTypeAlas2  VulnerabilityAliasType = "ALAS2"
+	VulnerabilityAliasTypeAlpine VulnerabilityAliasType = "ALPINE"
+	VulnerabilityAliasTypeCga    VulnerabilityAliasType = "CGA"
+	VulnerabilityAliasTypeMal    VulnerabilityAliasType = "MAL"
+	VulnerabilityAliasTypeGsd    VulnerabilityAliasType = "GSD"
+	VulnerabilityAliasTypeOther  VulnerabilityAliasType = "OTHER"
+)
+
+var AllVulnerabilityAliasType = []VulnerabilityAliasType{
+	VulnerabilityAliasTypeCve,
+	VulnerabilityAliasTypeGhsa,
+	VulnerabilityAliasTypeGo,
+	VulnerabilityAliasTypePysec,
+	VulnerabilityAliasTypeRust,
+	VulnerabilityAliasTypeOsv,
+	VulnerabilityAliasTypeDsa,
+	VulnerabilityAliasTypeDla,
+	VulnerabilityAliasTypeRhsa,
+	VulnerabilityAliasTypeRhba,
+	VulnerabilityAliasTypeRhea,
+	VulnerabilityAliasTypeAlas,
+	VulnerabilityAliasTypeAlas2,
+	VulnerabilityAliasTypeAlpine,
+	VulnerabilityAliasTypeCga,
+	VulnerabilityAliasTypeMal,
+	VulnerabilityAliasTypeGsd,
+	VulnerabilityAliasTypeOther,
+}
+
+type VulnerabilitySeverity string
+
+const (
+	VulnerabilitySeverityCritical   VulnerabilitySeverity = "CRITICAL"
+	VulnerabilitySeverityHigh       VulnerabilitySeverity = "HIGH"
+	VulnerabilitySeverityMedium     VulnerabilitySeverity = "MEDIUM"
+	VulnerabilitySeverityLow        VulnerabilitySeverity = "LOW"
+	VulnerabilitySeverityUnassigned VulnerabilitySeverity = "UNASSIGNED"
+)
+
+var AllVulnerabilitySeverity = []VulnerabilitySeverity{
+	VulnerabilitySeverityCritical,
+	VulnerabilitySeverityHigh,
+	VulnerabilitySeverityMedium,
+	VulnerabilitySeverityLow,
+	VulnerabilitySeverityUnassigned,
+}
+
+// __AddArtifactProgrammaticInput is used internally by genqlient
+type __AddArtifactProgrammaticInput struct {
+	ArtifactInput *AddArtifactInput `json:"artifactInput,omitempty"`
+}
+
+// GetArtifactInput returns __AddArtifactProgrammaticInput.ArtifactInput, and is useful for accessing the field via an interface.
+func (v *__AddArtifactProgrammaticInput) GetArtifactInput() *AddArtifactInput { return v.ArtifactInput }
+
+// __AddOutboundDeliverablesProgrammaticInput is used internally by genqlient
+type __AddOutboundDeliverablesProgrammaticInput struct {
+	AddODeliverableInput *AddODeliverableInput `json:"addODeliverableInput,omitempty"`
+}
+
+// GetAddODeliverableInput returns __AddOutboundDeliverablesProgrammaticInput.AddODeliverableInput, and is useful for accessing the field via an interface.
+func (v *__AddOutboundDeliverablesProgrammaticInput) GetAddODeliverableInput() *AddODeliverableInput {
+	return v.AddODeliverableInput
+}
+
+// __AddReleaseProgrammaticInput is used internally by genqlient
+type __AddReleaseProgrammaticInput struct {
+	ReleaseInputProg *ReleaseInputProg `json:"releaseInputProg,omitempty"`
+}
+
+// GetReleaseInputProg returns __AddReleaseProgrammaticInput.ReleaseInputProg, and is useful for accessing the field via an interface.
+func (v *__AddReleaseProgrammaticInput) GetReleaseInputProg() *ReleaseInputProg {
+	return v.ReleaseInputProg
+}
+
+// __AddReleasesProgrammaticInput is used internally by genqlient
+type __AddReleasesProgrammaticInput struct {
+	ReleaseInputsProg []*ReleaseInputProg `json:"releaseInputsProg,omitempty"`
+}
+
+// GetReleaseInputsProg returns __AddReleasesProgrammaticInput.ReleaseInputsProg, and is useful for accessing the field via an interface.
+func (v *__AddReleasesProgrammaticInput) GetReleaseInputsProg() []*ReleaseInputProg {
+	return v.ReleaseInputsProg
+}
+
+// __AgentSessionInboxProgrammaticInput is used internally by genqlient
+type __AgentSessionInboxProgrammaticInput struct {
+	InboxRequest *AgentSessionInboxInput `json:"inboxRequest,omitempty"`
+}
+
+// GetInboxRequest returns __AgentSessionInboxProgrammaticInput.InboxRequest, and is useful for accessing the field via an interface.
+func (v *__AgentSessionInboxProgrammaticInput) GetInboxRequest() *AgentSessionInboxInput {
+	return v.InboxRequest
+}
+
+// __AgenticReleaseProgrammaticInput is used internally by genqlient
+type __AgenticReleaseProgrammaticInput struct {
+	ReleaseUuid     string  `json:"releaseUuid"`
+	SessionUuid     *string `json:"sessionUuid"`
+	ClientSessionId *string `json:"clientSessionId"`
+}
+
+// GetReleaseUuid returns __AgenticReleaseProgrammaticInput.ReleaseUuid, and is useful for accessing the field via an interface.
+func (v *__AgenticReleaseProgrammaticInput) GetReleaseUuid() string { return v.ReleaseUuid }
+
+// GetSessionUuid returns __AgenticReleaseProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__AgenticReleaseProgrammaticInput) GetSessionUuid() *string { return v.SessionUuid }
+
+// GetClientSessionId returns __AgenticReleaseProgrammaticInput.ClientSessionId, and is useful for accessing the field via an interface.
+func (v *__AgenticReleaseProgrammaticInput) GetClientSessionId() *string { return v.ClientSessionId }
 
 // __ApplyBranchesInput is used internally by genqlient
 type __ApplyBranchesInput struct {
@@ -1439,6 +7721,72 @@ func (v *__ApplyCatalogInput) GetDryRun() *bool { return v.DryRun }
 // GetSource returns __ApplyCatalogInput.Source, and is useful for accessing the field via an interface.
 func (v *__ApplyCatalogInput) GetSource() *DeclarativeSourceInput { return v.Source }
 
+// __ApproveReleaseProgrammaticInput is used internally by genqlient
+type __ApproveReleaseProgrammaticInput struct {
+	ReleaseApprovals *ReleaseApprovalProgrammaticInput `json:"releaseApprovals,omitempty"`
+}
+
+// GetReleaseApprovals returns __ApproveReleaseProgrammaticInput.ReleaseApprovals, and is useful for accessing the field via an interface.
+func (v *__ApproveReleaseProgrammaticInput) GetReleaseApprovals() *ReleaseApprovalProgrammaticInput {
+	return v.ReleaseApprovals
+}
+
+// __CreateComponentInPerspectiveProgrammaticInput is used internally by genqlient
+type __CreateComponentInPerspectiveProgrammaticInput struct {
+	CreateComponentInput *CreateComponentInput `json:"CreateComponentInput,omitempty"`
+	PerspectiveUuid      string                `json:"perspectiveUuid"`
+}
+
+// GetCreateComponentInput returns __CreateComponentInPerspectiveProgrammaticInput.CreateComponentInput, and is useful for accessing the field via an interface.
+func (v *__CreateComponentInPerspectiveProgrammaticInput) GetCreateComponentInput() *CreateComponentInput {
+	return v.CreateComponentInput
+}
+
+// GetPerspectiveUuid returns __CreateComponentInPerspectiveProgrammaticInput.PerspectiveUuid, and is useful for accessing the field via an interface.
+func (v *__CreateComponentInPerspectiveProgrammaticInput) GetPerspectiveUuid() string {
+	return v.PerspectiveUuid
+}
+
+// __CreateComponentProgrammaticInput is used internally by genqlient
+type __CreateComponentProgrammaticInput struct {
+	CreateComponentInput *CreateComponentInput `json:"CreateComponentInput,omitempty"`
+}
+
+// GetCreateComponentInput returns __CreateComponentProgrammaticInput.CreateComponentInput, and is useful for accessing the field via an interface.
+func (v *__CreateComponentProgrammaticInput) GetCreateComponentInput() *CreateComponentInput {
+	return v.CreateComponentInput
+}
+
+// __DeliverableDownloadSecretsInput is used internally by genqlient
+type __DeliverableDownloadSecretsInput struct {
+	InstanceUuid      *string `json:"instanceUuid"`
+	InstanceUri       *string `json:"instanceUri"`
+	DeliverableDigest string  `json:"deliverableDigest"`
+	Namespace         *string `json:"namespace"`
+}
+
+// GetInstanceUuid returns __DeliverableDownloadSecretsInput.InstanceUuid, and is useful for accessing the field via an interface.
+func (v *__DeliverableDownloadSecretsInput) GetInstanceUuid() *string { return v.InstanceUuid }
+
+// GetInstanceUri returns __DeliverableDownloadSecretsInput.InstanceUri, and is useful for accessing the field via an interface.
+func (v *__DeliverableDownloadSecretsInput) GetInstanceUri() *string { return v.InstanceUri }
+
+// GetDeliverableDigest returns __DeliverableDownloadSecretsInput.DeliverableDigest, and is useful for accessing the field via an interface.
+func (v *__DeliverableDownloadSecretsInput) GetDeliverableDigest() string { return v.DeliverableDigest }
+
+// GetNamespace returns __DeliverableDownloadSecretsInput.Namespace, and is useful for accessing the field via an interface.
+func (v *__DeliverableDownloadSecretsInput) GetNamespace() *string { return v.Namespace }
+
+// __EnrollSigningKeyProgrammaticInput is used internally by genqlient
+type __EnrollSigningKeyProgrammaticInput struct {
+	SigningKey *AgentSigningKeyInput `json:"signingKey,omitempty"`
+}
+
+// GetSigningKey returns __EnrollSigningKeyProgrammaticInput.SigningKey, and is useful for accessing the field via an interface.
+func (v *__EnrollSigningKeyProgrammaticInput) GetSigningKey() *AgentSigningKeyInput {
+	return v.SigningKey
+}
+
 // __ExportBranchesInput is used internally by genqlient
 type __ExportBranchesInput struct {
 	Component string `json:"component"`
@@ -1454,6 +7802,795 @@ type __ExportCatalogInput struct {
 
 // GetComponents returns __ExportCatalogInput.Components, and is useful for accessing the field via an interface.
 func (v *__ExportCatalogInput) GetComponents() []string { return v.Components }
+
+// __GetInstancePropSecretsInput is used internally by genqlient
+type __GetInstancePropSecretsInput struct {
+	InstanceUuid         *string   `json:"instanceUuid"`
+	InstanceUri          *string   `json:"instanceUri"`
+	Revision             int       `json:"revision"`
+	Namespace            string    `json:"namespace"`
+	Properties           []*string `json:"properties"`
+	Secrets              []*string `json:"secrets"`
+	Product              *string   `json:"product"`
+	ProductSpecificProps *bool     `json:"productSpecificProps"`
+}
+
+// GetInstanceUuid returns __GetInstancePropSecretsInput.InstanceUuid, and is useful for accessing the field via an interface.
+func (v *__GetInstancePropSecretsInput) GetInstanceUuid() *string { return v.InstanceUuid }
+
+// GetInstanceUri returns __GetInstancePropSecretsInput.InstanceUri, and is useful for accessing the field via an interface.
+func (v *__GetInstancePropSecretsInput) GetInstanceUri() *string { return v.InstanceUri }
+
+// GetRevision returns __GetInstancePropSecretsInput.Revision, and is useful for accessing the field via an interface.
+func (v *__GetInstancePropSecretsInput) GetRevision() int { return v.Revision }
+
+// GetNamespace returns __GetInstancePropSecretsInput.Namespace, and is useful for accessing the field via an interface.
+func (v *__GetInstancePropSecretsInput) GetNamespace() string { return v.Namespace }
+
+// GetProperties returns __GetInstancePropSecretsInput.Properties, and is useful for accessing the field via an interface.
+func (v *__GetInstancePropSecretsInput) GetProperties() []*string { return v.Properties }
+
+// GetSecrets returns __GetInstancePropSecretsInput.Secrets, and is useful for accessing the field via an interface.
+func (v *__GetInstancePropSecretsInput) GetSecrets() []*string { return v.Secrets }
+
+// GetProduct returns __GetInstancePropSecretsInput.Product, and is useful for accessing the field via an interface.
+func (v *__GetInstancePropSecretsInput) GetProduct() *string { return v.Product }
+
+// GetProductSpecificProps returns __GetInstancePropSecretsInput.ProductSpecificProps, and is useful for accessing the field via an interface.
+func (v *__GetInstancePropSecretsInput) GetProductSpecificProps() *bool {
+	return v.ProductSpecificProps
+}
+
+// __GetInstanceRevisionCycloneDxExportProgInput is used internally by genqlient
+type __GetInstanceRevisionCycloneDxExportProgInput struct {
+	InstanceUuid *string            `json:"instanceUuid"`
+	InstanceUri  *string            `json:"instanceUri"`
+	Revision     int                `json:"revision"`
+	Namespace    *string            `json:"namespace"`
+	StateType    *InstanceStateType `json:"stateType"`
+}
+
+// GetInstanceUuid returns __GetInstanceRevisionCycloneDxExportProgInput.InstanceUuid, and is useful for accessing the field via an interface.
+func (v *__GetInstanceRevisionCycloneDxExportProgInput) GetInstanceUuid() *string {
+	return v.InstanceUuid
+}
+
+// GetInstanceUri returns __GetInstanceRevisionCycloneDxExportProgInput.InstanceUri, and is useful for accessing the field via an interface.
+func (v *__GetInstanceRevisionCycloneDxExportProgInput) GetInstanceUri() *string {
+	return v.InstanceUri
+}
+
+// GetRevision returns __GetInstanceRevisionCycloneDxExportProgInput.Revision, and is useful for accessing the field via an interface.
+func (v *__GetInstanceRevisionCycloneDxExportProgInput) GetRevision() int { return v.Revision }
+
+// GetNamespace returns __GetInstanceRevisionCycloneDxExportProgInput.Namespace, and is useful for accessing the field via an interface.
+func (v *__GetInstanceRevisionCycloneDxExportProgInput) GetNamespace() *string { return v.Namespace }
+
+// GetStateType returns __GetInstanceRevisionCycloneDxExportProgInput.StateType, and is useful for accessing the field via an interface.
+func (v *__GetInstanceRevisionCycloneDxExportProgInput) GetStateType() *InstanceStateType {
+	return v.StateType
+}
+
+// __GetLatestReleaseProgrammaticCdxInput is used internally by genqlient
+type __GetLatestReleaseProgrammaticCdxInput struct {
+	GetLatestReleaseInput *GetLatestReleaseInput `json:"GetLatestReleaseInput,omitempty"`
+}
+
+// GetGetLatestReleaseInput returns __GetLatestReleaseProgrammaticCdxInput.GetLatestReleaseInput, and is useful for accessing the field via an interface.
+func (v *__GetLatestReleaseProgrammaticCdxInput) GetGetLatestReleaseInput() *GetLatestReleaseInput {
+	return v.GetLatestReleaseInput
+}
+
+// __GetLatestReleaseProgrammaticInput is used internally by genqlient
+type __GetLatestReleaseProgrammaticInput struct {
+	GetLatestReleaseInput *GetLatestReleaseInput `json:"GetLatestReleaseInput,omitempty"`
+}
+
+// GetGetLatestReleaseInput returns __GetLatestReleaseProgrammaticInput.GetLatestReleaseInput, and is useful for accessing the field via an interface.
+func (v *__GetLatestReleaseProgrammaticInput) GetGetLatestReleaseInput() *GetLatestReleaseInput {
+	return v.GetLatestReleaseInput
+}
+
+// __GetNewVersionProgrammaticInput is used internally by genqlient
+type __GetNewVersionProgrammaticInput struct {
+	GetNewVersionInput *GetNewVersionInput `json:"GetNewVersionInput,omitempty"`
+}
+
+// GetGetNewVersionInput returns __GetNewVersionProgrammaticInput.GetNewVersionInput, and is useful for accessing the field via an interface.
+func (v *__GetNewVersionProgrammaticInput) GetGetNewVersionInput() *GetNewVersionInput {
+	return v.GetNewVersionInput
+}
+
+// __GetNewVersionProgrammaticWithLifecycleInput is used internally by genqlient
+type __GetNewVersionProgrammaticWithLifecycleInput struct {
+	GetNewVersionInput *GetNewVersionInput `json:"GetNewVersionInput,omitempty"`
+}
+
+// GetGetNewVersionInput returns __GetNewVersionProgrammaticWithLifecycleInput.GetNewVersionInput, and is useful for accessing the field via an interface.
+func (v *__GetNewVersionProgrammaticWithLifecycleInput) GetGetNewVersionInput() *GetNewVersionInput {
+	return v.GetNewVersionInput
+}
+
+// __GetReleaseByHashProgrammaticInput is used internally by genqlient
+type __GetReleaseByHashProgrammaticInput struct {
+	Hash        string  `json:"hash"`
+	ComponentId *string `json:"componentId"`
+}
+
+// GetHash returns __GetReleaseByHashProgrammaticInput.Hash, and is useful for accessing the field via an interface.
+func (v *__GetReleaseByHashProgrammaticInput) GetHash() string { return v.Hash }
+
+// GetComponentId returns __GetReleaseByHashProgrammaticInput.ComponentId, and is useful for accessing the field via an interface.
+func (v *__GetReleaseByHashProgrammaticInput) GetComponentId() *string { return v.ComponentId }
+
+// __GetReleaseByReleaseVersionProgrammaticInput is used internally by genqlient
+type __GetReleaseByReleaseVersionProgrammaticInput struct {
+	Version     string `json:"version"`
+	ComponentId string `json:"componentId"`
+}
+
+// GetVersion returns __GetReleaseByReleaseVersionProgrammaticInput.Version, and is useful for accessing the field via an interface.
+func (v *__GetReleaseByReleaseVersionProgrammaticInput) GetVersion() string { return v.Version }
+
+// GetComponentId returns __GetReleaseByReleaseVersionProgrammaticInput.ComponentId, and is useful for accessing the field via an interface.
+func (v *__GetReleaseByReleaseVersionProgrammaticInput) GetComponentId() string { return v.ComponentId }
+
+// __GetSbomProbingResultInput is used internally by genqlient
+type __GetSbomProbingResultInput struct {
+	RunId string `json:"runId"`
+}
+
+// GetRunId returns __GetSbomProbingResultInput.RunId, and is useful for accessing the field via an interface.
+func (v *__GetSbomProbingResultInput) GetRunId() string { return v.RunId }
+
+// __InstDataInput is used internally by genqlient
+type __InstDataInput struct {
+	InstanceDataInput *InstanceDataInput `json:"InstanceDataInput,omitempty"`
+}
+
+// GetInstanceDataInput returns __InstDataInput.InstanceDataInput, and is useful for accessing the field via an interface.
+func (v *__InstDataInput) GetInstanceDataInput() *InstanceDataInput { return v.InstanceDataInput }
+
+// __InstanceDeploymentEventsProgrammaticInput is used internally by genqlient
+type __InstanceDeploymentEventsProgrammaticInput struct {
+	Events []*InstanceDeploymentEventInput `json:"events,omitempty"`
+}
+
+// GetEvents returns __InstanceDeploymentEventsProgrammaticInput.Events, and is useful for accessing the field via an interface.
+func (v *__InstanceDeploymentEventsProgrammaticInput) GetEvents() []*InstanceDeploymentEventInput {
+	return v.Events
+}
+
+// __IsInstanceHasSealedSecretCertInput is used internally by genqlient
+type __IsInstanceHasSealedSecretCertInput struct {
+	InstanceUuid *string `json:"instanceUuid"`
+	InstanceUri  *string `json:"instanceUri"`
+}
+
+// GetInstanceUuid returns __IsInstanceHasSealedSecretCertInput.InstanceUuid, and is useful for accessing the field via an interface.
+func (v *__IsInstanceHasSealedSecretCertInput) GetInstanceUuid() *string { return v.InstanceUuid }
+
+// GetInstanceUri returns __IsInstanceHasSealedSecretCertInput.InstanceUri, and is useful for accessing the field via an interface.
+func (v *__IsInstanceHasSealedSecretCertInput) GetInstanceUri() *string { return v.InstanceUri }
+
+// __ListInstanceProductFeatureSetsFeaturesetsInput is used internally by genqlient
+type __ListInstanceProductFeatureSetsFeaturesetsInput struct {
+	InstanceUuid *string `json:"instanceUuid"`
+	InstanceUri  *string `json:"instanceUri"`
+	Namespace    *string `json:"namespace"`
+}
+
+// GetInstanceUuid returns __ListInstanceProductFeatureSetsFeaturesetsInput.InstanceUuid, and is useful for accessing the field via an interface.
+func (v *__ListInstanceProductFeatureSetsFeaturesetsInput) GetInstanceUuid() *string {
+	return v.InstanceUuid
+}
+
+// GetInstanceUri returns __ListInstanceProductFeatureSetsFeaturesetsInput.InstanceUri, and is useful for accessing the field via an interface.
+func (v *__ListInstanceProductFeatureSetsFeaturesetsInput) GetInstanceUri() *string {
+	return v.InstanceUri
+}
+
+// GetNamespace returns __ListInstanceProductFeatureSetsFeaturesetsInput.Namespace, and is useful for accessing the field via an interface.
+func (v *__ListInstanceProductFeatureSetsFeaturesetsInput) GetNamespace() *string { return v.Namespace }
+
+// __ListInstanceProductFeatureSetsInput is used internally by genqlient
+type __ListInstanceProductFeatureSetsInput struct {
+	InstanceUuid *string `json:"instanceUuid"`
+	InstanceUri  *string `json:"instanceUri"`
+	Namespace    *string `json:"namespace"`
+}
+
+// GetInstanceUuid returns __ListInstanceProductFeatureSetsInput.InstanceUuid, and is useful for accessing the field via an interface.
+func (v *__ListInstanceProductFeatureSetsInput) GetInstanceUuid() *string { return v.InstanceUuid }
+
+// GetInstanceUri returns __ListInstanceProductFeatureSetsInput.InstanceUri, and is useful for accessing the field via an interface.
+func (v *__ListInstanceProductFeatureSetsInput) GetInstanceUri() *string { return v.InstanceUri }
+
+// GetNamespace returns __ListInstanceProductFeatureSetsInput.Namespace, and is useful for accessing the field via an interface.
+func (v *__ListInstanceProductFeatureSetsInput) GetNamespace() *string { return v.Namespace }
+
+// __ProbeSbomProgrammaticInput is used internally by genqlient
+type __ProbeSbomProgrammaticInput struct {
+	Sbom          string  `json:"sbom"`
+	ComponentUuid *string `json:"componentUuid"`
+	BranchUuid    *string `json:"branchUuid"`
+}
+
+// GetSbom returns __ProbeSbomProgrammaticInput.Sbom, and is useful for accessing the field via an interface.
+func (v *__ProbeSbomProgrammaticInput) GetSbom() string { return v.Sbom }
+
+// GetComponentUuid returns __ProbeSbomProgrammaticInput.ComponentUuid, and is useful for accessing the field via an interface.
+func (v *__ProbeSbomProgrammaticInput) GetComponentUuid() *string { return v.ComponentUuid }
+
+// GetBranchUuid returns __ProbeSbomProgrammaticInput.BranchUuid, and is useful for accessing the field via an interface.
+func (v *__ProbeSbomProgrammaticInput) GetBranchUuid() *string { return v.BranchUuid }
+
+// __ReleasecompletionfinalizerProgrammaticInput is used internally by genqlient
+type __ReleasecompletionfinalizerProgrammaticInput struct {
+	Release string `json:"release"`
+}
+
+// GetRelease returns __ReleasecompletionfinalizerProgrammaticInput.Release, and is useful for accessing the field via an interface.
+func (v *__ReleasecompletionfinalizerProgrammaticInput) GetRelease() string { return v.Release }
+
+// __SessionAddArtifactInput is used internally by genqlient
+type __SessionAddArtifactInput struct {
+	AddArtifact *SessionAddArtifactInput `json:"addArtifact,omitempty"`
+}
+
+// GetAddArtifact returns __SessionAddArtifactInput.AddArtifact, and is useful for accessing the field via an interface.
+func (v *__SessionAddArtifactInput) GetAddArtifact() *SessionAddArtifactInput { return v.AddArtifact }
+
+// __SessionCloseProgrammaticInput is used internally by genqlient
+type __SessionCloseProgrammaticInput struct {
+	SessionUuid string `json:"sessionUuid"`
+}
+
+// GetSessionUuid returns __SessionCloseProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__SessionCloseProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// __SessionInitializeProgrammaticInput is used internally by genqlient
+type __SessionInitializeProgrammaticInput struct {
+	SessionInit *SessionInitializeInput `json:"sessionInit,omitempty"`
+}
+
+// GetSessionInit returns __SessionInitializeProgrammaticInput.SessionInit, and is useful for accessing the field via an interface.
+func (v *__SessionInitializeProgrammaticInput) GetSessionInit() *SessionInitializeInput {
+	return v.SessionInit
+}
+
+// __SessionProgrammaticInput is used internally by genqlient
+type __SessionProgrammaticInput struct {
+	SessionUuid string `json:"sessionUuid"`
+}
+
+// GetSessionUuid returns __SessionProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__SessionProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// __SessionTouchProgrammaticInput is used internally by genqlient
+type __SessionTouchProgrammaticInput struct {
+	SessionUuid string `json:"sessionUuid"`
+}
+
+// GetSessionUuid returns __SessionTouchProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__SessionTouchProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// __SetInstanceSealedSecretCertInput is used internally by genqlient
+type __SetInstanceSealedSecretCertInput struct {
+	SealedCert string `json:"sealedCert"`
+}
+
+// GetSealedCert returns __SetInstanceSealedSecretCertInput.SealedCert, and is useful for accessing the field via an interface.
+func (v *__SetInstanceSealedSecretCertInput) GetSealedCert() string { return v.SealedCert }
+
+// __SwitchInstanceProductFeatureSetInput is used internally by genqlient
+type __SwitchInstanceProductFeatureSetInput struct {
+	InstanceUuid   *string `json:"instanceUuid"`
+	InstanceUri    *string `json:"instanceUri"`
+	ProductUuid    string  `json:"productUuid"`
+	FeatureSetUuid string  `json:"featureSetUuid"`
+	Namespace      *string `json:"namespace"`
+	Release        *string `json:"release"`
+	Follow         *bool   `json:"follow"`
+}
+
+// GetInstanceUuid returns __SwitchInstanceProductFeatureSetInput.InstanceUuid, and is useful for accessing the field via an interface.
+func (v *__SwitchInstanceProductFeatureSetInput) GetInstanceUuid() *string { return v.InstanceUuid }
+
+// GetInstanceUri returns __SwitchInstanceProductFeatureSetInput.InstanceUri, and is useful for accessing the field via an interface.
+func (v *__SwitchInstanceProductFeatureSetInput) GetInstanceUri() *string { return v.InstanceUri }
+
+// GetProductUuid returns __SwitchInstanceProductFeatureSetInput.ProductUuid, and is useful for accessing the field via an interface.
+func (v *__SwitchInstanceProductFeatureSetInput) GetProductUuid() string { return v.ProductUuid }
+
+// GetFeatureSetUuid returns __SwitchInstanceProductFeatureSetInput.FeatureSetUuid, and is useful for accessing the field via an interface.
+func (v *__SwitchInstanceProductFeatureSetInput) GetFeatureSetUuid() string { return v.FeatureSetUuid }
+
+// GetNamespace returns __SwitchInstanceProductFeatureSetInput.Namespace, and is useful for accessing the field via an interface.
+func (v *__SwitchInstanceProductFeatureSetInput) GetNamespace() *string { return v.Namespace }
+
+// GetRelease returns __SwitchInstanceProductFeatureSetInput.Release, and is useful for accessing the field via an interface.
+func (v *__SwitchInstanceProductFeatureSetInput) GetRelease() *string { return v.Release }
+
+// GetFollow returns __SwitchInstanceProductFeatureSetInput.Follow, and is useful for accessing the field via an interface.
+func (v *__SwitchInstanceProductFeatureSetInput) GetFollow() *bool { return v.Follow }
+
+// __SynchronizeLiveBranchesInput is used internally by genqlient
+type __SynchronizeLiveBranchesInput struct {
+	SynchronizeBranchInput *SynchronizeBranchInput `json:"synchronizeBranchInput,omitempty"`
+}
+
+// GetSynchronizeBranchInput returns __SynchronizeLiveBranchesInput.SynchronizeBranchInput, and is useful for accessing the field via an interface.
+func (v *__SynchronizeLiveBranchesInput) GetSynchronizeBranchInput() *SynchronizeBranchInput {
+	return v.SynchronizeBranchInput
+}
+
+// __UpsertPullRequestProgrammaticInput is used internally by genqlient
+type __UpsertPullRequestProgrammaticInput struct {
+	Input *PullRequestUpsertProgrammaticInput `json:"input,omitempty"`
+}
+
+// GetInput returns __UpsertPullRequestProgrammaticInput.Input, and is useful for accessing the field via an interface.
+func (v *__UpsertPullRequestProgrammaticInput) GetInput() *PullRequestUpsertProgrammaticInput {
+	return v.Input
+}
+
+// __VersionFeatureSetInput is used internally by genqlient
+type __VersionFeatureSetInput struct {
+	ProductUuid string                       `json:"productUuid"`
+	Overrides   []*VersionFeatureSetOverride `json:"overrides,omitempty"`
+}
+
+// GetProductUuid returns __VersionFeatureSetInput.ProductUuid, and is useful for accessing the field via an interface.
+func (v *__VersionFeatureSetInput) GetProductUuid() string { return v.ProductUuid }
+
+// GetOverrides returns __VersionFeatureSetInput.Overrides, and is useful for accessing the field via an interface.
+func (v *__VersionFeatureSetInput) GetOverrides() []*VersionFeatureSetOverride { return v.Overrides }
+
+// The mutation executed by AddArtifactProgrammatic.
+const AddArtifactProgrammatic_Operation = `
+mutation AddArtifactProgrammatic ($artifactInput: AddArtifactInput) {
+	addArtifactProgrammatic(artifactInput: $artifactInput) {
+		uuid
+		version
+		lifecycle
+		artifacts
+	}
+}
+`
+
+// from rearm-cli addArtifact.go
+func AddArtifactProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	artifactInput *AddArtifactInput,
+) (data_ *AddArtifactProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AddArtifactProgrammatic",
+		Query:  AddArtifactProgrammatic_Operation,
+		Variables: &__AddArtifactProgrammaticInput{
+			ArtifactInput: artifactInput,
+		},
+	}
+
+	data_ = &AddArtifactProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AddOutboundDeliverablesProgrammatic.
+const AddOutboundDeliverablesProgrammatic_Operation = `
+mutation AddOutboundDeliverablesProgrammatic ($addODeliverableInput: AddODeliverableInput!) {
+	addOutboundDeliverablesProgrammatic(deliverables: $addODeliverableInput) {
+		uuid
+		createdType
+		lastUpdatedBy
+		createdDate
+		version
+		lifecycle
+		org
+		component
+		branch
+		parentReleases {
+			release
+		}
+		sourceCodeEntry
+		artifacts
+		notes
+		endpoint
+		commits
+	}
+}
+`
+
+// from rearm-cli root.go
+func AddOutboundDeliverablesProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	addODeliverableInput *AddODeliverableInput,
+) (data_ *AddOutboundDeliverablesProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AddOutboundDeliverablesProgrammatic",
+		Query:  AddOutboundDeliverablesProgrammatic_Operation,
+		Variables: &__AddOutboundDeliverablesProgrammaticInput{
+			AddODeliverableInput: addODeliverableInput,
+		},
+	}
+
+	data_ = &AddOutboundDeliverablesProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AddReleaseProgrammatic.
+const AddReleaseProgrammatic_Operation = `
+mutation AddReleaseProgrammatic ($releaseInputProg: ReleaseInputProg!) {
+	addReleaseProgrammatic(release: $releaseInputProg) {
+		uuid
+		createdType
+		lastUpdatedBy
+		createdDate
+		version
+		lifecycle
+		org
+		component
+		branch
+		parentReleases {
+			release
+		}
+		sourceCodeEntry
+		artifacts
+		notes
+		endpoint
+		commits
+	}
+}
+`
+
+// from rearm-cli addRelease.go
+func AddReleaseProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	releaseInputProg *ReleaseInputProg,
+) (data_ *AddReleaseProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AddReleaseProgrammatic",
+		Query:  AddReleaseProgrammatic_Operation,
+		Variables: &__AddReleaseProgrammaticInput{
+			ReleaseInputProg: releaseInputProg,
+		},
+	}
+
+	data_ = &AddReleaseProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AddReleasesProgrammatic.
+const AddReleasesProgrammatic_Operation = `
+mutation AddReleasesProgrammatic ($releaseInputsProg: [ReleaseInputProg!]!) {
+	addReleasesProgrammatic(releases: $releaseInputsProg) {
+		uuid
+		createdType
+		lastUpdatedBy
+		createdDate
+		version
+		lifecycle
+		org
+		component
+		branch
+		parentReleases {
+			release
+		}
+		sourceCodeEntry
+		artifacts
+		notes
+		endpoint
+		commits
+	}
+}
+`
+
+// from rearm-cli addReleases.go
+func AddReleasesProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	releaseInputsProg []*ReleaseInputProg,
+) (data_ *AddReleasesProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AddReleasesProgrammatic",
+		Query:  AddReleasesProgrammatic_Operation,
+		Variables: &__AddReleasesProgrammaticInput{
+			ReleaseInputsProg: releaseInputsProg,
+		},
+	}
+
+	data_ = &AddReleasesProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentSessionInboxProgrammatic.
+const AgentSessionInboxProgrammatic_Operation = `
+query AgentSessionInboxProgrammatic ($inboxRequest: AgentSessionInboxInput!) {
+	agentSessionInboxProgrammatic(inboxRequest: $inboxRequest) {
+		cursor
+		occurredAt
+		kind
+		release {
+			uuid
+			version
+			lifecycle
+		}
+		oldValue
+		newValue
+		reason
+		source
+		actorUuid
+		actorRoleId
+	}
+}
+`
+
+// from rearm-cli agent.go
+func AgentSessionInboxProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	inboxRequest *AgentSessionInboxInput,
+) (data_ *AgentSessionInboxProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentSessionInboxProgrammatic",
+		Query:  AgentSessionInboxProgrammatic_Operation,
+		Variables: &__AgentSessionInboxProgrammaticInput{
+			InboxRequest: inboxRequest,
+		},
+	}
+
+	data_ = &AgentSessionInboxProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgenticReleaseProgrammatic.
+const AgenticReleaseProgrammatic_Operation = `
+query AgenticReleaseProgrammatic ($releaseUuid: ID!, $sessionUuid: ID, $clientSessionId: String) {
+	agenticReleaseProgrammatic(releaseUuid: $releaseUuid, sessionUuid: $sessionUuid, clientSessionId: $clientSessionId) {
+		uuid
+		version
+		lifecycle
+		updateEvents {
+			rus
+			rua
+			oldValue
+			newValue
+			message
+			date
+		}
+		approvalEvents {
+			approvalEntry
+			approvalRoleId
+			state
+			comment
+			date
+		}
+		sourceCodeEntryDetails {
+			uuid
+			commit
+			attributionState
+			attributionReason
+			signature {
+				state
+				format
+				signedByOwnerType
+				signedByOwnerUuid
+				verifiedAt
+				keyFingerprint
+			}
+			artifactDetails {
+				uuid
+				displayIdentifier
+				type
+				bomFormat
+				tags {
+					key
+					value
+				}
+				metrics {
+					firstScanned
+					lastScanned
+					critical
+					high
+					medium
+					low
+					unassigned
+					policyViolationsSecurityTotal
+					policyViolationsLicenseTotal
+					policyViolationsOperationalTotal
+					vulnerabilityDetails {
+						purl
+						vulnId
+						severity
+						analysisState
+					}
+					violationDetails {
+						purl
+						type
+						license
+						violationDetails
+						analysisState
+					}
+				}
+			}
+		}
+		metrics {
+			lastScanned
+			firstScanned
+			critical
+			high
+			medium
+			low
+			unassigned
+			policyViolationsSecurityTotal
+			policyViolationsLicenseTotal
+			policyViolationsOperationalTotal
+			vulnerabilityDetails {
+				purl
+				vulnId
+				severity
+				analysisState
+			}
+			violationDetails {
+				purl
+				type
+				license
+				violationDetails
+				analysisState
+			}
+		}
+		artifactDetails {
+			uuid
+			displayIdentifier
+			type
+			bomFormat
+			tags {
+				key
+				value
+			}
+			metrics {
+				firstScanned
+				lastScanned
+				critical
+				high
+				medium
+				low
+				unassigned
+				policyViolationsSecurityTotal
+				policyViolationsLicenseTotal
+				policyViolationsOperationalTotal
+				vulnerabilityDetails {
+					purl
+					vulnId
+					severity
+					analysisState
+				}
+				violationDetails {
+					purl
+					type
+					license
+					violationDetails
+					analysisState
+				}
+			}
+		}
+		variantDetails {
+			outboundDeliverableDetails {
+				uuid
+				displayIdentifier
+				artifactDetails {
+					uuid
+					displayIdentifier
+					type
+					bomFormat
+					tags {
+						key
+						value
+					}
+					metrics {
+						firstScanned
+						lastScanned
+						critical
+						high
+						medium
+						low
+						unassigned
+						policyViolationsSecurityTotal
+						policyViolationsLicenseTotal
+						policyViolationsOperationalTotal
+						vulnerabilityDetails {
+							purl
+							vulnId
+							severity
+							analysisState
+						}
+						violationDetails {
+							purl
+							type
+							license
+							violationDetails
+							analysisState
+						}
+					}
+				}
+			}
+		}
+	}
+}
+`
+
+// from rearm-cli agent.go
+func AgenticReleaseProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	releaseUuid string,
+	sessionUuid *string,
+	clientSessionId *string,
+) (data_ *AgenticReleaseProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgenticReleaseProgrammatic",
+		Query:  AgenticReleaseProgrammatic_Operation,
+		Variables: &__AgenticReleaseProgrammaticInput{
+			ReleaseUuid:     releaseUuid,
+			SessionUuid:     sessionUuid,
+			ClientSessionId: clientSessionId,
+		},
+	}
+
+	data_ = &AgenticReleaseProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
 
 // The mutation executed by ApplyBranches.
 const ApplyBranches_Operation = `
@@ -1560,6 +8697,237 @@ func ApplyCatalog(
 	}
 
 	data_ = &ApplyCatalogResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by ApproveReleaseProgrammatic.
+const ApproveReleaseProgrammatic_Operation = `
+mutation ApproveReleaseProgrammatic ($releaseApprovals: ReleaseApprovalProgrammaticInput!) {
+	approveReleaseProgrammatic(releaseApprovals: $releaseApprovals) {
+		uuid
+		createdType
+		lastUpdatedBy
+		createdDate
+		version
+		lifecycle
+		org
+		component
+		branch
+		parentReleases {
+			release
+		}
+		sourceCodeEntry
+		artifacts
+		notes
+		endpoint
+		commits
+	}
+}
+`
+
+// from rearm-cli approveRelease.go
+func ApproveReleaseProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	releaseApprovals *ReleaseApprovalProgrammaticInput,
+) (data_ *ApproveReleaseProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ApproveReleaseProgrammatic",
+		Query:  ApproveReleaseProgrammatic_Operation,
+		Variables: &__ApproveReleaseProgrammaticInput{
+			ReleaseApprovals: releaseApprovals,
+		},
+	}
+
+	data_ = &ApproveReleaseProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by CreateComponentInPerspectiveProgrammatic.
+const CreateComponentInPerspectiveProgrammatic_Operation = `
+mutation CreateComponentInPerspectiveProgrammatic ($CreateComponentInput: CreateComponentInput!, $perspectiveUuid: ID!) {
+	createComponentInPerspectiveProgrammatic(component: $CreateComponentInput, perspectiveUuid: $perspectiveUuid) {
+		uuid
+		name
+		org
+		type
+		versionSchema
+		vcsRepositoryDetails {
+			uri
+			type
+		}
+		featureBranchVersioning
+		status
+		apiKeyId
+		apiKey
+	}
+}
+`
+
+// from rearm-cli root.go
+func CreateComponentInPerspectiveProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	CreateComponentInput *CreateComponentInput,
+	perspectiveUuid string,
+) (data_ *CreateComponentInPerspectiveProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "CreateComponentInPerspectiveProgrammatic",
+		Query:  CreateComponentInPerspectiveProgrammatic_Operation,
+		Variables: &__CreateComponentInPerspectiveProgrammaticInput{
+			CreateComponentInput: CreateComponentInput,
+			PerspectiveUuid:      perspectiveUuid,
+		},
+	}
+
+	data_ = &CreateComponentInPerspectiveProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by CreateComponentProgrammatic.
+const CreateComponentProgrammatic_Operation = `
+mutation CreateComponentProgrammatic ($CreateComponentInput: CreateComponentInput!) {
+	createComponentProgrammatic(component: $CreateComponentInput) {
+		uuid
+		name
+		org
+		type
+		versionSchema
+		vcsRepositoryDetails {
+			uri
+			type
+		}
+		featureBranchVersioning
+		status
+		apiKeyId
+		apiKey
+	}
+}
+`
+
+// from rearm-cli root.go
+func CreateComponentProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	CreateComponentInput *CreateComponentInput,
+) (data_ *CreateComponentProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "CreateComponentProgrammatic",
+		Query:  CreateComponentProgrammatic_Operation,
+		Variables: &__CreateComponentProgrammaticInput{
+			CreateComponentInput: CreateComponentInput,
+		},
+	}
+
+	data_ = &CreateComponentProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by DeliverableDownloadSecrets.
+const DeliverableDownloadSecrets_Operation = `
+query DeliverableDownloadSecrets ($instanceUuid: ID, $instanceUri: String, $deliverableDigest: String!, $namespace: String) {
+	deliverableDownloadSecrets(instanceUuid: $instanceUuid, instanceUri: $instanceUri, deliverableDigest: $deliverableDigest, namespace: $namespace) {
+		login
+		password
+		type
+	}
+}
+`
+
+// from rearm-cli delSecrets.go
+func DeliverableDownloadSecrets(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	instanceUuid *string,
+	instanceUri *string,
+	deliverableDigest string,
+	namespace *string,
+) (data_ *DeliverableDownloadSecretsResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "DeliverableDownloadSecrets",
+		Query:  DeliverableDownloadSecrets_Operation,
+		Variables: &__DeliverableDownloadSecretsInput{
+			InstanceUuid:      instanceUuid,
+			InstanceUri:       instanceUri,
+			DeliverableDigest: deliverableDigest,
+			Namespace:         namespace,
+		},
+	}
+
+	data_ = &DeliverableDownloadSecretsResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by EnrollSigningKeyProgrammatic.
+const EnrollSigningKeyProgrammatic_Operation = `
+mutation EnrollSigningKeyProgrammatic ($signingKey: AgentSigningKeyInput!) {
+	enrollSigningKeyProgrammatic(signingKey: $signingKey) {
+		uuid
+		format
+		ownerType
+		ownerUuid
+		fingerprint
+		identity
+		createdDate
+	}
+}
+`
+
+// from rearm-cli agentEnrollkey.go
+func EnrollSigningKeyProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	signingKey *AgentSigningKeyInput,
+) (data_ *EnrollSigningKeyProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "EnrollSigningKeyProgrammatic",
+		Query:  EnrollSigningKeyProgrammatic_Operation,
+		Variables: &__EnrollSigningKeyProgrammaticInput{
+			SigningKey: signingKey,
+		},
+	}
+
+	data_ = &EnrollSigningKeyProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -1698,6 +9066,1200 @@ func ExportCatalog(
 	}
 
 	data_ = &ExportCatalogResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetInstancePropSecrets.
+const GetInstancePropSecrets_Operation = `
+query GetInstancePropSecrets ($instanceUuid: ID, $instanceUri: String, $revision: Int!, $namespace: String!, $properties: [String], $secrets: [String], $product: ID, $productSpecificProps: Boolean) {
+	getInstancePropSecrets(instanceUuid: $instanceUuid, instanceUri: $instanceUri, revision: $revision, namespace: $namespace, properties: $properties, secrets: $secrets, product: $product, productSpecificProps: $productSpecificProps) {
+		properties {
+			key
+			value
+		}
+		secrets {
+			key
+			value
+			lastUpdated
+		}
+	}
+}
+`
+
+// from rearm-cli instprops.go
+func GetInstancePropSecrets(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	instanceUuid *string,
+	instanceUri *string,
+	revision int,
+	namespace string,
+	properties []*string,
+	secrets []*string,
+	product *string,
+	productSpecificProps *bool,
+) (data_ *GetInstancePropSecretsResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetInstancePropSecrets",
+		Query:  GetInstancePropSecrets_Operation,
+		Variables: &__GetInstancePropSecretsInput{
+			InstanceUuid:         instanceUuid,
+			InstanceUri:          instanceUri,
+			Revision:             revision,
+			Namespace:            namespace,
+			Properties:           properties,
+			Secrets:              secrets,
+			Product:              product,
+			ProductSpecificProps: productSpecificProps,
+		},
+	}
+
+	data_ = &GetInstancePropSecretsResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetInstanceRevisionCycloneDxExportProg.
+const GetInstanceRevisionCycloneDxExportProg_Operation = `
+query GetInstanceRevisionCycloneDxExportProg ($instanceUuid: ID, $instanceUri: String, $revision: Int!, $namespace: String, $stateType: InstanceStateType) {
+	getInstanceRevisionCycloneDxExportProg(instanceUuid: $instanceUuid, instanceUri: $instanceUri, revision: $revision, namespace: $namespace, stateType: $stateType)
+}
+`
+
+// from rearm-cli devops.go
+func GetInstanceRevisionCycloneDxExportProg(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	instanceUuid *string,
+	instanceUri *string,
+	revision int,
+	namespace *string,
+	stateType *InstanceStateType,
+) (data_ *GetInstanceRevisionCycloneDxExportProgResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetInstanceRevisionCycloneDxExportProg",
+		Query:  GetInstanceRevisionCycloneDxExportProg_Operation,
+		Variables: &__GetInstanceRevisionCycloneDxExportProgInput{
+			InstanceUuid: instanceUuid,
+			InstanceUri:  instanceUri,
+			Revision:     revision,
+			Namespace:    namespace,
+			StateType:    stateType,
+		},
+	}
+
+	data_ = &GetInstanceRevisionCycloneDxExportProgResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetLatestReleaseProgrammatic.
+const GetLatestReleaseProgrammatic_Operation = `
+query GetLatestReleaseProgrammatic ($GetLatestReleaseInput: GetLatestReleaseInput!) {
+	getLatestReleaseProgrammatic(release: $GetLatestReleaseInput) {
+		uuid
+		createdType
+		lastUpdatedBy
+		createdDate
+		version
+		lifecycle
+		org
+		component
+		branch
+		parentReleases {
+			release
+		}
+		sourceCodeEntry
+		artifacts
+		notes
+		endpoint
+		commits
+	}
+}
+`
+
+// from rearm-cli getLatestRelease.go
+func GetLatestReleaseProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	GetLatestReleaseInput *GetLatestReleaseInput,
+) (data_ *GetLatestReleaseProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetLatestReleaseProgrammatic",
+		Query:  GetLatestReleaseProgrammatic_Operation,
+		Variables: &__GetLatestReleaseProgrammaticInput{
+			GetLatestReleaseInput: GetLatestReleaseInput,
+		},
+	}
+
+	data_ = &GetLatestReleaseProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetLatestReleaseProgrammaticCdx.
+const GetLatestReleaseProgrammaticCdx_Operation = `
+query GetLatestReleaseProgrammaticCdx ($GetLatestReleaseInput: GetLatestReleaseInput!) {
+	getLatestReleaseProgrammaticCdx(release: $GetLatestReleaseInput)
+}
+`
+
+// from rearm-cli getLatestRelease.go
+func GetLatestReleaseProgrammaticCdx(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	GetLatestReleaseInput *GetLatestReleaseInput,
+) (data_ *GetLatestReleaseProgrammaticCdxResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetLatestReleaseProgrammaticCdx",
+		Query:  GetLatestReleaseProgrammaticCdx_Operation,
+		Variables: &__GetLatestReleaseProgrammaticCdxInput{
+			GetLatestReleaseInput: GetLatestReleaseInput,
+		},
+	}
+
+	data_ = &GetLatestReleaseProgrammaticCdxResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by GetNewVersionProgrammatic.
+const GetNewVersionProgrammatic_Operation = `
+mutation GetNewVersionProgrammatic ($GetNewVersionInput: GetNewVersionInput!) {
+	getNewVersionProgrammatic(newVersionInput: $GetNewVersionInput) {
+		version
+		dockerTagSafeVersion
+		releaseAlreadyExists
+	}
+}
+`
+
+// from rearm-cli root.go
+func GetNewVersionProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	GetNewVersionInput *GetNewVersionInput,
+) (data_ *GetNewVersionProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetNewVersionProgrammatic",
+		Query:  GetNewVersionProgrammatic_Operation,
+		Variables: &__GetNewVersionProgrammaticInput{
+			GetNewVersionInput: GetNewVersionInput,
+		},
+	}
+
+	data_ = &GetNewVersionProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by GetNewVersionProgrammaticWithLifecycle.
+const GetNewVersionProgrammaticWithLifecycle_Operation = `
+mutation GetNewVersionProgrammaticWithLifecycle ($GetNewVersionInput: GetNewVersionInput!) {
+	getNewVersionProgrammatic(newVersionInput: $GetNewVersionInput) {
+		version
+		dockerTagSafeVersion
+		releaseAlreadyExists
+		lifecycle
+	}
+}
+`
+
+// from rearm-cli root.go
+func GetNewVersionProgrammaticWithLifecycle(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	GetNewVersionInput *GetNewVersionInput,
+) (data_ *GetNewVersionProgrammaticWithLifecycleResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetNewVersionProgrammaticWithLifecycle",
+		Query:  GetNewVersionProgrammaticWithLifecycle_Operation,
+		Variables: &__GetNewVersionProgrammaticWithLifecycleInput{
+			GetNewVersionInput: GetNewVersionInput,
+		},
+	}
+
+	data_ = &GetNewVersionProgrammaticWithLifecycleResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetReleaseByHashProgrammatic.
+const GetReleaseByHashProgrammatic_Operation = `
+query GetReleaseByHashProgrammatic ($hash: String!, $componentId: ID) {
+	getReleaseByHashProgrammatic(hash: $hash, componentId: $componentId)
+}
+`
+
+// from rearm-cli root.go
+func GetReleaseByHashProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	hash string,
+	componentId *string,
+) (data_ *GetReleaseByHashProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetReleaseByHashProgrammatic",
+		Query:  GetReleaseByHashProgrammatic_Operation,
+		Variables: &__GetReleaseByHashProgrammaticInput{
+			Hash:        hash,
+			ComponentId: componentId,
+		},
+	}
+
+	data_ = &GetReleaseByHashProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetReleaseByReleaseVersionProgrammatic.
+const GetReleaseByReleaseVersionProgrammatic_Operation = `
+query GetReleaseByReleaseVersionProgrammatic ($version: String!, $componentId: ID!) {
+	getReleaseByReleaseVersionProgrammatic(version: $version, componentId: $componentId)
+}
+`
+
+// from rearm-cli root.go
+func GetReleaseByReleaseVersionProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	version string,
+	componentId string,
+) (data_ *GetReleaseByReleaseVersionProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetReleaseByReleaseVersionProgrammatic",
+		Query:  GetReleaseByReleaseVersionProgrammatic_Operation,
+		Variables: &__GetReleaseByReleaseVersionProgrammaticInput{
+			Version:     version,
+			ComponentId: componentId,
+		},
+	}
+
+	data_ = &GetReleaseByReleaseVersionProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetSbomProbingResult.
+const GetSbomProbingResult_Operation = `
+query GetSbomProbingResult ($runId: String!) {
+	getSbomProbingResult(runId: $runId) {
+		status
+		metrics {
+			dependencyTrackFullUri
+			dtrackSubmissionFailed
+			dtrackSubmissionAttempts
+			dtrackSubmissionFailureReason
+			lastScanned
+			firstScanned
+			critical
+			high
+			medium
+			low
+			unassigned
+			vulnerabilities
+			vulnerableComponents
+			components
+			suppressed
+			findingsTotal
+			findingsAudited
+			findingsUnaudited
+			inheritedRiskScore
+			policyViolationsFail
+			policyViolationsWarn
+			policyViolationsInfo
+			policyViolationsTotal
+			policyViolationsAudited
+			policyViolationsUnaudited
+			policyViolationsSecurityTotal
+			policyViolationsSecurityAudited
+			policyViolationsSecurityUnaudited
+			policyViolationsLicenseTotal
+			policyViolationsLicenseAudited
+			policyViolationsLicenseUnaudited
+			policyViolationsOperationalTotal
+			policyViolationsOperationalAudited
+			policyViolationsOperationalUnaudited
+			vulnerabilityDetails {
+				purl
+				vulnId
+				severity
+				analysisState
+				analysisDate
+				attributedAt
+				aliases {
+					type
+					aliasId
+				}
+				sources {
+					artifact
+					release
+					variant
+					analysisState
+					analysisDate
+				}
+				severities {
+					source
+					severity
+				}
+			}
+			violationDetails {
+				purl
+				type
+				license
+				violationDetails
+				analysisState
+				analysisDate
+				attributedAt
+				sources {
+					artifact
+					release
+					variant
+					analysisState
+					analysisDate
+				}
+			}
+			weaknessDetails {
+				cweId
+				ruleId
+				location
+				fingerprint
+				severity
+				analysisState
+				analysisDate
+				attributedAt
+				sources {
+					artifact
+					release
+					variant
+					analysisState
+					analysisDate
+				}
+			}
+		}
+	}
+}
+`
+
+// from rearm-cli probeSbom.go
+func GetSbomProbingResult(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	runId string,
+) (data_ *GetSbomProbingResultResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetSbomProbingResult",
+		Query:  GetSbomProbingResult_Operation,
+		Variables: &__GetSbomProbingResultInput{
+			RunId: runId,
+		},
+	}
+
+	data_ = &GetSbomProbingResultResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by InstData.
+const InstData_Operation = `
+mutation InstData ($InstanceDataInput: InstanceDataInput!) {
+	instData(instance: $InstanceDataInput)
+}
+`
+
+// from rearm-cli instdata.go
+func InstData(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	InstanceDataInput *InstanceDataInput,
+) (data_ *InstDataResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "InstData",
+		Query:  InstData_Operation,
+		Variables: &__InstDataInput{
+			InstanceDataInput: InstanceDataInput,
+		},
+	}
+
+	data_ = &InstDataResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by InstanceDeploymentEventsProgrammatic.
+const InstanceDeploymentEventsProgrammatic_Operation = `
+mutation InstanceDeploymentEventsProgrammatic ($events: [InstanceDeploymentEventInput!]!) {
+	instanceDeploymentEventsProgrammatic(events: $events)
+}
+`
+
+// from rearm-cli instevent.go
+func InstanceDeploymentEventsProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	events []*InstanceDeploymentEventInput,
+) (data_ *InstanceDeploymentEventsProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "InstanceDeploymentEventsProgrammatic",
+		Query:  InstanceDeploymentEventsProgrammatic_Operation,
+		Variables: &__InstanceDeploymentEventsProgrammaticInput{
+			Events: events,
+		},
+	}
+
+	data_ = &InstanceDeploymentEventsProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by IsInstanceHasSealedSecretCert.
+const IsInstanceHasSealedSecretCert_Operation = `
+query IsInstanceHasSealedSecretCert ($instanceUuid: ID, $instanceUri: String) {
+	isInstanceHasSealedSecretCert(instanceUuid: $instanceUuid, instanceUri: $instanceUri)
+}
+`
+
+// from rearm-cli delSecrets.go
+func IsInstanceHasSealedSecretCert(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	instanceUuid *string,
+	instanceUri *string,
+) (data_ *IsInstanceHasSealedSecretCertResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "IsInstanceHasSealedSecretCert",
+		Query:  IsInstanceHasSealedSecretCert_Operation,
+		Variables: &__IsInstanceHasSealedSecretCertInput{
+			InstanceUuid: instanceUuid,
+			InstanceUri:  instanceUri,
+		},
+	}
+
+	data_ = &IsInstanceHasSealedSecretCertResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by ListInstanceProductFeatureSets.
+const ListInstanceProductFeatureSets_Operation = `
+query ListInstanceProductFeatureSets ($instanceUuid: ID, $instanceUri: String, $namespace: String) {
+	listInstanceProductFeatureSets(instanceUuid: $instanceUuid, instanceUri: $instanceUri, namespace: $namespace) {
+		namespace
+		product {
+			uuid
+			name
+		}
+		currentFeatureSet {
+			uuid
+			name
+		}
+		integrateType
+		targetRelease {
+			uuid
+			version
+			lifecycle
+			createdDate
+			approvedForInstanceEnvironment
+		}
+		deployedRelease {
+			uuid
+			version
+			lifecycle
+			createdDate
+			approvedForInstanceEnvironment
+		}
+		availableFeatureSets {
+			uuid
+			name
+			releases {
+				uuid
+				version
+				lifecycle
+				createdDate
+				approvedForInstanceEnvironment
+			}
+		}
+	}
+}
+`
+
+// from rearm-cli featureSets.go
+func ListInstanceProductFeatureSets(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	instanceUuid *string,
+	instanceUri *string,
+	namespace *string,
+) (data_ *ListInstanceProductFeatureSetsResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ListInstanceProductFeatureSets",
+		Query:  ListInstanceProductFeatureSets_Operation,
+		Variables: &__ListInstanceProductFeatureSetsInput{
+			InstanceUuid: instanceUuid,
+			InstanceUri:  instanceUri,
+			Namespace:    namespace,
+		},
+	}
+
+	data_ = &ListInstanceProductFeatureSetsResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by ListInstanceProductFeatureSetsFeaturesets.
+const ListInstanceProductFeatureSetsFeaturesets_Operation = `
+query ListInstanceProductFeatureSetsFeaturesets ($instanceUuid: ID, $instanceUri: String, $namespace: String) {
+	listInstanceProductFeatureSets(instanceUuid: $instanceUuid, instanceUri: $instanceUri, namespace: $namespace) {
+		namespace
+		product {
+			uuid
+			name
+		}
+		currentFeatureSet {
+			uuid
+			name
+		}
+		availableFeatureSets {
+			uuid
+			name
+		}
+	}
+}
+`
+
+// from rearm-cli featureSets.go
+func ListInstanceProductFeatureSetsFeaturesets(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	instanceUuid *string,
+	instanceUri *string,
+	namespace *string,
+) (data_ *ListInstanceProductFeatureSetsFeaturesetsResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ListInstanceProductFeatureSetsFeaturesets",
+		Query:  ListInstanceProductFeatureSetsFeaturesets_Operation,
+		Variables: &__ListInstanceProductFeatureSetsFeaturesetsInput{
+			InstanceUuid: instanceUuid,
+			InstanceUri:  instanceUri,
+			Namespace:    namespace,
+		},
+	}
+
+	data_ = &ListInstanceProductFeatureSetsFeaturesetsResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by ProbeSbomProgrammatic.
+const ProbeSbomProgrammatic_Operation = `
+mutation ProbeSbomProgrammatic ($sbom: String!, $componentUuid: ID, $branchUuid: ID) {
+	probeSbomProgrammatic(sbom: $sbom, componentUuid: $componentUuid, branchUuid: $branchUuid) {
+		runId
+		status
+	}
+}
+`
+
+// from rearm-cli probeSbom.go
+func ProbeSbomProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	sbom string,
+	componentUuid *string,
+	branchUuid *string,
+) (data_ *ProbeSbomProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ProbeSbomProgrammatic",
+		Query:  ProbeSbomProgrammatic_Operation,
+		Variables: &__ProbeSbomProgrammaticInput{
+			Sbom:          sbom,
+			ComponentUuid: componentUuid,
+			BranchUuid:    branchUuid,
+		},
+	}
+
+	data_ = &ProbeSbomProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by ReleasecompletionfinalizerProgrammatic.
+const ReleasecompletionfinalizerProgrammatic_Operation = `
+mutation ReleasecompletionfinalizerProgrammatic ($release: ID!) {
+	releasecompletionfinalizerProgrammatic(release: $release)
+}
+`
+
+// from rearm-cli root.go
+func ReleasecompletionfinalizerProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	release string,
+) (data_ *ReleasecompletionfinalizerProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ReleasecompletionfinalizerProgrammatic",
+		Query:  ReleasecompletionfinalizerProgrammatic_Operation,
+		Variables: &__ReleasecompletionfinalizerProgrammaticInput{
+			Release: release,
+		},
+	}
+
+	data_ = &ReleasecompletionfinalizerProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by SessionAddArtifact.
+const SessionAddArtifact_Operation = `
+mutation SessionAddArtifact ($addArtifact: SessionAddArtifactInput!) {
+	sessionAddArtifactProgrammatic(addArtifact: $addArtifact) {
+		uuid
+		status
+		artifacts
+		policyEvents {
+			policyName
+			state
+			severity
+			message
+			evaluatedAt
+		}
+	}
+}
+`
+
+// from rearm-cli agent.go
+func SessionAddArtifact(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	addArtifact *SessionAddArtifactInput,
+) (data_ *SessionAddArtifactResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "SessionAddArtifact",
+		Query:  SessionAddArtifact_Operation,
+		Variables: &__SessionAddArtifactInput{
+			AddArtifact: addArtifact,
+		},
+	}
+
+	data_ = &SessionAddArtifactResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by SessionCloseProgrammatic.
+const SessionCloseProgrammatic_Operation = `
+mutation SessionCloseProgrammatic ($sessionUuid: ID!) {
+	sessionCloseProgrammatic(sessionUuid: $sessionUuid) {
+		uuid
+		status
+		closedAt
+	}
+}
+`
+
+// from rearm-cli agent.go
+func SessionCloseProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	sessionUuid string,
+) (data_ *SessionCloseProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "SessionCloseProgrammatic",
+		Query:  SessionCloseProgrammatic_Operation,
+		Variables: &__SessionCloseProgrammaticInput{
+			SessionUuid: sessionUuid,
+		},
+	}
+
+	data_ = &SessionCloseProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by SessionInitializeProgrammatic.
+const SessionInitializeProgrammatic_Operation = `
+mutation SessionInitializeProgrammatic ($sessionInit: SessionInitializeInput!) {
+	sessionInitializeProgrammatic(sessionInit: $sessionInit) {
+		uuid
+		agent
+		clientSessionId
+		status
+		title
+		startedAt
+		policyEvents {
+			policyName
+			kind
+			state
+			severity
+			message
+			evaluatedAt
+			policy {
+				uuid
+				name
+				cel
+				description
+				enabled
+				severity
+				kind
+			}
+		}
+	}
+}
+`
+
+// from rearm-cli agent.go
+func SessionInitializeProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	sessionInit *SessionInitializeInput,
+) (data_ *SessionInitializeProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "SessionInitializeProgrammatic",
+		Query:  SessionInitializeProgrammatic_Operation,
+		Variables: &__SessionInitializeProgrammaticInput{
+			SessionInit: sessionInit,
+		},
+	}
+
+	data_ = &SessionInitializeProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by SessionProgrammatic.
+const SessionProgrammatic_Operation = `
+query SessionProgrammatic ($sessionUuid: ID!) {
+	sessionProgrammatic(sessionUuid: $sessionUuid) {
+		uuid
+		clientSessionId
+		status
+		startedAt
+		closedAt
+		lastActivityAt
+		agent
+		title
+		parentSession
+		artifacts
+		commits
+		policyEvents {
+			policyName
+			kind
+			state
+			severity
+			message
+			evaluatedAt
+			policy {
+				uuid
+				name
+				cel
+				description
+				enabled
+				severity
+				kind
+			}
+		}
+		releases {
+			uuid
+			version
+			lifecycle
+		}
+		pullRequests {
+			uuid
+			identity
+			title
+			state
+		}
+	}
+}
+`
+
+// from rearm-cli agent.go
+func SessionProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	sessionUuid string,
+) (data_ *SessionProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "SessionProgrammatic",
+		Query:  SessionProgrammatic_Operation,
+		Variables: &__SessionProgrammaticInput{
+			SessionUuid: sessionUuid,
+		},
+	}
+
+	data_ = &SessionProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by SessionTouchProgrammatic.
+const SessionTouchProgrammatic_Operation = `
+mutation SessionTouchProgrammatic ($sessionUuid: ID!) {
+	sessionTouchProgrammatic(sessionUuid: $sessionUuid) {
+		uuid
+		status
+		lastActivityAt
+	}
+}
+`
+
+// from rearm-cli agent.go
+func SessionTouchProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	sessionUuid string,
+) (data_ *SessionTouchProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "SessionTouchProgrammatic",
+		Query:  SessionTouchProgrammatic_Operation,
+		Variables: &__SessionTouchProgrammaticInput{
+			SessionUuid: sessionUuid,
+		},
+	}
+
+	data_ = &SessionTouchProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by SetInstanceSealedSecretCert.
+const SetInstanceSealedSecretCert_Operation = `
+mutation SetInstanceSealedSecretCert ($sealedCert: String!) {
+	setInstanceSealedSecretCert(sealedCert: $sealedCert)
+}
+`
+
+// from rearm-cli devops.go
+func SetInstanceSealedSecretCert(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	sealedCert string,
+) (data_ *SetInstanceSealedSecretCertResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "SetInstanceSealedSecretCert",
+		Query:  SetInstanceSealedSecretCert_Operation,
+		Variables: &__SetInstanceSealedSecretCertInput{
+			SealedCert: sealedCert,
+		},
+	}
+
+	data_ = &SetInstanceSealedSecretCertResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by SwitchInstanceProductFeatureSet.
+const SwitchInstanceProductFeatureSet_Operation = `
+mutation SwitchInstanceProductFeatureSet ($instanceUuid: ID, $instanceUri: String, $productUuid: ID!, $featureSetUuid: ID!, $namespace: String, $release: String, $follow: Boolean) {
+	switchInstanceProductFeatureSet(instanceUuid: $instanceUuid, instanceUri: $instanceUri, productUuid: $productUuid, featureSetUuid: $featureSetUuid, namespace: $namespace, release: $release, follow: $follow) {
+		uuid
+		name
+	}
+}
+`
+
+// from rearm-cli featureSets.go
+func SwitchInstanceProductFeatureSet(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	instanceUuid *string,
+	instanceUri *string,
+	productUuid string,
+	featureSetUuid string,
+	namespace *string,
+	release *string,
+	follow *bool,
+) (data_ *SwitchInstanceProductFeatureSetResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "SwitchInstanceProductFeatureSet",
+		Query:  SwitchInstanceProductFeatureSet_Operation,
+		Variables: &__SwitchInstanceProductFeatureSetInput{
+			InstanceUuid:   instanceUuid,
+			InstanceUri:    instanceUri,
+			ProductUuid:    productUuid,
+			FeatureSetUuid: featureSetUuid,
+			Namespace:      namespace,
+			Release:        release,
+			Follow:         follow,
+		},
+	}
+
+	data_ = &SwitchInstanceProductFeatureSetResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by SynchronizeLiveBranches.
+const SynchronizeLiveBranches_Operation = `
+mutation SynchronizeLiveBranches ($synchronizeBranchInput: SynchronizeBranchInput!) {
+	synchronizeLiveBranches(synchronizeBranchInput: $synchronizeBranchInput)
+}
+`
+
+// from rearm-cli synchronizeBranches.go
+func SynchronizeLiveBranches(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	synchronizeBranchInput *SynchronizeBranchInput,
+) (data_ *SynchronizeLiveBranchesResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "SynchronizeLiveBranches",
+		Query:  SynchronizeLiveBranches_Operation,
+		Variables: &__SynchronizeLiveBranchesInput{
+			SynchronizeBranchInput: synchronizeBranchInput,
+		},
+	}
+
+	data_ = &SynchronizeLiveBranchesResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by UpsertPullRequestProgrammatic.
+const UpsertPullRequestProgrammatic_Operation = `
+mutation UpsertPullRequestProgrammatic ($input: PullRequestUpsertProgrammaticInput!) {
+	upsertPullRequestProgrammatic(input: $input) {
+		uuid
+		identity
+		state
+		title
+		targetVcsRepository
+		commits
+	}
+}
+`
+
+// from rearm-cli pullRequest.go
+func UpsertPullRequestProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input *PullRequestUpsertProgrammaticInput,
+) (data_ *UpsertPullRequestProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "UpsertPullRequestProgrammatic",
+		Query:  UpsertPullRequestProgrammatic_Operation,
+		Variables: &__UpsertPullRequestProgrammaticInput{
+			Input: input,
+		},
+	}
+
+	data_ = &UpsertPullRequestProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by VersionFeatureSet.
+const VersionFeatureSet_Operation = `
+mutation VersionFeatureSet ($productUuid: ID!, $overrides: [VersionFeatureSetOverride!]!) {
+	versionFeatureSet(productUuid: $productUuid, overrides: $overrides) {
+		uuid
+		name
+		component
+		autoIntegrate
+	}
+}
+`
+
+// from rearm-cli featureSets.go
+func VersionFeatureSet(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	productUuid string,
+	overrides []*VersionFeatureSetOverride,
+) (data_ *VersionFeatureSetResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "VersionFeatureSet",
+		Query:  VersionFeatureSet_Operation,
+		Variables: &__VersionFeatureSetInput{
+			ProductUuid: productUuid,
+			Overrides:   overrides,
+		},
+	}
+
+	data_ = &VersionFeatureSetResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
