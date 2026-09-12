@@ -1,0 +1,109 @@
+# Declarative configuration: Catalog and Branches slices.
+
+fragment ChangeFields on DeclarativeChange {
+  kind
+  name
+  action
+  fields
+  message
+}
+
+fragment ApplyResultFields on DeclarativeApplyResult {
+  kind
+  dryRun
+  specHash
+  created
+  updated
+  unchanged
+  archived
+  errors
+  changes {
+    ...ChangeFields
+  }
+}
+
+fragment ProvenanceFields on DeclarativeProvenance {
+  specHash
+  appliedAt
+  source {
+    repo
+    path
+    commit
+  }
+}
+
+mutation ApplyCatalog($spec: CatalogSpecInput!, $dryRun: Boolean, $source: DeclarativeSourceInput) {
+  applyCatalogProgrammatic(spec: $spec, dryRun: $dryRun, source: $source) {
+    ...ApplyResultFields
+  }
+}
+
+mutation ApplyBranches($spec: BranchesSpecInput!, $dryRun: Boolean, $source: DeclarativeSourceInput) {
+  applyBranchesProgrammatic(spec: $spec, dryRun: $dryRun, source: $source) {
+    ...ApplyResultFields
+  }
+}
+
+query ExportCatalog($components: [String!]) {
+  exportCatalogProgrammatic(components: $components) {
+    kind
+    version
+    authoritative
+    components {
+      name
+      type
+      kind
+      versionSchema
+      marketingVersionSchema
+      versionType
+      featureBranchVersioning
+      vcsUri
+      vcsType
+      repoPath
+      nature
+      deviceClass
+      branchSuffixMode
+      identifiers {
+        idType
+        idValue
+      }
+      provenance {
+        ...ProvenanceFields
+      }
+    }
+  }
+}
+
+query ExportBranches($component: String!) {
+  exportBranchesProgrammatic(component: $component) {
+    kind
+    version
+    component
+    authoritative
+    branches {
+      name
+      type
+      versionSchema
+      marketingVersionSchema
+      vcsBranch
+      autoIntegrate
+      findingAnalyticsParticipation
+      dependencies {
+        component
+        branch
+        release
+        status
+        isFollowVersion
+      }
+      dependencyPatterns {
+        pattern
+        targetBranchName
+        defaultStatus
+        fallbackToBase
+      }
+      provenance {
+        ...ProvenanceFields
+      }
+    }
+  }
+}
