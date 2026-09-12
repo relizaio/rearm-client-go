@@ -314,6 +314,54 @@ query GetLatestReleaseProgrammatic ($GetLatestReleaseInput: GetLatestReleaseInpu
 	notes
 	endpoint
 	commits
+	sourceCodeEntryDetails {
+		uuid
+		branch
+		vcsUuid
+		vcsBranch
+		commit
+		commits
+		commitMessage
+		vcsTag
+		notes
+		org
+		dateActual
+	}
+	vcsRepository {
+		uuid
+		name
+		org
+		uri
+		type
+	}
+	artifactDetails {
+		uuid
+		displayIdentifier
+		org
+		branch
+		buildId
+		buildUri
+		cicdMeta
+		isInternal
+		type
+		notes
+		tags {
+			key
+			value
+		}
+		dateFrom
+		dateTo
+		duration
+		packageType
+		version
+		publisher
+		group
+		dependencies
+	}
+	componentDetails {
+		uuid
+		name
+	}
 }
 			}
 
