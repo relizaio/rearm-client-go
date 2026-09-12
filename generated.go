@@ -2244,6 +2244,18 @@ func (v *ApproveReleaseProgrammaticResponse) GetApproveReleaseProgrammatic() *Ap
 	return v.ApproveReleaseProgrammatic
 }
 
+type ArtifactBelonging string
+
+const (
+	ArtifactBelongingInternal ArtifactBelonging = "INTERNAL"
+	ArtifactBelongingExternal ArtifactBelonging = "EXTERNAL"
+)
+
+var AllArtifactBelonging = []ArtifactBelonging{
+	ArtifactBelongingInternal,
+	ArtifactBelongingExternal,
+}
+
 type ArtifactInput struct {
 	Type                    *ArtifactType        `json:"type"`
 	DisplayIdentifier       *string              `json:"displayIdentifier"`
@@ -4076,21 +4088,24 @@ func (v *GetLatestReleaseProgrammaticCdxResponse) GetGetLatestReleaseProgrammati
 
 // GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease includes the requested fields of the GraphQL type Release.
 type GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease struct {
-	Uuid            *string                                                                                       `json:"uuid"`
-	CreatedType     *ProgrammaticType                                                                             `json:"createdType"`
-	LastUpdatedBy   *string                                                                                       `json:"lastUpdatedBy"`
-	CreatedDate     *string                                                                                       `json:"createdDate"`
-	Version         *string                                                                                       `json:"version"`
-	Lifecycle       *ReleaseLifecycleEnum                                                                         `json:"lifecycle"`
-	Org             *string                                                                                       `json:"org"`
-	Component       *string                                                                                       `json:"component"`
-	Branch          *string                                                                                       `json:"branch"`
-	ParentReleases  []*GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleasesParentRelease `json:"parentReleases"`
-	SourceCodeEntry *string                                                                                       `json:"sourceCodeEntry"`
-	Artifacts       []*string                                                                                     `json:"artifacts"`
-	Notes           *string                                                                                       `json:"notes"`
-	Endpoint        *string                                                                                       `json:"endpoint"`
-	Commits         []*string                                                                                     `json:"commits"`
+	Uuid                   *string                                                                                               `json:"uuid"`
+	CreatedType            *ProgrammaticType                                                                                     `json:"createdType"`
+	LastUpdatedBy          *string                                                                                               `json:"lastUpdatedBy"`
+	CreatedDate            *string                                                                                               `json:"createdDate"`
+	Version                *string                                                                                               `json:"version"`
+	Lifecycle              *ReleaseLifecycleEnum                                                                                 `json:"lifecycle"`
+	Org                    *string                                                                                               `json:"org"`
+	Component              *string                                                                                               `json:"component"`
+	Branch                 *string                                                                                               `json:"branch"`
+	ParentReleases         []*GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleasesParentRelease         `json:"parentReleases"`
+	SourceCodeEntry        *string                                                                                               `json:"sourceCodeEntry"`
+	Artifacts              []*string                                                                                             `json:"artifacts"`
+	Notes                  *string                                                                                               `json:"notes"`
+	Endpoint               *string                                                                                               `json:"endpoint"`
+	Commits                []*string                                                                                             `json:"commits"`
+	SourceCodeEntryDetails *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry `json:"sourceCodeEntryDetails"`
+	VcsRepository          *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository                         `json:"vcsRepository"`
+	ArtifactDetails        []*GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact             `json:"artifactDetails"`
 }
 
 // GetUuid returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.Uuid, and is useful for accessing the field via an interface.
@@ -4168,6 +4183,155 @@ func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetCom
 	return v.Commits
 }
 
+// GetSourceCodeEntryDetails returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.SourceCodeEntryDetails, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetSourceCodeEntryDetails() *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry {
+	return v.SourceCodeEntryDetails
+}
+
+// GetVcsRepository returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.VcsRepository, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetVcsRepository() *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository {
+	return v.VcsRepository
+}
+
+// GetArtifactDetails returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.ArtifactDetails, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetArtifactDetails() []*GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact {
+	return v.ArtifactDetails
+}
+
+// GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact includes the requested fields of the GraphQL type Artifact.
+type GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact struct {
+	Uuid              *string                                                                                                `json:"uuid"`
+	DisplayIdentifier *string                                                                                                `json:"displayIdentifier"`
+	Org               *string                                                                                                `json:"org"`
+	Branch            *string                                                                                                `json:"branch"`
+	BuildId           *string                                                                                                `json:"buildId"`
+	BuildUri          *string                                                                                                `json:"buildUri"`
+	CicdMeta          *string                                                                                                `json:"cicdMeta"`
+	IsInternal        *ArtifactBelonging                                                                                     `json:"isInternal"`
+	Type              *ArtifactType                                                                                          `json:"type"`
+	Notes             *string                                                                                                `json:"notes"`
+	Tags              []*GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord `json:"tags"`
+	DateFrom          *string                                                                                                `json:"dateFrom"`
+	DateTo            *string                                                                                                `json:"dateTo"`
+	Duration          *int64                                                                                                 `json:"duration"`
+	PackageType       *PackageType                                                                                           `json:"packageType"`
+	Version           *string                                                                                                `json:"version"`
+	Publisher         *string                                                                                                `json:"publisher"`
+	Group             *string                                                                                                `json:"group"`
+	Dependencies      []*string                                                                                              `json:"dependencies"`
+}
+
+// GetUuid returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.Uuid, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetDisplayIdentifier returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.DisplayIdentifier, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetDisplayIdentifier() *string {
+	return v.DisplayIdentifier
+}
+
+// GetOrg returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.Org, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetOrg() *string {
+	return v.Org
+}
+
+// GetBranch returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.Branch, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetBranch() *string {
+	return v.Branch
+}
+
+// GetBuildId returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.BuildId, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetBuildId() *string {
+	return v.BuildId
+}
+
+// GetBuildUri returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.BuildUri, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetBuildUri() *string {
+	return v.BuildUri
+}
+
+// GetCicdMeta returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.CicdMeta, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetCicdMeta() *string {
+	return v.CicdMeta
+}
+
+// GetIsInternal returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.IsInternal, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetIsInternal() *ArtifactBelonging {
+	return v.IsInternal
+}
+
+// GetType returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.Type, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetType() *ArtifactType {
+	return v.Type
+}
+
+// GetNotes returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.Notes, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetNotes() *string {
+	return v.Notes
+}
+
+// GetTags returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.Tags, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetTags() []*GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord {
+	return v.Tags
+}
+
+// GetDateFrom returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.DateFrom, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetDateFrom() *string {
+	return v.DateFrom
+}
+
+// GetDateTo returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.DateTo, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetDateTo() *string {
+	return v.DateTo
+}
+
+// GetDuration returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.Duration, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetDuration() *int64 {
+	return v.Duration
+}
+
+// GetPackageType returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.PackageType, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetPackageType() *PackageType {
+	return v.PackageType
+}
+
+// GetVersion returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.Version, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetVersion() *string {
+	return v.Version
+}
+
+// GetPublisher returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.Publisher, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetPublisher() *string {
+	return v.Publisher
+}
+
+// GetGroup returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.Group, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetGroup() *string {
+	return v.Group
+}
+
+// GetDependencies returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact.Dependencies, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact) GetDependencies() []*string {
+	return v.Dependencies
+}
+
+// GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord struct {
+	Key   *string `json:"key"`
+	Value *string `json:"value"`
+}
+
+// GetKey returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
 // GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleasesParentRelease includes the requested fields of the GraphQL type ParentRelease.
 type GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleasesParentRelease struct {
 	Release *string `json:"release"`
@@ -4176,6 +4340,110 @@ type GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleas
 // GetRelease returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleasesParentRelease.Release, and is useful for accessing the field via an interface.
 func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleasesParentRelease) GetRelease() *string {
 	return v.Release
+}
+
+// GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry includes the requested fields of the GraphQL type SourceCodeEntry.
+type GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry struct {
+	Uuid          *string `json:"uuid"`
+	Branch        *string `json:"branch"`
+	VcsUuid       *string `json:"vcsUuid"`
+	VcsBranch     *string `json:"vcsBranch"`
+	Commit        *string `json:"commit"`
+	Commits       *string `json:"commits"`
+	CommitMessage *string `json:"commitMessage"`
+	VcsTag        *string `json:"vcsTag"`
+	Notes         *string `json:"notes"`
+	Org           *string `json:"org"`
+	DateActual    *string `json:"dateActual"`
+}
+
+// GetUuid returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.Uuid, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetBranch returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.Branch, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetBranch() *string {
+	return v.Branch
+}
+
+// GetVcsUuid returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.VcsUuid, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetVcsUuid() *string {
+	return v.VcsUuid
+}
+
+// GetVcsBranch returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.VcsBranch, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetVcsBranch() *string {
+	return v.VcsBranch
+}
+
+// GetCommit returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.Commit, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetCommit() *string {
+	return v.Commit
+}
+
+// GetCommits returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.Commits, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetCommits() *string {
+	return v.Commits
+}
+
+// GetCommitMessage returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.CommitMessage, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetCommitMessage() *string {
+	return v.CommitMessage
+}
+
+// GetVcsTag returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.VcsTag, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetVcsTag() *string {
+	return v.VcsTag
+}
+
+// GetNotes returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.Notes, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetNotes() *string {
+	return v.Notes
+}
+
+// GetOrg returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.Org, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetOrg() *string {
+	return v.Org
+}
+
+// GetDateActual returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry.DateActual, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry) GetDateActual() *string {
+	return v.DateActual
+}
+
+// GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository struct {
+	Uuid *string `json:"uuid"`
+	Name *string `json:"name"`
+	Org  *string `json:"org"`
+	Uri  *string `json:"uri"`
+	Type *string `json:"type"`
+}
+
+// GetUuid returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository.Uuid, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetName returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository.Name, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository) GetName() *string {
+	return v.Name
+}
+
+// GetOrg returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository.Org, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository) GetOrg() *string {
+	return v.Org
+}
+
+// GetUri returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository) GetUri() *string {
+	return v.Uri
+}
+
+// GetType returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository.Type, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository) GetType() *string {
+	return v.Type
 }
 
 // GetLatestReleaseProgrammaticResponse is returned by GetLatestReleaseProgrammatic on success.
@@ -9196,6 +9464,50 @@ query GetLatestReleaseProgrammatic ($GetLatestReleaseInput: GetLatestReleaseInpu
 		notes
 		endpoint
 		commits
+		sourceCodeEntryDetails {
+			uuid
+			branch
+			vcsUuid
+			vcsBranch
+			commit
+			commits
+			commitMessage
+			vcsTag
+			notes
+			org
+			dateActual
+		}
+		vcsRepository {
+			uuid
+			name
+			org
+			uri
+			type
+		}
+		artifactDetails {
+			uuid
+			displayIdentifier
+			org
+			branch
+			buildId
+			buildUri
+			cicdMeta
+			isInternal
+			type
+			notes
+			tags {
+				key
+				value
+			}
+			dateFrom
+			dateTo
+			duration
+			packageType
+			version
+			publisher
+			group
+			dependencies
+		}
 	}
 }
 `
