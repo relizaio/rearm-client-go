@@ -40,7 +40,15 @@ const TokenPath = "/api/programmatic/token"
 // Client wraps a genqlient graphql.Client with ReARM API-key auth.
 type Client struct {
 	graphql.Client
-	endpoint string
+	endpoint  string
+	http      *http.Client
+	transport *authTransport
+	root      string
+}
+
+// NewGraphQLClient exposes the underlying constructor for advanced callers.
+func NewGraphQLClient(endpoint string, hc *http.Client) graphql.Client {
+	return graphql.NewClient(endpoint, hc)
 }
 
 // Option customises a Client.
@@ -99,7 +107,7 @@ func New(baseURL, apiKeyID, apiKey string, opts ...Option) (*Client, error) {
 	if o.legacy {
 		endpoint = root + LegacyPath
 	}
-	return &Client{Client: graphql.NewClient(endpoint, hc), endpoint: endpoint}, nil
+	return &Client{Client: graphql.NewClient(endpoint, hc), endpoint: endpoint, http: hc, transport: t, root: root}, nil
 }
 
 // Endpoint is the GraphQL URL the client talks to.
@@ -132,6 +140,11 @@ type authTransport struct {
 	bearer    string    // current access token
 	bearerExp time.Time // when to fetch a new one (a minute before the server's expiry)
 	session   *csrfSession
+	// browser-login session mode: no Basic credential, tokens come from the refresh token
+	refreshToken string
+	revokeURL    string
+	sessionExp   time.Time
+	persist      func(SessionTokens)
 }
 
 type csrfSession struct {
@@ -202,6 +215,9 @@ func (t *authTransport) ensureToken(ctx context.Context) error {
 	if !need {
 		return nil
 	}
+	if t.refreshToken != "" {
+		return t.refreshAccessToken(ctx)
+	}
 	form := strings.NewReader("grant_type=client_credentials")
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, t.tokenURL, form)
 	if err != nil {
@@ -255,7 +271,7 @@ func (t *authTransport) setLegacy() { t.mu.Lock(); defer t.mu.Unlock(); t.legacy
 
 func (t *authTransport) send(req *http.Request, body []byte, sess *csrfSession) (*http.Response, error) {
 	r := req.Clone(req.Context())
-	if t.isLegacy() && r.URL.Path != LegacyPath {
+	if t.isLegacy() && strings.HasSuffix(r.URL.Path, ProgrammaticPath) {
 		u, err := url.Parse(t.legacyURL)
 		if err != nil {
 			return nil, err
@@ -268,9 +284,9 @@ func (t *authTransport) send(req *http.Request, body []byte, sess *csrfSession) 
 		r.ContentLength = int64(len(body))
 		r.GetBody = func() (io.ReadCloser, error) { return io.NopCloser(bytes.NewReader(body)), nil }
 	}
-	if b := t.currentBearer(); b != "" && !t.isLegacy() {
+	if b := t.currentBearer(); b != "" && (!t.isLegacy() || t.refreshToken != "") {
 		r.Header.Set("Authorization", "Bearer "+b)
-	} else {
+	} else if t.auth != "" {
 		r.Header.Set("Authorization", t.auth)
 	}
 	r.Header.Set("User-Agent", t.userAgent)

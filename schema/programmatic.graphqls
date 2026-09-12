@@ -237,8 +237,37 @@ type Release {
   identifiers: [Identifier]
   gudidRecord: GudidRecord
   gudidStatus: GudidStatus
+  """
+  Release lifecycle date: the CLE END_OF_SUPPORT projection (TeaTransformerService).
+  NOT the device support window -- that is declared on the device model at
+  ComponentData.medicalProfile.deviceSupportWindow and resolved by DeviceLifecycleResolver.
+  """
   eos: String
+  """
+  Release lifecycle date: the CLE END_OF_LIFE projection (TeaTransformerService).
+  NOT the device support window -- that is declared on the device model at
+  ComponentData.medicalProfile.deviceSupportWindow and resolved by DeviceLifecycleResolver.
+  """
   eol: String
+  """
+  Per-release override of the org-level FDA assessment narrative.
+  
+NULL MEANS INHERIT, not empty. Read it through the resolution seam -- release
+  value else the org's Settings.fdaAssessmentNarrative -- never on its own: a
+  generator reading only this field renders a blank justification section for
+  every release that never set one, which is the overwhelming majority.
+  """
+  fdaAssessmentNarrative: String
+  """
+  Provenance for the release's own eos/eol -- the CLE lifecycle projections, NOT
+  the device support window -- DERIVED from the most recent SUPPORT_WINDOW update
+  event rather than stored separately. Null on a
+  release whose window has never been touched (including one set only at
+  release creation before this field existed).
+  """
+  supportWindowSource: ProgrammaticType
+  supportWindowAssertedBy: ID
+  supportWindowLastAssessed: DateTime
   """
   Component name snapshot captured when a sid PURL was first emitted for this release (D6).
   Immutable once set. Null on releases pre-dating sid enablement and on releases of
@@ -745,7 +774,17 @@ input ReleaseInputProg {
   identifiers: [IdentifierInput]
   gudidRecord: GudidRecordInput
   gudidStatus: GudidStatus
+  """
+  Release lifecycle date: the CLE END_OF_SUPPORT projection (TeaTransformerService).
+  NOT the device support window -- that is declared on the device model at
+  ComponentData.medicalProfile.deviceSupportWindow and resolved by DeviceLifecycleResolver.
+  """
   eos: String
+  """
+  Release lifecycle date: the CLE END_OF_LIFE projection (TeaTransformerService).
+  NOT the device support window -- that is declared on the device model at
+  ComponentData.medicalProfile.deviceSupportWindow and resolved by DeviceLifecycleResolver.
+  """
   eol: String
   vcsUri: String
   repoPath: String
@@ -1303,6 +1342,12 @@ type Device {
   """
   versionDrift: Boolean
   createdDate: DateTime
+  """
+  The device support window that applies to this unit (D7): its shipment's override if
+  that batch has one, else the product component's declaration, with the level it came
+  from. This is the window the fleet evaluation measures the unit's software against.
+  """
+  effectiveDeviceSupportWindow: ResolvedDeviceSupportWindow
 }
 
 """
@@ -2298,6 +2343,14 @@ type MedicalProfile {
   issuingAgency: IssuingAgency
   udiBearing: Boolean
   gudidDefaults: GudidDefaults
+  """
+  The section 524B device support window declared for this device model (decision D7).
+  
+Null means NOT DECLARED, which is a fact in its own right rather than an unknown to
+  fill in. This is the DEVICE window; it is not Release.eos/eol, which are release
+  lifecycle for TEA/CLE and are unrelated to a support commitment.
+  """
+  deviceSupportWindow: DeviceSupportWindow
 }
 
 """
@@ -2633,6 +2686,14 @@ type ApiKey {
   accessDate: DateTime
   createdDate: DateTime
   notes: String
+  status: ApiKeyStatus
+  secrets: [ApiKeySecretInfo!]
+  "FREEFORM keys: the user who requested the key and the only one who may mint or regenerate its secrets"
+  holder: ID
+  "Deactivated by an org admin: the owner or holder cannot re-activate it, only an admin can"
+  adminDisabled: Boolean
+  "MANUAL, or CLI_SESSION for a personal key a CLI browser login created for its session (deleted with the session)"
+  origin: ApiKeyOrigin
   """
   Root agents this key is bound to via the agent-identity it
   resolves to (agent_identity_credentials). Empty until an agent
@@ -2677,6 +2738,24 @@ type ObservedState {
   matchedCount: Int
   driftedCount: Int
   unknownCount: Int
+}
+
+"""
+A window resolved for a shipment or a unit, with the level it came from.
+
+The source matters to a generated document: a Device Support Statement produced from a
+batch must be able to say whether the dates are the model's default or this batch's
+override, because a reader comparing two statements for the same model needs to know why
+they differ.
+
+Null when the model declares nothing and the batch has not overridden it. A batch that
+overrode the model with NO window is reported as an object with both dates null and source
+SHIPMENT -- a statement the batch made, distinct from the model's silence.
+"""
+type ResolvedDeviceSupportWindow {
+  eos: String
+  eol: String
+  source: DeviceWindowSource
 }
 
 """
@@ -2767,6 +2846,42 @@ type Settings {
   deliveries, read marks). Null means the 90-day default.
   """
   notificationRetentionDays: Int
+  """
+  The submission-level justification: what FDA L1021-1022 asks for literally, the reason
+  per-component support information cannot be included. At the measured 2.3% upstream
+  coverage this is the centre of a submission rather than a footnote.
+  
+Null is a real state, not a default. A document with an empty REQUIRED slot is blocked
+  rather than generated with the section missing -- on a submission a reviewer expects
+  gaps, but on the patient-facing Device Support Statement a silent gap is itself
+  misleading under 502(a)(1). No product-shipped default text: these are the
+  manufacturer's own commitments.
+  """
+  fdaAssessmentNarrative: String
+  """
+  Whether this org's exports carry its support attestations.
+  
+NULL MEANS DISABLED. The default is off: support properties do not appear in an
+  export unless someone asks for them. It governs INJECTION only -- the
+  forged-provenance strip runs on every egress whatever this says, because a
+  security control and a content choice are not the same switch.
+  """
+  supportInjection: SupportInjectionSetting
+  """
+  Labeling VI.A.2: that patches and software updates may cease at end of support.
+  """
+  fdaPatchesMayCeaseStatement: String
+  """
+  Labeling VI.A.3: a REFERENCE to the controlled risk-transfer process -- an identifier or
+  URL, never the process itself. Plans are design-history-file records, and a pasted copy
+  becomes a second, unversioned original that drifts from the controlled one.
+  """
+  fdaRiskTransferProcessRef: String
+  """
+  Labeling VI.A.4: that end-user cybersecurity risk can be expected to increase over
+  time.
+  """
+  fdaRiskIncreasesNotice: String
   """
   Org-wide default UI view (Security or DevOps) for users who have not
   picked one in their browser. Null means SECURITY.
@@ -3114,6 +3229,8 @@ enum ReleaseUpdateScopeEnum {
   TRIGGER
   INPUT_TRIGGER
   APPROVED_ENVIRONMENT
+  SUPPORT_WINDOW
+  FDA_NARRATIVE
 }
 
 enum ReleaseUpdateActionEnum {
@@ -3449,6 +3566,37 @@ type GudidDefaults {
   gmdnCode: String
 }
 
+"""
+A manufacturer's declared section 524B support window for a device (decision D7).
+
+Declared on the PRODUCT COMPONENT (the device model), optionally overridden per
+ShippedProduct (a batch), and evaluated per Device (a unit). `eos` and `eol` are SEPARATE
+FACTS and are never merged: under D5, `eol` means END OF SALE, which is not a support
+horizon -- only `eos` is.
+"""
+type DeviceSupportWindow {
+  """
+  Section 524B end of support: the device horizon. Null = not declared.
+  """
+  eos: String
+  """
+  End of SALE per CycloneDX and D5, NOT a support horizon. Null = not declared.
+  """
+  eol: String
+  """
+  The user who asserted this window.
+  """
+  assertedBy: ID
+  """
+  When the assertion was made, as a UTC RFC-3339 instant. Caller-supplied.
+  """
+  assessedAt: String
+  """
+  How it arrived: a human in the UI, an API caller, an automation.
+  """
+  source: ProgrammaticType
+}
+
 enum PerspectiveType {
   PERSPECTIVE
   PRODUCT
@@ -3545,6 +3693,40 @@ enum ApiTypeEnum {
   ORGANIZATION
   ORGANIZATION_RW
   FREEFORM
+  "Personal key owned by a user: its permissions are a ceiling intersected with the owner's current permissions"
+  USER
+}
+
+enum ApiKeyStatus {
+  ACTIVE
+  INACTIVE
+  "Delete tombstone; never listed, and setApiKeyStatus refuses it (delete the key instead)"
+  REVOKED
+  "A free-form key a write user asked for: listed, never usable, until an admin approves (ACTIVE) or denies it"
+  REQUESTED
+  "A denied request: listed for the requester with the reason in the notes, never usable"
+  DENIED
+}
+
+"""
+One of up to two secrets of a key id (rotation: add the second, move clients, retire the first).
+Only metadata: the secret itself is shown once, when created or regenerated.
+"""
+type ApiKeySecretInfo {
+  slot: Int!
+  active: Boolean!
+  createdDate: DateTime
+  lastUsedDate: DateTime
+  "Optional hard stop; past it the secret is refused like a retired one, and its tokens end here at the latest"
+  expiresDate: DateTime
+}
+
+"""
+Kill switch for a whole key id: INACTIVE refuses every secret and every token issued for the key, without deleting anything.
+"""
+enum ApiKeyOrigin {
+  MANUAL
+  CLI_SESSION
 }
 
 """
@@ -3574,6 +3756,20 @@ type ObservedItem {
   observedVersion: String
   expectedRelease: ID
   expectedVersion: String
+}
+
+"""
+Which level a resolved device window was declared at.
+"""
+enum DeviceWindowSource {
+  """
+  The product component -- the device model's default.
+  """
+  COMPONENT
+  """
+  The shipment -- this batch differs from the model.
+  """
+  SHIPMENT
 }
 
 type DeclarativeSource {
@@ -3616,6 +3812,30 @@ enum SidPurlMode {
   DISABLED
   ENABLED_STRICT
   ENABLED_FLEXIBLE
+}
+
+"""
+Whether an organization's BOM exports carry its support attestations.
+
+Two values, and deliberately not four: SupportExportState's PARTIAL and UNKNOWN are things
+OBSERVED about a running system, not things an operator chooses. Storing either would let
+an operator configure a state meaning "we are not sure what we do".
+"""
+enum SupportInjectionSetting {
+  """
+  Exports carry the attestations. Applies to the native single-artifact download, the
+  SPDX-augmented download and the merged release export -- NOT the raw artifact download,
+  which is swept for forged reliza:* provenance and marked, but never injected into, on any
+  setting.
+  """
+  ENABLED
+  """
+  Exports carry no support properties. The default, including when the field is unset.
+  
+It does not disable the forged-provenance strip, which runs on every egress regardless:
+  a security control and a content choice are not the same switch.
+  """
+  DISABLED
 }
 
 """
