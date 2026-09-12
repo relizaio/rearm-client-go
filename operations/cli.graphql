@@ -1,0 +1,530 @@
+# from rearm-cli addArtifact.go
+mutation AddArtifactProgrammatic($artifactInput: AddArtifactInput) {
+				addArtifactProgrammatic(artifactInput: $artifactInput) {
+					uuid
+					version
+					lifecycle
+					artifacts
+				}
+			}
+
+# from rearm-cli addRelease.go
+mutation AddReleaseProgrammatic($releaseInputProg: ReleaseInputProg!) {addReleaseProgrammatic(release:$releaseInputProg) {
+	uuid
+	createdType
+	lastUpdatedBy
+	createdDate
+	version
+	lifecycle
+	org
+	component
+	branch
+	parentReleases {
+		release
+	}
+	sourceCodeEntry
+	artifacts
+	notes
+	endpoint
+	commits
+}}
+
+# from rearm-cli addReleases.go
+mutation AddReleasesProgrammatic($releaseInputsProg: [ReleaseInputProg!]!) {addReleasesProgrammatic(releases:$releaseInputsProg) {
+	uuid
+	createdType
+	lastUpdatedBy
+	createdDate
+	version
+	lifecycle
+	org
+	component
+	branch
+	parentReleases {
+		release
+	}
+	sourceCodeEntry
+	artifacts
+	notes
+	endpoint
+	commits
+}}
+
+# from rearm-cli agent.go
+mutation SessionInitializeProgrammatic ($sessionInit: SessionInitializeInput!) {
+				sessionInitializeProgrammatic(sessionInit: $sessionInit) {
+					uuid
+					agent
+					clientSessionId
+					status
+					title
+					startedAt
+					policyEvents {
+						policyName
+						kind
+						state
+						severity
+						message
+						evaluatedAt
+						policy { uuid name cel description enabled severity kind }
+					}
+				}
+			}
+
+# from rearm-cli agent.go
+mutation SessionTouchProgrammatic ($sessionUuid: ID!) {
+				sessionTouchProgrammatic(sessionUuid: $sessionUuid) {
+					uuid
+					status
+					lastActivityAt
+				}
+			}
+
+# from rearm-cli agent.go
+mutation SessionCloseProgrammatic ($sessionUuid: ID!) {
+				sessionCloseProgrammatic(sessionUuid: $sessionUuid) {
+					uuid
+					status
+					closedAt
+				}
+			}
+
+# from rearm-cli agent.go
+query SessionProgrammatic ($sessionUuid: ID!) {
+				sessionProgrammatic(sessionUuid: $sessionUuid) {
+					uuid clientSessionId status startedAt closedAt lastActivityAt
+					agent title parentSession
+					artifacts
+					commits
+					policyEvents {
+						policyName kind state severity message evaluatedAt
+						policy { uuid name cel description enabled severity kind }
+					}
+					releases { uuid version lifecycle }
+					pullRequests { uuid identity title state }
+				}
+			}
+
+# from rearm-cli agent.go
+query AgenticReleaseProgrammatic ($releaseUuid: ID!, $sessionUuid: ID, $clientSessionId: String) {
+				agenticReleaseProgrammatic(releaseUuid: $releaseUuid, sessionUuid: $sessionUuid, clientSessionId: $clientSessionId) {
+					uuid version lifecycle
+					updateEvents { rus rua oldValue newValue message date }
+					approvalEvents { approvalEntry approvalRoleId state comment date }
+					sourceCodeEntryDetails {
+						uuid commit attributionState attributionReason
+						# Latest signature-verification verdict (null when no
+						# SIGNATURE artifact was ever attached to this commit).
+						# Independent of attribution: RESOLVED attribution does
+						# NOT imply a VERIFIED signature — this is the field
+						# that tells them apart.
+						signature { state format signedByOwnerType signedByOwnerUuid verifiedAt keyFingerprint }
+						artifactDetails { 
+			uuid displayIdentifier type bomFormat tags { key value }
+			metrics {
+				firstScanned lastScanned
+				critical high medium low unassigned
+				policyViolationsSecurityTotal policyViolationsLicenseTotal policyViolationsOperationalTotal
+				vulnerabilityDetails { purl vulnId severity analysisState }
+				violationDetails { purl type license violationDetails analysisState }
+			} }
+					}
+					# Release-level metrics are the AGGREGATE, reflecting any
+					# release-scope vulnerability suppressions; per-artifact
+					# metrics below are raw (artifact scope), so the two detail
+					# lists can differ — keep both.
+					metrics {
+						lastScanned firstScanned
+						critical high medium low unassigned
+						policyViolationsSecurityTotal policyViolationsLicenseTotal policyViolationsOperationalTotal
+						vulnerabilityDetails { purl vulnId severity analysisState }
+						violationDetails { purl type license violationDetails analysisState }
+					}
+					# Release-level artifacts (e.g. an aggregated SBOM / SARIF
+					# attached straight to the release).
+					artifactDetails { 
+			uuid displayIdentifier type bomFormat tags { key value }
+			metrics {
+				firstScanned lastScanned
+				critical high medium low unassigned
+				policyViolationsSecurityTotal policyViolationsLicenseTotal policyViolationsOperationalTotal
+				vulnerabilityDetails { purl vulnId severity analysisState }
+				violationDetails { purl type license violationDetails analysisState }
+			} }
+					# Deliverable SBOMs / scan results, per variant.
+					variantDetails {
+						outboundDeliverableDetails {
+							uuid displayIdentifier
+							artifactDetails { 
+			uuid displayIdentifier type bomFormat tags { key value }
+			metrics {
+				firstScanned lastScanned
+				critical high medium low unassigned
+				policyViolationsSecurityTotal policyViolationsLicenseTotal policyViolationsOperationalTotal
+				vulnerabilityDetails { purl vulnId severity analysisState }
+				violationDetails { purl type license violationDetails analysisState }
+			} }
+						}
+					}
+				}
+			}
+
+# from rearm-cli agent.go
+query AgentSessionInboxProgrammatic ($inboxRequest: AgentSessionInboxInput!) {
+				agentSessionInboxProgrammatic(inboxRequest: $inboxRequest) {
+					cursor
+					occurredAt
+					kind
+					release { uuid version lifecycle }
+					oldValue
+					newValue
+					reason
+					source
+					actorUuid
+					actorRoleId
+				}
+			}
+
+# from rearm-cli agent.go
+mutation SessionAddArtifact($addArtifact: SessionAddArtifactInput!) {
+				sessionAddArtifactProgrammatic(addArtifact: $addArtifact) {
+					uuid
+					status
+					artifacts
+					policyEvents { policyName state severity message evaluatedAt }
+				}
+			}
+
+# from rearm-cli approveRelease.go
+mutation ApproveReleaseProgrammatic($releaseApprovals: ReleaseApprovalProgrammaticInput!) {
+				approveReleaseProgrammatic(releaseApprovals:$releaseApprovals) {
+	uuid
+	createdType
+	lastUpdatedBy
+	createdDate
+	version
+	lifecycle
+	org
+	component
+	branch
+	parentReleases {
+		release
+	}
+	sourceCodeEntry
+	artifacts
+	notes
+	endpoint
+	commits
+}
+			}
+
+# from rearm-cli delSecrets.go
+query DeliverableDownloadSecrets ($instanceUuid: ID, $instanceUri: String, $deliverableDigest: String!, $namespace: String) {
+				deliverableDownloadSecrets(instanceUuid: $instanceUuid, instanceUri: $instanceUri, deliverableDigest: $deliverableDigest, namespace: $namespace) {
+					login
+					password
+					type
+				}
+			}
+
+# from rearm-cli delSecrets.go
+query IsInstanceHasSealedSecretCert ($instanceUuid: ID, $instanceUri: String) {
+				isInstanceHasSealedSecretCert(instanceUuid: $instanceUuid, instanceUri: $instanceUri)
+			}
+
+# from rearm-cli devops.go
+mutation SetInstanceSealedSecretCert ($sealedCert: String!) {
+				setInstanceSealedSecretCert(sealedCert: $sealedCert)
+			}
+
+# from rearm-cli devops.go
+query GetInstanceRevisionCycloneDxExportProg ($instanceUuid: ID, $instanceUri: String, $revision: Int!, $namespace: String, $stateType: InstanceStateType) {
+			getInstanceRevisionCycloneDxExportProg(instanceUuid: $instanceUuid, instanceUri: $instanceUri, revision: $revision, namespace: $namespace, stateType: $stateType)
+		}
+
+# from rearm-cli featureSets.go
+query ListInstanceProductFeatureSets ($instanceUuid: ID, $instanceUri: String, $namespace: String) {
+				listInstanceProductFeatureSets(instanceUuid: $instanceUuid, instanceUri: $instanceUri, namespace: $namespace) {
+					namespace
+					product { uuid name }
+					currentFeatureSet { uuid name }
+					integrateType
+					targetRelease { uuid version lifecycle createdDate approvedForInstanceEnvironment }
+					deployedRelease { uuid version lifecycle createdDate approvedForInstanceEnvironment }
+					availableFeatureSets {
+						uuid
+						name
+						releases { uuid version lifecycle createdDate approvedForInstanceEnvironment }
+					}
+				}
+			}
+
+# from rearm-cli featureSets.go
+query ListInstanceProductFeatureSetsFeaturesets ($instanceUuid: ID, $instanceUri: String, $namespace: String) {
+				listInstanceProductFeatureSets(instanceUuid: $instanceUuid, instanceUri: $instanceUri, namespace: $namespace) {
+					namespace
+					product { uuid name }
+					currentFeatureSet { uuid name }
+					availableFeatureSets { uuid name }
+				}
+			}
+
+# from rearm-cli featureSets.go
+mutation SwitchInstanceProductFeatureSet ($instanceUuid: ID, $instanceUri: String, $productUuid: ID!, $featureSetUuid: ID!, $namespace: String, $release: String, $follow: Boolean) {
+				switchInstanceProductFeatureSet(
+					instanceUuid: $instanceUuid,
+					instanceUri: $instanceUri,
+					productUuid: $productUuid,
+					featureSetUuid: $featureSetUuid,
+					namespace: $namespace,
+					release: $release,
+					follow: $follow
+				) { uuid name }
+			}
+
+# from rearm-cli featureSets.go
+mutation VersionFeatureSet ($productUuid: ID!, $overrides: [VersionFeatureSetOverride!]!) {
+				versionFeatureSet(productUuid: $productUuid, overrides: $overrides) {
+					uuid name component autoIntegrate
+				}
+			}
+
+# from rearm-cli getLatestRelease.go
+query GetLatestReleaseProgrammaticCdx ($GetLatestReleaseInput: GetLatestReleaseInput!) {
+				getLatestReleaseProgrammaticCdx(release:$GetLatestReleaseInput)
+			}
+
+# from rearm-cli getLatestRelease.go
+query GetLatestReleaseProgrammatic ($GetLatestReleaseInput: GetLatestReleaseInput!) {
+				getLatestReleaseProgrammatic(release:$GetLatestReleaseInput) {
+	uuid
+	createdType
+	lastUpdatedBy
+	createdDate
+	version
+	lifecycle
+	org
+	component
+	branch
+	parentReleases {
+		release
+	}
+	sourceCodeEntry
+	artifacts
+	notes
+	endpoint
+	commits
+}
+			}
+
+# from rearm-cli instdata.go
+mutation InstData ($InstanceDataInput: InstanceDataInput!) {
+				instData(instance:$InstanceDataInput)
+			}
+
+# from rearm-cli instevent.go
+mutation InstanceDeploymentEventsProgrammatic ($events: [InstanceDeploymentEventInput!]!) {
+				instanceDeploymentEventsProgrammatic(events:$events)
+			}
+
+# from rearm-cli instprops.go
+query GetInstancePropSecrets ($instanceUuid: ID, $instanceUri: String, $revision: Int!, $namespace: String!, $properties: [String], $secrets: [String], $product: ID, $productSpecificProps: Boolean) {
+				getInstancePropSecrets(instanceUuid: $instanceUuid, instanceUri: $instanceUri, revision: $revision, namespace: $namespace, properties: $properties, secrets: $secrets, product: $product, productSpecificProps: $productSpecificProps) {
+					properties {
+						key
+						value
+					}
+					secrets {
+						key
+						value
+						lastUpdated
+					}
+				}
+			}
+
+# from rearm-cli probeSbom.go
+mutation ProbeSbomProgrammatic($sbom: String!, $componentUuid: ID, $branchUuid: ID) {
+			probeSbomProgrammatic(sbom: $sbom, componentUuid: $componentUuid, branchUuid: $branchUuid) {
+				runId
+				status
+			}
+		}
+
+# from rearm-cli probeSbom.go
+query GetSbomProbingResult($runId: String!) {
+			getSbomProbingResult(runId: $runId) {
+				status
+				metrics {
+					dependencyTrackFullUri
+					dtrackSubmissionFailed
+					dtrackSubmissionAttempts
+					dtrackSubmissionFailureReason
+					lastScanned
+					firstScanned
+					critical
+					high
+					medium
+					low
+					unassigned
+					vulnerabilities
+					vulnerableComponents
+					components
+					suppressed
+					findingsTotal
+					findingsAudited
+					findingsUnaudited
+					inheritedRiskScore
+					policyViolationsFail
+					policyViolationsWarn
+					policyViolationsInfo
+					policyViolationsTotal
+					policyViolationsAudited
+					policyViolationsUnaudited
+					policyViolationsSecurityTotal
+					policyViolationsSecurityAudited
+					policyViolationsSecurityUnaudited
+					policyViolationsLicenseTotal
+					policyViolationsLicenseAudited
+					policyViolationsLicenseUnaudited
+					policyViolationsOperationalTotal
+					policyViolationsOperationalAudited
+					policyViolationsOperationalUnaudited
+					vulnerabilityDetails {
+						purl vulnId severity analysisState analysisDate attributedAt
+						aliases { type aliasId }
+						sources { artifact release variant analysisState analysisDate }
+						severities { source severity }
+					}
+					violationDetails {
+						purl type license violationDetails analysisState analysisDate attributedAt
+						sources { artifact release variant analysisState analysisDate }
+					}
+					weaknessDetails {
+						cweId ruleId location fingerprint severity analysisState analysisDate attributedAt
+						sources { artifact release variant analysisState analysisDate }
+					}
+				}
+			}
+		}
+
+# from rearm-cli pullRequest.go
+mutation UpsertPullRequestProgrammatic($input: PullRequestUpsertProgrammaticInput!) {
+				upsertPullRequestProgrammatic(input: $input) {
+					uuid
+					identity
+					state
+					title
+					targetVcsRepository
+					commits
+				}
+			}
+
+# from rearm-cli root.go
+mutation AddOutboundDeliverablesProgrammatic($addODeliverableInput: AddODeliverableInput!) {addOutboundDeliverablesProgrammatic(deliverables:$addODeliverableInput) {
+	uuid
+	createdType
+	lastUpdatedBy
+	createdDate
+	version
+	lifecycle
+	org
+	component
+	branch
+	parentReleases {
+		release
+	}
+	sourceCodeEntry
+	artifacts
+	notes
+	endpoint
+	commits
+}}
+
+# from rearm-cli root.go
+mutation CreateComponentInPerspectiveProgrammatic ($CreateComponentInput: CreateComponentInput!, $perspectiveUuid: ID!) {
+					createComponentInPerspectiveProgrammatic(component:$CreateComponentInput, perspectiveUuid:$perspectiveUuid) {
+	uuid
+	name
+	org
+	type
+	versionSchema
+	vcsRepositoryDetails {
+		uri
+		type
+	}
+	featureBranchVersioning
+	status
+	apiKeyId
+	apiKey
+}
+				}
+
+# from rearm-cli root.go
+mutation CreateComponentProgrammatic ($CreateComponentInput: CreateComponentInput!) {
+					createComponentProgrammatic(component:$CreateComponentInput) {
+	uuid
+	name
+	org
+	type
+	versionSchema
+	vcsRepositoryDetails {
+		uri
+		type
+	}
+	featureBranchVersioning
+	status
+	apiKeyId
+	apiKey
+}
+				}
+
+# from rearm-cli root.go
+mutation GetNewVersionProgrammatic ($GetNewVersionInput: GetNewVersionInput!) {
+				getNewVersionProgrammatic(newVersionInput:$GetNewVersionInput) {
+					version
+					dockerTagSafeVersion
+					releaseAlreadyExists
+					
+				}
+			}
+
+# from rearm-cli root.go
+mutation GetNewVersionProgrammaticWithLifecycle ($GetNewVersionInput: GetNewVersionInput!) {
+				getNewVersionProgrammatic(newVersionInput:$GetNewVersionInput) {
+					version
+					dockerTagSafeVersion
+					releaseAlreadyExists
+					lifecycle
+				}
+			}
+
+# from rearm-cli root.go
+query GetReleaseByHashProgrammatic ($hash: String!, $componentId: ID) {
+				getReleaseByHashProgrammatic(hash: $hash, componentId: $componentId)
+			}
+
+# from rearm-cli root.go
+query GetReleaseByReleaseVersionProgrammatic ($version: String!, $componentId: ID!) {
+				getReleaseByReleaseVersionProgrammatic(version: $version, componentId: $componentId)
+			}
+
+# from rearm-cli root.go
+mutation ReleasecompletionfinalizerProgrammatic($release: ID!) { releasecompletionfinalizerProgrammatic(release: $release) }
+
+# from rearm-cli synchronizeBranches.go
+mutation SynchronizeLiveBranches($synchronizeBranchInput: SynchronizeBranchInput!) {
+				synchronizeLiveBranches(synchronizeBranchInput: $synchronizeBranchInput)
+			}
+
+# from rearm-cli agentEnrollkey.go
+mutation EnrollSigningKeyProgrammatic($signingKey: AgentSigningKeyInput!) {
+	enrollSigningKeyProgrammatic(signingKey: $signingKey) {
+		uuid
+		format
+		ownerType
+		ownerUuid
+		fingerprint
+		identity
+		createdDate
+	}
+}
