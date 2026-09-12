@@ -358,6 +358,10 @@ query GetLatestReleaseProgrammatic ($GetLatestReleaseInput: GetLatestReleaseInpu
 		group
 		dependencies
 	}
+	componentDetails {
+		uuid
+		name
+	}
 }
 			}
 

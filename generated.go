@@ -4106,6 +4106,7 @@ type GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease struct {
 	SourceCodeEntryDetails *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntry `json:"sourceCodeEntryDetails"`
 	VcsRepository          *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseVcsRepository                         `json:"vcsRepository"`
 	ArtifactDetails        []*GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact             `json:"artifactDetails"`
+	ComponentDetails       *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseComponentDetailsComponent             `json:"componentDetails"`
 }
 
 // GetUuid returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.Uuid, and is useful for accessing the field via an interface.
@@ -4196,6 +4197,11 @@ func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetVcs
 // GetArtifactDetails returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.ArtifactDetails, and is useful for accessing the field via an interface.
 func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetArtifactDetails() []*GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact {
 	return v.ArtifactDetails
+}
+
+// GetComponentDetails returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease.ComponentDetails, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticRelease) GetComponentDetails() *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseComponentDetailsComponent {
+	return v.ComponentDetails
 }
 
 // GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifact includes the requested fields of the GraphQL type Artifact.
@@ -4330,6 +4336,22 @@ func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifact
 // GetValue returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord.Value, and is useful for accessing the field via an interface.
 func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseArtifactDetailsArtifactTagsTagRecord) GetValue() *string {
 	return v.Value
+}
+
+// GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseComponentDetailsComponent includes the requested fields of the GraphQL type Component.
+type GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseComponentDetailsComponent struct {
+	Uuid *string `json:"uuid"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseComponentDetailsComponent.Uuid, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseComponentDetailsComponent) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetName returns GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseComponentDetailsComponent.Name, and is useful for accessing the field via an interface.
+func (v *GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseComponentDetailsComponent) GetName() *string {
+	return v.Name
 }
 
 // GetLatestReleaseProgrammaticGetLatestReleaseProgrammaticReleaseParentReleasesParentRelease includes the requested fields of the GraphQL type ParentRelease.
@@ -9507,6 +9529,10 @@ query GetLatestReleaseProgrammatic ($GetLatestReleaseInput: GetLatestReleaseInpu
 			publisher
 			group
 			dependencies
+		}
+		componentDetails {
+			uuid
+			name
 		}
 	}
 }

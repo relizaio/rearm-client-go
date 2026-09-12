@@ -171,7 +171,7 @@ func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		if err != nil {
 			return nil, err
 		}
-		if resp.StatusCode != http.StatusNotFound {
+		if !t.programmaticAbsent(resp.StatusCode) {
 			return resp, nil
 		}
 		// no programmatic endpoint on this server: fall back to /graphql with the handshake, for good
@@ -198,6 +198,22 @@ func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 }
 
 func (t *authTransport) isLegacy() bool { t.mu.Lock(); defer t.mu.Unlock(); return t.legacy }
+
+// programmaticAbsent reads a first answer from the programmatic endpoint as "this server does
+// not have it": a 404, or a 401/403 to a Basic credential. Servers older than the programmatic
+// chain answer any unknown path from their browser security chain with 401, so that status is
+// not a verdict on the key while the key was presented as Basic; if the key really is wrong the
+// legacy endpoint refuses it too and that error is the one returned. A refused bearer stays a
+// refusal: the token endpoint existed, so the server is not old.
+func (t *authTransport) programmaticAbsent(status int) bool {
+	switch status {
+	case http.StatusNotFound:
+		return true
+	case http.StatusUnauthorized, http.StatusForbidden:
+		return t.currentBearer() == "" && t.refreshToken == ""
+	}
+	return false
+}
 
 func (t *authTransport) currentBearer() string {
 	t.mu.Lock()
@@ -261,10 +277,19 @@ func (t *authTransport) ensureToken(ctx context.Context) error {
 			Description string `json:"error_description"`
 		}
 		_ = json.Unmarshal(raw, &e)
-		if e.Error == "" {
-			return fmt.Errorf("rearm: token exchange failed with status %d", resp.StatusCode)
+		if e.Error != "" {
+			// the token endpoint itself refused the key (RFC 6749 error body)
+			return fmt.Errorf("rearm: token exchange failed: %s: %s", e.Error, e.Description)
 		}
-		return fmt.Errorf("rearm: token exchange failed: %s: %s", e.Error, e.Description)
+		if resp.StatusCode >= 400 && resp.StatusCode < 500 {
+			// No OAuth error body: a server older than the token endpoint answers the unknown path
+			// from its browser security chain with 401, and some ingresses replace 4xx bodies with a
+			// text page. Neither is a verdict on the key, so present it as Basic; the endpoint
+			// fallback in RoundTrip settles the rest, and a wrong key still fails there.
+			t.exchange = false
+			return nil
+		}
+		return fmt.Errorf("rearm: token exchange failed with status %d", resp.StatusCode)
 	}
 }
 func (t *authTransport) setLegacy() { t.mu.Lock(); defer t.mu.Unlock(); t.legacy = true }
@@ -284,7 +309,11 @@ func (t *authTransport) send(req *http.Request, body []byte, sess *csrfSession) 
 		r.ContentLength = int64(len(body))
 		r.GetBody = func() (io.ReadCloser, error) { return io.NopCloser(bytes.NewReader(body)), nil }
 	}
-	if b := t.currentBearer(); b != "" && (!t.isLegacy() || t.refreshToken != "") {
+	// The access token is honoured on the programmatic GraphQL endpoint only; REST paths such as
+	// the artifact download live on the browser chain, which takes the key as Basic. A session
+	// client has no Basic credential and sends its bearer everywhere.
+	graphQL := strings.HasSuffix(r.URL.Path, ProgrammaticPath) || strings.HasSuffix(r.URL.Path, LegacyPath)
+	if b := t.currentBearer(); b != "" && (t.refreshToken != "" || (graphQL && !t.isLegacy())) {
 		r.Header.Set("Authorization", "Bearer "+b)
 	} else if t.auth != "" {
 		r.Header.Set("Authorization", t.auth)
