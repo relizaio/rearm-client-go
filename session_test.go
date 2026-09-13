@@ -7,6 +7,9 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
+
+	"github.com/Khan/genqlient/graphql"
 	"strings"
 	"testing"
 	"time"
@@ -179,5 +182,52 @@ func TestRawSurfacesGraphQLErrors(t *testing.T) {
 	ge, ok := err.(GraphQLErrors)
 	if !ok || len(ge) != 1 || ge[0].Message != "Not authorized" {
 		t.Fatalf("expected GraphQLErrors, got %v", err)
+	}
+}
+
+// The server rotates the refresh token on every refresh: the client must present the new one next
+// time and hand it to the persist callback, since the one it logged in with is retired.
+func TestRotatedRefreshTokenIsUsedAndPersisted(t *testing.T) {
+	var presented []string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case TokenPath:
+			_ = r.ParseForm()
+			presented = append(presented, r.Form.Get("refresh_token"))
+			next := "rt-" + strconv.Itoa(len(presented)+1)
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write([]byte(`{"access_token":"at-` + strconv.Itoa(len(presented)) + `","token_type":"Bearer","expires_in":3600,"refresh_token":"` + next + `","session_expires_at":"2026-10-12T00:00:00Z"}`))
+		case ProgrammaticPath:
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write([]byte(`{"data":{"__typename":"Query"}}`))
+		default:
+			t.Errorf("unexpected path %s", r.URL.Path)
+		}
+	}))
+	defer srv.Close()
+	var persisted []SessionTokens
+	c, err := NewWithSession(srv.URL, "rt-1", SessionTokens{}, func(s SessionTokens) { persisted = append(persisted, s) })
+	if err != nil {
+		t.Fatal(err)
+	}
+	var resp struct{}
+	if err := c.MakeRequest(context.Background(), &graphql.Request{Query: "{__typename}"}, &graphql.Response{Data: &resp}); err != nil {
+		t.Fatal(err)
+	}
+	if len(persisted) != 1 || persisted[0].RefreshToken != "rt-2" {
+		t.Fatalf("expected the rotated token rt-2 through persist, got %+v", persisted)
+	}
+	// force a second refresh: it must present the rotated token
+	c.transport.mu.Lock()
+	c.transport.bearerExp = time.Now().Add(-time.Minute)
+	c.transport.mu.Unlock()
+	if err := c.MakeRequest(context.Background(), &graphql.Request{Query: "{__typename}"}, &graphql.Response{Data: &resp}); err != nil {
+		t.Fatal(err)
+	}
+	if len(presented) != 2 || presented[0] != "rt-1" || presented[1] != "rt-2" {
+		t.Fatalf("expected rt-1 then rt-2 presented, got %v", presented)
+	}
+	if c.Tokens().RefreshToken != "rt-3" {
+		t.Fatalf("expected the current refresh token to be rt-3, got %q", c.Tokens().RefreshToken)
 	}
 }

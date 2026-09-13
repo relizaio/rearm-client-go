@@ -104,8 +104,11 @@ c, err := rearm.NewWithSession(url, refreshToken, cached, func(t rearm.SessionTo
 
 The client trades the refresh token for one-hour access tokens on demand and hands every new
 token set to the callback; the server slides the session 30 days per refresh, capped at 90 days
-after approval. A refused refresh surfaces as `*rearm.SessionError` (unwrap with `errors.As`):
-log in again. `c.Revoke(ctx)` ends the session.
+after approval. The server rotates the refresh token on every refresh: when `SessionTokens.RefreshToken`
+is set, persist it before anything else, because the token you logged in with is retired (a short
+grace window covers a crash between receiving and persisting; reuse after it revokes the session).
+A refused refresh surfaces as `*rearm.SessionError` (unwrap with `errors.As`): log in again.
+`c.Revoke(ctx)` ends the session.
 
 The interactive flow itself is two calls, `rearm.StartDeviceLogin` and `rearm.PollDeviceLogin`;
 printing the code, opening the browser and the polling loop belong to the caller.

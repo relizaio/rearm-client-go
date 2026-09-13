@@ -29,6 +29,10 @@ const (
 type SessionTokens struct {
 	AccessToken       string
 	AccessTokenExpiry time.Time
+	// RefreshToken is set when the server rotated the refresh token on a refresh: the caller must
+	// persist it before anything else, the token it logged in with is retired (a short grace window
+	// covers a crash between receiving and persisting).
+	RefreshToken string
 	// SessionExpiry is when the refresh token stops working; it moves forward on each refresh.
 	SessionExpiry time.Time
 }
@@ -91,6 +95,7 @@ func (t *authTransport) refreshAccessToken(ctx context.Context) error {
 	var tok struct {
 		AccessToken      string `json:"access_token"`
 		ExpiresIn        int64  `json:"expires_in"`
+		RefreshToken     string `json:"refresh_token"`
 		SessionExpiresAt string `json:"session_expires_at"`
 		Error            string `json:"error"`
 		Description      string `json:"error_description"`
@@ -113,7 +118,13 @@ func (t *authTransport) refreshAccessToken(ctx context.Context) error {
 	if se, err := time.Parse(time.RFC3339, tok.SessionExpiresAt); err == nil {
 		t.sessionExp = se
 	}
-	snapshot := SessionTokens{AccessToken: t.bearer, AccessTokenExpiry: t.bearerExp.Add(time.Minute), SessionExpiry: t.sessionExp}
+	rotated := ""
+	if tok.RefreshToken != "" && tok.RefreshToken != t.refreshToken {
+		// rotation: from now on only the new token refreshes; the persist callback carries it to disk
+		t.refreshToken = tok.RefreshToken
+		rotated = tok.RefreshToken
+	}
+	snapshot := SessionTokens{AccessToken: t.bearer, AccessTokenExpiry: t.bearerExp.Add(time.Minute), SessionExpiry: t.sessionExp, RefreshToken: rotated}
 	persist := t.persist
 	t.mu.Unlock()
 	if persist != nil {
@@ -142,7 +153,7 @@ func (c *Client) Tokens() SessionTokens {
 	if t.bearer == "" {
 		return SessionTokens{SessionExpiry: t.sessionExp}
 	}
-	return SessionTokens{AccessToken: t.bearer, AccessTokenExpiry: t.bearerExp.Add(time.Minute), SessionExpiry: t.sessionExp}
+	return SessionTokens{AccessToken: t.bearer, AccessTokenExpiry: t.bearerExp.Add(time.Minute), SessionExpiry: t.sessionExp, RefreshToken: t.refreshToken}
 }
 
 // Revoke ends the browser-login session on the server (RFC 7009). Always succeeds from the
