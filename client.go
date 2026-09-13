@@ -145,6 +145,10 @@ type authTransport struct {
 	revokeURL    string
 	sessionExp   time.Time
 	persist      func(SessionTokens)
+	// assertion mode: no Basic credential, tokens come from a fresh identity token each time
+	assertion AssertionSource
+	clientID  string
+	identity  Identity
 }
 
 type csrfSession struct {
@@ -210,7 +214,7 @@ func (t *authTransport) programmaticAbsent(status int) bool {
 	case http.StatusNotFound:
 		return true
 	case http.StatusUnauthorized, http.StatusForbidden:
-		return t.currentBearer() == "" && t.refreshToken == ""
+		return t.currentBearer() == "" && t.refreshToken == "" && t.assertion == nil
 	}
 	return false
 }
@@ -233,6 +237,9 @@ func (t *authTransport) ensureToken(ctx context.Context) error {
 	}
 	if t.refreshToken != "" {
 		return t.refreshAccessToken(ctx)
+	}
+	if t.assertion != nil {
+		return t.exchangeAssertion(ctx)
 	}
 	form := strings.NewReader("grant_type=client_credentials")
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, t.tokenURL, form)
@@ -313,7 +320,7 @@ func (t *authTransport) send(req *http.Request, body []byte, sess *csrfSession) 
 	// the artifact download live on the browser chain, which takes the key as Basic. A session
 	// client has no Basic credential and sends its bearer everywhere.
 	graphQL := strings.HasSuffix(r.URL.Path, ProgrammaticPath) || strings.HasSuffix(r.URL.Path, LegacyPath)
-	if b := t.currentBearer(); b != "" && (t.refreshToken != "" || (graphQL && !t.isLegacy())) {
+	if b := t.currentBearer(); b != "" && (t.refreshToken != "" || t.assertion != nil || (graphQL && !t.isLegacy())) {
 		r.Header.Set("Authorization", "Bearer "+b)
 	} else if t.auth != "" {
 		r.Header.Set("Authorization", t.auth)
