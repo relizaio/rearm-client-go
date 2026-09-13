@@ -113,3 +113,19 @@ A refused refresh surfaces as `*rearm.SessionError` (unwrap with `errors.As`): l
 The interactive flow itself is two calls, `rearm.StartDeviceLogin` and `rearm.PollDeviceLogin`;
 printing the code, opening the browser and the polling loop belong to the caller.
 
+### Identity tokens (GitHub Actions, no secret)
+
+A CI job can authenticate with the identity token its platform issues to it, when a ReARM
+organization holds a trust rule for that repository (Programmatic Access, Federated Identities).
+Nothing is stored anywhere:
+
+```go
+c, err := rearm.NewWithAssertion(url, orgUUID, rearm.GitHubActionsAssertion(url, nil))
+```
+
+The job needs `permissions: id-token: write`. The client fetches a fresh identity token for every
+exchange (they live for minutes) and trades it at the token endpoint for the usual one-hour access
+token; `c.Identity()` tells which key and repository it acts as. `orgUUID` is only needed when
+several organizations trust the same identity, pass `""` otherwise. A refused exchange surfaces as
+`*rearm.AssertionError`. Any other issuer plugs in as an `AssertionSource` returning its token.
+
