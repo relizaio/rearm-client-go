@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strconv"
 
 	"github.com/Khan/genqlient/graphql"
@@ -229,5 +230,26 @@ func TestRotatedRefreshTokenIsUsedAndPersisted(t *testing.T) {
 	}
 	if c.Tokens().RefreshToken != "rt-3" {
 		t.Fatalf("expected the current refresh token to be rt-3, got %q", c.Tokens().RefreshToken)
+	}
+}
+
+func TestDeviceDetailsAreSentAsFormFields(t *testing.T) {
+	var got url.Values
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_ = r.ParseForm()
+		got = r.PostForm
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"device_code":"d","user_code":"U","verification_uri":"https://x/cli-login","verification_uri_complete":"https://x/cli-login?user_code=U","expires_in":600,"interval":5}`))
+	}))
+	defer srv.Close()
+	_, err := StartDeviceLoginWithDetails(context.Background(), nil, srv.URL, DeviceDetails{Hostname: "box", OS: "linux/amd64", TimeZone: "UTC+02:00 CEST", Client: "rearm-cli test"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.Get("requested_from") != "box" || got.Get("requested_os") != "linux/amd64" || got.Get("requested_tz") != "UTC+02:00 CEST" || got.Get("requested_client") != "rearm-cli test" {
+		t.Fatalf("unexpected form %v", got)
+	}
+	if _, err := StartDeviceLogin(context.Background(), nil, srv.URL, "box2"); err != nil || got.Get("requested_from") != "box2" || got.Has("requested_os") {
+		t.Fatalf("the plain form must send only the host name, got %v (%v)", got, err)
 	}
 }

@@ -188,13 +188,40 @@ type DeviceAuthorization struct {
 	Interval                int64  `json:"interval"`
 }
 
+// DeviceDetails is what the CLI reports about the device asking to log in. The approving user
+// sees it next to the address the server observed, labelled as reported by the requester, so
+// they can tell whether the request is the one they started. All fields are optional.
+type DeviceDetails struct {
+	Hostname string
+	// OS such as "linux/amd64"
+	OS string
+	// TimeZone as the local UTC offset and abbreviation, e.g. "UTC+02:00 CEST"
+	TimeZone string
+	// Client is the calling program and version, e.g. "rearm-cli 26.09.1"
+	Client string
+}
+
 // StartDeviceLogin asks ReARM for a device code; requestedFrom is shown to the approving user
 // (typically the host name). No credentials are involved.
 func StartDeviceLogin(ctx context.Context, hc *http.Client, baseURL, requestedFrom string) (*DeviceAuthorization, error) {
+	return StartDeviceLoginWithDetails(ctx, hc, baseURL, DeviceDetails{Hostname: requestedFrom})
+}
+
+// StartDeviceLoginWithDetails is StartDeviceLogin with everything the CLI can report about the device.
+func StartDeviceLoginWithDetails(ctx context.Context, hc *http.Client, baseURL string, details DeviceDetails) (*DeviceAuthorization, error) {
 	if hc == nil {
 		hc = &http.Client{Timeout: 30 * time.Second}
 	}
-	form := url.Values{"requested_from": {requestedFrom}}
+	form := url.Values{"requested_from": {details.Hostname}}
+	if details.OS != "" {
+		form.Set("requested_os", details.OS)
+	}
+	if details.TimeZone != "" {
+		form.Set("requested_tz", details.TimeZone)
+	}
+	if details.Client != "" {
+		form.Set("requested_client", details.Client)
+	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, normalizeRoot(baseURL)+DeviceCodePath, strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, err
