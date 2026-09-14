@@ -1,0 +1,90 @@
+name: Record Release In ReARM
+
+on:
+  [push]
+
+# id-token: write is what github-oidc needs — there is no ReARM secret anywhere
+# in this workflow. CodeQL runs with upload:false and its SARIF is attached to
+# the ReARM release rather than GitHub code scanning, so security-events is
+# deliberately NOT requested.
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: rearm-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REARM_API_URL: https://reliza.rearmhq.com
+
+jobs:
+  record-release:
+    name: Record Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0   # initialize walks history to build the commit list
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Test
+        run: go test ./...
+
+      # Must precede initialize: initialize invokes the `rearm` binary but does
+      # not install it. setup-cli's pinned default is CLI 26.09.5 — the first
+      # release carrying the github-oidc credential mode.
+      - name: Set up ReARM CLI
+        uses: relizaio/rearm-actions/setup-cli@2026-09-token-auth
+
+      - name: Resolve version from ReARM
+        id: rearm
+        uses: relizaio/rearm-actions/initialize@2026-09-token-auth
+        with:
+          rearm_api_url: ${{ env.REARM_API_URL }}
+          rearm_auth: github-oidc
+          create_component: 'true'        # first run only; needs creation in the trust rule
+
+      # deliverable_type FILE (not the CONTAINER default) is what keeps this
+      # honest: it skips the registry login, the image pull, the container SBOM
+      # and the purl lookup. The Go source SBOM and the CodeQL SARIF both land
+      # in `scearts`, attached to the source code entry, and `odelartsjson`
+      # stays empty because nothing is shipped.
+      - name: SBOM and CodeQL
+        id: sbom
+        if: steps.rearm.outputs.do_build == 'true'
+        uses: relizaio/rearm-actions/sbom-sign-scan@2026-09-token-auth
+        with:
+          deliverable_type: FILE
+          rearm_short_version: ${{ steps.rearm.outputs.short_version }}
+          rearm_full_version: ${{ steps.rearm.outputs.full_version }}
+          enable_sbom: 'true'
+          source_code_sbom_type: go
+          enable_codeql: 'true'
+          codeql_language: go
+
+      - name: Record release
+        if: steps.rearm.outputs.do_build == 'true'
+        uses: relizaio/rearm-actions/finalize@2026-09-token-auth
+        with:
+          rearm_api_url: ${{ env.REARM_API_URL }}
+          rearm_auth: github-oidc
+          rearm_full_version: ${{ steps.rearm.outputs.full_version }}
+          rearm_short_version: ${{ steps.rearm.outputs.short_version }}
+          rearm_build_lifecycle: ASSEMBLED
+          # No image_full_name: this component ships no deliverable, so the
+          # release is a pointer — its version, source code entry, SBOM and
+          # scan results. Passing image_digest or odelartsjson here without a
+          # name is now a hard error, by design.
+          commit_list: ${{ steps.rearm.outputs.commit_list }}
+          sce_commit: ${{ steps.rearm.outputs.sce_commit }}
+          sce_commit_message: ${{ steps.rearm.outputs.sce_commit_message }}
+          sce_commit_date: ${{ steps.rearm.outputs.sce_commit_date }}
+          sce_vcs_uri: ${{ steps.rearm.outputs.sce_vcs_uri }}
+          scearts: ${{ steps.sbom.outputs.scearts }}
