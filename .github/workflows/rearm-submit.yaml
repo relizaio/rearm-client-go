@@ -65,8 +65,8 @@ jobs:
       # release carrying the github-oidc credential mode.
       - name: Set up ReARM CLI
         uses: relizaio/rearm-actions/setup-cli@2026-09-token-auth
-      - name: whoami
-        run: rearm whoami --auth github-oidc -u "$REARM_API_URL"
+      # - name: whoami
+      #  run: rearm whoami --auth github-oidc -u "$REARM_API_URL"
       - name: Resolve version from ReARM
         id: rearm
         uses: relizaio/rearm-actions/initialize@2026-09-token-auth
