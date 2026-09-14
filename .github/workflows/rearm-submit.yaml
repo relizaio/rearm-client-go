@@ -52,6 +52,15 @@ jobs:
             -H "Authorization: Bearer $AT" -H 'Accept: application/json' -H 'Content-Type: application/json' \
             -d '{"query":"{__typename}"}'
           echo "  body: $(head -c 200 /tmp/g.json)"
+          echo "--- the actual failing query:"
+          curl -sS -X POST "$REARM_API_URL/api/programmatic/graphql" \
+            -H "Authorization: Bearer $AT" -H 'Accept: application/json' -H 'Content-Type: application/json' \
+            -d '{"query":"query($r:GetLatestReleaseInput!){getLatestReleaseProgrammatic(release:$r){uuid version}}",
+                 "variables":{"r":{"vcsUri":"https://github.com/relizaio/rearm-client-go","repoPath":".","branch":"refs/heads/2026-09-github-actions-workflow"}}}' \
+            | head -c 400; echo
+      - name: whoami
+        run: rearm whoami --auth github-oidc -u "$REARM_API_URL"
+        
       # Must precede initialize: initialize invokes the `rearm` binary but does
       # not install it. setup-cli's pinned default is CLI 26.09.5 — the first
       # release carrying the github-oidc credential mode.
