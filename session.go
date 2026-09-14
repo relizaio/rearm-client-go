@@ -208,19 +208,19 @@ func StartDeviceLogin(ctx context.Context, hc *http.Client, baseURL, requestedFr
 }
 
 // StartDeviceLoginWithDetails is StartDeviceLogin with everything the CLI can report about the device.
-func StartDeviceLoginWithDetails(ctx context.Context, hc *http.Client, baseURL string, d DeviceDetails) (*DeviceAuthorization, error) {
+func StartDeviceLoginWithDetails(ctx context.Context, hc *http.Client, baseURL string, details DeviceDetails) (*DeviceAuthorization, error) {
 	if hc == nil {
 		hc = &http.Client{Timeout: 30 * time.Second}
 	}
-	form := url.Values{"requested_from": {d.Hostname}}
-	if d.OS != "" {
-		form.Set("requested_os", d.OS)
+	form := url.Values{"requested_from": {details.Hostname}}
+	if details.OS != "" {
+		form.Set("requested_os", details.OS)
 	}
-	if d.TimeZone != "" {
-		form.Set("requested_tz", d.TimeZone)
+	if details.TimeZone != "" {
+		form.Set("requested_tz", details.TimeZone)
 	}
-	if d.Client != "" {
-		form.Set("requested_client", d.Client)
+	if details.Client != "" {
+		form.Set("requested_client", details.Client)
 	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, normalizeRoot(baseURL)+DeviceCodePath, strings.NewReader(form.Encode()))
 	if err != nil {
