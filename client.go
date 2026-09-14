@@ -203,17 +203,21 @@ func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 func (t *authTransport) isLegacy() bool { t.mu.Lock(); defer t.mu.Unlock(); return t.legacy }
 
-// programmaticAbsent reads a first answer from the programmatic endpoint as "this server does
-// not have it": a 404, or a 401/403 to a Basic credential. Servers older than the programmatic
-// chain answer any unknown path from their browser security chain with 401, so that status is
-// not a verdict on the key while the key was presented as Basic; if the key really is wrong the
-// legacy endpoint refuses it too and that error is the one returned. A refused bearer stays a
-// refusal: the token endpoint existed, so the server is not old.
+// programmaticAbsent reads a first answer from the programmatic endpoint as "this server does not
+// have it": a 404, or a 401/403, and in both cases only while the request went out as a Basic
+// credential. Servers older than the programmatic chain answer any unknown path from their browser
+// security chain with 401 or 404, and neither status is a verdict on the key while the key was
+// presented as Basic; if the key really is wrong the legacy endpoint refuses it too and that error
+// is the one returned.
+//
+// A token changes the reading of both. This server minted it, so its programmatic chain exists and
+// a later 404 is a routing problem -- an edge rule, a rewrite, a missing route -- not an old server.
+// Downgrading then would replay the call on /graphql, which authenticates by CSRF handshake and
+// carries no token at all, and the routing fault would surface as an authorization error instead.
+// So a refused or missing answer to a token-bearing request is returned as it stands.
 func (t *authTransport) programmaticAbsent(status int) bool {
 	switch status {
-	case http.StatusNotFound:
-		return true
-	case http.StatusUnauthorized, http.StatusForbidden:
+	case http.StatusNotFound, http.StatusUnauthorized, http.StatusForbidden:
 		return t.currentBearer() == "" && t.refreshToken == "" && t.assertion == nil
 	}
 	return false

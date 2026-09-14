@@ -2,6 +2,7 @@ package rearm
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -233,5 +234,46 @@ func TestKeyModeSendsBasicOnRestPaths(t *testing.T) {
 	_ = body.Close()
 	if !strings.Contains(cd, "a.json") {
 		t.Fatalf("expected the content disposition, got %q", cd)
+	}
+}
+
+// A 404 on the programmatic path while the client holds a token this server minted is a routing
+// fault, not an old server: it must surface, not turn into a legacy handshake that carries no token.
+func TestNotFoundWithATokenDoesNotDowngrade(t *testing.T) {
+	var csrfCalls, legacyCalls int
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case TokenPath:
+			_ = json.NewEncoder(w).Encode(map[string]any{"access_token": "at-1", "token_type": "Bearer", "expires_in": 3600, "session_expires_at": "2026-10-12T00:00:00Z"})
+		case ProgrammaticPath:
+			if r.Header.Get("Authorization") == "" {
+				t.Errorf("the programmatic call must carry the bearer")
+			}
+			w.WriteHeader(http.StatusNotFound) // an edge rule, a rewrite, a route miss
+		case "/api/manual/v1/fetchCsrf":
+			csrfCalls++
+		case LegacyPath:
+			legacyCalls++
+		default:
+			t.Errorf("unexpected path %s", r.URL.Path)
+		}
+	}))
+	defer srv.Close()
+	c, err := NewWithSession(srv.URL, "rt-1", SessionTokens{}, func(SessionTokens) {})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var resp struct {
+		Typename string `json:"__typename"`
+	}
+	err = c.MakeRequest(context.Background(), &graphql.Request{Query: "{__typename}"}, &graphql.Response{Data: &resp})
+	if err == nil {
+		t.Fatal("expected the 404 to be reported")
+	}
+	if !strings.Contains(err.Error(), "404") {
+		t.Fatalf("the error must name the status, got %v", err)
+	}
+	if csrfCalls != 0 || legacyCalls != 0 {
+		t.Fatalf("a token-bearing client must not fall back; got csrf=%d legacy=%d", csrfCalls, legacyCalls)
 	}
 }
