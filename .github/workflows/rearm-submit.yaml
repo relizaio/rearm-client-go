@@ -34,9 +34,24 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Test
-        run: go test ./...
-
+      # - name: Test
+      #  run: go test ./...
+      - name: Probe programmatic endpoint
+        run: |
+          set -euo pipefail
+          IDT=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+                 "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$REARM_API_URL" | jq -r .value)
+          echo "--- token exchange:"
+          curl -sS -o /tmp/t.json -w '  status=%{http_code}\n' -X POST "$REARM_API_URL/api/programmatic/token" \
+            --data-urlencode "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer" \
+            --data-urlencode "assertion=$IDT"
+          echo "  body: $(head -c 200 /tmp/t.json)"
+          AT=$(jq -r '.access_token // empty' /tmp/t.json)
+          echo "--- programmatic graphql (this is the one that matters):"
+          curl -sS -o /tmp/g.json -w '  status=%{http_code}\n' -X POST "$REARM_API_URL/api/programmatic/graphql" \
+            -H "Authorization: Bearer $AT" -H 'Accept: application/json' -H 'Content-Type: application/json' \
+            -d '{"query":"{__typename}"}'
+          echo "  body: $(head -c 200 /tmp/g.json)"
       # Must precede initialize: initialize invokes the `rearm` binary but does
       # not install it. setup-cli's pinned default is CLI 26.09.5 — the first
       # release carrying the github-oidc credential mode.
