@@ -73,6 +73,41 @@ type Query {
   releaseUuid: ID!
   sessionUuid: ID
   clientSessionId: String): Release
+  """
+  Agent-key auth (FREEFORM, personal USER or FEDERATED): the org's boards (coordinator/worker discovery).
+  """
+  agentBoardsProgrammatic: [AgentBoard]
+  """
+  Agent-key auth: one board (includes coordinatorPrompt and lock state).
+  """
+  agentBoardProgrammatic(
+  boardUuid: ID!): AgentBoard
+  """
+  Role-less worker poll: the lowest-ordered QUEUED task across the
+  org's unlocked boards (or one board) whose constraints admit the
+  calling session's agent (WIP limits, distinct-agent, seat
+  exclusion). Returns the role to assume and its served prompt; the
+  agent follows up with agentTaskAssignProgrammatic. Null = no work.
+  """
+  agentTaskNextProgrammatic(
+  sessionUuid: ID!
+  boardUuid: ID): AgentTaskAssignment
+  """
+  Agent-key auth: read one task.
+  """
+  agentTaskProgrammatic(
+  taskUuid: ID!): AgentTask
+  """
+  Agent-key auth: tasks of a board, optionally by status.
+  """
+  agentTasksProgrammatic(
+  boardUuid: ID!
+  status: AgentTaskStatus): [AgentTask]
+  """
+  Agent-key auth: a board's role configuration in order.
+  """
+  agentTaskRoleConfigsProgrammatic(
+  boardUuid: ID!): [AgentTaskRoleConfig]
 }
 
 type Mutation {
@@ -167,6 +202,29 @@ type Mutation {
   setModelOntologyModelCardProgrammatic(input: SetModelCardInput!): ModelOntology
   reportDeviceState(report: DeviceStateReportInput!): Device
   enrollSigningKeyProgrammatic(signingKey: AgentSigningKeyInput!): SigningKey
+  agentBoardCoordinateProgrammatic(boardUuid: ID!, sessionUuid: ID!): AgentBoard
+  agentBoardCoordinatorLockProgrammatic(boardUuid: ID!, sessionUuid: ID!, lock: Boolean!, reason: String): AgentBoard
+  agentTaskRoleConfigSetProgrammatic(boardUuid: ID!, sessionUuid: ID!, input: AgentTaskRoleConfigInput!): AgentTaskRoleConfig
+  agentTaskRegisterProgrammatic(input: AgentTaskRegisterInput!): AgentTask
+  agentTaskAuthorizeProgrammatic(taskUuid: ID!, sessionUuid: ID!, role: String!, orderIndex: Int, dependsOn: [ID!]): AgentTask
+  agentTaskHoldProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: String!): AgentTask
+  agentTaskReleaseHoldProgrammatic(taskUuid: ID!, sessionUuid: ID!): AgentTask
+  """
+  Coordinator sets the per-task human-review flag (add-only: the coordinator can add review, never remove it).
+  """
+  agentTaskRequireHumanReviewProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!): AgentTask
+  agentBoardPostEventProgrammatic(boardUuid: ID!, sessionUuid: ID!, kind: AgentBoardEventKind!, message: String!): AgentBoard
+  agentTaskOrderProgrammatic(taskUuid: ID!, sessionUuid: ID!, orderIndex: Int!): AgentTask
+  agentTaskSplitProgrammatic(taskUuid: ID!, sessionUuid: ID!, children: [AgentTaskSplitChildInput!]!): [AgentTask]
+  agentTaskCompleteProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
+  agentTaskCancelProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
+  agentTaskAssignProgrammatic(taskUuid: ID!, sessionUuid: ID!): AgentTaskAssignment
+  agentTaskSignOffProgrammatic(taskUuid: ID!, sessionUuid: ID!, outcome: AgentSignOffOutcome!, note: String): AgentTask
+  agentTaskReturnProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: AgentTaskReturnReason!, description: String): AgentTask
+  agentTaskBindExternalRefProgrammatic(taskUuid: ID!, externalRef: String!, sourceUrl: String): AgentTask
+  agentTaskLinkPrProgrammatic(taskUuid: ID!, prUrl: String!): AgentTask
 }
 
 type CatalogSpec {
@@ -523,6 +581,148 @@ type Session {
   """
   modelAssertion: ModelAssertionState!
   createdDate: DateTime
+}
+
+type AgentBoard {
+  uuid: ID
+  org: ID
+  name: String
+  description: String
+  status: AgentBoardStatus
+  """
+  Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
+  """
+  sources: [String]
+  """
+  Append-only board notices, newest last (lock transitions auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
+  """
+  events: [AgentBoardEvent]
+  """
+  Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
+  """
+  missingCapabilities: [String]
+  """
+  Served prompt of the implicit, non-removable coordinator role.
+  """
+  coordinatorPrompt: String
+  lock: AgentBoardLock
+  coordinatorSeat: AgentCoordinatorSeat
+  """
+  Max concurrently ASSIGNED tasks per agent on this board (default 2).
+  """
+  perAgentWipLimit: Int
+  """
+  Whether coordinator priority is advisory (LAX, default) or enforced at assignment (STRICT).
+  """
+  priorityType: AgentBoardPriorityType
+  createdDate: DateTime
+}
+
+"""
+What a polling/assigned worker receives: the task, the role to assume and its served prompt.
+"""
+type AgentTaskAssignment {
+  task: AgentTask
+  role: String
+  rolePrompt: String
+  promptVersion: String
+}
+
+type AgentTask {
+  uuid: ID
+  org: ID
+  board: ID
+  externalRef: String
+  title: String
+  sourceUrl: String
+  status: AgentTaskStatus
+  """
+  Role the task is queued for / worked in; retained as last role until re-authorized.
+  """
+  role: String
+  """
+  Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
+  """
+  orderIndex: Int
+  """
+  Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
+  """
+  dependsOn: [ID]
+  """
+  Hold state while ON_HOLD; null otherwise.
+  """
+  hold: AgentTaskHold
+  """
+  Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
+  """
+  requireHumanReview: Boolean
+  assignment: AgentTaskWorkAssignment
+  signOffs: [AgentTaskSignOff]
+  returns: [AgentTaskReturn]
+  parentTask: ID
+  childTasks: [ID]
+  """
+  Every session that ever held the assignment.
+  """
+  sessions: [ID]
+  prUrls: [String]
+  registeredBySession: ID
+  """
+  Append-only status transition log, oldest first.
+  """
+  statusHistory: [AgentTaskStatusChange]
+  createdDate: DateTime
+  completedAt: DateTime
+}
+
+enum AgentTaskStatus {
+  PENDING_INTAKE
+  QUEUED
+  ASSIGNED
+  AWAITING_COORDINATOR
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+"""
+Board-scoped role definition. The coordinator is implicit and never a row here.
+"""
+type AgentTaskRoleConfig {
+  uuid: ID
+  board: ID
+  org: ID
+  name: String
+  prompt: String
+  """
+  Advisory routing order for the coordinator; routing is a per-hop decision, not a pipeline.
+  """
+  orderIndex: Int
+  """
+  Optional cap on concurrently ASSIGNED tasks in this role on this board.
+  """
+  wipLimit: Int
+  """
+  Assigned agent must differ from the last sign-off's agent (separation of duties).
+  """
+  requireDistinctAgent: Boolean
+  active: Boolean
+  """
+  Capabilities an assignee of this role must hold (declared, unverified in v1).
+  """
+  requiredCapabilities: [AgentCapability]
+  """
+  Operator-only: who works this role (default AGENTIC).
+  """
+  kind: AgentRoleKind
+  """
+  Operator-only: may the coordinator skip this role (default OPTIONAL).
+  """
+  necessity: AgentRoleNecessity
+  """
+  Operator-only: conditional human review of this role's sign-offs (default NONE; AGENTIC roles only).
+  """
+  humanGate: AgentHumanGate
 }
 
 type DeclarativeApplyResult {
@@ -1413,6 +1613,75 @@ input AgentSigningKeyInput {
   pubKey: String!
 }
 
+input AgentTaskRoleConfigInput {
+  name: String!
+  prompt: String
+  orderIndex: Int
+  wipLimit: Int
+  requireDistinctAgent: Boolean
+  active: Boolean
+  requiredCapabilities: [AgentCapability!]
+  """
+  Operator-only; rejected on the coordinator-seat path.
+  """
+  kind: AgentRoleKind
+  """
+  Operator-only; rejected on the coordinator-seat path.
+  """
+  necessity: AgentRoleNecessity
+  """
+  Operator-only; rejected on the coordinator-seat path.
+  """
+  humanGate: AgentHumanGate
+}
+
+input AgentTaskRegisterInput {
+  boardUuid: ID!
+  externalRef: String
+  title: String!
+  sourceUrl: String
+  """
+  Registering agent's session (intake provenance).
+  """
+  sessionUuid: ID
+  parentTask: ID
+}
+
+enum AgentBoardEventKind {
+  LOCKED
+  UNLOCKED
+  ALERT
+  INFO
+}
+
+input AgentTaskSplitChildInput {
+  externalRef: String
+  title: String!
+  sourceUrl: String
+  """
+  Sibling-index dependencies (0-based within this split), encoding the architect's proposed ordering.
+  """
+  dependsOnSiblingIndexes: [Int!]
+}
+
+enum AgentSignOffOutcome {
+  PASSED
+  REJECTED
+}
+
+"""
+Why an assigned agent handed the task back to the coordinator. SESSION_CLOSED is system-generated on any session-close path.
+"""
+enum AgentTaskReturnReason {
+  TASK_UNCLEAR
+  ROLE_MISMATCH
+  MISSING_CAPABILITY
+  BLOCKED_ON_DEPENDENCY
+  NEEDS_HUMAN
+  SESSION_CLOSED
+  OTHER
+}
+
 """
 Ownership slice a declarative spec describes. One kind per file; the apply / export operations are per kind.
 """
@@ -2022,6 +2291,138 @@ enum ModelAssertionState {
   Model read from the runtime's own record (e.g. Claude Code transcript). Reserved for Path-B hooks; not yet emitted.
   """
   RUNTIME_OBSERVED
+}
+
+enum AgentBoardStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+type AgentBoardEvent {
+  kind: AgentBoardEventKind
+  message: String
+  actor: String
+  eventAt: DateTime
+}
+
+type AgentBoardLock {
+  level: AgentBoardLockLevel
+  reason: String
+  lockedBy: String
+  lockedAt: DateTime
+}
+
+"""
+Singleton coordinator seat: one session per board, held until that session closes.
+"""
+type AgentCoordinatorSeat {
+  session: ID
+  agent: ID
+  claimedAt: DateTime
+}
+
+"""
+How strictly coordinator priority binds assignment. LAX: the poll offers work in priority order but a worker may assign any eligible task (advisory). STRICT: assignment is refused unless the task is the top eligible offer for that agent.
+"""
+enum AgentBoardPriorityType {
+  LAX
+  STRICT
+}
+
+type AgentTaskHold {
+  level: AgentTaskHoldLevel
+  kind: AgentTaskHoldKind
+  """
+  Role whose sign-off is under review; set when kind = HUMAN_GATE.
+  """
+  gateRole: String
+  reason: String
+  heldBy: String
+  heldAt: DateTime
+}
+
+"""
+The single live assignment -- bound to session liveness, released on any session close.
+"""
+type AgentTaskWorkAssignment {
+  session: ID
+  agent: ID
+  role: String
+  assignedAt: DateTime
+  promptVersion: String
+}
+
+"""
+Append-only per-hop sign-off stored in ReARM; promptVersion pins the served prompt the agent assumed.
+"""
+type AgentTaskSignOff {
+  role: String
+  agent: ID
+  session: ID
+  assignedAt: DateTime
+  signedOffAt: DateTime
+  outcome: AgentSignOffOutcome
+  note: String
+  promptVersion: String
+  """
+  Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
+  """
+  reviewedBy: String
+}
+
+type AgentTaskReturn {
+  role: String
+  agent: ID
+  session: ID
+  reason: AgentTaskReturnReason
+  description: String
+  returnedAt: DateTime
+}
+
+"""
+One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+"""
+type AgentTaskStatusChange {
+  from: AgentTaskStatus
+  to: AgentTaskStatus
+  at: DateTime
+  trigger: String
+  actor: ID
+}
+
+"""
+The verbs an assignee must be able to perform. Declared on roles; implicit/unverified on agents in v1.
+"""
+enum AgentCapability {
+  TRACKER_READ
+  TRACKER_WRITE
+  CODE_PUSH
+  PR_MERGE
+}
+
+"""
+Who works this role. AGENTIC: agents poll/assume/sign off through sessions. HUMAN: a deliberate human workflow stage -- never offered to agent polls; an org admin signs off directly from the queue.
+"""
+enum AgentRoleKind {
+  AGENTIC
+  HUMAN
+}
+
+"""
+Whether the coordinator may skip this role. REQUIRED: a task cannot be COMPLETED unless its most recent sign-off in this role is PASSED (cancel and split parents with completed children exempt).
+"""
+enum AgentRoleNecessity {
+  OPTIONAL
+  REQUIRED
+}
+
+"""
+Conditional human review of this role's sign-offs. Fires only when the role actually signs off. ON_PASS: PASSED sign-offs park ON_HOLD for a human verdict; ON_ANY_SIGNOFF: rejections gate too.
+"""
+enum AgentHumanGate {
+  NONE
+  ON_PASS
+  ON_ANY_SIGNOFF
 }
 
 type DeclarativeChange {
@@ -2694,6 +3095,8 @@ type ApiKey {
   adminDisabled: Boolean
   "MANUAL, or CLI_SESSION for a personal key a CLI browser login created for its session (deleted with the session)"
   origin: ApiKeyOrigin
+  "FEDERATED rows: the external repository this identity stands for"
+  federation: FederatedIdentity
   """
   Root agents this key is bound to via the agent-identity it
   resolves to (agent_identity_credentials). Empty until an agent
@@ -3386,6 +3789,31 @@ type AgentPolicy {
   createdDate: DateTime
 }
 
+"""
+Locks stop NEW assignments only; the coordinator cannot lift or override an OPERATOR lock.
+"""
+enum AgentBoardLockLevel {
+  NONE
+  COORDINATOR
+  OPERATOR
+}
+
+"""
+Two-tier task hold, mirroring board locks: the coordinator cannot lift an OPERATOR hold.
+"""
+enum AgentTaskHoldLevel {
+  COORDINATOR
+  OPERATOR
+}
+
+"""
+MANUAL: coordinator/operator parked the task. HUMAN_GATE: a gated role signed off; only a human review verdict (not a plain release) resolves it.
+"""
+enum AgentTaskHoldKind {
+  MANUAL
+  HUMAN_GATE
+}
+
 enum DeclarativeAction {
   CREATE
   UPDATE
@@ -3695,6 +4123,8 @@ enum ApiTypeEnum {
   FREEFORM
   "Personal key owned by a user: its permissions are a ceiling intersected with the owner's current permissions"
   USER
+  "Identity row for one external repository trusted by the org's federated trust rules: no secret, permissions computed from the rules on every call"
+  FEDERATED
 }
 
 enum ApiKeyStatus {
@@ -3727,6 +4157,21 @@ Kill switch for a whole key id: INACTIVE refuses every secret and every token is
 enum ApiKeyOrigin {
   MANUAL
   CLI_SESSION
+}
+
+"The external repository behind a FEDERATED key row, with the ids pinned on first use"
+type FederatedIdentity {
+  provider: FederatedProvider
+  issuer: String
+  owner: String
+  repository: String
+  repositoryUri: String
+  repositoryId: String
+  ownerId: String
+  pinnedDate: DateTime
+  lastRef: String
+  lastRunId: String
+  lastActor: String
 }
 
 """
@@ -4051,6 +4496,11 @@ enum PropertyDataType {
 enum PropertyTargetType {
   INSTANCE
   COMPONENT
+}
+
+"External identity providers whose tokens an organization can trust"
+enum FederatedProvider {
+  GITHUB_ACTIONS
 }
 
 enum ObservedItemStatus {
