@@ -1,4 +1,5 @@
-# ReARM programmatic API contract. Generated from programmatic.graphqls and the types it reaches;
+# ReARM programmatic API contract: the root fields declared in programmatic.graphqls and
+# every type they reach, whether declared there or in the shared schema.
 # served at /api/programmatic/schema. Consumed by rearm-client-go and the Terraform provider.
 
 type Query {
