@@ -112,6 +112,33 @@ type Mutation {
   upsertPullRequestProgrammatic(
   input: PullRequestUpsertProgrammaticInput!): PullRequest
   getNewVersionProgrammatic(newVersionInput: GetNewVersionInput!): Version
+  """
+  Claim or disown a commit as the key's agent. The commit is named the way getversion and
+  addrelease name a component -- a component uuid, or vcsUri plus repoPath -- plus the sha,
+  which the server resolves through that component's repository. A sha ReARM has never seen is
+  refused rather than recorded: a commit that does not exist cannot be a lock cause.
+  
+The session is required rather than inferred from the key: an attestation says who stood
+  behind a claim, and a key is not a who. An agent already opens a session before it works, so
+  it has one to name.
+  
+This is the mutation a refusal points at. An agent that made a mistake claims it, and if
+  that was the last thing a lock was waiting on and the lock is allowed to release itself, the
+  next build goes through with no human in the loop.
+  """
+  attestProgrammatic(
+  componentRef: ComponentRefInput!
+  commit: String!
+  verdict: AttestationVerdict!
+  note: String
+  session: ID!): Attestation
+  """
+  Release a lock whose level is AGENT and whose requirement is met. Anything stricter, or any
+  lock that has escalated, refuses and says so.
+  """
+  releaseLockProgrammatic(
+  lockUuid: ID!
+  reason: String!): Lock
   addReleaseProgrammatic(release: ReleaseInputProg!): Release
   """
   Batch counterpart to addReleaseProgrammatic. Creates every supplied
@@ -752,6 +779,113 @@ input GetNewVersionInput {
   rebuild: Boolean
 }
 
+"""
+An accountable statement by a user or an agent. Append-only: a correction is a new row plus a
+revocation of the old one, because a record that can be edited afterwards is not one.
+"""
+type Attestation {
+  uuid: ID
+  org: ID
+  type: AttestationType
+  subjectType: AttestationSubjectType
+  subjectUuid: ID
+  subjectRef: AttestationSubjectRef
+  actorType: AttestationActorType
+  actorUuid: ID
+  """
+  AGENT: the session it was filed under.
+  """
+  agentSession: ID
+  verdict: AttestationVerdict
+  note: String
+  """
+  LOCK_RELEASE: released without the requirement being met. Never silent.
+  """
+  override: Boolean
+  status: AttestationRecordStatus
+  revokedAt: DateTime
+  revokeReason: String
+  createdDate: DateTime
+}
+
+"""
+How a programmatic caller names a component: by uuid, or by the VCS coordinates CI already has.
+The same block getversion and addrelease accept, resolved by the same code, so a CI job that can
+call one can call the others without learning a second convention.
+"""
+input ComponentRefInput {
+  component: ID
+  vcsUri: String
+  repoPath: String
+}
+
+"""
+Verdicts of a commit acknowledgement. MINE makes a commit recognized; it does not certify the
+content and is not a review. NOT_MINE leaves it unrecognized and escalates every lock it is a
+cause of.
+"""
+enum AttestationVerdict {
+  MINE
+  NOT_MINE
+}
+
+"""
+A sticky refusal of writes on a component or one of its branches.
+
+Every other gate in ReARM evaluates a point in time, so a rule about a commit is defeated by
+pushing another commit on top of it. A lock is the state that outlives the build: it refuses the
+next one outright and stays until somebody resolves the cause and says so on the record.
+"""
+type Lock {
+  uuid: ID
+  scope: LockScope
+  """
+  Set when scope is BRANCH.
+  """
+  branch: ID
+  status: LockStatus
+  """
+  Shown verbatim in every refusal.
+  """
+  reason: String
+  origin: LockOrigin
+  """
+  POLICY: the output event that raised it, which is also its idempotence key.
+  """
+  outputEvent: ID
+  causes: [LockCause!]
+  """
+  Causes dropped by the retention cap. Above zero the checklist is incomplete, so the lock will
+  not release itself automatically however many causes are claimed.
+  """
+  droppedCauses: Int
+  unlockLevel: UnlockLevel
+  attestationRequirement: AttestationRequirement
+  """
+  The strongest level any cause has ever implied, kept because that cause may since have been
+  dropped. A floor, never lowered.
+  """
+  escalatedLevel: UnlockLevel
+  """
+  Declared level and escalation floor combined -- who may actually release it.
+  """
+  effectiveLevel: UnlockLevel
+  raisedAt: DateTime
+  releasedAt: DateTime
+  """
+  The LOCK_RELEASE attestation that released it.
+  """
+  releaseAttestation: ID
+  """
+  Where the lock lives. A lock is stored inside its component or branch row, so these come from
+  the read rather than from the record -- without them an organization-wide list of locks could
+  not say what any of them was about.
+  """
+  component: ID
+  componentName: String
+  branchName: String
+}
+
 input ReleaseInputProg {
   version: String!
   lifecycle: ReleaseLifecycleEnum
@@ -925,6 +1059,15 @@ type Component {
   at-risk report and NEVER blocks releases.
   """
   ownership: ComponentOwnership!
+  """
+  Guards written on this component. They accumulate with the guards its perspectives and its
+  organization declare for it -- every applicable guard is evaluated and any one can refuse.
+  """
+  actionGuards: [ActionGuard!]
+  """
+  Locks raised on this component, active and recently released.
+  """
+  locks: [Lock!]
 }
 
 input CreateComponentInput {
@@ -1051,6 +1194,10 @@ type Instance {
 type Branch {
   uuid: ID
   name: String
+  """
+  Locks raised on this branch, active and recently released.
+  """
+  locks: [Lock!]
   component: ID
   componentDetails: Component
   components: [ID]
@@ -2150,6 +2297,100 @@ input PullRequestInfoInput {
   endpoint: String
 }
 
+enum AttestationType {
+  COMMIT_ACKNOWLEDGEMENT
+  LOCK_RELEASE
+}
+
+enum AttestationSubjectType {
+  SCE
+  RELEASE
+  LOCK
+}
+
+"""
+What the subject was called when the statement was made; display only.
+"""
+type AttestationSubjectRef {
+  component: ID
+  componentName: String
+  commit: String
+  version: String
+}
+
+enum AttestationActorType {
+  USER
+  AGENT
+}
+
+enum AttestationRecordStatus {
+  ACTIVE
+  REVOKED
+}
+
+enum LockScope {
+  COMPONENT
+  BRANCH
+}
+
+enum LockStatus {
+  ACTIVE
+  RELEASED
+}
+
+enum LockOrigin {
+  MANUAL
+  POLICY
+}
+
+"""
+One thing a lock is waiting on.
+"""
+type LockCause {
+  subjectType: LockSubjectType
+  subjectUuid: ID
+  """
+  Human text carried into the refusal, e.g. "commit a1b2c3d: unsigned, no attribution".
+  """
+  detail: String
+}
+
+"""
+Who may release a lock.
+"""
+enum UnlockLevel {
+  """
+  Any recognized principal, agent or user, through either API.
+  """
+  AGENT
+  """
+  A user; an agent cannot.
+  """
+  HUMAN
+  """
+  A component or organization administrator.
+  """
+  ADMIN
+}
+
+"""
+What must be true of a lock's causes before it may be released.
+"""
+enum AttestationRequirement {
+  """
+  Nothing; the level alone decides.
+  """
+  NONE
+  """
+  Every cause carries an active MINE attestation from any recognized principal.
+  """
+  ANY
+  """
+  Every cause carries an active MINE attestation filed by a user.
+  """
+  HUMAN
+}
+
 input ArtifactInput {
   type: ArtifactType
   displayIdentifier: String
@@ -2396,6 +2637,10 @@ type Perspective {
   Perspective-level decoded authority segments (SaaS only).
   """
   sidAuthoritySegments: [String!]
+  """
+  Guards applying to every component of this perspective.
+  """
+  actionGuards: [ActionGuard!]
 }
 
 """
@@ -2456,6 +2701,35 @@ type ComponentOwnership {
   status: ComponentOwnershipStatus!
   derived: Boolean!
   reason: String
+}
+
+"""
+One named rule withholding an action until its CEL expression holds.
+
+Guards accumulate rather than override: every guard that applies to an action is evaluated, any
+one of them can refuse, and the refusal names the guard that did it. A guard is the mirror of a
+release trigger -- same expression language, same release.* variables, plus action.* describing
+what is being attempted -- but where a trigger makes something happen, a guard only refuses.
+"""
+type ActionGuard {
+  """
+  Names the guard in refusals and in the note a WARN guard leaves behind.
+  """
+  name: String
+  action: GuardedAction
+  """
+  CEL over release.* and action.*; the action proceeds only while this is true.
+  """
+  cel: String
+  mode: GuardMode
+  """
+  Java regex matched FULLY against the component name -- `guard-prod` governs the component
+  named exactly that, not `guard-prod-api`; write `guard-prod.*` for a prefix. Same anchoring
+  as the org's approval-policy and team-assignment rules. Meaningful only on organization-wide
+  guards; guards written on a component or a perspective leave it null and are refused if they
+  set it.
+  """
+  namePattern: String
 }
 
 input VcsRepositoryInput {
@@ -2694,6 +2968,8 @@ type ApiKey {
   adminDisabled: Boolean
   "MANUAL, or CLI_SESSION for a personal key a CLI browser login created for its session (deleted with the session)"
   origin: ApiKeyOrigin
+  "FEDERATED rows: the external repository this identity stands for"
+  federation: FederatedIdentity
   """
   Root agents this key is bound to via the agent-identity it
   resolves to (agent_identity_credentials). Empty until an agent
@@ -2887,6 +3163,11 @@ NULL MEANS DISABLED. The default is off: support properties do not appear in an
   picked one in their browser. Null means SECURITY.
   """
   defaultView: DashboardView
+  """
+  Guards declared once for the organization, each picking the components it governs by name
+  pattern, the same way the org's approval-policy rules do.
+  """
+  actionGuards: [ActionGuard!]
 }
 
 """
@@ -3228,6 +3509,7 @@ enum ReleaseUpdateScopeEnum {
   MARKETING_VERSION
   TRIGGER
   INPUT_TRIGGER
+  GUARD
   APPROVED_ENVIRONMENT
   SUPPORT_WINDOW
   FDA_NARRATIVE
@@ -3281,6 +3563,10 @@ enum IdentifierType {
   CPE
   TEI
   COMPLIANCE_DOCUMENT
+  """
+  The component IS a specification document; idValue comes from SpecificationType.
+  """
+  SPECIFICATION
   UDI
   UDI_DI
   UDI_PI
@@ -3416,6 +3702,11 @@ input DependencyPatternSpecInput {
   targetBranchName: String
   defaultStatus: Status
   fallbackToBase: FallbackToBase
+}
+
+enum LockSubjectType {
+  SCE
+  RELEASE
 }
 
 input LinkInput {
@@ -3630,6 +3921,34 @@ enum ComponentOwnershipStatus {
   ORPHANED
 }
 
+"""
+An action a guard can withhold. New actions bring their own action.* variables.
+"""
+enum GuardedAction {
+  """
+  Moving a release forward through its lifecycle, however the move was requested.
+  """
+  RELEASE_PROMOTION
+}
+
+"""
+What happens when a guard is not satisfied.
+"""
+enum GuardMode {
+  """
+  Kept but not evaluated.
+  """
+  OFF
+  """
+  The action proceeds; the failure is recorded against it.
+  """
+  WARN
+  """
+  The action is refused, naming the guard.
+  """
+  BLOCK
+}
+
 input GudidDefaultsInput {
   brandName: String
   companyName: String
@@ -3695,6 +4014,8 @@ enum ApiTypeEnum {
   FREEFORM
   "Personal key owned by a user: its permissions are a ceiling intersected with the owner's current permissions"
   USER
+  "Identity row for one external repository trusted by the org's federated trust rules: no secret, permissions computed from the rules on every call"
+  FEDERATED
 }
 
 enum ApiKeyStatus {
@@ -3727,6 +4048,21 @@ Kill switch for a whole key id: INACTIVE refuses every secret and every token is
 enum ApiKeyOrigin {
   MANUAL
   CLI_SESSION
+}
+
+"The external repository behind a FEDERATED key row, with the ids pinned on first use"
+type FederatedIdentity {
+  provider: FederatedProvider
+  issuer: String
+  owner: String
+  repository: String
+  repositoryUri: String
+  repositoryId: String
+  ownerId: String
+  pinnedDate: DateTime
+  lastRef: String
+  lastRunId: String
+  lastActor: String
 }
 
 """
@@ -4051,6 +4387,11 @@ enum PropertyDataType {
 enum PropertyTargetType {
   INSTANCE
   COMPONENT
+}
+
+"External identity providers whose tokens an organization can trust"
+enum FederatedProvider {
+  GITHUB_ACTIONS
 }
 
 enum ObservedItemStatus {

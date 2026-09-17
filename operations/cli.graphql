@@ -576,3 +576,43 @@ mutation EnrollSigningKeyProgrammatic($signingKey: AgentSigningKeyInput!) {
 		createdDate
 	}
 }
+
+# from rearm-cli attest.go -- claim or disown a commit as the key's agent.
+#
+# The session is named rather than inferred from the key: an attestation records who stood behind
+# a claim, and a key is not a who. The CLI already opens a session before it works.
+mutation AttestProgrammatic($componentRef: ComponentRefInput!, $commit: String!,
+		$verdict: AttestationVerdict!, $note: String, $session: ID!) {
+	attestProgrammatic(componentRef: $componentRef, commit: $commit, verdict: $verdict,
+			note: $note, session: $session) {
+		uuid
+		type
+		verdict
+		note
+		actorType
+		actorUuid
+		agentSession
+		status
+		createdDate
+		subjectRef {
+			componentName
+			commit
+		}
+	}
+}
+
+# from rearm-cli lockRelease.go -- release a lock an agent is allowed to release.
+#
+# Anything stricter refuses and says which level it needs, so a CI log shows the reason rather
+# than a bare permission error.
+mutation ReleaseLockProgrammatic($lockUuid: ID!, $reason: String!) {
+	releaseLockProgrammatic(lockUuid: $lockUuid, reason: $reason) {
+		uuid
+		status
+		reason
+		componentName
+		branchName
+		releasedAt
+		releaseAttestation
+	}
+}
