@@ -136,10 +136,14 @@ This is the mutation a refusal points at. An agent that made a mistake claims it
   """
   Release a lock whose level is AGENT and whose requirement is met. Anything stricter, or any
   lock that has escalated, refuses and says so.
+  
+The session is required and must belong to the calling key's agent: the LOCK_RELEASE
+  attestation this writes is the durable record of who released the lock.
   """
   releaseLockProgrammatic(
   lockUuid: ID!
-  reason: String!): Lock
+  reason: String!
+  session: ID!): Lock
   addReleaseProgrammatic(release: ReleaseInputProg!): Release
   """
   Batch counterpart to addReleaseProgrammatic. Creates every supplied
@@ -1683,6 +1687,17 @@ type ParentRelease {
 
 type SourceCodeEntry {
   uuid: ID
+  """
+  Whether anybody can be held to this commit: an enrolled key signed it, a live agent session
+  owns it, or somebody has claimed it in an attestation. Computed on demand -- a verdict changes
+  when a key is enrolled or revoked and a claim can be revoked later, so a stored flag would be
+  wrong quietly. The same predicate rules read as `c.recognized`.
+  """
+  recognized: Boolean
+  """
+  What the attestations say about this commit, independently of signature and attribution.
+  """
+  attestation: CommitAttestation
   branch: ID
   vcsUuid: ID
   vcsBranch: String
@@ -3254,6 +3269,25 @@ type GlobalTeamAssignmentRule {
   Owner team (UserGroup) UUID; must exist and be active in this org.
   """
   ownerTeam: ID
+}
+
+"""
+What has been claimed about a commit, and by whom.
+"""
+type CommitAttestation {
+  """
+  NONE, MINE, NOT_MINE, or CONFLICT when claimed and disowned at once.
+  """
+  state: String
+  """
+  USER or AGENT, for the claim that made it accountable.
+  """
+  actorType: String
+  actor: ID
+  """
+  Why it stands as it does: "signed by an enrolled key", "unsigned, no attribution".
+  """
+  detail: String
 }
 
 """

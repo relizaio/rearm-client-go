@@ -6746,6 +6746,9 @@ func (v *ReleaseLockProgrammaticReleaseLockProgrammaticLock) GetReleaseAttestati
 type ReleaseLockProgrammaticResponse struct {
 	// Release a lock whose level is AGENT and whose requirement is met. Anything stricter, or any
 	// lock that has escalated, refuses and says so.
+	//
+	// The session is required and must belong to the calling key's agent: the LOCK_RELEASE
+	// attestation this writes is the durable record of who released the lock.
 	ReleaseLockProgrammatic *ReleaseLockProgrammaticReleaseLockProgrammaticLock `json:"releaseLockProgrammatic"`
 }
 
@@ -8592,6 +8595,7 @@ func (v *__ProbeSbomProgrammaticInput) GetBranchUuid() *string { return v.Branch
 type __ReleaseLockProgrammaticInput struct {
 	LockUuid string `json:"lockUuid"`
 	Reason   string `json:"reason"`
+	Session  string `json:"session"`
 }
 
 // GetLockUuid returns __ReleaseLockProgrammaticInput.LockUuid, and is useful for accessing the field via an interface.
@@ -8599,6 +8603,9 @@ func (v *__ReleaseLockProgrammaticInput) GetLockUuid() string { return v.LockUui
 
 // GetReason returns __ReleaseLockProgrammaticInput.Reason, and is useful for accessing the field via an interface.
 func (v *__ReleaseLockProgrammaticInput) GetReason() string { return v.Reason }
+
+// GetSession returns __ReleaseLockProgrammaticInput.Session, and is useful for accessing the field via an interface.
+func (v *__ReleaseLockProgrammaticInput) GetSession() string { return v.Session }
 
 // __ReleasecompletionfinalizerProgrammaticInput is used internally by genqlient
 type __ReleasecompletionfinalizerProgrammaticInput struct {
@@ -10479,8 +10486,8 @@ func ProbeSbomProgrammatic(
 
 // The mutation executed by ReleaseLockProgrammatic.
 const ReleaseLockProgrammatic_Operation = `
-mutation ReleaseLockProgrammatic ($lockUuid: ID!, $reason: String!) {
-	releaseLockProgrammatic(lockUuid: $lockUuid, reason: $reason) {
+mutation ReleaseLockProgrammatic ($lockUuid: ID!, $reason: String!, $session: ID!) {
+	releaseLockProgrammatic(lockUuid: $lockUuid, reason: $reason, session: $session) {
 		uuid
 		status
 		reason
@@ -10495,12 +10502,14 @@ mutation ReleaseLockProgrammatic ($lockUuid: ID!, $reason: String!) {
 // from rearm-cli lockRelease.go -- release a lock an agent is allowed to release.
 //
 // Anything stricter refuses and says which level it needs, so a CI log shows the reason rather
-// than a bare permission error.
+// than a bare permission error. The session is named for the same reason attest names it: the
+// LOCK_RELEASE attestation is the record of who released the lock.
 func ReleaseLockProgrammatic(
 	ctx_ context.Context,
 	client_ graphql.Client,
 	lockUuid string,
 	reason string,
+	session string,
 ) (data_ *ReleaseLockProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "ReleaseLockProgrammatic",
@@ -10508,6 +10517,7 @@ func ReleaseLockProgrammatic(
 		Variables: &__ReleaseLockProgrammaticInput{
 			LockUuid: lockUuid,
 			Reason:   reason,
+			Session:  session,
 		},
 	}
 

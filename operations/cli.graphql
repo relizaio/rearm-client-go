@@ -604,9 +604,10 @@ mutation AttestProgrammatic($componentRef: ComponentRefInput!, $commit: String!,
 # from rearm-cli lockRelease.go -- release a lock an agent is allowed to release.
 #
 # Anything stricter refuses and says which level it needs, so a CI log shows the reason rather
-# than a bare permission error.
-mutation ReleaseLockProgrammatic($lockUuid: ID!, $reason: String!) {
-	releaseLockProgrammatic(lockUuid: $lockUuid, reason: $reason) {
+# than a bare permission error. The session is named for the same reason attest names it: the
+# LOCK_RELEASE attestation is the record of who released the lock.
+mutation ReleaseLockProgrammatic($lockUuid: ID!, $reason: String!, $session: ID!) {
+	releaseLockProgrammatic(lockUuid: $lockUuid, reason: $reason, session: $session) {
 		uuid
 		status
 		reason
