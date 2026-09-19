@@ -194,8 +194,19 @@ type Mutation {
   follow: Boolean): Instance
   versionFeatureSet(productUuid: ID!, overrides: [VersionFeatureSetOverride!]!): Branch
   sessionInitializeProgrammatic(sessionInit: SessionInitializeInput!): Session
-  sessionTouchProgrammatic(sessionUuid: ID!): Session
+  sessionTouchProgrammatic(sessionUuid: ID!, usage: SessionUsageReportInput): Session
   sessionCloseProgrammatic(sessionUuid: ID!): Session
+
+  """
+  Report what the session consumed since its last report. One report carries
+  several lines: a delta may span models and may cross a pricing threshold, and
+  each line becomes one row that prices under exactly one entry.
+
+  Idempotent on (session, clientSeq, model, hosting, contextBand): a retried
+  delta inserts nothing and reports duplicates. A clientSeq below the session's
+  high-water mark is refused.
+  """
+  sessionReportUsageProgrammatic(input: SessionUsageReportInput!): SessionUsageAck
   sessionAddArtifactProgrammatic(addArtifact: SessionAddArtifactInput!): Session
   sessionUpdateMetaProgrammatic(updateMeta: SessionUpdateMetaInput!): Session
   spawnSubAgentProgrammatic(spawnSubAgent: SpawnSubAgentInput!): Agent
@@ -4643,3 +4654,57 @@ input CoordsInput {
   longitude: Float
 }
 
+"""Where a usage report came from, which is also how far it is to be trusted."""
+enum SessionUsageSource { SELF_REPORTED TRANSCRIPT OTEL PROVIDER }
+
+"""
+Where a model was served from. Not an identity dimension -- the catalogue holds
+one row per model and the Bedrock / Vertex / Azure forms resolve onto it -- but a
+pricing one, because the same model bills differently per provider.
+"""
+enum SessionUsageHosting { DIRECT BEDROCK VERTEX AZURE OTHER }
+
+"""How a usage row found its task; the answer changes what the number means."""
+enum SessionUsageAttribution { EXPLICIT IMPLICIT COORDINATOR UNATTRIBUTED }
+
+"""One line of a usage report: one model, one hosting, one context band."""
+input SessionUsageLineInput {
+  model: String
+  hosting: SessionUsageHosting
+  contextBand: String!
+  requests: Int!
+  inputTokens: Long!
+  outputTokens: Long!
+  cacheReadTokens: Long
+  cacheWriteTokens: Long
+  reasoningTokens: Long
+  maxRequestContextTokens: Long
+  minRequestContextTokens: Long
+  reportedCostMicros: Long
+}
+
+input SessionUsageReportInput {
+  sessionUuid: ID
+  clientSessionId: String
+  """Monotonic per session; the transcript byte offset in the CLI, so 64-bit."""
+  clientSeq: Long!
+  source: SessionUsageSource!
+  windowStart: DateTime
+  windowEnd: DateTime
+  turns: Int
+  toolCalls: Int
+  wallSeconds: Int
+  reasoningLevel: String
+  taskUuid: ID
+  raw: Object
+  lines: [SessionUsageLineInput!]!
+}
+
+type SessionUsageAck {
+  accepted: Int!
+  duplicates: Int!
+  """One message per line that could not be filed, with the reason."""
+  refused: [String!]!
+  attribution: SessionUsageAttribution!
+  task: ID
+}

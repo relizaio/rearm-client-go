@@ -80,6 +80,17 @@ mutation SessionTouchProgrammatic ($sessionUuid: ID!) {
 				}
 			}
 
+# from rearm-cli agentUsage.go
+mutation SessionReportUsageProgrammatic ($input: SessionUsageReportInput!) {
+				sessionReportUsageProgrammatic(input: $input) {
+					accepted
+					duplicates
+					refused
+					attribution
+					task
+				}
+			}
+
 # from rearm-cli agent.go
 mutation SessionCloseProgrammatic ($sessionUuid: ID!) {
 				sessionCloseProgrammatic(sessionUuid: $sessionUuid) {

@@ -15115,6 +15115,58 @@ func (v *SessionProgrammaticSessionProgrammaticSessionReleasesRelease) GetLifecy
 	return v.Lifecycle
 }
 
+// SessionReportUsageProgrammaticResponse is returned by SessionReportUsageProgrammatic on success.
+type SessionReportUsageProgrammaticResponse struct {
+	// Report what the session consumed since its last report. One report carries
+	// several lines: a delta may span models and may cross a pricing threshold, and
+	// each line becomes one row that prices under exactly one entry.
+	//
+	// Idempotent on (session, clientSeq, model, hosting, contextBand): a retried
+	// delta inserts nothing and reports duplicates. A clientSeq below the session's
+	// high-water mark is refused.
+	SessionReportUsageProgrammatic *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck `json:"sessionReportUsageProgrammatic"`
+}
+
+// GetSessionReportUsageProgrammatic returns SessionReportUsageProgrammaticResponse.SessionReportUsageProgrammatic, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticResponse) GetSessionReportUsageProgrammatic() *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck {
+	return v.SessionReportUsageProgrammatic
+}
+
+// SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck includes the requested fields of the GraphQL type SessionUsageAck.
+type SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck struct {
+	Accepted   int `json:"accepted"`
+	Duplicates int `json:"duplicates"`
+	// One message per line that could not be filed, with the reason.
+	Refused     []string                `json:"refused"`
+	Attribution SessionUsageAttribution `json:"attribution"`
+	Task        *string                 `json:"task"`
+}
+
+// GetAccepted returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Accepted, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetAccepted() int {
+	return v.Accepted
+}
+
+// GetDuplicates returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Duplicates, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetDuplicates() int {
+	return v.Duplicates
+}
+
+// GetRefused returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Refused, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetRefused() []string {
+	return v.Refused
+}
+
+// GetAttribution returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Attribution, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetAttribution() SessionUsageAttribution {
+	return v.Attribution
+}
+
+// GetTask returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Task, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetTask() *string {
+	return v.Task
+}
+
 type SessionStatus string
 
 const (
@@ -15169,6 +15221,169 @@ func (v *SessionTouchProgrammaticSessionTouchProgrammaticSession) GetStatus() *S
 // GetLastActivityAt returns SessionTouchProgrammaticSessionTouchProgrammaticSession.LastActivityAt, and is useful for accessing the field via an interface.
 func (v *SessionTouchProgrammaticSessionTouchProgrammaticSession) GetLastActivityAt() *string {
 	return v.LastActivityAt
+}
+
+// How a usage row found its task; the answer changes what the number means.
+type SessionUsageAttribution string
+
+const (
+	SessionUsageAttributionExplicit     SessionUsageAttribution = "EXPLICIT"
+	SessionUsageAttributionImplicit     SessionUsageAttribution = "IMPLICIT"
+	SessionUsageAttributionCoordinator  SessionUsageAttribution = "COORDINATOR"
+	SessionUsageAttributionUnattributed SessionUsageAttribution = "UNATTRIBUTED"
+)
+
+var AllSessionUsageAttribution = []SessionUsageAttribution{
+	SessionUsageAttributionExplicit,
+	SessionUsageAttributionImplicit,
+	SessionUsageAttributionCoordinator,
+	SessionUsageAttributionUnattributed,
+}
+
+// Where a model was served from. Not an identity dimension -- the catalogue holds
+// one row per model and the Bedrock / Vertex / Azure forms resolve onto it -- but a
+// pricing one, because the same model bills differently per provider.
+type SessionUsageHosting string
+
+const (
+	SessionUsageHostingDirect  SessionUsageHosting = "DIRECT"
+	SessionUsageHostingBedrock SessionUsageHosting = "BEDROCK"
+	SessionUsageHostingVertex  SessionUsageHosting = "VERTEX"
+	SessionUsageHostingAzure   SessionUsageHosting = "AZURE"
+	SessionUsageHostingOther   SessionUsageHosting = "OTHER"
+)
+
+var AllSessionUsageHosting = []SessionUsageHosting{
+	SessionUsageHostingDirect,
+	SessionUsageHostingBedrock,
+	SessionUsageHostingVertex,
+	SessionUsageHostingAzure,
+	SessionUsageHostingOther,
+}
+
+// One line of a usage report: one model, one hosting, one context band.
+type SessionUsageLineInput struct {
+	Model                   *string              `json:"model"`
+	Hosting                 *SessionUsageHosting `json:"hosting"`
+	ContextBand             string               `json:"contextBand"`
+	Requests                int                  `json:"requests"`
+	InputTokens             int64                `json:"inputTokens"`
+	OutputTokens            int64                `json:"outputTokens"`
+	CacheReadTokens         *int64               `json:"cacheReadTokens"`
+	CacheWriteTokens        *int64               `json:"cacheWriteTokens"`
+	ReasoningTokens         *int64               `json:"reasoningTokens"`
+	MaxRequestContextTokens *int64               `json:"maxRequestContextTokens"`
+	MinRequestContextTokens *int64               `json:"minRequestContextTokens"`
+	ReportedCostMicros      *int64               `json:"reportedCostMicros"`
+}
+
+// GetModel returns SessionUsageLineInput.Model, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetModel() *string { return v.Model }
+
+// GetHosting returns SessionUsageLineInput.Hosting, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetHosting() *SessionUsageHosting { return v.Hosting }
+
+// GetContextBand returns SessionUsageLineInput.ContextBand, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetContextBand() string { return v.ContextBand }
+
+// GetRequests returns SessionUsageLineInput.Requests, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetRequests() int { return v.Requests }
+
+// GetInputTokens returns SessionUsageLineInput.InputTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetInputTokens() int64 { return v.InputTokens }
+
+// GetOutputTokens returns SessionUsageLineInput.OutputTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetOutputTokens() int64 { return v.OutputTokens }
+
+// GetCacheReadTokens returns SessionUsageLineInput.CacheReadTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetCacheReadTokens() *int64 { return v.CacheReadTokens }
+
+// GetCacheWriteTokens returns SessionUsageLineInput.CacheWriteTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetCacheWriteTokens() *int64 { return v.CacheWriteTokens }
+
+// GetReasoningTokens returns SessionUsageLineInput.ReasoningTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetReasoningTokens() *int64 { return v.ReasoningTokens }
+
+// GetMaxRequestContextTokens returns SessionUsageLineInput.MaxRequestContextTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetMaxRequestContextTokens() *int64 { return v.MaxRequestContextTokens }
+
+// GetMinRequestContextTokens returns SessionUsageLineInput.MinRequestContextTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetMinRequestContextTokens() *int64 { return v.MinRequestContextTokens }
+
+// GetReportedCostMicros returns SessionUsageLineInput.ReportedCostMicros, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetReportedCostMicros() *int64 { return v.ReportedCostMicros }
+
+type SessionUsageReportInput struct {
+	SessionUuid     *string `json:"sessionUuid"`
+	ClientSessionId *string `json:"clientSessionId"`
+	// Monotonic per session; the transcript byte offset in the CLI, so 64-bit.
+	ClientSeq      int64                    `json:"clientSeq"`
+	Source         SessionUsageSource       `json:"source"`
+	WindowStart    *string                  `json:"windowStart"`
+	WindowEnd      *string                  `json:"windowEnd"`
+	Turns          *int                     `json:"turns"`
+	ToolCalls      *int                     `json:"toolCalls"`
+	WallSeconds    *int                     `json:"wallSeconds"`
+	ReasoningLevel *string                  `json:"reasoningLevel"`
+	TaskUuid       *string                  `json:"taskUuid"`
+	Raw            *json.RawMessage         `json:"raw"`
+	Lines          []*SessionUsageLineInput `json:"lines,omitempty"`
+}
+
+// GetSessionUuid returns SessionUsageReportInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetSessionUuid() *string { return v.SessionUuid }
+
+// GetClientSessionId returns SessionUsageReportInput.ClientSessionId, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetClientSessionId() *string { return v.ClientSessionId }
+
+// GetClientSeq returns SessionUsageReportInput.ClientSeq, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetClientSeq() int64 { return v.ClientSeq }
+
+// GetSource returns SessionUsageReportInput.Source, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetSource() SessionUsageSource { return v.Source }
+
+// GetWindowStart returns SessionUsageReportInput.WindowStart, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetWindowStart() *string { return v.WindowStart }
+
+// GetWindowEnd returns SessionUsageReportInput.WindowEnd, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetWindowEnd() *string { return v.WindowEnd }
+
+// GetTurns returns SessionUsageReportInput.Turns, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetTurns() *int { return v.Turns }
+
+// GetToolCalls returns SessionUsageReportInput.ToolCalls, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetToolCalls() *int { return v.ToolCalls }
+
+// GetWallSeconds returns SessionUsageReportInput.WallSeconds, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetWallSeconds() *int { return v.WallSeconds }
+
+// GetReasoningLevel returns SessionUsageReportInput.ReasoningLevel, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetReasoningLevel() *string { return v.ReasoningLevel }
+
+// GetTaskUuid returns SessionUsageReportInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetTaskUuid() *string { return v.TaskUuid }
+
+// GetRaw returns SessionUsageReportInput.Raw, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetRaw() *json.RawMessage { return v.Raw }
+
+// GetLines returns SessionUsageReportInput.Lines, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetLines() []*SessionUsageLineInput { return v.Lines }
+
+// Where a usage report came from, which is also how far it is to be trusted.
+type SessionUsageSource string
+
+const (
+	SessionUsageSourceSelfReported SessionUsageSource = "SELF_REPORTED"
+	SessionUsageSourceTranscript   SessionUsageSource = "TRANSCRIPT"
+	SessionUsageSourceOtel         SessionUsageSource = "OTEL"
+	SessionUsageSourceProvider     SessionUsageSource = "PROVIDER"
+)
+
+var AllSessionUsageSource = []SessionUsageSource{
+	SessionUsageSourceSelfReported,
+	SessionUsageSourceTranscript,
+	SessionUsageSourceOtel,
+	SessionUsageSourceProvider,
 }
 
 // SetInstanceSealedSecretCertResponse is returned by SetInstanceSealedSecretCert on success.
@@ -16547,6 +16762,14 @@ type __SessionProgrammaticInput struct {
 
 // GetSessionUuid returns __SessionProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
 func (v *__SessionProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// __SessionReportUsageProgrammaticInput is used internally by genqlient
+type __SessionReportUsageProgrammaticInput struct {
+	Input *SessionUsageReportInput `json:"input,omitempty"`
+}
+
+// GetInput returns __SessionReportUsageProgrammaticInput.Input, and is useful for accessing the field via an interface.
+func (v *__SessionReportUsageProgrammaticInput) GetInput() *SessionUsageReportInput { return v.Input }
 
 // __SessionTouchProgrammaticInput is used internally by genqlient
 type __SessionTouchProgrammaticInput struct {
@@ -20599,6 +20822,45 @@ func SessionProgrammatic(
 	}
 
 	data_ = &SessionProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by SessionReportUsageProgrammatic.
+const SessionReportUsageProgrammatic_Operation = `
+mutation SessionReportUsageProgrammatic ($input: SessionUsageReportInput!) {
+	sessionReportUsageProgrammatic(input: $input) {
+		accepted
+		duplicates
+		refused
+		attribution
+		task
+	}
+}
+`
+
+// from rearm-cli agentUsage.go
+func SessionReportUsageProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input *SessionUsageReportInput,
+) (data_ *SessionReportUsageProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "SessionReportUsageProgrammatic",
+		Query:  SessionReportUsageProgrammatic_Operation,
+		Variables: &__SessionReportUsageProgrammaticInput{
+			Input: input,
+		},
+	}
+
+	data_ = &SessionReportUsageProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
