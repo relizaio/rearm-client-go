@@ -232,8 +232,24 @@ type Mutation {
   agentTaskCompleteProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
   agentTaskCancelProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
   agentTaskAssignProgrammatic(taskUuid: ID!, sessionUuid: ID!): AgentTaskAssignment
-  agentTaskSignOffProgrammatic(taskUuid: ID!, sessionUuid: ID!, outcome: AgentSignOffOutcome!, note: String): AgentTask
-  agentTaskReturnProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: AgentTaskReturnReason!, description: String): AgentTask
+  """
+  outputs: document releases produced during this hop. A role that declares
+  an output as required cannot sign off without it; the task stays assigned
+  so the refusal lands on the hop that can still fix it.
+  """
+  agentTaskSignOffProgrammatic(taskUuid: ID!, sessionUuid: ID!, outcome: AgentSignOffOutcome!, note: String, outputs: [ID!]): AgentTask
+
+  """A return may carry outputs too, and nothing is required of it."""
+  agentTaskReturnProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: AgentTaskReturnReason!, description: String, outputs: [ID!]): AgentTask
+
+  """
+  Publish a document version: a release of a specification component pointing
+  at bytes already committed in the board's documents repository. Idempotent on
+  (task or component, specification, commit, digest), so a retry after a timeout
+  returns the original release rather than opening a round the repository has no
+  file for.
+  """
+  agentDocumentPublishProgrammatic(input: AgentDocumentPublishInput!): Release
   agentTaskBindExternalRefProgrammatic(taskUuid: ID!, externalRef: String!, sourceUrl: String): AgentTask
   agentTaskLinkPrProgrammatic(taskUuid: ID!, prUrl: String!): AgentTask
 }
@@ -4707,4 +4723,51 @@ type SessionUsageAck {
   refused: [String!]!
   attribution: SessionUsageAttribution!
   task: ID
+}
+
+"""Specification document types a component may carry."""
+enum SpecificationType {
+  CONOPS
+  USE_CASES
+  REQUIREMENTS
+  FUNCTIONS
+  PRODUCT_BREAKDOWN
+  INTERFACES
+  DATA_MODEL
+  ARCHITECTURE
+  DETAILED_DESIGN
+  UX_CONCEPT
+  TEST_PLAN
+  GLOSSARY
+  DECISION_RECORD
+  """One review round of one task. Task-scoped."""
+  REVIEW_FINDINGS
+  """One test run of one task. Task-scoped."""
+  TEST_REPORT
+}
+
+"""What an agent states about a document it has already committed."""
+input AgentDocumentPublishInput {
+  sessionUuid: ID!
+  """Required for TASK-scoped types (REVIEW_FINDINGS, TEST_REPORT)."""
+  taskUuid: ID
+  specification: SpecificationType!
+  """Required for COMPONENT-scoped types: which document series this belongs to."""
+  component: ID
+  """Repo-relative path of the document at the commit below."""
+  path: String!
+  """sha256 of the file at that path."""
+  digest: String!
+  mediaType: String
+  indexPath: String
+  indexDigest: String
+  """The findings index. Required for REVIEW_FINDINGS and TEST_REPORT."""
+  index: Object
+  """HEAD of the documents repository when the files were read."""
+  commit: String!
+  """The documents repository, as a git URI; compared canonically with the board's."""
+  vcsUri: String!
+  commitMessage: String
+  commitDate: DateTime
+  lifecycle: ReleaseLifecycleEnum
 }

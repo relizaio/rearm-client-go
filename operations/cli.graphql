@@ -80,6 +80,15 @@ mutation SessionTouchProgrammatic ($sessionUuid: ID!) {
 				}
 			}
 
+# from rearm-cli agentDoc.go
+mutation AgentDocumentPublishProgrammatic ($input: AgentDocumentPublishInput!) {
+				agentDocumentPublishProgrammatic(input: $input) {
+					uuid
+					version
+					lifecycle
+				}
+			}
+
 # from rearm-cli agentUsage.go
 mutation SessionReportUsageProgrammatic ($input: SessionUsageReportInput!) {
 				sessionReportUsageProgrammatic(input: $input) {

@@ -1447,6 +1447,114 @@ var AllAgentCapability = []AgentCapability{
 	AgentCapabilityPrMerge,
 }
 
+// What an agent states about a document it has already committed.
+type AgentDocumentPublishInput struct {
+	SessionUuid string `json:"sessionUuid"`
+	// Required for TASK-scoped types (REVIEW_FINDINGS, TEST_REPORT).
+	TaskUuid      *string           `json:"taskUuid"`
+	Specification SpecificationType `json:"specification"`
+	// Required for COMPONENT-scoped types: which document series this belongs to.
+	Component *string `json:"component"`
+	// Repo-relative path of the document at the commit below.
+	Path string `json:"path"`
+	// sha256 of the file at that path.
+	Digest      string  `json:"digest"`
+	MediaType   *string `json:"mediaType"`
+	IndexPath   *string `json:"indexPath"`
+	IndexDigest *string `json:"indexDigest"`
+	// The findings index. Required for REVIEW_FINDINGS and TEST_REPORT.
+	Index *json.RawMessage `json:"index"`
+	// HEAD of the documents repository when the files were read.
+	Commit string `json:"commit"`
+	// The documents repository, as a git URI; compared canonically with the board's.
+	VcsUri        string                `json:"vcsUri"`
+	CommitMessage *string               `json:"commitMessage"`
+	CommitDate    *string               `json:"commitDate"`
+	Lifecycle     *ReleaseLifecycleEnum `json:"lifecycle"`
+}
+
+// GetSessionUuid returns AgentDocumentPublishInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetTaskUuid returns AgentDocumentPublishInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetTaskUuid() *string { return v.TaskUuid }
+
+// GetSpecification returns AgentDocumentPublishInput.Specification, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetSpecification() SpecificationType { return v.Specification }
+
+// GetComponent returns AgentDocumentPublishInput.Component, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetComponent() *string { return v.Component }
+
+// GetPath returns AgentDocumentPublishInput.Path, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetPath() string { return v.Path }
+
+// GetDigest returns AgentDocumentPublishInput.Digest, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetDigest() string { return v.Digest }
+
+// GetMediaType returns AgentDocumentPublishInput.MediaType, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetMediaType() *string { return v.MediaType }
+
+// GetIndexPath returns AgentDocumentPublishInput.IndexPath, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetIndexPath() *string { return v.IndexPath }
+
+// GetIndexDigest returns AgentDocumentPublishInput.IndexDigest, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetIndexDigest() *string { return v.IndexDigest }
+
+// GetIndex returns AgentDocumentPublishInput.Index, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetIndex() *json.RawMessage { return v.Index }
+
+// GetCommit returns AgentDocumentPublishInput.Commit, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetCommit() string { return v.Commit }
+
+// GetVcsUri returns AgentDocumentPublishInput.VcsUri, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetVcsUri() string { return v.VcsUri }
+
+// GetCommitMessage returns AgentDocumentPublishInput.CommitMessage, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetCommitMessage() *string { return v.CommitMessage }
+
+// GetCommitDate returns AgentDocumentPublishInput.CommitDate, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetCommitDate() *string { return v.CommitDate }
+
+// GetLifecycle returns AgentDocumentPublishInput.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetLifecycle() *ReleaseLifecycleEnum { return v.Lifecycle }
+
+// AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease includes the requested fields of the GraphQL type Release.
+type AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease struct {
+	Uuid      *string               `json:"uuid"`
+	Version   *string               `json:"version"`
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+}
+
+// GetUuid returns AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetVersion returns AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease.Version, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// AgentDocumentPublishProgrammaticResponse is returned by AgentDocumentPublishProgrammatic on success.
+type AgentDocumentPublishProgrammaticResponse struct {
+	// Publish a document version: a release of a specification component pointing
+	// at bytes already committed in the board's documents repository. Idempotent on
+	// (task or component, specification, commit, digest), so a retry after a timeout
+	// returns the original release rather than opening a round the repository has no
+	// file for.
+	AgentDocumentPublishProgrammatic *AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease `json:"agentDocumentPublishProgrammatic"`
+}
+
+// GetAgentDocumentPublishProgrammatic returns AgentDocumentPublishProgrammaticResponse.AgentDocumentPublishProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishProgrammaticResponse) GetAgentDocumentPublishProgrammatic() *AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease {
+	return v.AgentDocumentPublishProgrammatic
+}
+
 // Conditional human review of this role's sign-offs. Fires only when the role actually signs off. ON_PASS: PASSED sign-offs park ON_HOLD for a human verdict; ON_ANY_SIGNOFF: rejections gate too.
 type AgentHumanGate string
 
@@ -7087,6 +7195,7 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHi
 
 // AgentTaskReturnProgrammaticResponse is returned by AgentTaskReturnProgrammatic on success.
 type AgentTaskReturnProgrammaticResponse struct {
+	// A return may carry outputs too, and nothing is required of it.
 	AgentTaskReturnProgrammatic *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask `json:"agentTaskReturnProgrammatic"`
 }
 
@@ -7739,6 +7848,9 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatus
 
 // AgentTaskSignOffProgrammaticResponse is returned by AgentTaskSignOffProgrammatic on success.
 type AgentTaskSignOffProgrammaticResponse struct {
+	// outputs: document releases produced during this hop. A role that declares
+	// an output as required cannot sign off without it; the task stays assigned
+	// so the refusal lands on the hop that can still fix it.
 	AgentTaskSignOffProgrammatic *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask `json:"agentTaskSignOffProgrammatic"`
 }
 
@@ -15594,6 +15706,47 @@ func (v *SourceCodeEntryInput) GetNotes() *string { return v.Notes }
 // GetArtifacts returns SourceCodeEntryInput.Artifacts, and is useful for accessing the field via an interface.
 func (v *SourceCodeEntryInput) GetArtifacts() []*ArtifactInput { return v.Artifacts }
 
+// Specification document types a component may carry.
+type SpecificationType string
+
+const (
+	SpecificationTypeConops           SpecificationType = "CONOPS"
+	SpecificationTypeUseCases         SpecificationType = "USE_CASES"
+	SpecificationTypeRequirements     SpecificationType = "REQUIREMENTS"
+	SpecificationTypeFunctions        SpecificationType = "FUNCTIONS"
+	SpecificationTypeProductBreakdown SpecificationType = "PRODUCT_BREAKDOWN"
+	SpecificationTypeInterfaces       SpecificationType = "INTERFACES"
+	SpecificationTypeDataModel        SpecificationType = "DATA_MODEL"
+	SpecificationTypeArchitecture     SpecificationType = "ARCHITECTURE"
+	SpecificationTypeDetailedDesign   SpecificationType = "DETAILED_DESIGN"
+	SpecificationTypeUxConcept        SpecificationType = "UX_CONCEPT"
+	SpecificationTypeTestPlan         SpecificationType = "TEST_PLAN"
+	SpecificationTypeGlossary         SpecificationType = "GLOSSARY"
+	SpecificationTypeDecisionRecord   SpecificationType = "DECISION_RECORD"
+	// One review round of one task. Task-scoped.
+	SpecificationTypeReviewFindings SpecificationType = "REVIEW_FINDINGS"
+	// One test run of one task. Task-scoped.
+	SpecificationTypeTestReport SpecificationType = "TEST_REPORT"
+)
+
+var AllSpecificationType = []SpecificationType{
+	SpecificationTypeConops,
+	SpecificationTypeUseCases,
+	SpecificationTypeRequirements,
+	SpecificationTypeFunctions,
+	SpecificationTypeProductBreakdown,
+	SpecificationTypeInterfaces,
+	SpecificationTypeDataModel,
+	SpecificationTypeArchitecture,
+	SpecificationTypeDetailedDesign,
+	SpecificationTypeUxConcept,
+	SpecificationTypeTestPlan,
+	SpecificationTypeGlossary,
+	SpecificationTypeDecisionRecord,
+	SpecificationTypeReviewFindings,
+	SpecificationTypeTestReport,
+}
+
 type Status string
 
 const (
@@ -16080,6 +16233,16 @@ type __AgentBoardProgrammaticInput struct {
 
 // GetBoardUuid returns __AgentBoardProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
 func (v *__AgentBoardProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
+
+// __AgentDocumentPublishProgrammaticInput is used internally by genqlient
+type __AgentDocumentPublishProgrammaticInput struct {
+	Input *AgentDocumentPublishInput `json:"input,omitempty"`
+}
+
+// GetInput returns __AgentDocumentPublishProgrammaticInput.Input, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPublishProgrammaticInput) GetInput() *AgentDocumentPublishInput {
+	return v.Input
+}
 
 // __AgentSessionInboxProgrammaticInput is used internally by genqlient
 type __AgentSessionInboxProgrammaticInput struct {
@@ -17346,6 +17509,43 @@ func AgentBoardsProgrammatic(
 	}
 
 	data_ = &AgentBoardsProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AgentDocumentPublishProgrammatic.
+const AgentDocumentPublishProgrammatic_Operation = `
+mutation AgentDocumentPublishProgrammatic ($input: AgentDocumentPublishInput!) {
+	agentDocumentPublishProgrammatic(input: $input) {
+		uuid
+		version
+		lifecycle
+	}
+}
+`
+
+// from rearm-cli agentDoc.go
+func AgentDocumentPublishProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input *AgentDocumentPublishInput,
+) (data_ *AgentDocumentPublishProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentDocumentPublishProgrammatic",
+		Query:  AgentDocumentPublishProgrammatic_Operation,
+		Variables: &__AgentDocumentPublishProgrammaticInput{
+			Input: input,
+		},
+	}
+
+	data_ = &AgentDocumentPublishProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
