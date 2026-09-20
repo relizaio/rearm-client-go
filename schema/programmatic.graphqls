@@ -287,7 +287,52 @@ type DocumentRef {
   """1-based count of this task's rounds of this type."""
   round: Int
   """The findings index for REVIEW_FINDINGS and TEST_REPORT; absent otherwise."""
-  findings: Object
+  findings: FindingsIndex
+}
+
+"""
+The machine-read half of a review or test document: what was found, how badly it
+matters and whether it is still open. The prose lives in the markdown the release
+points at, under a heading carrying each finding's id.
+"""
+type FindingsIndex {
+  kind: SpecificationType
+  round: Int
+  verdict: FindingsVerdict
+  counts: TestCounts
+  findings: [Finding]
+}
+
+enum FindingsVerdict { PASSED REJECTED }
+
+"""
+Where a finding stands. RESOLVED says the work was done, ACCEPTED says an operator
+took the risk knowingly, WITHDRAWN says the reviewer was wrong. Only OPEN must be
+carried into the next round.
+"""
+enum FindingStatus { OPEN RESOLVED ACCEPTED WITHDRAWN }
+
+type Finding {
+  """Stable within a task across rounds."""
+  id: String
+  """1 highest, at most the organization's level count."""
+  priority: Int
+  status: FindingStatus
+  title: String
+  location: FindingLocation
+  resolvedBy: String
+}
+
+type FindingLocation {
+  path: String
+  line: Int
+  ref: String
+}
+
+type TestCounts {
+  passed: Int
+  failed: Int
+  skipped: Int
 }
 
 type Release {
@@ -737,7 +782,7 @@ type AgentTask {
   ordered by priority. Newest round only: every round carries forward what the
   previous one left open, so the newest is the current state.
   """
-  openFindings: [Object]
+  openFindings: [Finding]
 }
 
 enum AgentTaskStatus {

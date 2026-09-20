@@ -5502,7 +5502,7 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	// Findings still open on this task, from the NEWEST round of each indexed type,
 	// ordered by priority. Newest round only: every round carries forward what the
 	// previous one left open, so the newest is the current state.
-	OpenFindings []*json.RawMessage `json:"openFindings"`
+	OpenFindings []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding `json:"openFindings"`
 }
 
 // GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -5614,7 +5614,7 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetDocuments() []*
 }
 
 // GetOpenFindings returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.OpenFindings, and is useful for accessing the field via an interface.
-func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetOpenFindings() []*json.RawMessage {
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetOpenFindings() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding {
 	return v.OpenFindings
 }
 
@@ -5697,7 +5697,7 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocument
 	Round *int    `json:"round"`
 	Task  *string `json:"task"`
 	// The findings index for REVIEW_FINDINGS and TEST_REPORT; absent otherwise.
-	Findings *json.RawMessage `json:"findings"`
+	Findings *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex `json:"findings"`
 }
 
 // GetSpecification returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Specification, and is useful for accessing the field via an interface.
@@ -5721,8 +5721,133 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocu
 }
 
 // GetFindings returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Findings, and is useful for accessing the field via an interface.
-func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetFindings() *json.RawMessage {
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetFindings() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex {
 	return v.Findings
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex includes the requested fields of the GraphQL type FindingsIndex.
+// The GraphQL type's documentation follows.
+//
+// The machine-read half of a review or test document: what was found, how badly it
+// matters and whether it is still open. The prose lives in the markdown the release
+// points at, under a heading carrying each finding's id.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex struct {
+	Kind     *SpecificationType                                                                                                            `json:"kind"`
+	Round    *int                                                                                                                          `json:"round"`
+	Verdict  *FindingsVerdict                                                                                                              `json:"verdict"`
+	Counts   *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts  `json:"counts"`
+	Findings []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding `json:"findings"`
+}
+
+// GetKind returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetKind() *SpecificationType {
+	return v.Kind
+}
+
+// GetRound returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetRound() *int {
+	return v.Round
+}
+
+// GetVerdict returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Verdict, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetVerdict() *FindingsVerdict {
+	return v.Verdict
+}
+
+// GetCounts returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Counts, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetCounts() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts {
+	return v.Counts
+}
+
+// GetFindings returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Findings, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetFindings() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding {
+	return v.Findings
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts includes the requested fields of the GraphQL type TestCounts.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts struct {
+	Passed  *int `json:"passed"`
+	Failed  *int `json:"failed"`
+	Skipped *int `json:"skipped"`
+}
+
+// GetPassed returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts.Passed, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts) GetPassed() *int {
+	return v.Passed
+}
+
+// GetFailed returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts.Failed, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts) GetFailed() *int {
+	return v.Failed
+}
+
+// GetSkipped returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts.Skipped, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts) GetSkipped() *int {
+	return v.Skipped
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding includes the requested fields of the GraphQL type Finding.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding struct {
+	// Stable within a task across rounds.
+	Id *string `json:"id"`
+	// 1 highest, at most the organization's level count.
+	Priority   *int                                                                                                                                `json:"priority"`
+	Status     *FindingStatus                                                                                                                      `json:"status"`
+	Title      *string                                                                                                                             `json:"title"`
+	Location   *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation `json:"location"`
+	ResolvedBy *string                                                                                                                             `json:"resolvedBy"`
+}
+
+// GetId returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Id, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetId() *string {
+	return v.Id
+}
+
+// GetPriority returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Priority, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetPriority() *int {
+	return v.Priority
+}
+
+// GetStatus returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetStatus() *FindingStatus {
+	return v.Status
+}
+
+// GetTitle returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetTitle() *string {
+	return v.Title
+}
+
+// GetLocation returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Location, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetLocation() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation {
+	return v.Location
+}
+
+// GetResolvedBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.ResolvedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetResolvedBy() *string {
+	return v.ResolvedBy
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation includes the requested fields of the GraphQL type FindingLocation.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation struct {
+	Path *string `json:"path"`
+	Line *int    `json:"line"`
+	Ref  *string `json:"ref"`
+}
+
+// GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetPath() *string {
+	return v.Path
+}
+
+// GetLine returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Line, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetLine() *int {
+	return v.Line
+}
+
+// GetRef returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Ref, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetRef() *string {
+	return v.Ref
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -5764,6 +5889,70 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold) GetHeldBy() *s
 // GetHeldAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding includes the requested fields of the GraphQL type Finding.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding struct {
+	// Stable within a task across rounds.
+	Id *string `json:"id"`
+	// 1 highest, at most the organization's level count.
+	Priority   *int                                                                            `json:"priority"`
+	Status     *FindingStatus                                                                  `json:"status"`
+	Title      *string                                                                         `json:"title"`
+	Location   *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation `json:"location"`
+	ResolvedBy *string                                                                         `json:"resolvedBy"`
+}
+
+// GetId returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.Id, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding) GetId() *string {
+	return v.Id
+}
+
+// GetPriority returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.Priority, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding) GetPriority() *int {
+	return v.Priority
+}
+
+// GetStatus returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding) GetStatus() *FindingStatus {
+	return v.Status
+}
+
+// GetTitle returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding) GetTitle() *string {
+	return v.Title
+}
+
+// GetLocation returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.Location, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding) GetLocation() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation {
+	return v.Location
+}
+
+// GetResolvedBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.ResolvedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding) GetResolvedBy() *string {
+	return v.ResolvedBy
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation includes the requested fields of the GraphQL type FindingLocation.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation struct {
+	Path *string `json:"path"`
+	Line *int    `json:"line"`
+	Ref  *string `json:"ref"`
+}
+
+// GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation) GetPath() *string {
+	return v.Path
+}
+
+// GetLine returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation.Line, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation) GetLine() *int {
+	return v.Line
+}
+
+// GetRef returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation.Ref, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation) GetRef() *string {
+	return v.Ref
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturn includes the requested fields of the GraphQL type AgentTaskReturn.
@@ -12157,6 +12346,37 @@ const (
 var AllFindingAnalyticsParticipation = []FindingAnalyticsParticipation{
 	FindingAnalyticsParticipationIncluded,
 	FindingAnalyticsParticipationExcluded,
+}
+
+// Where a finding stands. RESOLVED says the work was done, ACCEPTED says an operator
+// took the risk knowingly, WITHDRAWN says the reviewer was wrong. Only OPEN must be
+// carried into the next round.
+type FindingStatus string
+
+const (
+	FindingStatusOpen      FindingStatus = "OPEN"
+	FindingStatusResolved  FindingStatus = "RESOLVED"
+	FindingStatusAccepted  FindingStatus = "ACCEPTED"
+	FindingStatusWithdrawn FindingStatus = "WITHDRAWN"
+)
+
+var AllFindingStatus = []FindingStatus{
+	FindingStatusOpen,
+	FindingStatusResolved,
+	FindingStatusAccepted,
+	FindingStatusWithdrawn,
+}
+
+type FindingsVerdict string
+
+const (
+	FindingsVerdictPassed   FindingsVerdict = "PASSED"
+	FindingsVerdictRejected FindingsVerdict = "REJECTED"
+)
+
+var AllFindingsVerdict = []FindingsVerdict{
+	FindingsVerdictPassed,
+	FindingsVerdictRejected,
 }
 
 // GetInstancePropSecretsGetInstancePropSecrets includes the requested fields of the GraphQL type PropSecrets.
@@ -18824,10 +19044,42 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 				path
 				round
 				task
-				findings
+				findings {
+					kind
+					round
+					verdict
+					counts {
+						passed
+						failed
+						skipped
+					}
+					findings {
+						id
+						priority
+						status
+						title
+						location {
+							path
+							line
+							ref
+						}
+						resolvedBy
+					}
+				}
 			}
 		}
-		openFindings
+		openFindings {
+			id
+			priority
+			status
+			title
+			location {
+				path
+				line
+				ref
+			}
+			resolvedBy
+		}
 	}
 }
 `
