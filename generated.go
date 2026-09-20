@@ -468,9 +468,10 @@ type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard 
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
-	// Where this board's documents are written: a plain git URI, any host. Must
-	// correspond to one of sources when compared as canonical URIs.
-	DocumentsRepo *string `json:"documentsRepo"`
+	// Where this board's documents are written, as the repository row it resolves
+	// to. The row is the identity, so a remote written as ssh on one machine and
+	// https on another is the same repository here.
+	DocumentsRepo *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
 	// Per-type path templates inside documentsRepo; empty means the defaults.
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
@@ -519,7 +520,7 @@ func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBo
 }
 
 // GetDocumentsRepo returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
-func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard) GetDocumentsRepo() *string {
+func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard) GetDocumentsRepo() *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository {
 	return v.DocumentsRepo
 }
 
@@ -591,6 +592,22 @@ func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBo
 // GetClaimedAt returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.ClaimedAt, and is useful for accessing the field via an interface.
 func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetClaimedAt() *string {
 	return v.ClaimedAt
+}
+
+// AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository struct {
+	Uuid *string `json:"uuid"`
+	Uri  *string `json:"uri"`
+}
+
+// GetUuid returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetUri returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUri() *string {
+	return v.Uri
 }
 
 // AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -668,9 +685,10 @@ type AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticA
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
-	// Where this board's documents are written: a plain git URI, any host. Must
-	// correspond to one of sources when compared as canonical URIs.
-	DocumentsRepo *string `json:"documentsRepo"`
+	// Where this board's documents are written, as the repository row it resolves
+	// to. The row is the identity, so a remote written as ssh on one machine and
+	// https on another is the same repository here.
+	DocumentsRepo *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
 	// Per-type path templates inside documentsRepo; empty means the defaults.
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
@@ -719,7 +737,7 @@ func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgramma
 }
 
 // GetDocumentsRepo returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
-func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard) GetDocumentsRepo() *string {
+func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard) GetDocumentsRepo() *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository {
 	return v.DocumentsRepo
 }
 
@@ -791,6 +809,22 @@ func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgramma
 // GetClaimedAt returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.ClaimedAt, and is useful for accessing the field via an interface.
 func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetClaimedAt() *string {
 	return v.ClaimedAt
+}
+
+// AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository struct {
+	Uuid *string `json:"uuid"`
+	Uri  *string `json:"uri"`
+}
+
+// GetUuid returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetUri returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUri() *string {
+	return v.Uri
 }
 
 // AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -899,9 +933,10 @@ type AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard st
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
-	// Where this board's documents are written: a plain git URI, any host. Must
-	// correspond to one of sources when compared as canonical URIs.
-	DocumentsRepo *string `json:"documentsRepo"`
+	// Where this board's documents are written, as the repository row it resolves
+	// to. The row is the identity, so a remote written as ssh on one machine and
+	// https on another is the same repository here.
+	DocumentsRepo *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
 	// Per-type path templates inside documentsRepo; empty means the defaults.
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
@@ -950,7 +985,7 @@ func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoar
 }
 
 // GetDocumentsRepo returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
-func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard) GetDocumentsRepo() *string {
+func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard) GetDocumentsRepo() *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository {
 	return v.DocumentsRepo
 }
 
@@ -1022,6 +1057,22 @@ func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoar
 // GetClaimedAt returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.ClaimedAt, and is useful for accessing the field via an interface.
 func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetClaimedAt() *string {
 	return v.ClaimedAt
+}
+
+// AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository struct {
+	Uuid *string `json:"uuid"`
+	Uri  *string `json:"uri"`
+}
+
+// GetUuid returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetUri returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUri() *string {
+	return v.Uri
 }
 
 // AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -1112,9 +1163,10 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
-	// Where this board's documents are written: a plain git URI, any host. Must
-	// correspond to one of sources when compared as canonical URIs.
-	DocumentsRepo *string `json:"documentsRepo"`
+	// Where this board's documents are written, as the repository row it resolves
+	// to. The row is the identity, so a remote written as ssh on one machine and
+	// https on another is the same repository here.
+	DocumentsRepo *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
 	// Per-type path templates inside documentsRepo; empty means the defaults.
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
@@ -1157,7 +1209,7 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetSources() []
 }
 
 // GetDocumentsRepo returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
-func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentsRepo() *string {
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentsRepo() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository {
 	return v.DocumentsRepo
 }
 
@@ -1229,6 +1281,22 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCoordinatorSeatAg
 // GetClaimedAt returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.ClaimedAt, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetClaimedAt() *string {
 	return v.ClaimedAt
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository struct {
+	Uuid *string `json:"uuid"`
+	Uri  *string `json:"uri"`
+}
+
+// GetUuid returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetUri returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUri() *string {
+	return v.Uri
 }
 
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -1319,9 +1387,10 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
-	// Where this board's documents are written: a plain git URI, any host. Must
-	// correspond to one of sources when compared as canonical URIs.
-	DocumentsRepo *string `json:"documentsRepo"`
+	// Where this board's documents are written, as the repository row it resolves
+	// to. The row is the identity, so a remote written as ssh on one machine and
+	// https on another is the same repository here.
+	DocumentsRepo *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
 	// Per-type path templates inside documentsRepo; empty means the defaults.
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
@@ -1364,7 +1433,7 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetSources() 
 }
 
 // GetDocumentsRepo returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
-func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentsRepo() *string {
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentsRepo() *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository {
 	return v.DocumentsRepo
 }
 
@@ -1436,6 +1505,22 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCoordinatorSeat
 // GetClaimedAt returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.ClaimedAt, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetClaimedAt() *string {
 	return v.ClaimedAt
+}
+
+// AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository struct {
+	Uuid *string `json:"uuid"`
+	Uri  *string `json:"uri"`
+}
+
+// GetUuid returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetUri returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUri() *string {
+	return v.Uri
 }
 
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -17376,7 +17461,10 @@ mutation AgentBoardCoordinateProgrammatic ($boardUuid: ID!, $sessionUuid: ID!) {
 		description
 		status
 		sources
-		documentsRepo
+		documentsRepo {
+			uuid
+			uri
+		}
 		documentPaths
 		coordinatorPrompt
 		missingCapabilities
@@ -17441,7 +17529,10 @@ mutation AgentBoardCoordinatorLockProgrammatic ($boardUuid: ID!, $sessionUuid: I
 		description
 		status
 		sources
-		documentsRepo
+		documentsRepo {
+			uuid
+			uri
+		}
 		documentPaths
 		coordinatorPrompt
 		missingCapabilities
@@ -17510,7 +17601,10 @@ mutation AgentBoardPostEventProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $k
 		description
 		status
 		sources
-		documentsRepo
+		documentsRepo {
+			uuid
+			uri
+		}
 		documentPaths
 		coordinatorPrompt
 		missingCapabilities
@@ -17579,7 +17673,10 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		description
 		status
 		sources
-		documentsRepo
+		documentsRepo {
+			uuid
+			uri
+		}
 		documentPaths
 		coordinatorPrompt
 		missingCapabilities
@@ -17642,7 +17739,10 @@ query AgentBoardsProgrammatic {
 		description
 		status
 		sources
-		documentsRepo
+		documentsRepo {
+			uuid
+			uri
+		}
 		documentPaths
 		coordinatorPrompt
 		missingCapabilities

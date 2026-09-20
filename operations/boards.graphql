@@ -4,7 +4,7 @@
 
 query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	uuid org name description status sources
-	documentsRepo documentPaths
+	documentsRepo { uuid uri } documentPaths
 	coordinatorPrompt missingCapabilities
 	events { kind message actor eventAt }
 	lock { level reason lockedBy lockedAt }
@@ -14,7 +14,7 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 
 query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUuid: $boardUuid) {
 	uuid org name description status sources
-	documentsRepo documentPaths
+	documentsRepo { uuid uri } documentPaths
 	coordinatorPrompt missingCapabilities
 	events { kind message actor eventAt }
 	lock { level reason lockedBy lockedAt }
@@ -25,7 +25,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 mutation AgentBoardCoordinateProgrammatic ($boardUuid: ID!, $sessionUuid: ID!) {
 	agentBoardCoordinateProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid) {
 	uuid org name description status sources
-	documentsRepo documentPaths
+	documentsRepo { uuid uri } documentPaths
 	coordinatorPrompt missingCapabilities
 	events { kind message actor eventAt }
 	lock { level reason lockedBy lockedAt }
@@ -36,7 +36,7 @@ mutation AgentBoardCoordinateProgrammatic ($boardUuid: ID!, $sessionUuid: ID!) {
 mutation AgentBoardCoordinatorLockProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $lock: Boolean!, $reason: String) {
 	agentBoardCoordinatorLockProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid, lock: $lock, reason: $reason) {
 	uuid org name description status sources
-	documentsRepo documentPaths
+	documentsRepo { uuid uri } documentPaths
 	coordinatorPrompt missingCapabilities
 	events { kind message actor eventAt }
 	lock { level reason lockedBy lockedAt }
@@ -47,7 +47,7 @@ mutation AgentBoardCoordinatorLockProgrammatic ($boardUuid: ID!, $sessionUuid: I
 mutation AgentBoardPostEventProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $kind: AgentBoardEventKind!, $message: String!) {
 	agentBoardPostEventProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid, kind: $kind, message: $message) {
 	uuid org name description status sources
-	documentsRepo documentPaths
+	documentsRepo { uuid uri } documentPaths
 	coordinatorPrompt missingCapabilities
 	events { kind message actor eventAt }
 	lock { level reason lockedBy lockedAt }

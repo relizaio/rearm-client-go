@@ -643,10 +643,11 @@ type AgentBoard {
   """
   sources: [String]
   """
-  Where this board's documents are written: a plain git URI, any host. Must
-  correspond to one of sources when compared as canonical URIs.
+  Where this board's documents are written, as the repository row it resolves
+  to. The row is the identity, so a remote written as ssh on one machine and
+  https on another is the same repository here.
   """
-  documentsRepo: String
+  documentsRepo: VcsRepository
   """Per-type path templates inside documentsRepo; empty means the defaults."""
   documentPaths: Object
   """
