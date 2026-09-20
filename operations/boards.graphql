@@ -2,12 +2,18 @@
 # Hub-and-spoke distribution: the coordinator holds a singleton session-bound seat,
 # authorizes and orders tasks, and every sign-off or return routes back to it.
 
+# Every actor selection goes through this fragment. genqlient still generates one struct
+# per selection set either way -- the fragment does not collapse those -- but each of them
+# then EMBEDS a single shared ActorFields, so the CLI can format any actor with one helper
+# instead of eleven copies that share no type. That is the whole reason it is here.
+fragment ActorFields on AgentActor { kind uuid name }
+
 query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths
 	coordinatorPrompt missingCapabilities
-	events { kind message actor eventAt }
-	lock { level reason lockedBy lockedAt }
+	events { kind message actor { ...ActorFields } eventAt }
+	lock { level reason lockedBy { ...ActorFields } lockedAt }
 	coordinatorSeat { session agent claimedAt }
 	perAgentWipLimit priorityType createdDate
 } }
@@ -16,8 +22,8 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths
 	coordinatorPrompt missingCapabilities
-	events { kind message actor eventAt }
-	lock { level reason lockedBy lockedAt }
+	events { kind message actor { ...ActorFields } eventAt }
+	lock { level reason lockedBy { ...ActorFields } lockedAt }
 	coordinatorSeat { session agent claimedAt }
 	perAgentWipLimit priorityType createdDate
 } }
@@ -27,8 +33,8 @@ mutation AgentBoardCoordinateProgrammatic ($boardUuid: ID!, $sessionUuid: ID!) {
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths
 	coordinatorPrompt missingCapabilities
-	events { kind message actor eventAt }
-	lock { level reason lockedBy lockedAt }
+	events { kind message actor { ...ActorFields } eventAt }
+	lock { level reason lockedBy { ...ActorFields } lockedAt }
 	coordinatorSeat { session agent claimedAt }
 	perAgentWipLimit priorityType createdDate
 } }
@@ -38,8 +44,8 @@ mutation AgentBoardCoordinatorLockProgrammatic ($boardUuid: ID!, $sessionUuid: I
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths
 	coordinatorPrompt missingCapabilities
-	events { kind message actor eventAt }
-	lock { level reason lockedBy lockedAt }
+	events { kind message actor { ...ActorFields } eventAt }
+	lock { level reason lockedBy { ...ActorFields } lockedAt }
 	coordinatorSeat { session agent claimedAt }
 	perAgentWipLimit priorityType createdDate
 } }
@@ -49,8 +55,8 @@ mutation AgentBoardPostEventProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $k
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths
 	coordinatorPrompt missingCapabilities
-	events { kind message actor eventAt }
-	lock { level reason lockedBy lockedAt }
+	events { kind message actor { ...ActorFields } eventAt }
+	lock { level reason lockedBy { ...ActorFields } lockedAt }
 	coordinatorSeat { session agent claimedAt }
 	perAgentWipLimit priorityType createdDate
 } }
@@ -70,9 +76,9 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 	agentTaskRegisterProgrammatic(input: $input) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -83,9 +89,9 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID) {
 	task {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -98,9 +104,9 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
 	task {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -112,9 +118,9 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -124,9 +130,9 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 	agentTaskReturnProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason, description: $description) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -136,9 +142,9 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -148,9 +154,9 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 	agentTaskHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -160,9 +166,9 @@ mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
 	agentTaskReleaseHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -172,9 +178,9 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 	agentTaskRequireHumanReviewProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -184,9 +190,9 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 	agentTaskOrderProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, orderIndex: $orderIndex) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -196,9 +202,9 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 	agentTaskSplitProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, children: $children) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -208,9 +214,9 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 	agentTaskCompleteProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, note: $note) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -220,9 +226,9 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 	agentTaskCancelProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, note: $note) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -232,9 +238,9 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 	agentTaskBindExternalRefProgrammatic(taskUuid: $taskUuid, externalRef: $externalRef, sourceUrl: $sourceUrl) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -244,9 +250,9 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 	agentTaskLinkPrProgrammatic(taskUuid: $taskUuid, prUrl: $prUrl) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -255,9 +261,9 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $taskUuid) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
@@ -271,9 +277,9 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus) {
 	agentTasksProgrammatic(boardUuid: $boardUuid, status: $status) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor }
