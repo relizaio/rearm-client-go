@@ -269,8 +269,30 @@ type BranchesSpec {
   branches: [BranchSpecEntry!]!
 }
 
+"""
+Pointer from a release to document bytes in a repository, present only on
+releases of specification components. The commit and repository come from the
+release's source code entry, so commit recognition and signature verification
+apply to a document exactly as to code.
+"""
+type DocumentRef {
+  specification: SpecificationType
+  path: String
+  digest: String
+  mediaType: String
+  indexPath: String
+  indexDigest: String
+  task: ID
+  session: ID
+  """1-based count of this task's rounds of this type."""
+  round: Int
+  """The findings index for REVIEW_FINDINGS and TEST_REPORT; absent otherwise."""
+  findings: Object
+}
+
 type Release {
   uuid: ID
+  document: DocumentRef
   version: String
   marketingVersion: String
   status: Status
@@ -621,6 +643,13 @@ type AgentBoard {
   """
   sources: [String]
   """
+  Where this board's documents are written: a plain git URI, any host. Must
+  correspond to one of sources when compared as canonical URIs.
+  """
+  documentsRepo: String
+  """Per-type path templates inside documentsRepo; empty means the defaults."""
+  documentPaths: Object
+  """
   Append-only board notices, newest last (lock transitions auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
   """
   events: [AgentBoardEvent]
@@ -700,6 +729,14 @@ type AgentTask {
   statusHistory: [AgentTaskStatusChange]
   createdDate: DateTime
   completedAt: DateTime
+  """This task's document releases, newest first."""
+  documents: [Release]
+  """
+  Findings still open on this task, from the NEWEST round of each indexed type,
+  ordered by priority. Newest round only: every round carries forward what the
+  previous one left open, so the newest is the current state.
+  """
+  openFindings: [Object]
 }
 
 enum AgentTaskStatus {

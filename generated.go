@@ -468,6 +468,11 @@ type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard 
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
+	// Where this board's documents are written: a plain git URI, any host. Must
+	// correspond to one of sources when compared as canonical URIs.
+	DocumentsRepo *string `json:"documentsRepo"`
+	// Per-type path templates inside documentsRepo; empty means the defaults.
+	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
@@ -511,6 +516,16 @@ func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBo
 // GetSources returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard.Sources, and is useful for accessing the field via an interface.
 func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard) GetSources() []*string {
 	return v.Sources
+}
+
+// GetDocumentsRepo returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard) GetDocumentsRepo() *string {
+	return v.DocumentsRepo
+}
+
+// GetDocumentPaths returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard.DocumentPaths, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard) GetDocumentPaths() *json.RawMessage {
+	return v.DocumentPaths
 }
 
 // GetCoordinatorPrompt returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -653,6 +668,11 @@ type AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticA
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
+	// Where this board's documents are written: a plain git URI, any host. Must
+	// correspond to one of sources when compared as canonical URIs.
+	DocumentsRepo *string `json:"documentsRepo"`
+	// Per-type path templates inside documentsRepo; empty means the defaults.
+	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
@@ -696,6 +716,16 @@ func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgramma
 // GetSources returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard.Sources, and is useful for accessing the field via an interface.
 func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard) GetSources() []*string {
 	return v.Sources
+}
+
+// GetDocumentsRepo returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard) GetDocumentsRepo() *string {
+	return v.DocumentsRepo
+}
+
+// GetDocumentPaths returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard.DocumentPaths, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard) GetDocumentPaths() *json.RawMessage {
+	return v.DocumentPaths
 }
 
 // GetCoordinatorPrompt returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -869,6 +899,11 @@ type AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard st
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
+	// Where this board's documents are written: a plain git URI, any host. Must
+	// correspond to one of sources when compared as canonical URIs.
+	DocumentsRepo *string `json:"documentsRepo"`
+	// Per-type path templates inside documentsRepo; empty means the defaults.
+	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
@@ -912,6 +947,16 @@ func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoar
 // GetSources returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard.Sources, and is useful for accessing the field via an interface.
 func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard) GetSources() []*string {
 	return v.Sources
+}
+
+// GetDocumentsRepo returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
+func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard) GetDocumentsRepo() *string {
+	return v.DocumentsRepo
+}
+
+// GetDocumentPaths returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard.DocumentPaths, and is useful for accessing the field via an interface.
+func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard) GetDocumentPaths() *json.RawMessage {
+	return v.DocumentPaths
 }
 
 // GetCoordinatorPrompt returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -1067,6 +1112,11 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
+	// Where this board's documents are written: a plain git URI, any host. Must
+	// correspond to one of sources when compared as canonical URIs.
+	DocumentsRepo *string `json:"documentsRepo"`
+	// Per-type path templates inside documentsRepo; empty means the defaults.
+	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
@@ -1104,6 +1154,16 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetStatus() *Ag
 // GetSources returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Sources, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetSources() []*string {
 	return v.Sources
+}
+
+// GetDocumentsRepo returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentsRepo() *string {
+	return v.DocumentsRepo
+}
+
+// GetDocumentPaths returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DocumentPaths, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentPaths() *json.RawMessage {
+	return v.DocumentPaths
 }
 
 // GetCoordinatorPrompt returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -1259,6 +1319,11 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
+	// Where this board's documents are written: a plain git URI, any host. Must
+	// correspond to one of sources when compared as canonical URIs.
+	DocumentsRepo *string `json:"documentsRepo"`
+	// Per-type path templates inside documentsRepo; empty means the defaults.
+	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
@@ -1296,6 +1361,16 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetStatus() *
 // GetSources returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Sources, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetSources() []*string {
 	return v.Sources
+}
+
+// GetDocumentsRepo returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentsRepo() *string {
+	return v.DocumentsRepo
+}
+
+// GetDocumentPaths returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DocumentPaths, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentPaths() *json.RawMessage {
+	return v.DocumentPaths
 }
 
 // GetCoordinatorPrompt returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -5337,6 +5412,12 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
+	// This task's document releases, newest first.
+	Documents []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease `json:"documents"`
+	// Findings still open on this task, from the NEWEST round of each indexed type,
+	// ordered by priority. Newest round only: every round carries forward what the
+	// previous one left open, so the newest is the current state.
+	OpenFindings []*json.RawMessage `json:"openFindings"`
 }
 
 // GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -5442,6 +5523,16 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetStatusHistory()
 	return v.StatusHistory
 }
 
+// GetDocuments returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Documents, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetDocuments() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease {
+	return v.Documents
+}
+
+// GetOpenFindings returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.OpenFindings, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetOpenFindings() []*json.RawMessage {
+	return v.OpenFindings
+}
+
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment includes the requested fields of the GraphQL type AgentTaskWorkAssignment.
 // The GraphQL type's documentation follows.
 //
@@ -5477,6 +5568,76 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskW
 // GetPromptVersion returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease includes the requested fields of the GraphQL type Release.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease struct {
+	Uuid      *string                                                                                 `json:"uuid"`
+	Version   *string                                                                                 `json:"version"`
+	Lifecycle *ReleaseLifecycleEnum                                                                   `json:"lifecycle"`
+	Document  *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef `json:"document"`
+}
+
+// GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetVersion returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease.Version, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetDocument returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease.Document, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease) GetDocument() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef {
+	return v.Document
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef includes the requested fields of the GraphQL type DocumentRef.
+// The GraphQL type's documentation follows.
+//
+// Pointer from a release to document bytes in a repository, present only on
+// releases of specification components. The commit and repository come from the
+// release's source code entry, so commit recognition and signature verification
+// apply to a document exactly as to code.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef struct {
+	Specification *SpecificationType `json:"specification"`
+	Path          *string            `json:"path"`
+	// 1-based count of this task's rounds of this type.
+	Round *int    `json:"round"`
+	Task  *string `json:"task"`
+	// The findings index for REVIEW_FINDINGS and TEST_REPORT; absent otherwise.
+	Findings *json.RawMessage `json:"findings"`
+}
+
+// GetSpecification returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetPath() *string {
+	return v.Path
+}
+
+// GetRound returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetRound() *int {
+	return v.Round
+}
+
+// GetTask returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Task, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetTask() *string {
+	return v.Task
+}
+
+// GetFindings returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Findings, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetFindings() *json.RawMessage {
+	return v.Findings
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -17215,6 +17376,8 @@ mutation AgentBoardCoordinateProgrammatic ($boardUuid: ID!, $sessionUuid: ID!) {
 		description
 		status
 		sources
+		documentsRepo
+		documentPaths
 		coordinatorPrompt
 		missingCapabilities
 		events {
@@ -17278,6 +17441,8 @@ mutation AgentBoardCoordinatorLockProgrammatic ($boardUuid: ID!, $sessionUuid: I
 		description
 		status
 		sources
+		documentsRepo
+		documentPaths
 		coordinatorPrompt
 		missingCapabilities
 		events {
@@ -17345,6 +17510,8 @@ mutation AgentBoardPostEventProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $k
 		description
 		status
 		sources
+		documentsRepo
+		documentPaths
 		coordinatorPrompt
 		missingCapabilities
 		events {
@@ -17412,6 +17579,8 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		description
 		status
 		sources
+		documentsRepo
+		documentPaths
 		coordinatorPrompt
 		missingCapabilities
 		events {
@@ -17473,6 +17642,8 @@ query AgentBoardsProgrammatic {
 		description
 		status
 		sources
+		documentsRepo
+		documentPaths
 		coordinatorPrompt
 		missingCapabilities
 		events {
@@ -18540,6 +18711,19 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 			trigger
 			actor
 		}
+		documents {
+			uuid
+			version
+			lifecycle
+			document {
+				specification
+				path
+				round
+				task
+				findings
+			}
+		}
+		openFindings
 	}
 }
 `
