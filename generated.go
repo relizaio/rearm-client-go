@@ -15621,18 +15621,22 @@ var AllSessionUsageHosting = []SessionUsageHosting{
 
 // One line of a usage report: one model, one hosting, one context band.
 type SessionUsageLineInput struct {
-	Model                   *string              `json:"model"`
-	Hosting                 *SessionUsageHosting `json:"hosting"`
-	ContextBand             string               `json:"contextBand"`
-	Requests                int                  `json:"requests"`
-	InputTokens             int64                `json:"inputTokens"`
-	OutputTokens            int64                `json:"outputTokens"`
-	CacheReadTokens         *int64               `json:"cacheReadTokens"`
-	CacheWriteTokens        *int64               `json:"cacheWriteTokens"`
-	ReasoningTokens         *int64               `json:"reasoningTokens"`
-	MaxRequestContextTokens *int64               `json:"maxRequestContextTokens"`
-	MinRequestContextTokens *int64               `json:"minRequestContextTokens"`
-	ReportedCostMicros      *int64               `json:"reportedCostMicros"`
+	Model   *string              `json:"model"`
+	Hosting *SessionUsageHosting `json:"hosting"`
+	// Floor of the pricing band these requests fall in, in tokens: 0 for the base
+	// band, 200000 above the long-context threshold. A number rather than a label,
+	// so it sorts and compares against a pricing entry's contextAboveTokens
+	// directly. Absent means the base band.
+	ContextBand             *int64 `json:"contextBand"`
+	Requests                int    `json:"requests"`
+	InputTokens             int64  `json:"inputTokens"`
+	OutputTokens            int64  `json:"outputTokens"`
+	CacheReadTokens         *int64 `json:"cacheReadTokens"`
+	CacheWriteTokens        *int64 `json:"cacheWriteTokens"`
+	ReasoningTokens         *int64 `json:"reasoningTokens"`
+	MaxRequestContextTokens *int64 `json:"maxRequestContextTokens"`
+	MinRequestContextTokens *int64 `json:"minRequestContextTokens"`
+	ReportedCostMicros      *int64 `json:"reportedCostMicros"`
 }
 
 // GetModel returns SessionUsageLineInput.Model, and is useful for accessing the field via an interface.
@@ -15642,7 +15646,7 @@ func (v *SessionUsageLineInput) GetModel() *string { return v.Model }
 func (v *SessionUsageLineInput) GetHosting() *SessionUsageHosting { return v.Hosting }
 
 // GetContextBand returns SessionUsageLineInput.ContextBand, and is useful for accessing the field via an interface.
-func (v *SessionUsageLineInput) GetContextBand() string { return v.ContextBand }
+func (v *SessionUsageLineInput) GetContextBand() *int64 { return v.ContextBand }
 
 // GetRequests returns SessionUsageLineInput.Requests, and is useful for accessing the field via an interface.
 func (v *SessionUsageLineInput) GetRequests() int { return v.Requests }

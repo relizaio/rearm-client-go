@@ -4725,7 +4725,13 @@ enum SessionUsageAttribution { EXPLICIT IMPLICIT COORDINATOR UNATTRIBUTED }
 input SessionUsageLineInput {
   model: String
   hosting: SessionUsageHosting
-  contextBand: String!
+  """
+  Floor of the pricing band these requests fall in, in tokens: 0 for the base
+  band, 200000 above the long-context threshold. A number rather than a label,
+  so it sorts and compares against a pricing entry's contextAboveTokens
+  directly. Absent means the base band.
+  """
+  contextBand: Long
   requests: Int!
   inputTokens: Long!
   outputTokens: Long!
