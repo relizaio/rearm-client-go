@@ -468,6 +468,12 @@ type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard 
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
+	// Where this board's documents are written, as the repository row it resolves
+	// to. The row is the identity, so a remote written as ssh on one machine and
+	// https on another is the same repository here.
+	DocumentsRepo *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
+	// Per-type path templates inside documentsRepo; empty means the defaults.
+	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
@@ -511,6 +517,16 @@ func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBo
 // GetSources returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard.Sources, and is useful for accessing the field via an interface.
 func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard) GetSources() []*string {
 	return v.Sources
+}
+
+// GetDocumentsRepo returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard) GetDocumentsRepo() *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository {
+	return v.DocumentsRepo
+}
+
+// GetDocumentPaths returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard.DocumentPaths, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard) GetDocumentPaths() *json.RawMessage {
+	return v.DocumentPaths
 }
 
 // GetCoordinatorPrompt returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -576,6 +592,22 @@ func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBo
 // GetClaimedAt returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.ClaimedAt, and is useful for accessing the field via an interface.
 func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetClaimedAt() *string {
 	return v.ClaimedAt
+}
+
+// AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository struct {
+	Uuid *string `json:"uuid"`
+	Uri  *string `json:"uri"`
+}
+
+// GetUuid returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetUri returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUri() *string {
+	return v.Uri
 }
 
 // AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -653,6 +685,12 @@ type AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticA
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
+	// Where this board's documents are written, as the repository row it resolves
+	// to. The row is the identity, so a remote written as ssh on one machine and
+	// https on another is the same repository here.
+	DocumentsRepo *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
+	// Per-type path templates inside documentsRepo; empty means the defaults.
+	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
@@ -696,6 +734,16 @@ func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgramma
 // GetSources returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard.Sources, and is useful for accessing the field via an interface.
 func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard) GetSources() []*string {
 	return v.Sources
+}
+
+// GetDocumentsRepo returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard) GetDocumentsRepo() *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository {
+	return v.DocumentsRepo
+}
+
+// GetDocumentPaths returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard.DocumentPaths, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard) GetDocumentPaths() *json.RawMessage {
+	return v.DocumentPaths
 }
 
 // GetCoordinatorPrompt returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -761,6 +809,22 @@ func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgramma
 // GetClaimedAt returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.ClaimedAt, and is useful for accessing the field via an interface.
 func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetClaimedAt() *string {
 	return v.ClaimedAt
+}
+
+// AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository struct {
+	Uuid *string `json:"uuid"`
+	Uri  *string `json:"uri"`
+}
+
+// GetUuid returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetUri returns AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUri() *string {
+	return v.Uri
 }
 
 // AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -869,6 +933,12 @@ type AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard st
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
+	// Where this board's documents are written, as the repository row it resolves
+	// to. The row is the identity, so a remote written as ssh on one machine and
+	// https on another is the same repository here.
+	DocumentsRepo *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
+	// Per-type path templates inside documentsRepo; empty means the defaults.
+	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
@@ -912,6 +982,16 @@ func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoar
 // GetSources returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard.Sources, and is useful for accessing the field via an interface.
 func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard) GetSources() []*string {
 	return v.Sources
+}
+
+// GetDocumentsRepo returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
+func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard) GetDocumentsRepo() *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository {
+	return v.DocumentsRepo
+}
+
+// GetDocumentPaths returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard.DocumentPaths, and is useful for accessing the field via an interface.
+func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard) GetDocumentPaths() *json.RawMessage {
+	return v.DocumentPaths
 }
 
 // GetCoordinatorPrompt returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -977,6 +1057,22 @@ func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoar
 // GetClaimedAt returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.ClaimedAt, and is useful for accessing the field via an interface.
 func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetClaimedAt() *string {
 	return v.ClaimedAt
+}
+
+// AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository struct {
+	Uuid *string `json:"uuid"`
+	Uri  *string `json:"uri"`
+}
+
+// GetUuid returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetUri returns AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUri() *string {
+	return v.Uri
 }
 
 // AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -1067,6 +1163,12 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
+	// Where this board's documents are written, as the repository row it resolves
+	// to. The row is the identity, so a remote written as ssh on one machine and
+	// https on another is the same repository here.
+	DocumentsRepo *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
+	// Per-type path templates inside documentsRepo; empty means the defaults.
+	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
@@ -1104,6 +1206,16 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetStatus() *Ag
 // GetSources returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Sources, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetSources() []*string {
 	return v.Sources
+}
+
+// GetDocumentsRepo returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentsRepo() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository {
+	return v.DocumentsRepo
+}
+
+// GetDocumentPaths returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DocumentPaths, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentPaths() *json.RawMessage {
+	return v.DocumentPaths
 }
 
 // GetCoordinatorPrompt returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -1169,6 +1281,22 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCoordinatorSeatAg
 // GetClaimedAt returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.ClaimedAt, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetClaimedAt() *string {
 	return v.ClaimedAt
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository struct {
+	Uuid *string `json:"uuid"`
+	Uri  *string `json:"uri"`
+}
+
+// GetUuid returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetUri returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUri() *string {
+	return v.Uri
 }
 
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -1259,6 +1387,12 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
+	// Where this board's documents are written, as the repository row it resolves
+	// to. The row is the identity, so a remote written as ssh on one machine and
+	// https on another is the same repository here.
+	DocumentsRepo *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
+	// Per-type path templates inside documentsRepo; empty means the defaults.
+	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
@@ -1296,6 +1430,16 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetStatus() *
 // GetSources returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Sources, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetSources() []*string {
 	return v.Sources
+}
+
+// GetDocumentsRepo returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentsRepo() *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository {
+	return v.DocumentsRepo
+}
+
+// GetDocumentPaths returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DocumentPaths, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentPaths() *json.RawMessage {
+	return v.DocumentPaths
 }
 
 // GetCoordinatorPrompt returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -1361,6 +1505,22 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCoordinatorSeat
 // GetClaimedAt returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.ClaimedAt, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetClaimedAt() *string {
 	return v.ClaimedAt
+}
+
+// AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository struct {
+	Uuid *string `json:"uuid"`
+	Uri  *string `json:"uri"`
+}
+
+// GetUuid returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetUri returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUri() *string {
+	return v.Uri
 }
 
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -1445,6 +1605,114 @@ var AllAgentCapability = []AgentCapability{
 	AgentCapabilityTrackerWrite,
 	AgentCapabilityCodePush,
 	AgentCapabilityPrMerge,
+}
+
+// What an agent states about a document it has already committed.
+type AgentDocumentPublishInput struct {
+	SessionUuid string `json:"sessionUuid"`
+	// Required for TASK-scoped types (REVIEW_FINDINGS, TEST_REPORT).
+	TaskUuid      *string           `json:"taskUuid"`
+	Specification SpecificationType `json:"specification"`
+	// Required for COMPONENT-scoped types: which document series this belongs to.
+	Component *string `json:"component"`
+	// Repo-relative path of the document at the commit below.
+	Path string `json:"path"`
+	// sha256 of the file at that path.
+	Digest      string  `json:"digest"`
+	MediaType   *string `json:"mediaType"`
+	IndexPath   *string `json:"indexPath"`
+	IndexDigest *string `json:"indexDigest"`
+	// The findings index. Required for REVIEW_FINDINGS and TEST_REPORT.
+	Index *json.RawMessage `json:"index"`
+	// HEAD of the documents repository when the files were read.
+	Commit string `json:"commit"`
+	// The documents repository, as a git URI; compared canonically with the board's.
+	VcsUri        string                `json:"vcsUri"`
+	CommitMessage *string               `json:"commitMessage"`
+	CommitDate    *string               `json:"commitDate"`
+	Lifecycle     *ReleaseLifecycleEnum `json:"lifecycle"`
+}
+
+// GetSessionUuid returns AgentDocumentPublishInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetTaskUuid returns AgentDocumentPublishInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetTaskUuid() *string { return v.TaskUuid }
+
+// GetSpecification returns AgentDocumentPublishInput.Specification, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetSpecification() SpecificationType { return v.Specification }
+
+// GetComponent returns AgentDocumentPublishInput.Component, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetComponent() *string { return v.Component }
+
+// GetPath returns AgentDocumentPublishInput.Path, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetPath() string { return v.Path }
+
+// GetDigest returns AgentDocumentPublishInput.Digest, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetDigest() string { return v.Digest }
+
+// GetMediaType returns AgentDocumentPublishInput.MediaType, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetMediaType() *string { return v.MediaType }
+
+// GetIndexPath returns AgentDocumentPublishInput.IndexPath, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetIndexPath() *string { return v.IndexPath }
+
+// GetIndexDigest returns AgentDocumentPublishInput.IndexDigest, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetIndexDigest() *string { return v.IndexDigest }
+
+// GetIndex returns AgentDocumentPublishInput.Index, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetIndex() *json.RawMessage { return v.Index }
+
+// GetCommit returns AgentDocumentPublishInput.Commit, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetCommit() string { return v.Commit }
+
+// GetVcsUri returns AgentDocumentPublishInput.VcsUri, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetVcsUri() string { return v.VcsUri }
+
+// GetCommitMessage returns AgentDocumentPublishInput.CommitMessage, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetCommitMessage() *string { return v.CommitMessage }
+
+// GetCommitDate returns AgentDocumentPublishInput.CommitDate, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetCommitDate() *string { return v.CommitDate }
+
+// GetLifecycle returns AgentDocumentPublishInput.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetLifecycle() *ReleaseLifecycleEnum { return v.Lifecycle }
+
+// AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease includes the requested fields of the GraphQL type Release.
+type AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease struct {
+	Uuid      *string               `json:"uuid"`
+	Version   *string               `json:"version"`
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+}
+
+// GetUuid returns AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetVersion returns AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease.Version, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// AgentDocumentPublishProgrammaticResponse is returned by AgentDocumentPublishProgrammatic on success.
+type AgentDocumentPublishProgrammaticResponse struct {
+	// Publish a document version: a release of a specification component pointing
+	// at bytes already committed in the board's documents repository. Idempotent on
+	// (task or component, specification, commit, digest), so a retry after a timeout
+	// returns the original release rather than opening a round the repository has no
+	// file for.
+	AgentDocumentPublishProgrammatic *AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease `json:"agentDocumentPublishProgrammatic"`
+}
+
+// GetAgentDocumentPublishProgrammatic returns AgentDocumentPublishProgrammaticResponse.AgentDocumentPublishProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishProgrammaticResponse) GetAgentDocumentPublishProgrammatic() *AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease {
+	return v.AgentDocumentPublishProgrammatic
 }
 
 // Conditional human review of this role's sign-offs. Fires only when the role actually signs off. ON_PASS: PASSED sign-offs park ON_HOLD for a human verdict; ON_ANY_SIGNOFF: rejections gate too.
@@ -5229,6 +5497,12 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
+	// This task's document releases, newest first.
+	Documents []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease `json:"documents"`
+	// Findings still open on this task, from the NEWEST round of each indexed type,
+	// ordered by priority. Newest round only: every round carries forward what the
+	// previous one left open, so the newest is the current state.
+	OpenFindings []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding `json:"openFindings"`
 }
 
 // GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -5334,6 +5608,16 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetStatusHistory()
 	return v.StatusHistory
 }
 
+// GetDocuments returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Documents, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetDocuments() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease {
+	return v.Documents
+}
+
+// GetOpenFindings returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.OpenFindings, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetOpenFindings() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding {
+	return v.OpenFindings
+}
+
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment includes the requested fields of the GraphQL type AgentTaskWorkAssignment.
 // The GraphQL type's documentation follows.
 //
@@ -5369,6 +5653,201 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskW
 // GetPromptVersion returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease includes the requested fields of the GraphQL type Release.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease struct {
+	Uuid      *string                                                                                 `json:"uuid"`
+	Version   *string                                                                                 `json:"version"`
+	Lifecycle *ReleaseLifecycleEnum                                                                   `json:"lifecycle"`
+	Document  *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef `json:"document"`
+}
+
+// GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetVersion returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease.Version, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetDocument returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease.Document, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease) GetDocument() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef {
+	return v.Document
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef includes the requested fields of the GraphQL type DocumentRef.
+// The GraphQL type's documentation follows.
+//
+// Pointer from a release to document bytes in a repository, present only on
+// releases of specification components. The commit and repository come from the
+// release's source code entry, so commit recognition and signature verification
+// apply to a document exactly as to code.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef struct {
+	Specification *SpecificationType `json:"specification"`
+	Path          *string            `json:"path"`
+	// 1-based count of this task's rounds of this type.
+	Round *int    `json:"round"`
+	Task  *string `json:"task"`
+	// The findings index for REVIEW_FINDINGS and TEST_REPORT; absent otherwise.
+	Findings *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex `json:"findings"`
+}
+
+// GetSpecification returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetPath() *string {
+	return v.Path
+}
+
+// GetRound returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetRound() *int {
+	return v.Round
+}
+
+// GetTask returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Task, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetTask() *string {
+	return v.Task
+}
+
+// GetFindings returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Findings, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetFindings() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex {
+	return v.Findings
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex includes the requested fields of the GraphQL type FindingsIndex.
+// The GraphQL type's documentation follows.
+//
+// The machine-read half of a review or test document: what was found, how badly it
+// matters and whether it is still open. The prose lives in the markdown the release
+// points at, under a heading carrying each finding's id.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex struct {
+	Kind     *SpecificationType                                                                                                            `json:"kind"`
+	Round    *int                                                                                                                          `json:"round"`
+	Verdict  *FindingsVerdict                                                                                                              `json:"verdict"`
+	Counts   *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts  `json:"counts"`
+	Findings []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding `json:"findings"`
+}
+
+// GetKind returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetKind() *SpecificationType {
+	return v.Kind
+}
+
+// GetRound returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetRound() *int {
+	return v.Round
+}
+
+// GetVerdict returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Verdict, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetVerdict() *FindingsVerdict {
+	return v.Verdict
+}
+
+// GetCounts returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Counts, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetCounts() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts {
+	return v.Counts
+}
+
+// GetFindings returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Findings, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetFindings() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding {
+	return v.Findings
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts includes the requested fields of the GraphQL type TestCounts.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts struct {
+	Passed  *int `json:"passed"`
+	Failed  *int `json:"failed"`
+	Skipped *int `json:"skipped"`
+}
+
+// GetPassed returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts.Passed, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts) GetPassed() *int {
+	return v.Passed
+}
+
+// GetFailed returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts.Failed, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts) GetFailed() *int {
+	return v.Failed
+}
+
+// GetSkipped returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts.Skipped, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts) GetSkipped() *int {
+	return v.Skipped
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding includes the requested fields of the GraphQL type Finding.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding struct {
+	// Stable within a task across rounds.
+	Id *string `json:"id"`
+	// 1 highest, at most the organization's level count.
+	Priority   *int                                                                                                                                `json:"priority"`
+	Status     *FindingStatus                                                                                                                      `json:"status"`
+	Title      *string                                                                                                                             `json:"title"`
+	Location   *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation `json:"location"`
+	ResolvedBy *string                                                                                                                             `json:"resolvedBy"`
+}
+
+// GetId returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Id, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetId() *string {
+	return v.Id
+}
+
+// GetPriority returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Priority, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetPriority() *int {
+	return v.Priority
+}
+
+// GetStatus returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetStatus() *FindingStatus {
+	return v.Status
+}
+
+// GetTitle returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetTitle() *string {
+	return v.Title
+}
+
+// GetLocation returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Location, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetLocation() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation {
+	return v.Location
+}
+
+// GetResolvedBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.ResolvedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetResolvedBy() *string {
+	return v.ResolvedBy
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation includes the requested fields of the GraphQL type FindingLocation.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation struct {
+	Path *string `json:"path"`
+	Line *int    `json:"line"`
+	Ref  *string `json:"ref"`
+}
+
+// GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetPath() *string {
+	return v.Path
+}
+
+// GetLine returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Line, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetLine() *int {
+	return v.Line
+}
+
+// GetRef returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Ref, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetRef() *string {
+	return v.Ref
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -5410,6 +5889,70 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold) GetHeldBy() *s
 // GetHeldAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding includes the requested fields of the GraphQL type Finding.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding struct {
+	// Stable within a task across rounds.
+	Id *string `json:"id"`
+	// 1 highest, at most the organization's level count.
+	Priority   *int                                                                            `json:"priority"`
+	Status     *FindingStatus                                                                  `json:"status"`
+	Title      *string                                                                         `json:"title"`
+	Location   *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation `json:"location"`
+	ResolvedBy *string                                                                         `json:"resolvedBy"`
+}
+
+// GetId returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.Id, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding) GetId() *string {
+	return v.Id
+}
+
+// GetPriority returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.Priority, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding) GetPriority() *int {
+	return v.Priority
+}
+
+// GetStatus returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding) GetStatus() *FindingStatus {
+	return v.Status
+}
+
+// GetTitle returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding) GetTitle() *string {
+	return v.Title
+}
+
+// GetLocation returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.Location, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding) GetLocation() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation {
+	return v.Location
+}
+
+// GetResolvedBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.ResolvedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding) GetResolvedBy() *string {
+	return v.ResolvedBy
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation includes the requested fields of the GraphQL type FindingLocation.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation struct {
+	Path *string `json:"path"`
+	Line *int    `json:"line"`
+	Ref  *string `json:"ref"`
+}
+
+// GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation) GetPath() *string {
+	return v.Path
+}
+
+// GetLine returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation.Line, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation) GetLine() *int {
+	return v.Line
+}
+
+// GetRef returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation.Ref, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation) GetRef() *string {
+	return v.Ref
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturn includes the requested fields of the GraphQL type AgentTaskReturn.
@@ -7087,6 +7630,7 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHi
 
 // AgentTaskReturnProgrammaticResponse is returned by AgentTaskReturnProgrammatic on success.
 type AgentTaskReturnProgrammaticResponse struct {
+	// A return may carry outputs too, and nothing is required of it.
 	AgentTaskReturnProgrammatic *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask `json:"agentTaskReturnProgrammatic"`
 }
 
@@ -7739,6 +8283,9 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatus
 
 // AgentTaskSignOffProgrammaticResponse is returned by AgentTaskSignOffProgrammatic on success.
 type AgentTaskSignOffProgrammaticResponse struct {
+	// outputs: document releases produced during this hop. A role that declares
+	// an output as required cannot sign off without it; the task stays assigned
+	// so the refusal lands on the hop that can still fix it.
 	AgentTaskSignOffProgrammatic *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask `json:"agentTaskSignOffProgrammatic"`
 }
 
@@ -11801,6 +12348,37 @@ var AllFindingAnalyticsParticipation = []FindingAnalyticsParticipation{
 	FindingAnalyticsParticipationExcluded,
 }
 
+// Where a finding stands. RESOLVED says the work was done, ACCEPTED says an operator
+// took the risk knowingly, WITHDRAWN says the reviewer was wrong. Only OPEN must be
+// carried into the next round.
+type FindingStatus string
+
+const (
+	FindingStatusOpen      FindingStatus = "OPEN"
+	FindingStatusResolved  FindingStatus = "RESOLVED"
+	FindingStatusAccepted  FindingStatus = "ACCEPTED"
+	FindingStatusWithdrawn FindingStatus = "WITHDRAWN"
+)
+
+var AllFindingStatus = []FindingStatus{
+	FindingStatusOpen,
+	FindingStatusResolved,
+	FindingStatusAccepted,
+	FindingStatusWithdrawn,
+}
+
+type FindingsVerdict string
+
+const (
+	FindingsVerdictPassed   FindingsVerdict = "PASSED"
+	FindingsVerdictRejected FindingsVerdict = "REJECTED"
+)
+
+var AllFindingsVerdict = []FindingsVerdict{
+	FindingsVerdictPassed,
+	FindingsVerdictRejected,
+}
+
 // GetInstancePropSecretsGetInstancePropSecrets includes the requested fields of the GraphQL type PropSecrets.
 type GetInstancePropSecretsGetInstancePropSecrets struct {
 	Properties []*GetInstancePropSecretsGetInstancePropSecretsPropertiesKeyValue `json:"properties"`
@@ -15115,6 +15693,58 @@ func (v *SessionProgrammaticSessionProgrammaticSessionReleasesRelease) GetLifecy
 	return v.Lifecycle
 }
 
+// SessionReportUsageProgrammaticResponse is returned by SessionReportUsageProgrammatic on success.
+type SessionReportUsageProgrammaticResponse struct {
+	// Report what the session consumed since its last report. One report carries
+	// several lines: a delta may span models and may cross a pricing threshold, and
+	// each line becomes one row that prices under exactly one entry.
+	//
+	// Idempotent on (session, clientSeq, model, hosting, contextBand): a retried
+	// delta inserts nothing and reports duplicates. A clientSeq below the session's
+	// high-water mark is refused.
+	SessionReportUsageProgrammatic *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck `json:"sessionReportUsageProgrammatic"`
+}
+
+// GetSessionReportUsageProgrammatic returns SessionReportUsageProgrammaticResponse.SessionReportUsageProgrammatic, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticResponse) GetSessionReportUsageProgrammatic() *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck {
+	return v.SessionReportUsageProgrammatic
+}
+
+// SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck includes the requested fields of the GraphQL type SessionUsageAck.
+type SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck struct {
+	Accepted   int `json:"accepted"`
+	Duplicates int `json:"duplicates"`
+	// One message per line that could not be filed, with the reason.
+	Refused     []string                `json:"refused"`
+	Attribution SessionUsageAttribution `json:"attribution"`
+	Task        *string                 `json:"task"`
+}
+
+// GetAccepted returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Accepted, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetAccepted() int {
+	return v.Accepted
+}
+
+// GetDuplicates returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Duplicates, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetDuplicates() int {
+	return v.Duplicates
+}
+
+// GetRefused returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Refused, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetRefused() []string {
+	return v.Refused
+}
+
+// GetAttribution returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Attribution, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetAttribution() SessionUsageAttribution {
+	return v.Attribution
+}
+
+// GetTask returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Task, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetTask() *string {
+	return v.Task
+}
+
 type SessionStatus string
 
 const (
@@ -15169,6 +15799,173 @@ func (v *SessionTouchProgrammaticSessionTouchProgrammaticSession) GetStatus() *S
 // GetLastActivityAt returns SessionTouchProgrammaticSessionTouchProgrammaticSession.LastActivityAt, and is useful for accessing the field via an interface.
 func (v *SessionTouchProgrammaticSessionTouchProgrammaticSession) GetLastActivityAt() *string {
 	return v.LastActivityAt
+}
+
+// How a usage row found its task; the answer changes what the number means.
+type SessionUsageAttribution string
+
+const (
+	SessionUsageAttributionExplicit     SessionUsageAttribution = "EXPLICIT"
+	SessionUsageAttributionImplicit     SessionUsageAttribution = "IMPLICIT"
+	SessionUsageAttributionCoordinator  SessionUsageAttribution = "COORDINATOR"
+	SessionUsageAttributionUnattributed SessionUsageAttribution = "UNATTRIBUTED"
+)
+
+var AllSessionUsageAttribution = []SessionUsageAttribution{
+	SessionUsageAttributionExplicit,
+	SessionUsageAttributionImplicit,
+	SessionUsageAttributionCoordinator,
+	SessionUsageAttributionUnattributed,
+}
+
+// Where a model was served from. Not an identity dimension -- the catalogue holds
+// one row per model and the Bedrock / Vertex / Azure forms resolve onto it -- but a
+// pricing one, because the same model bills differently per provider.
+type SessionUsageHosting string
+
+const (
+	SessionUsageHostingDirect  SessionUsageHosting = "DIRECT"
+	SessionUsageHostingBedrock SessionUsageHosting = "BEDROCK"
+	SessionUsageHostingVertex  SessionUsageHosting = "VERTEX"
+	SessionUsageHostingAzure   SessionUsageHosting = "AZURE"
+	SessionUsageHostingOther   SessionUsageHosting = "OTHER"
+)
+
+var AllSessionUsageHosting = []SessionUsageHosting{
+	SessionUsageHostingDirect,
+	SessionUsageHostingBedrock,
+	SessionUsageHostingVertex,
+	SessionUsageHostingAzure,
+	SessionUsageHostingOther,
+}
+
+// One line of a usage report: one model, one hosting, one context band.
+type SessionUsageLineInput struct {
+	Model   *string              `json:"model"`
+	Hosting *SessionUsageHosting `json:"hosting"`
+	// Floor of the pricing band these requests fall in, in tokens: 0 for the base
+	// band, 200000 above the long-context threshold. A number rather than a label,
+	// so it sorts and compares against a pricing entry's contextAboveTokens
+	// directly. Absent means the base band.
+	ContextBand             *int64 `json:"contextBand"`
+	Requests                int    `json:"requests"`
+	InputTokens             int64  `json:"inputTokens"`
+	OutputTokens            int64  `json:"outputTokens"`
+	CacheReadTokens         *int64 `json:"cacheReadTokens"`
+	CacheWriteTokens        *int64 `json:"cacheWriteTokens"`
+	ReasoningTokens         *int64 `json:"reasoningTokens"`
+	MaxRequestContextTokens *int64 `json:"maxRequestContextTokens"`
+	MinRequestContextTokens *int64 `json:"minRequestContextTokens"`
+	ReportedCostMicros      *int64 `json:"reportedCostMicros"`
+}
+
+// GetModel returns SessionUsageLineInput.Model, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetModel() *string { return v.Model }
+
+// GetHosting returns SessionUsageLineInput.Hosting, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetHosting() *SessionUsageHosting { return v.Hosting }
+
+// GetContextBand returns SessionUsageLineInput.ContextBand, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetContextBand() *int64 { return v.ContextBand }
+
+// GetRequests returns SessionUsageLineInput.Requests, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetRequests() int { return v.Requests }
+
+// GetInputTokens returns SessionUsageLineInput.InputTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetInputTokens() int64 { return v.InputTokens }
+
+// GetOutputTokens returns SessionUsageLineInput.OutputTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetOutputTokens() int64 { return v.OutputTokens }
+
+// GetCacheReadTokens returns SessionUsageLineInput.CacheReadTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetCacheReadTokens() *int64 { return v.CacheReadTokens }
+
+// GetCacheWriteTokens returns SessionUsageLineInput.CacheWriteTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetCacheWriteTokens() *int64 { return v.CacheWriteTokens }
+
+// GetReasoningTokens returns SessionUsageLineInput.ReasoningTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetReasoningTokens() *int64 { return v.ReasoningTokens }
+
+// GetMaxRequestContextTokens returns SessionUsageLineInput.MaxRequestContextTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetMaxRequestContextTokens() *int64 { return v.MaxRequestContextTokens }
+
+// GetMinRequestContextTokens returns SessionUsageLineInput.MinRequestContextTokens, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetMinRequestContextTokens() *int64 { return v.MinRequestContextTokens }
+
+// GetReportedCostMicros returns SessionUsageLineInput.ReportedCostMicros, and is useful for accessing the field via an interface.
+func (v *SessionUsageLineInput) GetReportedCostMicros() *int64 { return v.ReportedCostMicros }
+
+type SessionUsageReportInput struct {
+	SessionUuid     *string `json:"sessionUuid"`
+	ClientSessionId *string `json:"clientSessionId"`
+	// Monotonic per session; the transcript byte offset in the CLI, so 64-bit.
+	ClientSeq      int64                    `json:"clientSeq"`
+	Source         SessionUsageSource       `json:"source"`
+	WindowStart    *string                  `json:"windowStart"`
+	WindowEnd      *string                  `json:"windowEnd"`
+	Turns          *int                     `json:"turns"`
+	ToolCalls      *int                     `json:"toolCalls"`
+	WallSeconds    *int                     `json:"wallSeconds"`
+	ReasoningLevel *string                  `json:"reasoningLevel"`
+	TaskUuid       *string                  `json:"taskUuid"`
+	Raw            *json.RawMessage         `json:"raw"`
+	Lines          []*SessionUsageLineInput `json:"lines,omitempty"`
+}
+
+// GetSessionUuid returns SessionUsageReportInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetSessionUuid() *string { return v.SessionUuid }
+
+// GetClientSessionId returns SessionUsageReportInput.ClientSessionId, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetClientSessionId() *string { return v.ClientSessionId }
+
+// GetClientSeq returns SessionUsageReportInput.ClientSeq, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetClientSeq() int64 { return v.ClientSeq }
+
+// GetSource returns SessionUsageReportInput.Source, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetSource() SessionUsageSource { return v.Source }
+
+// GetWindowStart returns SessionUsageReportInput.WindowStart, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetWindowStart() *string { return v.WindowStart }
+
+// GetWindowEnd returns SessionUsageReportInput.WindowEnd, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetWindowEnd() *string { return v.WindowEnd }
+
+// GetTurns returns SessionUsageReportInput.Turns, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetTurns() *int { return v.Turns }
+
+// GetToolCalls returns SessionUsageReportInput.ToolCalls, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetToolCalls() *int { return v.ToolCalls }
+
+// GetWallSeconds returns SessionUsageReportInput.WallSeconds, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetWallSeconds() *int { return v.WallSeconds }
+
+// GetReasoningLevel returns SessionUsageReportInput.ReasoningLevel, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetReasoningLevel() *string { return v.ReasoningLevel }
+
+// GetTaskUuid returns SessionUsageReportInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetTaskUuid() *string { return v.TaskUuid }
+
+// GetRaw returns SessionUsageReportInput.Raw, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetRaw() *json.RawMessage { return v.Raw }
+
+// GetLines returns SessionUsageReportInput.Lines, and is useful for accessing the field via an interface.
+func (v *SessionUsageReportInput) GetLines() []*SessionUsageLineInput { return v.Lines }
+
+// Where a usage report came from, which is also how far it is to be trusted.
+type SessionUsageSource string
+
+const (
+	SessionUsageSourceSelfReported SessionUsageSource = "SELF_REPORTED"
+	SessionUsageSourceTranscript   SessionUsageSource = "TRANSCRIPT"
+	SessionUsageSourceOtel         SessionUsageSource = "OTEL"
+	SessionUsageSourceProvider     SessionUsageSource = "PROVIDER"
+)
+
+var AllSessionUsageSource = []SessionUsageSource{
+	SessionUsageSourceSelfReported,
+	SessionUsageSourceTranscript,
+	SessionUsageSourceOtel,
+	SessionUsageSourceProvider,
 }
 
 // SetInstanceSealedSecretCertResponse is returned by SetInstanceSealedSecretCert on success.
@@ -15378,6 +16175,47 @@ func (v *SourceCodeEntryInput) GetNotes() *string { return v.Notes }
 
 // GetArtifacts returns SourceCodeEntryInput.Artifacts, and is useful for accessing the field via an interface.
 func (v *SourceCodeEntryInput) GetArtifacts() []*ArtifactInput { return v.Artifacts }
+
+// Specification document types a component may carry.
+type SpecificationType string
+
+const (
+	SpecificationTypeConops           SpecificationType = "CONOPS"
+	SpecificationTypeUseCases         SpecificationType = "USE_CASES"
+	SpecificationTypeRequirements     SpecificationType = "REQUIREMENTS"
+	SpecificationTypeFunctions        SpecificationType = "FUNCTIONS"
+	SpecificationTypeProductBreakdown SpecificationType = "PRODUCT_BREAKDOWN"
+	SpecificationTypeInterfaces       SpecificationType = "INTERFACES"
+	SpecificationTypeDataModel        SpecificationType = "DATA_MODEL"
+	SpecificationTypeArchitecture     SpecificationType = "ARCHITECTURE"
+	SpecificationTypeDetailedDesign   SpecificationType = "DETAILED_DESIGN"
+	SpecificationTypeUxConcept        SpecificationType = "UX_CONCEPT"
+	SpecificationTypeTestPlan         SpecificationType = "TEST_PLAN"
+	SpecificationTypeGlossary         SpecificationType = "GLOSSARY"
+	SpecificationTypeDecisionRecord   SpecificationType = "DECISION_RECORD"
+	// One review round of one task. Task-scoped.
+	SpecificationTypeReviewFindings SpecificationType = "REVIEW_FINDINGS"
+	// One test run of one task. Task-scoped.
+	SpecificationTypeTestReport SpecificationType = "TEST_REPORT"
+)
+
+var AllSpecificationType = []SpecificationType{
+	SpecificationTypeConops,
+	SpecificationTypeUseCases,
+	SpecificationTypeRequirements,
+	SpecificationTypeFunctions,
+	SpecificationTypeProductBreakdown,
+	SpecificationTypeInterfaces,
+	SpecificationTypeDataModel,
+	SpecificationTypeArchitecture,
+	SpecificationTypeDetailedDesign,
+	SpecificationTypeUxConcept,
+	SpecificationTypeTestPlan,
+	SpecificationTypeGlossary,
+	SpecificationTypeDecisionRecord,
+	SpecificationTypeReviewFindings,
+	SpecificationTypeTestReport,
+}
 
 type Status string
 
@@ -15865,6 +16703,16 @@ type __AgentBoardProgrammaticInput struct {
 
 // GetBoardUuid returns __AgentBoardProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
 func (v *__AgentBoardProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
+
+// __AgentDocumentPublishProgrammaticInput is used internally by genqlient
+type __AgentDocumentPublishProgrammaticInput struct {
+	Input *AgentDocumentPublishInput `json:"input,omitempty"`
+}
+
+// GetInput returns __AgentDocumentPublishProgrammaticInput.Input, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPublishProgrammaticInput) GetInput() *AgentDocumentPublishInput {
+	return v.Input
+}
 
 // __AgentSessionInboxProgrammaticInput is used internally by genqlient
 type __AgentSessionInboxProgrammaticInput struct {
@@ -16548,6 +17396,14 @@ type __SessionProgrammaticInput struct {
 // GetSessionUuid returns __SessionProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
 func (v *__SessionProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
 
+// __SessionReportUsageProgrammaticInput is used internally by genqlient
+type __SessionReportUsageProgrammaticInput struct {
+	Input *SessionUsageReportInput `json:"input,omitempty"`
+}
+
+// GetInput returns __SessionReportUsageProgrammaticInput.Input, and is useful for accessing the field via an interface.
+func (v *__SessionReportUsageProgrammaticInput) GetInput() *SessionUsageReportInput { return v.Input }
+
 // __SessionTouchProgrammaticInput is used internally by genqlient
 type __SessionTouchProgrammaticInput struct {
 	SessionUuid string `json:"sessionUuid"`
@@ -16829,6 +17685,11 @@ mutation AgentBoardCoordinateProgrammatic ($boardUuid: ID!, $sessionUuid: ID!) {
 		description
 		status
 		sources
+		documentsRepo {
+			uuid
+			uri
+		}
+		documentPaths
 		coordinatorPrompt
 		missingCapabilities
 		events {
@@ -16892,6 +17753,11 @@ mutation AgentBoardCoordinatorLockProgrammatic ($boardUuid: ID!, $sessionUuid: I
 		description
 		status
 		sources
+		documentsRepo {
+			uuid
+			uri
+		}
+		documentPaths
 		coordinatorPrompt
 		missingCapabilities
 		events {
@@ -16959,6 +17825,11 @@ mutation AgentBoardPostEventProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $k
 		description
 		status
 		sources
+		documentsRepo {
+			uuid
+			uri
+		}
+		documentPaths
 		coordinatorPrompt
 		missingCapabilities
 		events {
@@ -17026,6 +17897,11 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		description
 		status
 		sources
+		documentsRepo {
+			uuid
+			uri
+		}
+		documentPaths
 		coordinatorPrompt
 		missingCapabilities
 		events {
@@ -17087,6 +17963,11 @@ query AgentBoardsProgrammatic {
 		description
 		status
 		sources
+		documentsRepo {
+			uuid
+			uri
+		}
+		documentPaths
 		coordinatorPrompt
 		missingCapabilities
 		events {
@@ -17123,6 +18004,43 @@ func AgentBoardsProgrammatic(
 	}
 
 	data_ = &AgentBoardsProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AgentDocumentPublishProgrammatic.
+const AgentDocumentPublishProgrammatic_Operation = `
+mutation AgentDocumentPublishProgrammatic ($input: AgentDocumentPublishInput!) {
+	agentDocumentPublishProgrammatic(input: $input) {
+		uuid
+		version
+		lifecycle
+	}
+}
+`
+
+// from rearm-cli agentDoc.go
+func AgentDocumentPublishProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input *AgentDocumentPublishInput,
+) (data_ *AgentDocumentPublishProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentDocumentPublishProgrammatic",
+		Query:  AgentDocumentPublishProgrammatic_Operation,
+		Variables: &__AgentDocumentPublishProgrammaticInput{
+			Input: input,
+		},
+	}
+
+	data_ = &AgentDocumentPublishProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -18116,6 +19034,51 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 			at
 			trigger
 			actor
+		}
+		documents {
+			uuid
+			version
+			lifecycle
+			document {
+				specification
+				path
+				round
+				task
+				findings {
+					kind
+					round
+					verdict
+					counts {
+						passed
+						failed
+						skipped
+					}
+					findings {
+						id
+						priority
+						status
+						title
+						location {
+							path
+							line
+							ref
+						}
+						resolvedBy
+					}
+				}
+			}
+		}
+		openFindings {
+			id
+			priority
+			status
+			title
+			location {
+				path
+				line
+				ref
+			}
+			resolvedBy
 		}
 	}
 }
@@ -20599,6 +21562,45 @@ func SessionProgrammatic(
 	}
 
 	data_ = &SessionProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by SessionReportUsageProgrammatic.
+const SessionReportUsageProgrammatic_Operation = `
+mutation SessionReportUsageProgrammatic ($input: SessionUsageReportInput!) {
+	sessionReportUsageProgrammatic(input: $input) {
+		accepted
+		duplicates
+		refused
+		attribution
+		task
+	}
+}
+`
+
+// from rearm-cli agentUsage.go
+func SessionReportUsageProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input *SessionUsageReportInput,
+) (data_ *SessionReportUsageProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "SessionReportUsageProgrammatic",
+		Query:  SessionReportUsageProgrammatic_Operation,
+		Variables: &__SessionReportUsageProgrammaticInput{
+			Input: input,
+		},
+	}
+
+	data_ = &SessionReportUsageProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
