@@ -2408,17 +2408,29 @@ enum AgentBoardStatus {
   ARCHIVED
 }
 
+"""
+Who did something on a board: the identity on a lock, an event, a hold or a human
+sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+"""
+type AgentActor {
+  kind: AgentActorKind
+  uuid: ID
+  name: String
+}
+
+enum AgentActorKind { SESSION USER SYSTEM }
+
 type AgentBoardEvent {
   kind: AgentBoardEventKind
   message: String
-  actor: String
+  actor: AgentActor
   eventAt: DateTime
 }
 
 type AgentBoardLock {
   level: AgentBoardLockLevel
   reason: String
-  lockedBy: String
+  lockedBy: AgentActor
   lockedAt: DateTime
 }
 
@@ -2447,7 +2459,7 @@ type AgentTaskHold {
   """
   gateRole: String
   reason: String
-  heldBy: String
+  heldBy: AgentActor
   heldAt: DateTime
 }
 
@@ -2477,7 +2489,7 @@ type AgentTaskSignOff {
   """
   Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
   """
-  reviewedBy: String
+  reviewedBy: AgentActor
 }
 
 type AgentTaskReturn {
