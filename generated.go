@@ -1991,6 +1991,368 @@ func (v *AgentBoardProgrammaticResponse) GetAgentBoardProgrammatic() *AgentBoard
 	return v.AgentBoardProgrammatic
 }
 
+// AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshot includes the requested fields of the GraphQL type AgentBoardSnapshot.
+// The GraphQL type's documentation follows.
+//
+// Everything an agent needs to see what else is happening on its board, in one read.
+type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshot struct {
+	Board *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotBoardAgentBoard          `json:"board"`
+	Tasks []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot `json:"tasks"`
+}
+
+// GetBoard returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshot.Board, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshot) GetBoard() *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotBoardAgentBoard {
+	return v.Board
+}
+
+// GetTasks returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshot.Tasks, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshot) GetTasks() []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot {
+	return v.Tasks
+}
+
+// AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotBoardAgentBoard includes the requested fields of the GraphQL type AgentBoard.
+type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotBoardAgentBoard struct {
+	Uuid   *string           `json:"uuid"`
+	Name   *string           `json:"name"`
+	Status *AgentBoardStatus `json:"status"`
+}
+
+// GetUuid returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotBoardAgentBoard.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotBoardAgentBoard) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetName returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotBoardAgentBoard.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotBoardAgentBoard) GetName() *string {
+	return v.Name
+}
+
+// GetStatus returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotBoardAgentBoard.Status, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotBoardAgentBoard) GetStatus() *AgentBoardStatus {
+	return v.Status
+}
+
+// AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot includes the requested fields of the GraphQL type AgentTaskSnapshot.
+type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot struct {
+	Task            *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask                  `json:"task"`
+	Holder          *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor               `json:"holder"`
+	HeldSince       *string                                                                                                                             `json:"heldSince"`
+	DependsOn       []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency `json:"dependsOn"`
+	LatestDocuments []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease       `json:"latestDocuments"`
+	WaitingOn       *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame    `json:"waitingOn"`
+	SpentMicros     *int64                                                                                                                              `json:"spentMicros"`
+	BudgetMicros    *int64                                                                                                                              `json:"budgetMicros"`
+}
+
+// GetTask returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot.Task, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot) GetTask() *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask {
+	return v.Task
+}
+
+// GetHolder returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot.Holder, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot) GetHolder() *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor {
+	return v.Holder
+}
+
+// GetHeldSince returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot.HeldSince, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot) GetHeldSince() *string {
+	return v.HeldSince
+}
+
+// GetDependsOn returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot.DependsOn, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot) GetDependsOn() []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency {
+	return v.DependsOn
+}
+
+// GetLatestDocuments returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot.LatestDocuments, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot) GetLatestDocuments() []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease {
+	return v.LatestDocuments
+}
+
+// GetWaitingOn returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot.WaitingOn, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot) GetWaitingOn() *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame {
+	return v.WaitingOn
+}
+
+// GetSpentMicros returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot.SpentMicros, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot) GetSpentMicros() *int64 {
+	return v.SpentMicros
+}
+
+// GetBudgetMicros returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot) GetBudgetMicros() *int64 {
+	return v.BudgetMicros
+}
+
+// AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency includes the requested fields of the GraphQL type AgentTaskDependency.
+type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency struct {
+	Task        *string          `json:"task"`
+	ExternalRef *string          `json:"externalRef"`
+	Title       *string          `json:"title"`
+	Status      *AgentTaskStatus `json:"status"`
+}
+
+// GetTask returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency.Task, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency) GetTask() *string {
+	return v.Task
+}
+
+// GetExternalRef returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency) GetExternalRef() *string {
+	return v.ExternalRef
+}
+
+// GetTitle returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency.Title, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency) GetTitle() *string {
+	return v.Title
+}
+
+// GetStatus returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency.Status, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency) GetStatus() *AgentTaskStatus {
+	return v.Status
+}
+
+// AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human
+// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor) __premarshalJSON() (*__premarshalAgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor, error) {
+	var retval __premarshalAgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease includes the requested fields of the GraphQL type Release.
+type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease struct {
+	Uuid      *string                                                                                                                                        `json:"uuid"`
+	Version   *string                                                                                                                                        `json:"version"`
+	Lifecycle *ReleaseLifecycleEnum                                                                                                                          `json:"lifecycle"`
+	Document  *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsReleaseDocumentDocumentRef `json:"document"`
+}
+
+// GetUuid returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetVersion returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease.Version, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetDocument returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease.Document, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease) GetDocument() *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsReleaseDocumentDocumentRef {
+	return v.Document
+}
+
+// AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsReleaseDocumentDocumentRef includes the requested fields of the GraphQL type DocumentRef.
+// The GraphQL type's documentation follows.
+//
+// Pointer from a release to document bytes in a repository, present only on
+// releases of specification components. The commit and repository come from the
+// release's source code entry, so commit recognition and signature verification
+// apply to a document exactly as to code.
+type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsReleaseDocumentDocumentRef struct {
+	Specification *SpecificationType `json:"specification"`
+	Path          *string            `json:"path"`
+	// 1-based count of this task's rounds of this type.
+	Round *int `json:"round"`
+}
+
+// GetSpecification returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsReleaseDocumentDocumentRef.Specification, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsReleaseDocumentDocumentRef) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetPath returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsReleaseDocumentDocumentRef.Path, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsReleaseDocumentDocumentRef) GetPath() *string {
+	return v.Path
+}
+
+// GetRound returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsReleaseDocumentDocumentRef.Round, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsReleaseDocumentDocumentRef) GetRound() *int {
+	return v.Round
+}
+
+// AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask struct {
+	Uuid        *string          `json:"uuid"`
+	ExternalRef *string          `json:"externalRef"`
+	Title       *string          `json:"title"`
+	Status      *AgentTaskStatus `json:"status"`
+	// Role the task is queued for / worked in; retained as last role until re-authorized.
+	Role *string `json:"role"`
+	// The role config row `role` names, so a reader reaches its configuration without a lookup by name.
+	RoleUuid *string `json:"roleUuid"`
+	// Task level: the coordinator's priority band, served lowest first.
+	Level *int `json:"level"`
+	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
+	OrderIndex *int `json:"orderIndex"`
+}
+
+// GetUuid returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetExternalRef returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetExternalRef() *string {
+	return v.ExternalRef
+}
+
+// GetTitle returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Title, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetTitle() *string {
+	return v.Title
+}
+
+// GetStatus returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetStatus() *AgentTaskStatus {
+	return v.Status
+}
+
+// GetRole returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Role, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetRole() *string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetLevel returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetOrderIndex returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.OrderIndex, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetOrderIndex() *int {
+	return v.OrderIndex
+}
+
+// AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
+// The GraphQL type's documentation follows.
+//
+// One unanswered question: who asked, about what, and who is expected to answer.
+type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame struct {
+	AskingRole       *string `json:"askingRole"`
+	AskingSession    *string `json:"askingSession"`
+	AskingAgent      *string `json:"askingAgent"`
+	QuestionsRelease *string `json:"questionsRelease"`
+	AnsweringRole    *string `json:"answeringRole"`
+	AskedAt          *string `json:"askedAt"`
+}
+
+// GetAskingRole returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame) GetAskingRole() *string {
+	return v.AskingRole
+}
+
+// GetAskingSession returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame.AskingSession, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame) GetAskingSession() *string {
+	return v.AskingSession
+}
+
+// GetAskingAgent returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame.AskingAgent, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame) GetAskingAgent() *string {
+	return v.AskingAgent
+}
+
+// GetQuestionsRelease returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame.QuestionsRelease, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame) GetQuestionsRelease() *string {
+	return v.QuestionsRelease
+}
+
+// GetAnsweringRole returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame.AnsweringRole, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame) GetAnsweringRole() *string {
+	return v.AnsweringRole
+}
+
+// GetAskedAt returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame.AskedAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame) GetAskedAt() *string {
+	return v.AskedAt
+}
+
+// AgentBoardSnapshotProgrammaticResponse is returned by AgentBoardSnapshotProgrammatic on success.
+type AgentBoardSnapshotProgrammaticResponse struct {
+	// Every task on one board with holder, dependencies, documents and what it waits on, in one call.
+	AgentBoardSnapshotProgrammatic *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshot `json:"agentBoardSnapshotProgrammatic"`
+}
+
+// GetAgentBoardSnapshotProgrammatic returns AgentBoardSnapshotProgrammaticResponse.AgentBoardSnapshotProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticResponse) GetAgentBoardSnapshotProgrammatic() *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshot {
+	return v.AgentBoardSnapshotProgrammatic
+}
+
 type AgentBoardStatus string
 
 const (
@@ -2388,19 +2750,20 @@ type AgentDocumentPublishInput struct {
 	Specification SpecificationType `json:"specification"`
 	// Required for COMPONENT-scoped types: which document series this belongs to.
 	Component *string `json:"component"`
-	// Repo-relative path of the document at the commit below.
-	Path string `json:"path"`
-	// sha256 of the file at that path.
-	Digest      string  `json:"digest"`
+	// Repo-relative path. Omit it, with digest, commit and vcsUri, to publish an index alone --
+	// a QUESTIONS round usually has no prose worth committing.
+	Path *string `json:"path"`
+	// sha256 of the file at that path. Required with a path.
+	Digest      *string `json:"digest"`
 	MediaType   *string `json:"mediaType"`
 	IndexPath   *string `json:"indexPath"`
 	IndexDigest *string `json:"indexDigest"`
-	// The findings index. Required for REVIEW_FINDINGS and TEST_REPORT.
+	// The findings index. Required for REVIEW_FINDINGS, TEST_REPORT and QUESTIONS.
 	Index *json.RawMessage `json:"index"`
-	// HEAD of the documents repository when the files were read.
-	Commit string `json:"commit"`
-	// The documents repository, as a git URI; compared canonically with the board's.
-	VcsUri        string                `json:"vcsUri"`
+	// HEAD of the documents repository when the files were read. Required with a path.
+	Commit *string `json:"commit"`
+	// The documents repository, as a git URI. Required with a path.
+	VcsUri        *string               `json:"vcsUri"`
 	CommitMessage *string               `json:"commitMessage"`
 	CommitDate    *string               `json:"commitDate"`
 	Lifecycle     *ReleaseLifecycleEnum `json:"lifecycle"`
@@ -2419,10 +2782,10 @@ func (v *AgentDocumentPublishInput) GetSpecification() SpecificationType { retur
 func (v *AgentDocumentPublishInput) GetComponent() *string { return v.Component }
 
 // GetPath returns AgentDocumentPublishInput.Path, and is useful for accessing the field via an interface.
-func (v *AgentDocumentPublishInput) GetPath() string { return v.Path }
+func (v *AgentDocumentPublishInput) GetPath() *string { return v.Path }
 
 // GetDigest returns AgentDocumentPublishInput.Digest, and is useful for accessing the field via an interface.
-func (v *AgentDocumentPublishInput) GetDigest() string { return v.Digest }
+func (v *AgentDocumentPublishInput) GetDigest() *string { return v.Digest }
 
 // GetMediaType returns AgentDocumentPublishInput.MediaType, and is useful for accessing the field via an interface.
 func (v *AgentDocumentPublishInput) GetMediaType() *string { return v.MediaType }
@@ -2437,10 +2800,10 @@ func (v *AgentDocumentPublishInput) GetIndexDigest() *string { return v.IndexDig
 func (v *AgentDocumentPublishInput) GetIndex() *json.RawMessage { return v.Index }
 
 // GetCommit returns AgentDocumentPublishInput.Commit, and is useful for accessing the field via an interface.
-func (v *AgentDocumentPublishInput) GetCommit() string { return v.Commit }
+func (v *AgentDocumentPublishInput) GetCommit() *string { return v.Commit }
 
 // GetVcsUri returns AgentDocumentPublishInput.VcsUri, and is useful for accessing the field via an interface.
-func (v *AgentDocumentPublishInput) GetVcsUri() string { return v.VcsUri }
+func (v *AgentDocumentPublishInput) GetVcsUri() *string { return v.VcsUri }
 
 // GetCommitMessage returns AgentDocumentPublishInput.CommitMessage, and is useful for accessing the field via an interface.
 func (v *AgentDocumentPublishInput) GetCommitMessage() *string { return v.CommitMessage }
@@ -16957,16 +17320,18 @@ var AllFindingAnalyticsParticipation = []FindingAnalyticsParticipation{
 type FindingStatus string
 
 const (
-	FindingStatusOpen      FindingStatus = "OPEN"
-	FindingStatusResolved  FindingStatus = "RESOLVED"
-	FindingStatusAccepted  FindingStatus = "ACCEPTED"
-	FindingStatusWithdrawn FindingStatus = "WITHDRAWN"
+	FindingStatusOpen           FindingStatus = "OPEN"
+	FindingStatusResolved       FindingStatus = "RESOLVED"
+	FindingStatusAccepted       FindingStatus = "ACCEPTED"
+	FindingStatusPolicyAccepted FindingStatus = "POLICY_ACCEPTED"
+	FindingStatusWithdrawn      FindingStatus = "WITHDRAWN"
 )
 
 var AllFindingStatus = []FindingStatus{
 	FindingStatusOpen,
 	FindingStatusResolved,
 	FindingStatusAccepted,
+	FindingStatusPolicyAccepted,
 	FindingStatusWithdrawn,
 }
 
@@ -20800,6 +21165,8 @@ const (
 	SpecificationTypeReviewFindings SpecificationType = "REVIEW_FINDINGS"
 	// One test run of one task. Task-scoped.
 	SpecificationTypeTestReport SpecificationType = "TEST_REPORT"
+	// Questions one hop asked about one of its inputs; routed to whoever produces that input.
+	SpecificationTypeQuestions SpecificationType = "QUESTIONS"
 )
 
 var AllSpecificationType = []SpecificationType{
@@ -20818,6 +21185,7 @@ var AllSpecificationType = []SpecificationType{
 	SpecificationTypeDecisionRecord,
 	SpecificationTypeReviewFindings,
 	SpecificationTypeTestReport,
+	SpecificationTypeQuestions,
 }
 
 type Status string
@@ -21306,6 +21674,14 @@ type __AgentBoardProgrammaticInput struct {
 
 // GetBoardUuid returns __AgentBoardProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
 func (v *__AgentBoardProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
+
+// __AgentBoardSnapshotProgrammaticInput is used internally by genqlient
+type __AgentBoardSnapshotProgrammaticInput struct {
+	BoardUuid string `json:"boardUuid"`
+}
+
+// GetBoardUuid returns __AgentBoardSnapshotProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentBoardSnapshotProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
 
 // __AgentDocumentPublishProgrammaticInput is used internally by genqlient
 type __AgentDocumentPublishProgrammaticInput struct {
@@ -22581,6 +22957,93 @@ func AgentBoardProgrammatic(
 	}
 
 	data_ = &AgentBoardProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentBoardSnapshotProgrammatic.
+const AgentBoardSnapshotProgrammatic_Operation = `
+query AgentBoardSnapshotProgrammatic ($boardUuid: ID!) {
+	agentBoardSnapshotProgrammatic(boardUuid: $boardUuid) {
+		board {
+			uuid
+			name
+			status
+		}
+		tasks {
+			task {
+				uuid
+				externalRef
+				title
+				status
+				role
+				roleUuid
+				level
+				orderIndex
+			}
+			holder {
+				... ActorFields
+			}
+			heldSince
+			dependsOn {
+				task
+				externalRef
+				title
+				status
+			}
+			latestDocuments {
+				uuid
+				version
+				lifecycle
+				document {
+					specification
+					path
+					round
+				}
+			}
+			waitingOn {
+				askingRole
+				askingSession
+				askingAgent
+				questionsRelease
+				answeringRole
+				askedAt
+			}
+			spentMicros
+			budgetMicros
+		}
+	}
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+`
+
+// The whole board in one read: what everyone is doing, what waits on what, and which questions
+// are outstanding. An agent that needs N calls to learn this does not make them.
+func AgentBoardSnapshotProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+) (data_ *AgentBoardSnapshotProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentBoardSnapshotProgrammatic",
+		Query:  AgentBoardSnapshotProgrammatic_Operation,
+		Variables: &__AgentBoardSnapshotProgrammaticInput{
+			BoardUuid: boardUuid,
+		},
+	}
+
+	data_ = &AgentBoardSnapshotProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
