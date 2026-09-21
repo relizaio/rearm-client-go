@@ -284,3 +284,19 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus) {
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
 } }
+
+# The whole board in one read: what everyone is doing, what waits on what, and which questions
+# are outstanding. An agent that needs N calls to learn this does not make them.
+query AgentBoardSnapshotProgrammatic($boardUuid: ID!) { agentBoardSnapshotProgrammatic(boardUuid: $boardUuid) {
+	board { uuid name status }
+	tasks {
+		task { uuid externalRef title status role roleUuid level orderIndex }
+		holder { ...ActorFields }
+		heldSince
+		dependsOn { task externalRef title status }
+		latestDocuments { uuid version lifecycle document { specification path round } }
+		waitingOn { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+		spentMicros
+		budgetMicros
+	}
+} }

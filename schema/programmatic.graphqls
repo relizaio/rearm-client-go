@@ -77,6 +77,8 @@ type Query {
   Agent-key auth (FREEFORM, personal USER or FEDERATED): the org's boards (coordinator/worker discovery).
   """
   agentBoardsProgrammatic: [AgentBoard]
+  """Every task on one board with holder, dependencies, documents and what it waits on, in one call."""
+  agentBoardSnapshotProgrammatic(boardUuid: ID!): AgentBoardSnapshot
   """
   Agent-key auth: one board (includes coordinatorPrompt and lock state).
   """
@@ -301,6 +303,14 @@ type FindingsIndex {
   verdict: FindingsVerdict
   counts: TestCounts
   findings: [Finding]
+  """The input these items are about, which is what routes them to the role that produces it."""
+  about: FindingsAbout
+}
+
+"""What an index's items are about, and therefore who answers them."""
+type FindingsAbout {
+  specification: SpecificationType
+  release: ID
 }
 
 enum FindingsVerdict { PASSED REJECTED }
@@ -310,7 +320,7 @@ Where a finding stands. RESOLVED says the work was done, ACCEPTED says an operat
 took the risk knowingly, WITHDRAWN says the reviewer was wrong. Only OPEN must be
 carried into the next round.
 """
-enum FindingStatus { OPEN RESOLVED ACCEPTED WITHDRAWN }
+enum FindingStatus { OPEN RESOLVED ACCEPTED POLICY_ACCEPTED WITHDRAWN }
 
 type Finding {
   """Stable within a task across rounds."""
@@ -732,6 +742,12 @@ type AgentTaskAssignment {
 
 type AgentTask {
   uuid: ID
+  """The role config row `role` names, so a reader reaches its configuration without a lookup by name."""
+  roleUuid: ID
+  budgetMicros: Long
+  requiredStrength: Int
+  """Who is waiting on whom, innermost last."""
+  questionStack: [AgentQuestionFrame]
   org: ID
   board: ID
   externalRef: String
@@ -746,6 +762,8 @@ type AgentTask {
   Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
   """
   orderIndex: Int
+  """Task level: the coordinator's priority band, served lowest first."""
+  level: Int
   """
   Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
   """
@@ -2499,6 +2517,40 @@ type AgentTaskReturn {
   reason: AgentTaskReturnReason
   description: String
   returnedAt: DateTime
+}
+
+"""One unanswered question: who asked, about what, and who is expected to answer."""
+type AgentQuestionFrame {
+  askingRole: ID
+  askingSession: ID
+  askingAgent: ID
+  questionsRelease: ID
+  answeringRole: ID
+  askedAt: DateTime
+}
+
+"""Everything an agent needs to see what else is happening on its board, in one read."""
+type AgentBoardSnapshot {
+  board: AgentBoard
+  tasks: [AgentTaskSnapshot]
+}
+
+type AgentTaskSnapshot {
+  task: AgentTask
+  holder: AgentActor
+  heldSince: DateTime
+  dependsOn: [AgentTaskDependency]
+  latestDocuments: [Release]
+  waitingOn: AgentQuestionFrame
+  spentMicros: Long
+  budgetMicros: Long
+}
+
+type AgentTaskDependency {
+  task: ID
+  externalRef: String
+  title: String
+  status: AgentTaskStatus
 }
 
 """
@@ -4865,6 +4917,8 @@ enum SpecificationType {
   REVIEW_FINDINGS
   """One test run of one task. Task-scoped."""
   TEST_REPORT
+  """Questions one hop asked about one of its inputs; routed to whoever produces that input."""
+  QUESTIONS
 }
 
 """What an agent states about a document it has already committed."""
@@ -4875,19 +4929,22 @@ input AgentDocumentPublishInput {
   specification: SpecificationType!
   """Required for COMPONENT-scoped types: which document series this belongs to."""
   component: ID
-  """Repo-relative path of the document at the commit below."""
-  path: String!
-  """sha256 of the file at that path."""
-  digest: String!
+  """
+  Repo-relative path. Omit it, with digest, commit and vcsUri, to publish an index alone --
+  a QUESTIONS round usually has no prose worth committing.
+  """
+  path: String
+  """sha256 of the file at that path. Required with a path."""
+  digest: String
   mediaType: String
   indexPath: String
   indexDigest: String
-  """The findings index. Required for REVIEW_FINDINGS and TEST_REPORT."""
+  """The findings index. Required for REVIEW_FINDINGS, TEST_REPORT and QUESTIONS."""
   index: Object
-  """HEAD of the documents repository when the files were read."""
-  commit: String!
-  """The documents repository, as a git URI; compared canonically with the board's."""
-  vcsUri: String!
+  """HEAD of the documents repository when the files were read. Required with a path."""
+  commit: String
+  """The documents repository, as a git URI. Required with a path."""
+  vcsUri: String
   commitMessage: String
   commitDate: DateTime
   lifecycle: ReleaseLifecycleEnum
