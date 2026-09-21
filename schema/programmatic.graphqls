@@ -2508,8 +2508,28 @@ type AgentTaskStatusChange {
   from: AgentTaskStatus
   to: AgentTaskStatus
   at: DateTime
-  trigger: String
-  actor: ID
+  trigger: AgentStatusTrigger
+  """Who caused it: the session, the human who approved at a gate, or the system on a sweep."""
+  actor: AgentActor
+}
+
+"""What caused a status transition."""
+enum AgentStatusTrigger {
+  REGISTER
+  AUTHORIZE
+  ASSIGN
+  SIGNOFF
+  RETURN
+  COMPLETE
+  CANCEL
+  SPLIT
+  HOLD
+  RELEASE_HOLD
+  HUMAN_GATE
+  HUMAN_APPROVE
+  HUMAN_REJECT
+  HUMAN_SIGNOFF
+  SESSION_CLOSED
 }
 
 """
