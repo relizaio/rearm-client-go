@@ -59,6 +59,7 @@ mutation SessionInitializeProgrammatic ($sessionInit: SessionInitializeInput!) {
 					status
 					title
 					startedAt
+					providerSessions { provider id remoteId reportedAt }
 					policyEvents {
 						policyName
 						kind
@@ -68,6 +69,18 @@ mutation SessionInitializeProgrammatic ($sessionInit: SessionInitializeInput!) {
 						evaluatedAt
 						policy { uuid name cel description enabled severity kind }
 					}
+				}
+			}
+
+# from rearm-cli agent.go
+mutation SessionUpdateMetaProgrammatic ($updateMeta: SessionUpdateMetaInput!) {
+				sessionUpdateMetaProgrammatic(updateMeta: $updateMeta) {
+					uuid
+					clientSessionId
+					status
+					title
+					lastActivityAt
+					providerSessions { provider id remoteId reportedAt }
 				}
 			}
 
@@ -114,6 +127,7 @@ query SessionProgrammatic ($sessionUuid: ID!) {
 				sessionProgrammatic(sessionUuid: $sessionUuid) {
 					uuid clientSessionId status startedAt closedAt lastActivityAt
 					agent title parentSession
+					providerSessions { provider id remoteId reportedAt }
 					artifacts
 					commits
 					policyEvents {
