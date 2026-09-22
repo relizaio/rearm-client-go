@@ -21986,6 +21986,7 @@ type __AgentTaskReturnProgrammaticInput struct {
 	SessionUuid string                `json:"sessionUuid"`
 	Reason      AgentTaskReturnReason `json:"reason"`
 	Description *string               `json:"description"`
+	Outputs     []string              `json:"outputs"`
 }
 
 // GetTaskUuid returns __AgentTaskReturnProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -21999,6 +22000,9 @@ func (v *__AgentTaskReturnProgrammaticInput) GetReason() AgentTaskReturnReason {
 
 // GetDescription returns __AgentTaskReturnProgrammaticInput.Description, and is useful for accessing the field via an interface.
 func (v *__AgentTaskReturnProgrammaticInput) GetDescription() *string { return v.Description }
+
+// GetOutputs returns __AgentTaskReturnProgrammaticInput.Outputs, and is useful for accessing the field via an interface.
+func (v *__AgentTaskReturnProgrammaticInput) GetOutputs() []string { return v.Outputs }
 
 // __AgentTaskRoleConfigSetProgrammaticInput is used internally by genqlient
 type __AgentTaskRoleConfigSetProgrammaticInput struct {
@@ -22032,6 +22036,7 @@ type __AgentTaskSignOffProgrammaticInput struct {
 	SessionUuid string              `json:"sessionUuid"`
 	Outcome     AgentSignOffOutcome `json:"outcome"`
 	Note        *string             `json:"note"`
+	Outputs     []string            `json:"outputs"`
 }
 
 // GetTaskUuid returns __AgentTaskSignOffProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -22045,6 +22050,9 @@ func (v *__AgentTaskSignOffProgrammaticInput) GetOutcome() AgentSignOffOutcome {
 
 // GetNote returns __AgentTaskSignOffProgrammaticInput.Note, and is useful for accessing the field via an interface.
 func (v *__AgentTaskSignOffProgrammaticInput) GetNote() *string { return v.Note }
+
+// GetOutputs returns __AgentTaskSignOffProgrammaticInput.Outputs, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSignOffProgrammaticInput) GetOutputs() []string { return v.Outputs }
 
 // __AgentTaskSplitProgrammaticInput is used internally by genqlient
 type __AgentTaskSplitProgrammaticInput struct {
@@ -24755,8 +24763,8 @@ func AgentTaskRequireHumanReviewProgrammatic(
 
 // The mutation executed by AgentTaskReturnProgrammatic.
 const AgentTaskReturnProgrammatic_Operation = `
-mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: AgentTaskReturnReason!, $description: String) {
-	agentTaskReturnProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason, description: $description) {
+mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: AgentTaskReturnReason!, $description: String, $outputs: [ID!]) {
+	agentTaskReturnProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason, description: $description, outputs: $outputs) {
 		uuid
 		org
 		board
@@ -24838,6 +24846,7 @@ func AgentTaskReturnProgrammatic(
 	sessionUuid string,
 	reason AgentTaskReturnReason,
 	description *string,
+	outputs []string,
 ) (data_ *AgentTaskReturnProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskReturnProgrammatic",
@@ -24847,6 +24856,7 @@ func AgentTaskReturnProgrammatic(
 			SessionUuid: sessionUuid,
 			Reason:      reason,
 			Description: description,
+			Outputs:     outputs,
 		},
 	}
 
@@ -24960,8 +24970,8 @@ func AgentTaskRoleConfigsProgrammatic(
 
 // The mutation executed by AgentTaskSignOffProgrammatic.
 const AgentTaskSignOffProgrammatic_Operation = `
-mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String) {
-	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note) {
+mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!]) {
+	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs) {
 		uuid
 		org
 		board
@@ -25043,6 +25053,7 @@ func AgentTaskSignOffProgrammatic(
 	sessionUuid string,
 	outcome AgentSignOffOutcome,
 	note *string,
+	outputs []string,
 ) (data_ *AgentTaskSignOffProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskSignOffProgrammatic",
@@ -25052,6 +25063,7 @@ func AgentTaskSignOffProgrammatic(
 			SessionUuid: sessionUuid,
 			Outcome:     outcome,
 			Note:        note,
+			Outputs:     outputs,
 		},
 	}
 
