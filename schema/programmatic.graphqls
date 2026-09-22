@@ -687,7 +687,36 @@ type Session {
   session signature's authority.
   """
   modelAssertion: ModelAssertionState!
+  """
+  The agent tool's own sessions this ReARM session ran in -- what joins it back to the
+  conversation and transcript that produced its work. Empty when the client reported none.
+  Not unique either way: one tool session often opens many ReARM sessions, and a ReARM
+  session resumed in a new conversation records both.
+  """
+  providerSessions: [ProviderSession!]
   createdDate: DateTime
+}
+
+"""
+One agent-tool session a ReARM session ran in. See Session.providerSessions.
+"""
+type ProviderSession {
+  """
+  The tool, as the reporting client names it ("claude-code").
+  """
+  provider: String!
+  """
+  The tool's local id for the session -- for Claude Code, its transcript id.
+  """
+  id: String!
+  """
+  The id a hosted surface of the tool knows the session by; null for a purely local run.
+  """
+  remoteId: String
+  """
+  When ReARM first heard of this pairing.
+  """
+  reportedAt: DateTime
 }
 
 type AgentBoard {
@@ -1454,6 +1483,11 @@ input SessionInitializeInput {
   time sessions.
   """
   parentSession: ID
+  """
+  The agent tool's own id for the conversation opening this session, so the ReARM session
+  can be traced back to it. Optional; the rearm CLI fills it in under Claude Code.
+  """
+  providerSession: ProviderSessionInput
 }
 
 """
@@ -1472,6 +1506,32 @@ input SessionUpdateMetaInput {
   uuid: ID!
   title: String
   clientSessionId: String
+  """
+  Record a provider session against an open session -- a conversation that resumes the work
+  reports its own id here. Appends; a repeat of a recorded (provider, id) is a no-op, and may
+  fill in a remoteId the first report lacked.
+  """
+  providerSession: ProviderSessionInput
+}
+
+"""
+The agent tool's own session, as a client reports it. See Session.providerSessions.
+"""
+input ProviderSessionInput {
+  """
+  The tool, as a short lower-case identifier ("claude-code"). Stored lower-cased.
+  """
+  provider: String!
+  """
+  The tool's local id for the session -- for Claude Code, the id its transcript is filed
+  under ($CLAUDE_CODE_SESSION_ID). Printable ASCII, no whitespace, at most 256 characters.
+  """
+  id: String!
+  """
+  The id a hosted surface of the tool knows the session by, when there is one -- for Claude
+  Code, the bridge / web session id (session_...). Same character rules as id.
+  """
+  remoteId: String
 }
 
 """

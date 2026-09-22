@@ -20549,6 +20549,27 @@ func (v *ProvenanceFieldsSourceDeclarativeSource) GetPath() *string { return v.P
 // GetCommit returns ProvenanceFieldsSourceDeclarativeSource.Commit, and is useful for accessing the field via an interface.
 func (v *ProvenanceFieldsSourceDeclarativeSource) GetCommit() *string { return v.Commit }
 
+// The agent tool's own session, as a client reports it. See Session.providerSessions.
+type ProviderSessionInput struct {
+	// The tool, as a short lower-case identifier ("claude-code"). Stored lower-cased.
+	Provider string `json:"provider"`
+	// The tool's local id for the session -- for Claude Code, the id its transcript is filed
+	// under ($CLAUDE_CODE_SESSION_ID). Printable ASCII, no whitespace, at most 256 characters.
+	Id string `json:"id"`
+	// The id a hosted surface of the tool knows the session by, when there is one -- for Claude
+	// Code, the bridge / web session id (session_...). Same character rules as id.
+	RemoteId *string `json:"remoteId"`
+}
+
+// GetProvider returns ProviderSessionInput.Provider, and is useful for accessing the field via an interface.
+func (v *ProviderSessionInput) GetProvider() string { return v.Provider }
+
+// GetId returns ProviderSessionInput.Id, and is useful for accessing the field via an interface.
+func (v *ProviderSessionInput) GetId() string { return v.Id }
+
+// GetRemoteId returns ProviderSessionInput.RemoteId, and is useful for accessing the field via an interface.
+func (v *ProviderSessionInput) GetRemoteId() *string { return v.RemoteId }
+
 // PR metadata supplied by CI alongside an addReleaseProgrammatic call.
 // The caller (rearm-actions or any CI integration) populates these fields
 // from the SCM event context. Identity is opaque string ((targetVcs,
@@ -21109,6 +21130,9 @@ type SessionInitializeInput struct {
 	// so the audit trail threads the related attempts. Null on first-
 	// time sessions.
 	ParentSession *string `json:"parentSession"`
+	// The agent tool's own id for the conversation opening this session, so the ReARM session
+	// can be traced back to it. Optional; the rearm CLI fills it in under Claude Code.
+	ProviderSession *ProviderSessionInput `json:"providerSession,omitempty"`
 }
 
 // GetAgentName returns SessionInitializeInput.AgentName, and is useful for accessing the field via an interface.
@@ -21138,6 +21162,9 @@ func (v *SessionInitializeInput) GetTitle() *string { return v.Title }
 // GetParentSession returns SessionInitializeInput.ParentSession, and is useful for accessing the field via an interface.
 func (v *SessionInitializeInput) GetParentSession() *string { return v.ParentSession }
 
+// GetProviderSession returns SessionInitializeInput.ProviderSession, and is useful for accessing the field via an interface.
+func (v *SessionInitializeInput) GetProviderSession() *ProviderSessionInput { return v.ProviderSession }
+
 // SessionInitializeProgrammaticResponse is returned by SessionInitializeProgrammatic on success.
 type SessionInitializeProgrammaticResponse struct {
 	SessionInitializeProgrammatic *SessionInitializeProgrammaticSessionInitializeProgrammaticSession `json:"sessionInitializeProgrammatic"`
@@ -21166,6 +21193,11 @@ type SessionInitializeProgrammaticSessionInitializeProgrammaticSession struct {
 	Status          *SessionStatus `json:"status"`
 	Title           *string        `json:"title"`
 	StartedAt       *string        `json:"startedAt"`
+	// The agent tool's own sessions this ReARM session ran in -- what joins it back to the
+	// conversation and transcript that produced its work. Empty when the client reported none.
+	// Not unique either way: one tool session often opens many ReARM sessions, and a ReARM
+	// session resumed in a new conversation records both.
+	ProviderSessions []*SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProviderSessionsProviderSession `json:"providerSessions"`
 	// Append-only log of agent-policy evaluations (PR 4). Empty on CE
 	// deployments and on sessions opened under an org with no policies.
 	PolicyEvents []*SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent `json:"policyEvents"`
@@ -21199,6 +21231,11 @@ func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSession) GetT
 // GetStartedAt returns SessionInitializeProgrammaticSessionInitializeProgrammaticSession.StartedAt, and is useful for accessing the field via an interface.
 func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSession) GetStartedAt() *string {
 	return v.StartedAt
+}
+
+// GetProviderSessions returns SessionInitializeProgrammaticSessionInitializeProgrammaticSession.ProviderSessions, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSession) GetProviderSessions() []*SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProviderSessionsProviderSession {
+	return v.ProviderSessions
 }
 
 // GetPolicyEvents returns SessionInitializeProgrammaticSessionInitializeProgrammaticSession.PolicyEvents, and is useful for accessing the field via an interface.
@@ -21322,6 +21359,41 @@ func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicy
 	return v.Kind
 }
 
+// SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProviderSessionsProviderSession includes the requested fields of the GraphQL type ProviderSession.
+// The GraphQL type's documentation follows.
+//
+// One agent-tool session a ReARM session ran in. See Session.providerSessions.
+type SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProviderSessionsProviderSession struct {
+	// The tool, as the reporting client names it ("claude-code").
+	Provider string `json:"provider"`
+	// The tool's local id for the session -- for Claude Code, its transcript id.
+	Id string `json:"id"`
+	// The id a hosted surface of the tool knows the session by; null for a purely local run.
+	RemoteId *string `json:"remoteId"`
+	// When ReARM first heard of this pairing.
+	ReportedAt *string `json:"reportedAt"`
+}
+
+// GetProvider returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProviderSessionsProviderSession.Provider, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProviderSessionsProviderSession) GetProvider() string {
+	return v.Provider
+}
+
+// GetId returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProviderSessionsProviderSession.Id, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProviderSessionsProviderSession) GetId() string {
+	return v.Id
+}
+
+// GetRemoteId returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProviderSessionsProviderSession.RemoteId, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProviderSessionsProviderSession) GetRemoteId() *string {
+	return v.RemoteId
+}
+
+// GetReportedAt returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProviderSessionsProviderSession.ReportedAt, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProviderSessionsProviderSession) GetReportedAt() *string {
+	return v.ReportedAt
+}
+
 // SessionProgrammaticResponse is returned by SessionProgrammatic on success.
 type SessionProgrammaticResponse struct {
 	// FREEFORM-auth read of a single session by uuid. Returns null when
@@ -21362,6 +21434,11 @@ type SessionProgrammaticSessionProgrammaticSession struct {
 	// BLOCKED / CLOSED predecessor, this is that predecessor's uuid.
 	// Null on first-time sessions.
 	ParentSession *string `json:"parentSession"`
+	// The agent tool's own sessions this ReARM session ran in -- what joins it back to the
+	// conversation and transcript that produced its work. Empty when the client reported none.
+	// Not unique either way: one tool session often opens many ReARM sessions, and a ReARM
+	// session resumed in a new conversation records both.
+	ProviderSessions []*SessionProgrammaticSessionProgrammaticSessionProviderSessionsProviderSession `json:"providerSessions"`
 	// Artifact UUIDs attached to this session (reuses rearm.artifacts).
 	Artifacts []*string `json:"artifacts"`
 	// SCE UUIDs attributed to this session via the commit-trailer parser
@@ -21411,6 +21488,11 @@ func (v *SessionProgrammaticSessionProgrammaticSession) GetTitle() *string { ret
 // GetParentSession returns SessionProgrammaticSessionProgrammaticSession.ParentSession, and is useful for accessing the field via an interface.
 func (v *SessionProgrammaticSessionProgrammaticSession) GetParentSession() *string {
 	return v.ParentSession
+}
+
+// GetProviderSessions returns SessionProgrammaticSessionProgrammaticSession.ProviderSessions, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetProviderSessions() []*SessionProgrammaticSessionProgrammaticSessionProviderSessionsProviderSession {
+	return v.ProviderSessions
 }
 
 // GetArtifacts returns SessionProgrammaticSessionProgrammaticSession.Artifacts, and is useful for accessing the field via an interface.
@@ -21548,6 +21630,41 @@ func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPol
 // GetKind returns SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy.Kind, and is useful for accessing the field via an interface.
 func (v *SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEventPolicyAgentPolicy) GetKind() *PolicyKind {
 	return v.Kind
+}
+
+// SessionProgrammaticSessionProgrammaticSessionProviderSessionsProviderSession includes the requested fields of the GraphQL type ProviderSession.
+// The GraphQL type's documentation follows.
+//
+// One agent-tool session a ReARM session ran in. See Session.providerSessions.
+type SessionProgrammaticSessionProgrammaticSessionProviderSessionsProviderSession struct {
+	// The tool, as the reporting client names it ("claude-code").
+	Provider string `json:"provider"`
+	// The tool's local id for the session -- for Claude Code, its transcript id.
+	Id string `json:"id"`
+	// The id a hosted surface of the tool knows the session by; null for a purely local run.
+	RemoteId *string `json:"remoteId"`
+	// When ReARM first heard of this pairing.
+	ReportedAt *string `json:"reportedAt"`
+}
+
+// GetProvider returns SessionProgrammaticSessionProgrammaticSessionProviderSessionsProviderSession.Provider, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionProviderSessionsProviderSession) GetProvider() string {
+	return v.Provider
+}
+
+// GetId returns SessionProgrammaticSessionProgrammaticSessionProviderSessionsProviderSession.Id, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionProviderSessionsProviderSession) GetId() string {
+	return v.Id
+}
+
+// GetRemoteId returns SessionProgrammaticSessionProgrammaticSessionProviderSessionsProviderSession.RemoteId, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionProviderSessionsProviderSession) GetRemoteId() *string {
+	return v.RemoteId
+}
+
+// GetReportedAt returns SessionProgrammaticSessionProgrammaticSessionProviderSessionsProviderSession.ReportedAt, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionProviderSessionsProviderSession) GetReportedAt() *string {
+	return v.ReportedAt
 }
 
 // SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest includes the requested fields of the GraphQL type PullRequest.
@@ -21712,6 +21829,126 @@ func (v *SessionTouchProgrammaticSessionTouchProgrammaticSession) GetStatus() *S
 // GetLastActivityAt returns SessionTouchProgrammaticSessionTouchProgrammaticSession.LastActivityAt, and is useful for accessing the field via an interface.
 func (v *SessionTouchProgrammaticSessionTouchProgrammaticSession) GetLastActivityAt() *string {
 	return v.LastActivityAt
+}
+
+type SessionUpdateMetaInput struct {
+	Uuid            string  `json:"uuid"`
+	Title           *string `json:"title"`
+	ClientSessionId *string `json:"clientSessionId"`
+	// Record a provider session against an open session -- a conversation that resumes the work
+	// reports its own id here. Appends; a repeat of a recorded (provider, id) is a no-op, and may
+	// fill in a remoteId the first report lacked.
+	ProviderSession *ProviderSessionInput `json:"providerSession,omitempty"`
+}
+
+// GetUuid returns SessionUpdateMetaInput.Uuid, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaInput) GetUuid() string { return v.Uuid }
+
+// GetTitle returns SessionUpdateMetaInput.Title, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaInput) GetTitle() *string { return v.Title }
+
+// GetClientSessionId returns SessionUpdateMetaInput.ClientSessionId, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaInput) GetClientSessionId() *string { return v.ClientSessionId }
+
+// GetProviderSession returns SessionUpdateMetaInput.ProviderSession, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaInput) GetProviderSession() *ProviderSessionInput { return v.ProviderSession }
+
+// SessionUpdateMetaProgrammaticResponse is returned by SessionUpdateMetaProgrammatic on success.
+type SessionUpdateMetaProgrammaticResponse struct {
+	SessionUpdateMetaProgrammatic *SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession `json:"sessionUpdateMetaProgrammatic"`
+}
+
+// GetSessionUpdateMetaProgrammatic returns SessionUpdateMetaProgrammaticResponse.SessionUpdateMetaProgrammatic, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaProgrammaticResponse) GetSessionUpdateMetaProgrammatic() *SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession {
+	return v.SessionUpdateMetaProgrammatic
+}
+
+// SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession includes the requested fields of the GraphQL type Session.
+// The GraphQL type's documentation follows.
+//
+// One ROOT Agent invocation. Many concurrent sessions per agent are
+// allowed on the same API key. Sub-agents of the root contribute
+// commits / artifacts to the same session via the commit-trailer
+// attribution path (PR 2).
+type SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession struct {
+	Uuid *string `json:"uuid"`
+	// Agent-supplied natural session id. Defaults to the row uuid when
+	// the agent didn't pick one on initialize. The two-line commit
+	// trailer references this value, not the row uuid.
+	ClientSessionId *string        `json:"clientSessionId"`
+	Status          *SessionStatus `json:"status"`
+	Title           *string        `json:"title"`
+	LastActivityAt  *string        `json:"lastActivityAt"`
+	// The agent tool's own sessions this ReARM session ran in -- what joins it back to the
+	// conversation and transcript that produced its work. Empty when the client reported none.
+	// Not unique either way: one tool session often opens many ReARM sessions, and a ReARM
+	// session resumed in a new conversation records both.
+	ProviderSessions []*SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSessionProviderSessionsProviderSession `json:"providerSessions"`
+}
+
+// GetUuid returns SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession.Uuid, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetClientSessionId returns SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession.ClientSessionId, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession) GetClientSessionId() *string {
+	return v.ClientSessionId
+}
+
+// GetStatus returns SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession.Status, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession) GetStatus() *SessionStatus {
+	return v.Status
+}
+
+// GetTitle returns SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession.Title, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession) GetTitle() *string {
+	return v.Title
+}
+
+// GetLastActivityAt returns SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession.LastActivityAt, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession) GetLastActivityAt() *string {
+	return v.LastActivityAt
+}
+
+// GetProviderSessions returns SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession.ProviderSessions, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSession) GetProviderSessions() []*SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSessionProviderSessionsProviderSession {
+	return v.ProviderSessions
+}
+
+// SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSessionProviderSessionsProviderSession includes the requested fields of the GraphQL type ProviderSession.
+// The GraphQL type's documentation follows.
+//
+// One agent-tool session a ReARM session ran in. See Session.providerSessions.
+type SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSessionProviderSessionsProviderSession struct {
+	// The tool, as the reporting client names it ("claude-code").
+	Provider string `json:"provider"`
+	// The tool's local id for the session -- for Claude Code, its transcript id.
+	Id string `json:"id"`
+	// The id a hosted surface of the tool knows the session by; null for a purely local run.
+	RemoteId *string `json:"remoteId"`
+	// When ReARM first heard of this pairing.
+	ReportedAt *string `json:"reportedAt"`
+}
+
+// GetProvider returns SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSessionProviderSessionsProviderSession.Provider, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSessionProviderSessionsProviderSession) GetProvider() string {
+	return v.Provider
+}
+
+// GetId returns SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSessionProviderSessionsProviderSession.Id, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSessionProviderSessionsProviderSession) GetId() string {
+	return v.Id
+}
+
+// GetRemoteId returns SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSessionProviderSessionsProviderSession.RemoteId, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSessionProviderSessionsProviderSession) GetRemoteId() *string {
+	return v.RemoteId
+}
+
+// GetReportedAt returns SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSessionProviderSessionsProviderSession.ReportedAt, and is useful for accessing the field via an interface.
+func (v *SessionUpdateMetaProgrammaticSessionUpdateMetaProgrammaticSessionProviderSessionsProviderSession) GetReportedAt() *string {
+	return v.ReportedAt
 }
 
 // How a usage row found its task; the answer changes what the number means.
@@ -23343,6 +23580,16 @@ type __SessionTouchProgrammaticInput struct {
 
 // GetSessionUuid returns __SessionTouchProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
 func (v *__SessionTouchProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// __SessionUpdateMetaProgrammaticInput is used internally by genqlient
+type __SessionUpdateMetaProgrammaticInput struct {
+	UpdateMeta *SessionUpdateMetaInput `json:"updateMeta,omitempty"`
+}
+
+// GetUpdateMeta returns __SessionUpdateMetaProgrammaticInput.UpdateMeta, and is useful for accessing the field via an interface.
+func (v *__SessionUpdateMetaProgrammaticInput) GetUpdateMeta() *SessionUpdateMetaInput {
+	return v.UpdateMeta
+}
 
 // __SetInstanceSealedSecretCertInput is used internally by genqlient
 type __SetInstanceSealedSecretCertInput struct {
@@ -27859,6 +28106,12 @@ mutation SessionInitializeProgrammatic ($sessionInit: SessionInitializeInput!) {
 		status
 		title
 		startedAt
+		providerSessions {
+			provider
+			id
+			remoteId
+			reportedAt
+		}
 		policyEvents {
 			policyName
 			kind
@@ -27919,6 +28172,12 @@ query SessionProgrammatic ($sessionUuid: ID!) {
 		agent
 		title
 		parentSession
+		providerSessions {
+			provider
+			id
+			remoteId
+			reportedAt
+		}
 		artifacts
 		commits
 		policyEvents {
@@ -28044,6 +28303,51 @@ func SessionTouchProgrammatic(
 	}
 
 	data_ = &SessionTouchProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by SessionUpdateMetaProgrammatic.
+const SessionUpdateMetaProgrammatic_Operation = `
+mutation SessionUpdateMetaProgrammatic ($updateMeta: SessionUpdateMetaInput!) {
+	sessionUpdateMetaProgrammatic(updateMeta: $updateMeta) {
+		uuid
+		clientSessionId
+		status
+		title
+		lastActivityAt
+		providerSessions {
+			provider
+			id
+			remoteId
+			reportedAt
+		}
+	}
+}
+`
+
+// from rearm-cli agent.go
+func SessionUpdateMetaProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	updateMeta *SessionUpdateMetaInput,
+) (data_ *SessionUpdateMetaProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "SessionUpdateMetaProgrammatic",
+		Query:  SessionUpdateMetaProgrammatic_Operation,
+		Variables: &__SessionUpdateMetaProgrammaticInput{
+			UpdateMeta: updateMeta,
+		},
+	}
+
+	data_ = &SessionUpdateMetaProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
