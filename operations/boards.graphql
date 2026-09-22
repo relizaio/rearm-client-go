@@ -82,6 +82,7 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID) {
@@ -95,6 +96,7 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID) {
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
  }
 	role rolePrompt promptVersion
 } }
@@ -110,6 +112,7 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
  }
 	role rolePrompt promptVersion
 } }
@@ -124,6 +127,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: AgentTaskReturnReason!, $description: String, $outputs: [ID!]) {
@@ -136,6 +140,7 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!]) {
@@ -148,6 +153,7 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
@@ -160,6 +166,7 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
@@ -172,6 +179,7 @@ mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
@@ -184,6 +192,7 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIndex: Int!) {
@@ -196,6 +205,7 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $children: [AgentTaskSplitChildInput!]!) {
@@ -208,6 +218,7 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: String) {
@@ -220,6 +231,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: String) {
@@ -232,6 +244,7 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: String!, $sourceUrl: String) {
@@ -244,6 +257,7 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
@@ -256,6 +270,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $taskUuid) {
@@ -267,6 +282,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 	documents { uuid version lifecycle document { specification path round task
 		findings { kind round verdict counts { passed failed skipped }
 			findings { id priority status title location { path line ref } resolvedBy resolution } } } }
@@ -284,6 +300,7 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus) {
 	returns { role agent session reason description returnedAt }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
 # The whole board in one read: what everyone is doing, what waits on what, and which questions
