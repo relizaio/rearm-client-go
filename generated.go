@@ -8685,6 +8685,8 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	// ordered by priority. Newest round only: every round carries forward what the
 	// previous one left open, so the newest is the current state.
 	OpenFindings []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding `json:"openFindings"`
+	// The open items of the newest QUESTIONS round only, which is what a human answers.
+	OpenQuestions []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding `json:"openQuestions"`
 }
 
 // GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -8798,6 +8800,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetDocuments() []*
 // GetOpenFindings returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.OpenFindings, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetOpenFindings() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding {
 	return v.OpenFindings
+}
+
+// GetOpenQuestions returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.OpenQuestions, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetOpenQuestions() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding {
+	return v.OpenQuestions
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment includes the requested fields of the GraphQL type AgentTaskWorkAssignment.
@@ -8973,11 +8980,14 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocument
 	// Stable within a task across rounds.
 	Id *string `json:"id"`
 	// 1 highest, at most the organization's level count.
-	Priority   *int                                                                                                                                `json:"priority"`
-	Status     *FindingStatus                                                                                                                      `json:"status"`
-	Title      *string                                                                                                                             `json:"title"`
-	Location   *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation `json:"location"`
-	ResolvedBy *string                                                                                                                             `json:"resolvedBy"`
+	Priority *int                                                                                                                                `json:"priority"`
+	Status   *FindingStatus                                                                                                                      `json:"status"`
+	Title    *string                                                                                                                             `json:"title"`
+	Location *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation `json:"location"`
+	// The uuid of the release whose round closed it -- a pointer, never text.
+	ResolvedBy *string `json:"resolvedBy"`
+	// The words that closed it: a fixer's note, a policy stop's reason, or an answer.
+	Resolution *string `json:"resolution"`
 }
 
 // GetId returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Id, and is useful for accessing the field via an interface.
@@ -9008,6 +9018,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocu
 // GetResolvedBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.ResolvedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetResolvedBy() *string {
 	return v.ResolvedBy
+}
+
+// GetResolution returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Resolution, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetResolution() *string {
+	return v.Resolution
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation includes the requested fields of the GraphQL type FindingLocation.
@@ -9152,11 +9167,14 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding stru
 	// Stable within a task across rounds.
 	Id *string `json:"id"`
 	// 1 highest, at most the organization's level count.
-	Priority   *int                                                                            `json:"priority"`
-	Status     *FindingStatus                                                                  `json:"status"`
-	Title      *string                                                                         `json:"title"`
-	Location   *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation `json:"location"`
-	ResolvedBy *string                                                                         `json:"resolvedBy"`
+	Priority *int                                                                            `json:"priority"`
+	Status   *FindingStatus                                                                  `json:"status"`
+	Title    *string                                                                         `json:"title"`
+	Location *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation `json:"location"`
+	// The uuid of the release whose round closed it -- a pointer, never text.
+	ResolvedBy *string `json:"resolvedBy"`
+	// The words that closed it: a fixer's note, a policy stop's reason, or an answer.
+	Resolution *string `json:"resolution"`
 }
 
 // GetId returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.Id, and is useful for accessing the field via an interface.
@@ -9189,6 +9207,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding)
 	return v.ResolvedBy
 }
 
+// GetResolution returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding.Resolution, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding) GetResolution() *string {
+	return v.Resolution
+}
+
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation includes the requested fields of the GraphQL type FindingLocation.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation struct {
 	Path *string `json:"path"`
@@ -9208,6 +9231,78 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingL
 
 // GetRef returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation.Ref, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation) GetRef() *string {
+	return v.Ref
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding includes the requested fields of the GraphQL type Finding.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding struct {
+	// Stable within a task across rounds.
+	Id *string `json:"id"`
+	// 1 highest, at most the organization's level count.
+	Priority *int                                                                             `json:"priority"`
+	Status   *FindingStatus                                                                   `json:"status"`
+	Title    *string                                                                          `json:"title"`
+	Location *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation `json:"location"`
+	// The uuid of the release whose round closed it -- a pointer, never text.
+	ResolvedBy *string `json:"resolvedBy"`
+	// The words that closed it: a fixer's note, a policy stop's reason, or an answer.
+	Resolution *string `json:"resolution"`
+}
+
+// GetId returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding.Id, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding) GetId() *string {
+	return v.Id
+}
+
+// GetPriority returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding.Priority, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding) GetPriority() *int {
+	return v.Priority
+}
+
+// GetStatus returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding) GetStatus() *FindingStatus {
+	return v.Status
+}
+
+// GetTitle returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding) GetTitle() *string {
+	return v.Title
+}
+
+// GetLocation returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding.Location, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding) GetLocation() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation {
+	return v.Location
+}
+
+// GetResolvedBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding.ResolvedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding) GetResolvedBy() *string {
+	return v.ResolvedBy
+}
+
+// GetResolution returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding.Resolution, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding) GetResolution() *string {
+	return v.Resolution
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation includes the requested fields of the GraphQL type FindingLocation.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation struct {
+	Path *string `json:"path"`
+	Line *int    `json:"line"`
+	Ref  *string `json:"ref"`
+}
+
+// GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation) GetPath() *string {
+	return v.Path
+}
+
+// GetLine returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation.Line, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation) GetLine() *int {
+	return v.Line
+}
+
+// GetRef returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation.Ref, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation) GetRef() *string {
 	return v.Ref
 }
 
@@ -24280,6 +24375,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 							ref
 						}
 						resolvedBy
+						resolution
 					}
 				}
 			}
@@ -24295,6 +24391,20 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 				ref
 			}
 			resolvedBy
+			resolution
+		}
+		openQuestions {
+			id
+			priority
+			status
+			title
+			location {
+				path
+				line
+				ref
+			}
+			resolvedBy
+			resolution
 		}
 	}
 }
