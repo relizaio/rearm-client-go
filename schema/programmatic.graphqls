@@ -330,7 +330,10 @@ type Finding {
   status: FindingStatus
   title: String
   location: FindingLocation
+  """The uuid of the release whose round closed it -- a pointer, never text."""
   resolvedBy: String
+  """The words that closed it: a fixer's note, a policy stop's reason, or an answer."""
+  resolution: String
 }
 
 type FindingLocation {
@@ -801,6 +804,8 @@ type AgentTask {
   previous one left open, so the newest is the current state.
   """
   openFindings: [Finding]
+  """The open items of the newest QUESTIONS round only, which is what a human answers."""
+  openQuestions: [Finding]
 }
 
 enum AgentTaskStatus {
