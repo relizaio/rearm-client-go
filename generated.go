@@ -21067,6 +21067,24 @@ func (v *SessionAddArtifactSessionAddArtifactProgrammaticSessionPolicyEventsPoli
 	return v.EvaluatedAt
 }
 
+// How a session's caller authenticated when it opened the session.
+type SessionAuthMethod string
+
+const (
+	// An API key's secret, directly or exchanged for an access token. Says which key, never who.
+	SessionAuthMethodKeySecret SessionAuthMethod = "KEY_SECRET"
+	// A CLI browser login (device flow) a signed-in user approved.
+	SessionAuthMethodCliLogin SessionAuthMethod = "CLI_LOGIN"
+	// A federated identity exchange, e.g. a GitHub Actions OIDC token.
+	SessionAuthMethodFederated SessionAuthMethod = "FEDERATED"
+)
+
+var AllSessionAuthMethod = []SessionAuthMethod{
+	SessionAuthMethodKeySecret,
+	SessionAuthMethodCliLogin,
+	SessionAuthMethodFederated,
+}
+
 // SessionCloseProgrammaticResponse is returned by SessionCloseProgrammatic on success.
 type SessionCloseProgrammaticResponse struct {
 	SessionCloseProgrammatic *SessionCloseProgrammaticSessionCloseProgrammaticSession `json:"sessionCloseProgrammatic"`
@@ -21103,6 +21121,29 @@ func (v *SessionCloseProgrammaticSessionCloseProgrammaticSession) GetClosedAt() 
 	return v.ClosedAt
 }
 
+// A client's description of its device. Each value is trimmed and clipped to 200 characters.
+// hostname is personal data and is shown only to org admins and the session's owner.
+type SessionDeviceInput struct {
+	Hostname *string `json:"hostname"`
+	Os       *string `json:"os"`
+	// The local UTC offset and zone abbreviation, e.g. "UTC+02:00 CEST".
+	TimeZone *string `json:"timeZone"`
+	// The client and its version, e.g. "rearm-cli/26.09.4".
+	Client *string `json:"client"`
+}
+
+// GetHostname returns SessionDeviceInput.Hostname, and is useful for accessing the field via an interface.
+func (v *SessionDeviceInput) GetHostname() *string { return v.Hostname }
+
+// GetOs returns SessionDeviceInput.Os, and is useful for accessing the field via an interface.
+func (v *SessionDeviceInput) GetOs() *string { return v.Os }
+
+// GetTimeZone returns SessionDeviceInput.TimeZone, and is useful for accessing the field via an interface.
+func (v *SessionDeviceInput) GetTimeZone() *string { return v.TimeZone }
+
+// GetClient returns SessionDeviceInput.Client, and is useful for accessing the field via an interface.
+func (v *SessionDeviceInput) GetClient() *string { return v.Client }
+
 type SessionInitializeInput struct {
 	// Display name the agent reports for itself ("Claude Code", "Cursor
 	// Agent"). Required -- used as the (org, lower(name)) lookup key.
@@ -21133,6 +21174,9 @@ type SessionInitializeInput struct {
 	// The agent tool's own id for the conversation opening this session, so the ReARM session
 	// can be traced back to it. Optional; the rearm CLI fills it in under Claude Code.
 	ProviderSession *ProviderSessionInput `json:"providerSession,omitempty"`
+	// What the client says about the device it runs on. Optional and self-reported; stored beside
+	// what the server observed, never in place of it. The rearm CLI sends it unless told not to.
+	Device *SessionDeviceInput `json:"device,omitempty"`
 }
 
 // GetAgentName returns SessionInitializeInput.AgentName, and is useful for accessing the field via an interface.
@@ -21164,6 +21208,9 @@ func (v *SessionInitializeInput) GetParentSession() *string { return v.ParentSes
 
 // GetProviderSession returns SessionInitializeInput.ProviderSession, and is useful for accessing the field via an interface.
 func (v *SessionInitializeInput) GetProviderSession() *ProviderSessionInput { return v.ProviderSession }
+
+// GetDevice returns SessionInitializeInput.Device, and is useful for accessing the field via an interface.
+func (v *SessionInitializeInput) GetDevice() *SessionDeviceInput { return v.Device }
 
 // SessionInitializeProgrammaticResponse is returned by SessionInitializeProgrammatic on success.
 type SessionInitializeProgrammaticResponse struct {
@@ -21198,6 +21245,11 @@ type SessionInitializeProgrammaticSessionInitializeProgrammaticSession struct {
 	// Not unique either way: one tool session often opens many ReARM sessions, and a ReARM
 	// session resumed in a new conversation records both.
 	ProviderSessions []*SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProviderSessionsProviderSession `json:"providerSessions"`
+	// How the session came to be opened: the credential, the person behind it when anything names
+	// one, and the device. Captured once at initialize; null on sessions opened before it was
+	// recorded. Hostnames, IP addresses and a federated actor are withheld unless the reader is an
+	// org admin, the session's owner, or the key that opened it -- see SessionOrigin.restricted.
+	Origin *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin `json:"origin"`
 	// Append-only log of agent-policy evaluations (PR 4). Empty on CE
 	// deployments and on sessions opened under an org with no policies.
 	PolicyEvents []*SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent `json:"policyEvents"`
@@ -21238,9 +21290,222 @@ func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSession) GetP
 	return v.ProviderSessions
 }
 
+// GetOrigin returns SessionInitializeProgrammaticSessionInitializeProgrammaticSession.Origin, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSession) GetOrigin() *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin {
+	return v.Origin
+}
+
 // GetPolicyEvents returns SessionInitializeProgrammaticSessionInitializeProgrammaticSession.PolicyEvents, and is useful for accessing the field via an interface.
 func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSession) GetPolicyEvents() []*SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent {
 	return v.PolicyEvents
+}
+
+// SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin includes the requested fields of the GraphQL type SessionOrigin.
+// The GraphQL type's documentation follows.
+//
+// See Session.origin.
+type SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin struct {
+	AuthMethod *SessionAuthMethod `json:"authMethod"`
+	// The person the session is attributed to, or null when nothing names one -- an organisation
+	// key, a federated identity, or a Free Form key with no holder.
+	OwnerUser   *string             `json:"ownerUser"`
+	OwnerSource *SessionOwnerSource `json:"ownerSource"`
+	// The CLI login the session was opened through, when authMethod is CLI_LOGIN.
+	CliSession *string `json:"cliSession"`
+	// The client address the server saw when the session was opened. Restricted.
+	ObservedIp *string `json:"observedIp"`
+	CapturedAt *string `json:"capturedAt"`
+	// True when this reader is not allowed the personal fields, which then read null. Lets a UI
+	// tell "hidden from you" from "never reported".
+	Restricted bool `json:"restricted"`
+	// What the CLI login recorded about its device when it was approved.
+	LoginDevice *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice `json:"loginDevice"`
+	// What the client said about its device when it opened the session.
+	ReportedDevice *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginReportedDeviceSessionDevice `json:"reportedDevice"`
+	// The external identity, when authMethod is FEDERATED.
+	Federation *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation `json:"federation"`
+}
+
+// GetAuthMethod returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin.AuthMethod, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin) GetAuthMethod() *SessionAuthMethod {
+	return v.AuthMethod
+}
+
+// GetOwnerUser returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin.OwnerUser, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin) GetOwnerUser() *string {
+	return v.OwnerUser
+}
+
+// GetOwnerSource returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin.OwnerSource, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin) GetOwnerSource() *SessionOwnerSource {
+	return v.OwnerSource
+}
+
+// GetCliSession returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin.CliSession, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin) GetCliSession() *string {
+	return v.CliSession
+}
+
+// GetObservedIp returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin.ObservedIp, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin) GetObservedIp() *string {
+	return v.ObservedIp
+}
+
+// GetCapturedAt returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin.CapturedAt, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin) GetCapturedAt() *string {
+	return v.CapturedAt
+}
+
+// GetRestricted returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin.Restricted, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin) GetRestricted() bool {
+	return v.Restricted
+}
+
+// GetLoginDevice returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin.LoginDevice, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin) GetLoginDevice() *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice {
+	return v.LoginDevice
+}
+
+// GetReportedDevice returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin.ReportedDevice, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin) GetReportedDevice() *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginReportedDeviceSessionDevice {
+	return v.ReportedDevice
+}
+
+// GetFederation returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin.Federation, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOrigin) GetFederation() *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation {
+	return v.Federation
+}
+
+// SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation includes the requested fields of the GraphQL type SessionFederation.
+// The GraphQL type's documentation follows.
+//
+// The claims a federated session came through. actor names a person and is restricted.
+type SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation struct {
+	Provider    *string `json:"provider"`
+	Repository  *string `json:"repository"`
+	Ref         *string `json:"ref"`
+	Sha         *string `json:"sha"`
+	WorkflowRef *string `json:"workflowRef"`
+	Event       *string `json:"event"`
+	Environment *string `json:"environment"`
+	Actor       *string `json:"actor"`
+	RunId       *string `json:"runId"`
+}
+
+// GetProvider returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation.Provider, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation) GetProvider() *string {
+	return v.Provider
+}
+
+// GetRepository returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation.Repository, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation) GetRepository() *string {
+	return v.Repository
+}
+
+// GetRef returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation.Ref, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation) GetRef() *string {
+	return v.Ref
+}
+
+// GetSha returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation.Sha, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation) GetSha() *string {
+	return v.Sha
+}
+
+// GetWorkflowRef returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation.WorkflowRef, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation) GetWorkflowRef() *string {
+	return v.WorkflowRef
+}
+
+// GetEvent returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation.Event, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation) GetEvent() *string {
+	return v.Event
+}
+
+// GetEnvironment returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation.Environment, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation) GetEnvironment() *string {
+	return v.Environment
+}
+
+// GetActor returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation.Actor, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation) GetActor() *string {
+	return v.Actor
+}
+
+// GetRunId returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation.RunId, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginFederationSessionFederation) GetRunId() *string {
+	return v.RunId
+}
+
+// SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice includes the requested fields of the GraphQL type SessionDevice.
+// The GraphQL type's documentation follows.
+//
+// A device as described to ReARM. hostname and observedIp are restricted -- see SessionOrigin.
+type SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice struct {
+	Hostname *string `json:"hostname"`
+	Os       *string `json:"os"`
+	TimeZone *string `json:"timeZone"`
+	// The client and its version, e.g. rearm-cli/26.09.4.
+	Client *string `json:"client"`
+	// The address the server saw, when the description came with a request.
+	ObservedIp *string `json:"observedIp"`
+}
+
+// GetHostname returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice.Hostname, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice) GetHostname() *string {
+	return v.Hostname
+}
+
+// GetOs returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice.Os, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice) GetOs() *string {
+	return v.Os
+}
+
+// GetTimeZone returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice.TimeZone, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice) GetTimeZone() *string {
+	return v.TimeZone
+}
+
+// GetClient returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice.Client, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice) GetClient() *string {
+	return v.Client
+}
+
+// GetObservedIp returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice.ObservedIp, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginLoginDeviceSessionDevice) GetObservedIp() *string {
+	return v.ObservedIp
+}
+
+// SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginReportedDeviceSessionDevice includes the requested fields of the GraphQL type SessionDevice.
+// The GraphQL type's documentation follows.
+//
+// A device as described to ReARM. hostname and observedIp are restricted -- see SessionOrigin.
+type SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginReportedDeviceSessionDevice struct {
+	Hostname *string `json:"hostname"`
+	Os       *string `json:"os"`
+	TimeZone *string `json:"timeZone"`
+	// The client and its version, e.g. rearm-cli/26.09.4.
+	Client *string `json:"client"`
+}
+
+// GetHostname returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginReportedDeviceSessionDevice.Hostname, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginReportedDeviceSessionDevice) GetHostname() *string {
+	return v.Hostname
+}
+
+// GetOs returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginReportedDeviceSessionDevice.Os, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginReportedDeviceSessionDevice) GetOs() *string {
+	return v.Os
+}
+
+// GetTimeZone returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginReportedDeviceSessionDevice.TimeZone, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginReportedDeviceSessionDevice) GetTimeZone() *string {
+	return v.TimeZone
+}
+
+// GetClient returns SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginReportedDeviceSessionDevice.Client, and is useful for accessing the field via an interface.
+func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionOriginReportedDeviceSessionDevice) GetClient() *string {
+	return v.Client
 }
 
 // SessionInitializeProgrammaticSessionInitializeProgrammaticSessionPolicyEventsPolicyEvent includes the requested fields of the GraphQL type PolicyEvent.
@@ -21394,6 +21659,23 @@ func (v *SessionInitializeProgrammaticSessionInitializeProgrammaticSessionProvid
 	return v.ReportedAt
 }
 
+// Where SessionOrigin.ownerUser came from, strongest first. A login names who approved the
+// device; a personal key names whose key it is; a holder is only the user accountable for a
+// secret that may since have been handed to anyone.
+type SessionOwnerSource string
+
+const (
+	SessionOwnerSourceCliLogin  SessionOwnerSource = "CLI_LOGIN"
+	SessionOwnerSourceUserKey   SessionOwnerSource = "USER_KEY"
+	SessionOwnerSourceKeyHolder SessionOwnerSource = "KEY_HOLDER"
+)
+
+var AllSessionOwnerSource = []SessionOwnerSource{
+	SessionOwnerSourceCliLogin,
+	SessionOwnerSourceUserKey,
+	SessionOwnerSourceKeyHolder,
+}
+
 // SessionProgrammaticResponse is returned by SessionProgrammatic on success.
 type SessionProgrammaticResponse struct {
 	// FREEFORM-auth read of a single session by uuid. Returns null when
@@ -21439,6 +21721,11 @@ type SessionProgrammaticSessionProgrammaticSession struct {
 	// Not unique either way: one tool session often opens many ReARM sessions, and a ReARM
 	// session resumed in a new conversation records both.
 	ProviderSessions []*SessionProgrammaticSessionProgrammaticSessionProviderSessionsProviderSession `json:"providerSessions"`
+	// How the session came to be opened: the credential, the person behind it when anything names
+	// one, and the device. Captured once at initialize; null on sessions opened before it was
+	// recorded. Hostnames, IP addresses and a federated actor are withheld unless the reader is an
+	// org admin, the session's owner, or the key that opened it -- see SessionOrigin.restricted.
+	Origin *SessionProgrammaticSessionProgrammaticSessionOrigin `json:"origin"`
 	// Artifact UUIDs attached to this session (reuses rearm.artifacts).
 	Artifacts []*string `json:"artifacts"`
 	// SCE UUIDs attributed to this session via the commit-trailer parser
@@ -21495,6 +21782,11 @@ func (v *SessionProgrammaticSessionProgrammaticSession) GetProviderSessions() []
 	return v.ProviderSessions
 }
 
+// GetOrigin returns SessionProgrammaticSessionProgrammaticSession.Origin, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetOrigin() *SessionProgrammaticSessionProgrammaticSessionOrigin {
+	return v.Origin
+}
+
 // GetArtifacts returns SessionProgrammaticSessionProgrammaticSession.Artifacts, and is useful for accessing the field via an interface.
 func (v *SessionProgrammaticSessionProgrammaticSession) GetArtifacts() []*string { return v.Artifacts }
 
@@ -21514,6 +21806,214 @@ func (v *SessionProgrammaticSessionProgrammaticSession) GetReleases() []*Session
 // GetPullRequests returns SessionProgrammaticSessionProgrammaticSession.PullRequests, and is useful for accessing the field via an interface.
 func (v *SessionProgrammaticSessionProgrammaticSession) GetPullRequests() []*SessionProgrammaticSessionProgrammaticSessionPullRequestsPullRequest {
 	return v.PullRequests
+}
+
+// SessionProgrammaticSessionProgrammaticSessionOrigin includes the requested fields of the GraphQL type SessionOrigin.
+// The GraphQL type's documentation follows.
+//
+// See Session.origin.
+type SessionProgrammaticSessionProgrammaticSessionOrigin struct {
+	AuthMethod *SessionAuthMethod `json:"authMethod"`
+	// The person the session is attributed to, or null when nothing names one -- an organisation
+	// key, a federated identity, or a Free Form key with no holder.
+	OwnerUser   *string             `json:"ownerUser"`
+	OwnerSource *SessionOwnerSource `json:"ownerSource"`
+	// The CLI login the session was opened through, when authMethod is CLI_LOGIN.
+	CliSession *string `json:"cliSession"`
+	// The client address the server saw when the session was opened. Restricted.
+	ObservedIp *string `json:"observedIp"`
+	CapturedAt *string `json:"capturedAt"`
+	// True when this reader is not allowed the personal fields, which then read null. Lets a UI
+	// tell "hidden from you" from "never reported".
+	Restricted bool `json:"restricted"`
+	// What the CLI login recorded about its device when it was approved.
+	LoginDevice *SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice `json:"loginDevice"`
+	// What the client said about its device when it opened the session.
+	ReportedDevice *SessionProgrammaticSessionProgrammaticSessionOriginReportedDeviceSessionDevice `json:"reportedDevice"`
+	// The external identity, when authMethod is FEDERATED.
+	Federation *SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation `json:"federation"`
+}
+
+// GetAuthMethod returns SessionProgrammaticSessionProgrammaticSessionOrigin.AuthMethod, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOrigin) GetAuthMethod() *SessionAuthMethod {
+	return v.AuthMethod
+}
+
+// GetOwnerUser returns SessionProgrammaticSessionProgrammaticSessionOrigin.OwnerUser, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOrigin) GetOwnerUser() *string {
+	return v.OwnerUser
+}
+
+// GetOwnerSource returns SessionProgrammaticSessionProgrammaticSessionOrigin.OwnerSource, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOrigin) GetOwnerSource() *SessionOwnerSource {
+	return v.OwnerSource
+}
+
+// GetCliSession returns SessionProgrammaticSessionProgrammaticSessionOrigin.CliSession, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOrigin) GetCliSession() *string {
+	return v.CliSession
+}
+
+// GetObservedIp returns SessionProgrammaticSessionProgrammaticSessionOrigin.ObservedIp, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOrigin) GetObservedIp() *string {
+	return v.ObservedIp
+}
+
+// GetCapturedAt returns SessionProgrammaticSessionProgrammaticSessionOrigin.CapturedAt, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOrigin) GetCapturedAt() *string {
+	return v.CapturedAt
+}
+
+// GetRestricted returns SessionProgrammaticSessionProgrammaticSessionOrigin.Restricted, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOrigin) GetRestricted() bool {
+	return v.Restricted
+}
+
+// GetLoginDevice returns SessionProgrammaticSessionProgrammaticSessionOrigin.LoginDevice, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOrigin) GetLoginDevice() *SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice {
+	return v.LoginDevice
+}
+
+// GetReportedDevice returns SessionProgrammaticSessionProgrammaticSessionOrigin.ReportedDevice, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOrigin) GetReportedDevice() *SessionProgrammaticSessionProgrammaticSessionOriginReportedDeviceSessionDevice {
+	return v.ReportedDevice
+}
+
+// GetFederation returns SessionProgrammaticSessionProgrammaticSessionOrigin.Federation, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOrigin) GetFederation() *SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation {
+	return v.Federation
+}
+
+// SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation includes the requested fields of the GraphQL type SessionFederation.
+// The GraphQL type's documentation follows.
+//
+// The claims a federated session came through. actor names a person and is restricted.
+type SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation struct {
+	Provider    *string `json:"provider"`
+	Repository  *string `json:"repository"`
+	Ref         *string `json:"ref"`
+	Sha         *string `json:"sha"`
+	WorkflowRef *string `json:"workflowRef"`
+	Event       *string `json:"event"`
+	Environment *string `json:"environment"`
+	Actor       *string `json:"actor"`
+	RunId       *string `json:"runId"`
+}
+
+// GetProvider returns SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation.Provider, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation) GetProvider() *string {
+	return v.Provider
+}
+
+// GetRepository returns SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation.Repository, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation) GetRepository() *string {
+	return v.Repository
+}
+
+// GetRef returns SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation.Ref, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation) GetRef() *string {
+	return v.Ref
+}
+
+// GetSha returns SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation.Sha, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation) GetSha() *string {
+	return v.Sha
+}
+
+// GetWorkflowRef returns SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation.WorkflowRef, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation) GetWorkflowRef() *string {
+	return v.WorkflowRef
+}
+
+// GetEvent returns SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation.Event, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation) GetEvent() *string {
+	return v.Event
+}
+
+// GetEnvironment returns SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation.Environment, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation) GetEnvironment() *string {
+	return v.Environment
+}
+
+// GetActor returns SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation.Actor, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation) GetActor() *string {
+	return v.Actor
+}
+
+// GetRunId returns SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation.RunId, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginFederationSessionFederation) GetRunId() *string {
+	return v.RunId
+}
+
+// SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice includes the requested fields of the GraphQL type SessionDevice.
+// The GraphQL type's documentation follows.
+//
+// A device as described to ReARM. hostname and observedIp are restricted -- see SessionOrigin.
+type SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice struct {
+	Hostname *string `json:"hostname"`
+	Os       *string `json:"os"`
+	TimeZone *string `json:"timeZone"`
+	// The client and its version, e.g. rearm-cli/26.09.4.
+	Client *string `json:"client"`
+	// The address the server saw, when the description came with a request.
+	ObservedIp *string `json:"observedIp"`
+}
+
+// GetHostname returns SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice.Hostname, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice) GetHostname() *string {
+	return v.Hostname
+}
+
+// GetOs returns SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice.Os, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice) GetOs() *string {
+	return v.Os
+}
+
+// GetTimeZone returns SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice.TimeZone, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice) GetTimeZone() *string {
+	return v.TimeZone
+}
+
+// GetClient returns SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice.Client, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice) GetClient() *string {
+	return v.Client
+}
+
+// GetObservedIp returns SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice.ObservedIp, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginLoginDeviceSessionDevice) GetObservedIp() *string {
+	return v.ObservedIp
+}
+
+// SessionProgrammaticSessionProgrammaticSessionOriginReportedDeviceSessionDevice includes the requested fields of the GraphQL type SessionDevice.
+// The GraphQL type's documentation follows.
+//
+// A device as described to ReARM. hostname and observedIp are restricted -- see SessionOrigin.
+type SessionProgrammaticSessionProgrammaticSessionOriginReportedDeviceSessionDevice struct {
+	Hostname *string `json:"hostname"`
+	Os       *string `json:"os"`
+	TimeZone *string `json:"timeZone"`
+	// The client and its version, e.g. rearm-cli/26.09.4.
+	Client *string `json:"client"`
+}
+
+// GetHostname returns SessionProgrammaticSessionProgrammaticSessionOriginReportedDeviceSessionDevice.Hostname, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginReportedDeviceSessionDevice) GetHostname() *string {
+	return v.Hostname
+}
+
+// GetOs returns SessionProgrammaticSessionProgrammaticSessionOriginReportedDeviceSessionDevice.Os, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginReportedDeviceSessionDevice) GetOs() *string {
+	return v.Os
+}
+
+// GetTimeZone returns SessionProgrammaticSessionProgrammaticSessionOriginReportedDeviceSessionDevice.TimeZone, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginReportedDeviceSessionDevice) GetTimeZone() *string {
+	return v.TimeZone
+}
+
+// GetClient returns SessionProgrammaticSessionProgrammaticSessionOriginReportedDeviceSessionDevice.Client, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionOriginReportedDeviceSessionDevice) GetClient() *string {
+	return v.Client
 }
 
 // SessionProgrammaticSessionProgrammaticSessionPolicyEventsPolicyEvent includes the requested fields of the GraphQL type PolicyEvent.
@@ -28112,6 +28612,39 @@ mutation SessionInitializeProgrammatic ($sessionInit: SessionInitializeInput!) {
 			remoteId
 			reportedAt
 		}
+		origin {
+			authMethod
+			ownerUser
+			ownerSource
+			cliSession
+			observedIp
+			capturedAt
+			restricted
+			loginDevice {
+				hostname
+				os
+				timeZone
+				client
+				observedIp
+			}
+			reportedDevice {
+				hostname
+				os
+				timeZone
+				client
+			}
+			federation {
+				provider
+				repository
+				ref
+				sha
+				workflowRef
+				event
+				environment
+				actor
+				runId
+			}
+		}
 		policyEvents {
 			policyName
 			kind
@@ -28177,6 +28710,39 @@ query SessionProgrammatic ($sessionUuid: ID!) {
 			id
 			remoteId
 			reportedAt
+		}
+		origin {
+			authMethod
+			ownerUser
+			ownerSource
+			cliSession
+			observedIp
+			capturedAt
+			restricted
+			loginDevice {
+				hostname
+				os
+				timeZone
+				client
+				observedIp
+			}
+			reportedDevice {
+				hostname
+				os
+				timeZone
+				client
+			}
+			federation {
+				provider
+				repository
+				ref
+				sha
+				workflowRef
+				event
+				environment
+				actor
+				runId
+			}
 		}
 		artifacts
 		commits

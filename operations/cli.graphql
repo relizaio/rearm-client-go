@@ -60,6 +60,12 @@ mutation SessionInitializeProgrammatic ($sessionInit: SessionInitializeInput!) {
 					title
 					startedAt
 					providerSessions { provider id remoteId reportedAt }
+					origin {
+						authMethod ownerUser ownerSource cliSession observedIp capturedAt restricted
+						loginDevice { hostname os timeZone client observedIp }
+						reportedDevice { hostname os timeZone client }
+						federation { provider repository ref sha workflowRef event environment actor runId }
+					}
 					policyEvents {
 						policyName
 						kind
@@ -128,6 +134,12 @@ query SessionProgrammatic ($sessionUuid: ID!) {
 					uuid clientSessionId status startedAt closedAt lastActivityAt
 					agent title parentSession
 					providerSessions { provider id remoteId reportedAt }
+					origin {
+						authMethod ownerUser ownerSource cliSession observedIp capturedAt restricted
+						loginDevice { hostname os timeZone client observedIp }
+						reportedDevice { hostname os timeZone client }
+						federation { provider repository ref sha workflowRef event environment actor runId }
+					}
 					artifacts
 					commits
 					policyEvents {
