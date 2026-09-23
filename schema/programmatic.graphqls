@@ -694,6 +694,13 @@ type Session {
   session resumed in a new conversation records both.
   """
   providerSessions: [ProviderSession!]
+  """
+  How the session came to be opened: the credential, the person behind it when anything names
+  one, and the device. Captured once at initialize; null on sessions opened before it was
+  recorded. Hostnames, IP addresses and a federated actor are withheld unless the reader is an
+  org admin, the session's owner, or the key that opened it -- see SessionOrigin.restricted.
+  """
+  origin: SessionOrigin
   createdDate: DateTime
 }
 
@@ -717,6 +724,110 @@ type ProviderSession {
   When ReARM first heard of this pairing.
   """
   reportedAt: DateTime
+}
+
+"""
+How a session's caller authenticated when it opened the session.
+"""
+enum SessionAuthMethod {
+  """
+  An API key's secret, directly or exchanged for an access token. Says which key, never who.
+  """
+  KEY_SECRET
+  """
+  A CLI browser login (device flow) a signed-in user approved.
+  """
+  CLI_LOGIN
+  """
+  A federated identity exchange, e.g. a GitHub Actions OIDC token.
+  """
+  FEDERATED
+}
+
+"""
+Where SessionOrigin.ownerUser came from, strongest first. A login names who approved the
+device; a personal key names whose key it is; a holder is only the user accountable for a
+secret that may since have been handed to anyone.
+"""
+enum SessionOwnerSource {
+  CLI_LOGIN
+  USER_KEY
+  KEY_HOLDER
+}
+
+"""
+See Session.origin.
+"""
+type SessionOrigin {
+  authMethod: SessionAuthMethod
+  """
+  The CLI login the session was opened through, when authMethod is CLI_LOGIN.
+  """
+  cliSession: ID
+  """
+  The person the session is attributed to, or null when nothing names one -- an organisation
+  key, a federated identity, or a Free Form key with no holder.
+  """
+  ownerUser: ID
+  ownerSource: SessionOwnerSource
+  """
+  What the CLI login recorded about its device when it was approved.
+  """
+  loginDevice: SessionDevice
+  """
+  What the client said about its device when it opened the session.
+  """
+  reportedDevice: SessionDevice
+  """
+  The client address the server saw when the session was opened. Restricted.
+  """
+  observedIp: String
+  """
+  The external identity, when authMethod is FEDERATED.
+  """
+  federation: SessionFederation
+  capturedAt: DateTime
+  """
+  True when this reader is not allowed the personal fields, which then read null. Lets a UI
+  tell "hidden from you" from "never reported".
+  """
+  restricted: Boolean!
+}
+
+"""
+A device as described to ReARM. hostname and observedIp are restricted -- see SessionOrigin.
+"""
+type SessionDevice {
+  hostname: String
+  os: String
+  timeZone: String
+  """
+  The client and its version, e.g. rearm-cli/26.09.4.
+  """
+  client: String
+  """
+  The address the server saw, when the description came with a request.
+  """
+  observedIp: String
+}
+
+"""
+The claims a federated session came through. actor names a person and is restricted.
+"""
+type SessionFederation {
+  ruleUuids: [ID]
+  provider: String
+  issuer: String
+  owner: String
+  repository: String
+  repositoryUri: String
+  ref: String
+  sha: String
+  workflowRef: String
+  environment: String
+  event: String
+  actor: String
+  runId: String
 }
 
 type AgentBoard {
@@ -1488,6 +1599,28 @@ input SessionInitializeInput {
   can be traced back to it. Optional; the rearm CLI fills it in under Claude Code.
   """
   providerSession: ProviderSessionInput
+  """
+  What the client says about the device it runs on. Optional and self-reported; stored beside
+  what the server observed, never in place of it. The rearm CLI sends it unless told not to.
+  """
+  device: SessionDeviceInput
+}
+
+"""
+A client's description of its device. Each value is trimmed and clipped to 200 characters.
+hostname is personal data and is shown only to org admins and the session's owner.
+"""
+input SessionDeviceInput {
+  hostname: String
+  os: String
+  """
+  The local UTC offset and zone abbreviation, e.g. "UTC+02:00 CEST".
+  """
+  timeZone: String
+  """
+  The client and its version, e.g. "rearm-cli/26.09.4".
+  """
+  client: String
 }
 
 """
