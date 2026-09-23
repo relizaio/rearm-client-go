@@ -151,9 +151,14 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
-mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!]) {
-	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn) {
-	uuid org board externalRef title sourceUrl status role orderIndex
+mutation AgentTaskAuthorizeProgrammatic (
+	$taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!],
+	# Left out, the task's strength requirement stands; sent as null, the server clears it. So a
+	# typed caller passing nil must not send null.
+	# @genqlient(omitempty: true)
+	$requiredStrength: Float) {
+	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength) {
+	uuid org board externalRef title sourceUrl status role orderIndex requiredStrength
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }

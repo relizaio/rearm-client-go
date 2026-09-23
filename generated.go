@@ -4063,6 +4063,8 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Model strength this task requires, overriding the role's when set.
+	RequiredStrength *float64 `json:"requiredStrength"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -4129,6 +4131,11 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) 
 // GetOrderIndex returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetRequiredStrength returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetRequiredStrength() *float64 {
+	return v.RequiredStrength
 }
 
 // GetDependsOn returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -4715,6 +4722,9 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSt
 
 // AgentTaskAuthorizeProgrammaticResponse is returned by AgentTaskAuthorizeProgrammatic on success.
 type AgentTaskAuthorizeProgrammaticResponse struct {
+	// requiredStrength: the model strength this task needs, overriding its role's floor -- for
+	// work harder (or easier) than the role usually is. At most two decimal places. Left out, the
+	// task's requirement is unchanged; sent as null, it is cleared.
 	AgentTaskAuthorizeProgrammatic *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask `json:"agentTaskAuthorizeProgrammatic"`
 }
 
@@ -24178,11 +24188,12 @@ func (v *__AgentTaskAssignProgrammaticInput) GetRoles() []string { return v.Role
 
 // __AgentTaskAuthorizeProgrammaticInput is used internally by genqlient
 type __AgentTaskAuthorizeProgrammaticInput struct {
-	TaskUuid    string   `json:"taskUuid"`
-	SessionUuid string   `json:"sessionUuid"`
-	Role        string   `json:"role"`
-	OrderIndex  *int     `json:"orderIndex"`
-	DependsOn   []string `json:"dependsOn"`
+	TaskUuid         string   `json:"taskUuid"`
+	SessionUuid      string   `json:"sessionUuid"`
+	Role             string   `json:"role"`
+	OrderIndex       *int     `json:"orderIndex"`
+	DependsOn        []string `json:"dependsOn"`
+	RequiredStrength *float64 `json:"requiredStrength,omitempty"`
 }
 
 // GetTaskUuid returns __AgentTaskAuthorizeProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -24199,6 +24210,11 @@ func (v *__AgentTaskAuthorizeProgrammaticInput) GetOrderIndex() *int { return v.
 
 // GetDependsOn returns __AgentTaskAuthorizeProgrammaticInput.DependsOn, and is useful for accessing the field via an interface.
 func (v *__AgentTaskAuthorizeProgrammaticInput) GetDependsOn() []string { return v.DependsOn }
+
+// GetRequiredStrength returns __AgentTaskAuthorizeProgrammaticInput.RequiredStrength, and is useful for accessing the field via an interface.
+func (v *__AgentTaskAuthorizeProgrammaticInput) GetRequiredStrength() *float64 {
+	return v.RequiredStrength
+}
 
 // __AgentTaskBindExternalRefProgrammaticInput is used internally by genqlient
 type __AgentTaskBindExternalRefProgrammaticInput struct {
@@ -25816,8 +25832,8 @@ func AgentTaskAssignProgrammatic(
 
 // The mutation executed by AgentTaskAuthorizeProgrammatic.
 const AgentTaskAuthorizeProgrammatic_Operation = `
-mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!]) {
-	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn) {
+mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!], $requiredStrength: Float) {
+	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength) {
 		uuid
 		org
 		board
@@ -25827,6 +25843,7 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 		status
 		role
 		orderIndex
+		requiredStrength
 		dependsOn
 		requireHumanReview
 		hold {
@@ -25908,16 +25925,18 @@ func AgentTaskAuthorizeProgrammatic(
 	role string,
 	orderIndex *int,
 	dependsOn []string,
+	requiredStrength *float64,
 ) (data_ *AgentTaskAuthorizeProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskAuthorizeProgrammatic",
 		Query:  AgentTaskAuthorizeProgrammatic_Operation,
 		Variables: &__AgentTaskAuthorizeProgrammaticInput{
-			TaskUuid:    taskUuid,
-			SessionUuid: sessionUuid,
-			Role:        role,
-			OrderIndex:  orderIndex,
-			DependsOn:   dependsOn,
+			TaskUuid:         taskUuid,
+			SessionUuid:      sessionUuid,
+			Role:             role,
+			OrderIndex:       orderIndex,
+			DependsOn:        dependsOn,
+			RequiredStrength: requiredStrength,
 		},
 	}
 
