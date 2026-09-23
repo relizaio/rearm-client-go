@@ -153,8 +153,8 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 
 mutation AgentTaskAuthorizeProgrammatic (
 	$taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!],
-	# Left out, the task's strength requirement stands; sent as null, the server clears it. So a
-	# typed caller passing nil must not send null.
+	# Raise only: left out, the task's strength requirement stands; null is refused on this
+	# coordinator path. So a typed caller passing nil must omit it rather than send null.
 	# @genqlient(omitempty: true)
 	$requiredStrength: Float) {
 	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength) {

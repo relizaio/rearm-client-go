@@ -4722,9 +4722,10 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSt
 
 // AgentTaskAuthorizeProgrammaticResponse is returned by AgentTaskAuthorizeProgrammatic on success.
 type AgentTaskAuthorizeProgrammaticResponse struct {
-	// requiredStrength: the model strength this task needs, overriding its role's floor -- for
-	// work harder (or easier) than the role usually is. At most two decimal places. Left out, the
-	// task's requirement is unchanged; sent as null, it is cleared.
+	// requiredStrength: raise the model strength this task needs above what its role usually asks,
+	// for work harder than the role usually is. Raise only: at least the task's current requirement
+	// (its override, else the role's floor); lower values and null are refused -- people lower it
+	// through agentTaskSetStrength. At most two decimal places. Left out, unchanged.
 	AgentTaskAuthorizeProgrammatic *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask `json:"agentTaskAuthorizeProgrammatic"`
 }
 
