@@ -3837,6 +3837,8 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 
 // AgentTaskAssignProgrammaticResponse is returned by AgentTaskAssignProgrammatic on success.
 type AgentTaskAssignProgrammaticResponse struct {
+	// roles: the roles this agent declared on agentTaskNextProgrammatic, if any. A task for any
+	// other role is refused, and on a STRICT board priority is enforced among these roles only.
 	AgentTaskAssignProgrammatic *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment `json:"agentTaskAssignProgrammatic"`
 }
 
@@ -8435,11 +8437,17 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 
 // AgentTaskNextProgrammaticResponse is returned by AgentTaskNextProgrammatic on success.
 type AgentTaskNextProgrammaticResponse struct {
-	// Role-less worker poll: the lowest-ordered QUEUED task across the
-	// org's unlocked boards (or one board) whose constraints admit the
-	// calling session's agent (WIP limits, distinct-agent, seat
-	// exclusion). Returns the role to assume and its served prompt; the
-	// agent follows up with agentTaskAssignProgrammatic. Null = no work.
+	// Worker poll: the lowest-ordered QUEUED task across the org's
+	// unlocked boards (or one board) whose constraints admit the calling
+	// session's agent (WIP limits, distinct-agent, seat exclusion).
+	// Returns the role to assume and its served prompt; the agent follows
+	// up with agentTaskAssignProgrammatic. Null = no work.
+	//
+	// roles: the roles this agent can take, each a role name on the board
+	// (case-insensitive) or a role config uuid. Omitted or empty, every
+	// role is considered. Given, only tasks for those roles are offered;
+	// when none match, or nothing is open for them, the answer is null.
+	// Pass the same roles to agentTaskAssignProgrammatic.
 	AgentTaskNextProgrammatic *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment `json:"agentTaskNextProgrammatic"`
 }
 
@@ -23387,8 +23395,9 @@ func (v *__AgentSessionInboxProgrammaticInput) GetInboxRequest() *AgentSessionIn
 
 // __AgentTaskAssignProgrammaticInput is used internally by genqlient
 type __AgentTaskAssignProgrammaticInput struct {
-	TaskUuid    string `json:"taskUuid"`
-	SessionUuid string `json:"sessionUuid"`
+	TaskUuid    string   `json:"taskUuid"`
+	SessionUuid string   `json:"sessionUuid"`
+	Roles       []string `json:"roles"`
 }
 
 // GetTaskUuid returns __AgentTaskAssignProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -23396,6 +23405,9 @@ func (v *__AgentTaskAssignProgrammaticInput) GetTaskUuid() string { return v.Tas
 
 // GetSessionUuid returns __AgentTaskAssignProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
 func (v *__AgentTaskAssignProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetRoles returns __AgentTaskAssignProgrammaticInput.Roles, and is useful for accessing the field via an interface.
+func (v *__AgentTaskAssignProgrammaticInput) GetRoles() []string { return v.Roles }
 
 // __AgentTaskAuthorizeProgrammaticInput is used internally by genqlient
 type __AgentTaskAuthorizeProgrammaticInput struct {
@@ -23499,8 +23511,9 @@ func (v *__AgentTaskLinkPrProgrammaticInput) GetPrUrl() string { return v.PrUrl 
 
 // __AgentTaskNextProgrammaticInput is used internally by genqlient
 type __AgentTaskNextProgrammaticInput struct {
-	SessionUuid string  `json:"sessionUuid"`
-	BoardUuid   *string `json:"boardUuid"`
+	SessionUuid string   `json:"sessionUuid"`
+	BoardUuid   *string  `json:"boardUuid"`
+	Roles       []string `json:"roles"`
 }
 
 // GetSessionUuid returns __AgentTaskNextProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
@@ -23508,6 +23521,9 @@ func (v *__AgentTaskNextProgrammaticInput) GetSessionUuid() string { return v.Se
 
 // GetBoardUuid returns __AgentTaskNextProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
 func (v *__AgentTaskNextProgrammaticInput) GetBoardUuid() *string { return v.BoardUuid }
+
+// GetRoles returns __AgentTaskNextProgrammaticInput.Roles, and is useful for accessing the field via an interface.
+func (v *__AgentTaskNextProgrammaticInput) GetRoles() []string { return v.Roles }
 
 // __AgentTaskOrderProgrammaticInput is used internally by genqlient
 type __AgentTaskOrderProgrammaticInput struct {
@@ -24913,8 +24929,8 @@ func AgentSessionInboxProgrammatic(
 
 // The mutation executed by AgentTaskAssignProgrammatic.
 const AgentTaskAssignProgrammatic_Operation = `
-mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
-	agentTaskAssignProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid) {
+mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles: [String!]) {
+	agentTaskAssignProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, roles: $roles) {
 		task {
 			uuid
 			org
@@ -25007,6 +25023,7 @@ func AgentTaskAssignProgrammatic(
 	client_ graphql.Client,
 	taskUuid string,
 	sessionUuid string,
+	roles []string,
 ) (data_ *AgentTaskAssignProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskAssignProgrammatic",
@@ -25014,6 +25031,7 @@ func AgentTaskAssignProgrammatic(
 		Variables: &__AgentTaskAssignProgrammaticInput{
 			TaskUuid:    taskUuid,
 			SessionUuid: sessionUuid,
+			Roles:       roles,
 		},
 	}
 
@@ -25723,8 +25741,8 @@ func AgentTaskLinkPrProgrammatic(
 
 // The query executed by AgentTaskNextProgrammatic.
 const AgentTaskNextProgrammatic_Operation = `
-query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID) {
-	agentTaskNextProgrammatic(sessionUuid: $sessionUuid, boardUuid: $boardUuid) {
+query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [String!]) {
+	agentTaskNextProgrammatic(sessionUuid: $sessionUuid, boardUuid: $boardUuid, roles: $roles) {
 		task {
 			uuid
 			org
@@ -25817,6 +25835,7 @@ func AgentTaskNextProgrammatic(
 	client_ graphql.Client,
 	sessionUuid string,
 	boardUuid *string,
+	roles []string,
 ) (data_ *AgentTaskNextProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskNextProgrammatic",
@@ -25824,6 +25843,7 @@ func AgentTaskNextProgrammatic(
 		Variables: &__AgentTaskNextProgrammaticInput{
 			SessionUuid: sessionUuid,
 			BoardUuid:   boardUuid,
+			Roles:       roles,
 		},
 	}
 

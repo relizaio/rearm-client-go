@@ -85,8 +85,8 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
-query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID) {
-	agentTaskNextProgrammatic(sessionUuid: $sessionUuid, boardUuid: $boardUuid) {
+query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [String!]) {
+	agentTaskNextProgrammatic(sessionUuid: $sessionUuid, boardUuid: $boardUuid, roles: $roles) {
 	task {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
@@ -101,8 +101,8 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID) {
 	role rolePrompt promptVersion
 } }
 
-mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
-	agentTaskAssignProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid) {
+mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles: [String!]) {
+	agentTaskAssignProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, roles: $roles) {
 	task {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
