@@ -61,7 +61,14 @@ mutation AgentBoardPostEventProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $k
 	perAgentWipLimit priorityType createdDate
 } }
 
-mutation AgentTaskRoleConfigSetProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $input: AgentTaskRoleConfigInput!) {
+# The server reads a strength field sent as null as "clear it" and one left out as "leave it",
+# so these are omitted when nil: a typed caller that does not set them never clears a floor.
+# @genqlient(for: "AgentTaskRoleConfigInput.requiredStrength", omitempty: true)
+# @genqlient(for: "AgentTaskRoleConfigInput.strengthHeadroom", omitempty: true)
+# @genqlient(for: "AgentTaskRoleConfigInput.strengthCategory", omitempty: true)
+# @genqlient(for: "AgentTaskRoleConfigInput.modelStrengths", omitempty: true)
+mutation AgentTaskRoleConfigSetProgrammatic (
+	$boardUuid: ID!, $sessionUuid: ID!, $input: AgentTaskRoleConfigInput!) {
 	agentTaskRoleConfigSetProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid, input: $input) {
 	uuid board org name prompt orderIndex wipLimit requireDistinctAgent active requiredCapabilities
 	kind necessity humanGate
@@ -70,6 +77,7 @@ mutation AgentTaskRoleConfigSetProgrammatic ($boardUuid: ID!, $sessionUuid: ID!,
 query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsProgrammatic(boardUuid: $boardUuid) {
 	uuid board org name prompt orderIndex wipLimit requireDistinctAgent active requiredCapabilities
 	kind necessity humanGate
+	requiredStrength strengthHeadroom strengthCategory modelStrengths { model strength }
 } }
 
 mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {

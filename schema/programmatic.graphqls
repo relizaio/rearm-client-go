@@ -902,7 +902,7 @@ type AgentTask {
   """The role config row `role` names, so a reader reaches its configuration without a lookup by name."""
   roleUuid: ID
   budgetMicros: Long
-  requiredStrength: Int
+  requiredStrength: Float
   """Who is waiting on whom, innermost last."""
   questionStack: [AgentQuestionFrame]
   org: ID
@@ -1010,6 +1010,25 @@ type AgentTaskRoleConfig {
   Operator-only: conditional human review of this role's sign-offs (default NONE; AGENTIC roles only).
   """
   humanGate: AgentHumanGate
+  """
+  Model strength this role needs; null admits every model. At most two decimal places;
+  within 0.001 either side counts as meeting it.
+  """
+  requiredStrength: Float
+  """
+  How far above requiredStrength a model may be and still take the role. 0 means an exact match.
+  """
+  strengthHeadroom: Float
+  """
+  Which of a model's per-category strengths this role reads, so a board role with its own name
+  (PLANNER) can use a model's ARCHITECT strength. Null reads the model's base strength.
+  """
+  strengthCategory: ModelRoleCategory
+  """
+  Per-model strength overrides for this role, consulted first: override, then the model's
+  strength for strengthCategory, then its base strength. Re-pointed when a model is merged.
+  """
+  modelStrengths: [RoleModelStrength!]
 }
 
 type DeclarativeApplyResult {
@@ -1802,6 +1821,44 @@ input SpawnSubAgentInput {
 }
 
 """
+The kinds of work a model's strength can differ by. A board role maps to one of these through
+AgentTaskRoleConfig.strengthCategory.
+"""
+enum ModelRoleCategory {
+  ARCHITECT
+  CODER
+  QA
+  REVIEWER
+}
+
+"""
+A model's strength for one kind of work.
+"""
+type ModelRoleStrength {
+  category: ModelRoleCategory!
+  strength: Float!
+}
+
+"""
+A role's strength override for one model.
+"""
+type RoleModelStrength {
+  model: ID!
+  strength: Float!
+}
+
+"""
+One model's strength for one role, overriding what the catalogue says about the model.
+"""
+input RoleModelStrengthInput {
+  """
+  A model in this organization's catalogue.
+  """
+  model: ID!
+  strength: Float!
+}
+
+"""
 A row describing one AI/ML model an Agent runs. Identity =
 (org, lower(name), version). Carries publisher + a full CycloneDX
 ML-BOM model card (opaque jsonb). Auto-upserted on session
@@ -1838,6 +1895,15 @@ type ModelOntology {
   modelCard: Object
   notes: String
   createdDate: DateTime
+  """
+  How capable this model is, on the organization's scale; null means unrated. Operator-set, never
+  declared by an agent. At most two decimal places.
+  """
+  strength: Float
+  """
+  Per-category strengths, each overriding strength for roles of that category.
+  """
+  strengthByRole: [ModelRoleStrength!]
 }
 
 """
@@ -1973,6 +2039,23 @@ input AgentTaskRoleConfigInput {
   Operator-only; rejected on the coordinator-seat path.
   """
   humanGate: AgentHumanGate
+  """
+  Operator-only. The floor a model must meet for this role, at most two decimal places. Left
+  out, unchanged; sent as null, the floor is removed.
+  """
+  requiredStrength: Float
+  """
+  Operator-only. How far above requiredStrength a model may be; 0 is an exact match.
+  """
+  strengthHeadroom: Float
+  """
+  Operator-only. Which of a model's per-category strengths this role reads; null reads the base.
+  """
+  strengthCategory: ModelRoleCategory
+  """
+  Operator-only. Replaces the role's per-model overrides; an empty list clears them.
+  """
+  modelStrengths: [RoleModelStrengthInput!]
 }
 
 input AgentTaskRegisterInput {

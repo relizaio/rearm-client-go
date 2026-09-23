@@ -12776,6 +12776,15 @@ type AgentTaskRoleConfigInput struct {
 	Necessity *AgentRoleNecessity `json:"necessity"`
 	// Operator-only; rejected on the coordinator-seat path.
 	HumanGate *AgentHumanGate `json:"humanGate"`
+	// Operator-only. The floor a model must meet for this role, at most two decimal places. Left
+	// out, unchanged; sent as null, the floor is removed.
+	RequiredStrength *float64 `json:"requiredStrength,omitempty"`
+	// Operator-only. How far above requiredStrength a model may be; 0 is an exact match.
+	StrengthHeadroom *float64 `json:"strengthHeadroom,omitempty"`
+	// Operator-only. Which of a model's per-category strengths this role reads; null reads the base.
+	StrengthCategory *ModelRoleCategory `json:"strengthCategory,omitempty"`
+	// Operator-only. Replaces the role's per-model overrides; an empty list clears them.
+	ModelStrengths []*RoleModelStrengthInput `json:"modelStrengths,omitempty"`
 }
 
 // GetName returns AgentTaskRoleConfigInput.Name, and is useful for accessing the field via an interface.
@@ -12809,6 +12818,22 @@ func (v *AgentTaskRoleConfigInput) GetNecessity() *AgentRoleNecessity { return v
 
 // GetHumanGate returns AgentTaskRoleConfigInput.HumanGate, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigInput) GetHumanGate() *AgentHumanGate { return v.HumanGate }
+
+// GetRequiredStrength returns AgentTaskRoleConfigInput.RequiredStrength, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetRequiredStrength() *float64 { return v.RequiredStrength }
+
+// GetStrengthHeadroom returns AgentTaskRoleConfigInput.StrengthHeadroom, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetStrengthHeadroom() *float64 { return v.StrengthHeadroom }
+
+// GetStrengthCategory returns AgentTaskRoleConfigInput.StrengthCategory, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetStrengthCategory() *ModelRoleCategory {
+	return v.StrengthCategory
+}
+
+// GetModelStrengths returns AgentTaskRoleConfigInput.ModelStrengths, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetModelStrengths() []*RoleModelStrengthInput {
+	return v.ModelStrengths
+}
 
 // AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfig includes the requested fields of the GraphQL type AgentTaskRoleConfig.
 // The GraphQL type's documentation follows.
@@ -12937,6 +12962,17 @@ type AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRo
 	Necessity *AgentRoleNecessity `json:"necessity"`
 	// Operator-only: conditional human review of this role's sign-offs (default NONE; AGENTIC roles only).
 	HumanGate *AgentHumanGate `json:"humanGate"`
+	// Model strength this role needs; null admits every model. At most two decimal places;
+	// within 0.001 either side counts as meeting it.
+	RequiredStrength *float64 `json:"requiredStrength"`
+	// How far above requiredStrength a model may be and still take the role. 0 means an exact match.
+	StrengthHeadroom *float64 `json:"strengthHeadroom"`
+	// Which of a model's per-category strengths this role reads, so a board role with its own name
+	// (PLANNER) can use a model's ARCHITECT strength. Null reads the model's base strength.
+	StrengthCategory *ModelRoleCategory `json:"strengthCategory"`
+	// Per-model strength overrides for this role, consulted first: override, then the model's
+	// strength for strengthCategory, then its base strength. Re-pointed when a model is merged.
+	ModelStrengths []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength `json:"modelStrengths"`
 }
 
 // GetUuid returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.Uuid, and is useful for accessing the field via an interface.
@@ -13002,6 +13038,45 @@ func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTa
 // GetHumanGate returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.HumanGate, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetHumanGate() *AgentHumanGate {
 	return v.HumanGate
+}
+
+// GetRequiredStrength returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.RequiredStrength, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetRequiredStrength() *float64 {
+	return v.RequiredStrength
+}
+
+// GetStrengthHeadroom returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.StrengthHeadroom, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetStrengthHeadroom() *float64 {
+	return v.StrengthHeadroom
+}
+
+// GetStrengthCategory returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.StrengthCategory, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetStrengthCategory() *ModelRoleCategory {
+	return v.StrengthCategory
+}
+
+// GetModelStrengths returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.ModelStrengths, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetModelStrengths() []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength {
+	return v.ModelStrengths
+}
+
+// AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength includes the requested fields of the GraphQL type RoleModelStrength.
+// The GraphQL type's documentation follows.
+//
+// A role's strength override for one model.
+type AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength struct {
+	Model    string  `json:"model"`
+	Strength float64 `json:"strength"`
+}
+
+// GetModel returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength.Model, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength) GetModel() string {
+	return v.Model
+}
+
+// GetStrength returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength.Strength, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength) GetStrength() float64 {
+	return v.Strength
 }
 
 // AgentTaskRoleConfigsProgrammaticResponse is returned by AgentTaskRoleConfigsProgrammatic on success.
@@ -20290,6 +20365,24 @@ func (v *MedicalProfileInput) GetUdiBearing() *bool { return v.UdiBearing }
 // GetGudidDefaults returns MedicalProfileInput.GudidDefaults, and is useful for accessing the field via an interface.
 func (v *MedicalProfileInput) GetGudidDefaults() *GudidDefaultsInput { return v.GudidDefaults }
 
+// The kinds of work a model's strength can differ by. A board role maps to one of these through
+// AgentTaskRoleConfig.strengthCategory.
+type ModelRoleCategory string
+
+const (
+	ModelRoleCategoryArchitect ModelRoleCategory = "ARCHITECT"
+	ModelRoleCategoryCoder     ModelRoleCategory = "CODER"
+	ModelRoleCategoryQa        ModelRoleCategory = "QA"
+	ModelRoleCategoryReviewer  ModelRoleCategory = "REVIEWER"
+)
+
+var AllModelRoleCategory = []ModelRoleCategory{
+	ModelRoleCategoryArchitect,
+	ModelRoleCategoryCoder,
+	ModelRoleCategoryQa,
+	ModelRoleCategoryReviewer,
+}
+
 type OSEnum string
 
 const (
@@ -20945,6 +21038,19 @@ type ReleasecompletionfinalizerProgrammaticResponse struct {
 func (v *ReleasecompletionfinalizerProgrammaticResponse) GetReleasecompletionfinalizerProgrammatic() *bool {
 	return v.ReleasecompletionfinalizerProgrammatic
 }
+
+// One model's strength for one role, overriding what the catalogue says about the model.
+type RoleModelStrengthInput struct {
+	// A model in this organization's catalogue.
+	Model    string  `json:"model"`
+	Strength float64 `json:"strength"`
+}
+
+// GetModel returns RoleModelStrengthInput.Model, and is useful for accessing the field via an interface.
+func (v *RoleModelStrengthInput) GetModel() string { return v.Model }
+
+// GetStrength returns RoleModelStrengthInput.Strength, and is useful for accessing the field via an interface.
+func (v *RoleModelStrengthInput) GetStrength() float64 { return v.Strength }
 
 type SbomProbingStatus string
 
@@ -26622,6 +26728,8 @@ mutation AgentTaskRoleConfigSetProgrammatic ($boardUuid: ID!, $sessionUuid: ID!,
 }
 `
 
+// The server reads a strength field sent as null as "clear it" and one left out as "leave it",
+// so these are omitted when nil: a typed caller that does not set them never clears a floor.
 func AgentTaskRoleConfigSetProgrammatic(
 	ctx_ context.Context,
 	client_ graphql.Client,
@@ -26668,6 +26776,13 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) {
 		kind
 		necessity
 		humanGate
+		requiredStrength
+		strengthHeadroom
+		strengthCategory
+		modelStrengths {
+			model
+			strength
+		}
 	}
 }
 `
