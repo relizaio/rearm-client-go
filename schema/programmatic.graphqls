@@ -85,15 +85,22 @@ type Query {
   agentBoardProgrammatic(
   boardUuid: ID!): AgentBoard
   """
-  Role-less worker poll: the lowest-ordered QUEUED task across the
-  org's unlocked boards (or one board) whose constraints admit the
-  calling session's agent (WIP limits, distinct-agent, seat
-  exclusion). Returns the role to assume and its served prompt; the
-  agent follows up with agentTaskAssignProgrammatic. Null = no work.
+  Worker poll: the lowest-ordered QUEUED task across the org's
+  unlocked boards (or one board) whose constraints admit the calling
+  session's agent (WIP limits, distinct-agent, seat exclusion).
+  Returns the role to assume and its served prompt; the agent follows
+  up with agentTaskAssignProgrammatic. Null = no work.
+  
+roles: the roles this agent can take, each a role name on the board
+  (case-insensitive) or a role config uuid. Omitted or empty, every
+  role is considered. Given, only tasks for those roles are offered;
+  when none match, or nothing is open for them, the answer is null.
+  Pass the same roles to agentTaskAssignProgrammatic.
   """
   agentTaskNextProgrammatic(
   sessionUuid: ID!
-  boardUuid: ID): AgentTaskAssignment
+  boardUuid: ID
+  roles: [String!]): AgentTaskAssignment
   """
   Agent-key auth: read one task.
   """
@@ -233,7 +240,14 @@ type Mutation {
   agentTaskSplitProgrammatic(taskUuid: ID!, sessionUuid: ID!, children: [AgentTaskSplitChildInput!]!): [AgentTask]
   agentTaskCompleteProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
   agentTaskCancelProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
-  agentTaskAssignProgrammatic(taskUuid: ID!, sessionUuid: ID!): AgentTaskAssignment
+  """
+  roles: the roles this agent declared on agentTaskNextProgrammatic, if any. A task for any
+  other role is refused, and on a STRICT board priority is enforced among these roles only.
+  """
+  agentTaskAssignProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  roles: [String!]): AgentTaskAssignment
   """
   outputs: document releases produced during this hop. A role that declares
   an output as required cannot sign off without it; the task stays assigned
