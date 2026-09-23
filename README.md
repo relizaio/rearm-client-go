@@ -58,12 +58,15 @@ organization on purpose, a file cannot widen its own blast radius.
 ## Regenerating
 
 ```
+curl -fsS "$REARM_URI/api/programmatic/schema" -o schema/programmatic.graphqls
 go run github.com/Khan/genqlient
 ```
 
 `schema/programmatic.graphqls` is the programmatic API contract as served by a ReARM
 server at `GET /api/programmatic/schema` (only the API-key operations and the types they
-reach); refresh it from a server, then regenerate. Operations live in `operations/*.graphql`.
+reach). Refresh it whole from a server running the version you target, then regenerate;
+do not hand-edit it. A copy spliced by hand drifts: fields the server added go missing, and
+typed callers cannot reach them. Operations live in `operations/*.graphql`.
 
 ## The full programmatic surface
 

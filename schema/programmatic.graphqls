@@ -1,4 +1,5 @@
-# ReARM programmatic API contract. Generated from programmatic.graphqls and the types it reaches;
+# ReARM programmatic API contract: the root fields declared in programmatic.graphqls and
+# every type they reach, whether declared there or in the shared schema.
 # served at /api/programmatic/schema. Consumed by rearm-client-go and the Terraform provider.
 
 type Query {
@@ -77,8 +78,13 @@ type Query {
   Agent-key auth (FREEFORM, personal USER or FEDERATED): the org's boards (coordinator/worker discovery).
   """
   agentBoardsProgrammatic: [AgentBoard]
-  """Every task on one board with holder, dependencies, documents and what it waits on, in one call."""
-  agentBoardSnapshotProgrammatic(boardUuid: ID!): AgentBoardSnapshot
+  """
+  Every task on one board with who holds it, what it waits on, its current documents and the
+  question it is waiting on. One call, so an agent can see what the others are doing without
+  N round trips -- an agent that has to ask N questions will not ask them.
+  """
+  agentBoardSnapshotProgrammatic(
+  boardUuid: ID!): AgentBoardSnapshot
   """
   Agent-key auth: one board (includes coordinatorPrompt and lock state).
   """
@@ -117,6 +123,11 @@ roles: the roles this agent can take, each a role name on the board
   """
   agentTaskRoleConfigsProgrammatic(
   boardUuid: ID!): [AgentTaskRoleConfig]
+  """
+  Agent-key auth: the board as a declarative spec.
+  """
+  agentBoardSpecProgrammatic(
+  boardUuid: ID!): BoardSpec
 }
 
 type Mutation {
@@ -156,6 +167,37 @@ type Mutation {
   upsertPullRequestProgrammatic(
   input: PullRequestUpsertProgrammaticInput!): PullRequest
   getNewVersionProgrammatic(newVersionInput: GetNewVersionInput!): Version
+  """
+  Claim or disown a commit as the key's agent. The commit is named the way getversion and
+  addrelease name a component -- a component uuid, or vcsUri plus repoPath -- plus the sha,
+  which the server resolves through that component's repository. A sha ReARM has never seen is
+  refused rather than recorded: a commit that does not exist cannot be a lock cause.
+  
+The session is required rather than inferred from the key: an attestation says who stood
+  behind a claim, and a key is not a who. An agent already opens a session before it works, so
+  it has one to name.
+  
+This is the mutation a refusal points at. An agent that made a mistake claims it, and if
+  that was the last thing a lock was waiting on and the lock is allowed to release itself, the
+  next build goes through with no human in the loop.
+  """
+  attestProgrammatic(
+  componentRef: ComponentRefInput!
+  commit: String!
+  verdict: AttestationVerdict!
+  note: String
+  session: ID!): Attestation
+  """
+  Release a lock whose level is AGENT and whose requirement is met. Anything stricter, or any
+  lock that has escalated, refuses and says so.
+  
+The session is required and must belong to the calling key's agent: the LOCK_RELEASE
+  attestation this writes is the durable record of who released the lock.
+  """
+  releaseLockProgrammatic(
+  lockUuid: ID!
+  reason: String!
+  session: ID!): Lock
   addReleaseProgrammatic(release: ReleaseInputProg!): Release
   """
   Batch counterpart to addReleaseProgrammatic. Creates every supplied
@@ -204,18 +246,8 @@ type Mutation {
   versionFeatureSet(productUuid: ID!, overrides: [VersionFeatureSetOverride!]!): Branch
   sessionInitializeProgrammatic(sessionInit: SessionInitializeInput!): Session
   sessionTouchProgrammatic(sessionUuid: ID!, usage: SessionUsageReportInput): Session
-  sessionCloseProgrammatic(sessionUuid: ID!): Session
-
-  """
-  Report what the session consumed since its last report. One report carries
-  several lines: a delta may span models and may cross a pricing threshold, and
-  each line becomes one row that prices under exactly one entry.
-
-  Idempotent on (session, clientSeq, model, hosting, contextBand): a retried
-  delta inserts nothing and reports duplicates. A clientSeq below the session's
-  high-water mark is refused.
-  """
   sessionReportUsageProgrammatic(input: SessionUsageReportInput!): SessionUsageAck
+  sessionCloseProgrammatic(sessionUuid: ID!): Session
   sessionAddArtifactProgrammatic(addArtifact: SessionAddArtifactInput!): Session
   sessionUpdateMetaProgrammatic(updateMeta: SessionUpdateMetaInput!): Session
   spawnSubAgentProgrammatic(spawnSubAgent: SpawnSubAgentInput!): Agent
@@ -226,7 +258,22 @@ type Mutation {
   agentBoardCoordinatorLockProgrammatic(boardUuid: ID!, sessionUuid: ID!, lock: Boolean!, reason: String): AgentBoard
   agentTaskRoleConfigSetProgrammatic(boardUuid: ID!, sessionUuid: ID!, input: AgentTaskRoleConfigInput!): AgentTaskRoleConfig
   agentTaskRegisterProgrammatic(input: AgentTaskRegisterInput!): AgentTask
-  agentTaskAuthorizeProgrammatic(taskUuid: ID!, sessionUuid: ID!, role: String!, orderIndex: Int, dependsOn: [ID!]): AgentTask
+  """
+  requiredStrength: raise the model strength this task needs above what its role usually asks,
+  for work harder than the role usually is. Raise only: at least the task's current requirement
+  (its override, else the role's floor); lower values and null are refused -- people lower it
+  through agentTaskSetStrength. At most two decimal places. Left out, unchanged.
+  """
+  agentTaskAuthorizeProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  role: String!
+  orderIndex: Int
+  dependsOn: [ID!]
+  producesComponent: ID
+  level: Int
+  requiredInputs: [AgentRequiredInputInput]
+  requiredStrength: Float): AgentTask
   agentTaskHoldProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: String!): AgentTask
   agentTaskReleaseHoldProgrammatic(taskUuid: ID!, sessionUuid: ID!): AgentTask
   """
@@ -248,26 +295,17 @@ type Mutation {
   taskUuid: ID!
   sessionUuid: ID!
   roles: [String!]): AgentTaskAssignment
-  """
-  outputs: document releases produced during this hop. A role that declares
-  an output as required cannot sign off without it; the task stays assigned
-  so the refusal lands on the hop that can still fix it.
-  """
   agentTaskSignOffProgrammatic(taskUuid: ID!, sessionUuid: ID!, outcome: AgentSignOffOutcome!, note: String, outputs: [ID!]): AgentTask
-
-  """A return may carry outputs too, and nothing is required of it."""
   agentTaskReturnProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: AgentTaskReturnReason!, description: String, outputs: [ID!]): AgentTask
-
-  """
-  Publish a document version: a release of a specification component pointing
-  at bytes already committed in the board's documents repository. Idempotent on
-  (task or component, specification, commit, digest), so a retry after a timeout
-  returns the original release rather than opening a round the repository has no
-  file for.
-  """
   agentDocumentPublishProgrammatic(input: AgentDocumentPublishInput!): Release
   agentTaskBindExternalRefProgrammatic(taskUuid: ID!, externalRef: String!, sourceUrl: String): AgentTask
   agentTaskLinkPrProgrammatic(taskUuid: ID!, prUrl: String!): AgentTask
+  """
+  Attach a release this task produced -- the release counterpart of linkPr, and what a downstream role waits on when it requires this task's output.
+  """
+  agentTaskLinkReleaseProgrammatic(
+  taskUuid: ID!
+  releaseUuid: ID!): AgentTask
 }
 
 type CatalogSpec {
@@ -285,86 +323,8 @@ type BranchesSpec {
   branches: [BranchSpecEntry!]!
 }
 
-"""
-Pointer from a release to document bytes in a repository, present only on
-releases of specification components. The commit and repository come from the
-release's source code entry, so commit recognition and signature verification
-apply to a document exactly as to code.
-"""
-type DocumentRef {
-  specification: SpecificationType
-  path: String
-  digest: String
-  mediaType: String
-  indexPath: String
-  indexDigest: String
-  task: ID
-  session: ID
-  """1-based count of this task's rounds of this type."""
-  round: Int
-  """The findings index for REVIEW_FINDINGS and TEST_REPORT; absent otherwise."""
-  findings: FindingsIndex
-}
-
-"""
-The machine-read half of a review or test document: what was found, how badly it
-matters and whether it is still open. The prose lives in the markdown the release
-points at, under a heading carrying each finding's id.
-"""
-type FindingsIndex {
-  kind: SpecificationType
-  round: Int
-  verdict: FindingsVerdict
-  counts: TestCounts
-  findings: [Finding]
-  """The input these items are about, which is what routes them to the role that produces it."""
-  about: FindingsAbout
-}
-
-"""What an index's items are about, and therefore who answers them."""
-type FindingsAbout {
-  specification: SpecificationType
-  release: ID
-}
-
-enum FindingsVerdict { PASSED REJECTED }
-
-"""
-Where a finding stands. RESOLVED says the work was done, ACCEPTED says an operator
-took the risk knowingly, WITHDRAWN says the reviewer was wrong. Only OPEN must be
-carried into the next round.
-"""
-enum FindingStatus { OPEN RESOLVED ACCEPTED POLICY_ACCEPTED WITHDRAWN }
-
-type Finding {
-  """Stable within a task across rounds."""
-  id: String
-  """1 highest, at most the organization's level count."""
-  priority: Int
-  status: FindingStatus
-  title: String
-  location: FindingLocation
-  """The uuid of the release whose round closed it -- a pointer, never text."""
-  resolvedBy: String
-  """The words that closed it: a fixer's note, a policy stop's reason, or an answer."""
-  resolution: String
-}
-
-type FindingLocation {
-  path: String
-  line: Int
-  ref: String
-}
-
-type TestCounts {
-  passed: Int
-  failed: Int
-  skipped: Int
-}
-
 type Release {
   uuid: ID
-  document: DocumentRef
   version: String
   marketingVersion: String
   status: Status
@@ -414,6 +374,11 @@ type Release {
   updateEvents: [ReleaseUpdateEvent]
   metrics: DependencyTrackMetrics
   identifiers: [Identifier]
+  """
+  Pointer to the document bytes this release publishes. Non-null only on releases of
+  specification components -- an ordinary software release has no document.
+  """
+  document: DocumentRef
   gudidRecord: GudidRecord
   gudidStatus: GudidStatus
   """
@@ -655,6 +620,15 @@ type Session {
   closedAt: DateTime
   lastActivityAt: DateTime
   """
+  Rollup of this session's usage rows; null until the first report arrives.
+  """
+  usageTotals: UsageTotals
+  usageCompleteness: SessionUsageCompleteness
+  """
+  Observed usage resolved to a different model than the session declared.
+  """
+  modelMismatch: Boolean
+  """
   Artifact UUIDs attached to this session (reuses rearm.artifacts).
   """
   artifacts: [ID]
@@ -718,132 +692,6 @@ type Session {
   createdDate: DateTime
 }
 
-"""
-One agent-tool session a ReARM session ran in. See Session.providerSessions.
-"""
-type ProviderSession {
-  """
-  The tool, as the reporting client names it ("claude-code").
-  """
-  provider: String!
-  """
-  The tool's local id for the session -- for Claude Code, its transcript id.
-  """
-  id: String!
-  """
-  The id a hosted surface of the tool knows the session by; null for a purely local run.
-  """
-  remoteId: String
-  """
-  When ReARM first heard of this pairing.
-  """
-  reportedAt: DateTime
-}
-
-"""
-How a session's caller authenticated when it opened the session.
-"""
-enum SessionAuthMethod {
-  """
-  An API key's secret, directly or exchanged for an access token. Says which key, never who.
-  """
-  KEY_SECRET
-  """
-  A CLI browser login (device flow) a signed-in user approved.
-  """
-  CLI_LOGIN
-  """
-  A federated identity exchange, e.g. a GitHub Actions OIDC token.
-  """
-  FEDERATED
-}
-
-"""
-Where SessionOrigin.ownerUser came from, strongest first. A login names who approved the
-device; a personal key names whose key it is; a holder is only the user accountable for a
-secret that may since have been handed to anyone.
-"""
-enum SessionOwnerSource {
-  CLI_LOGIN
-  USER_KEY
-  KEY_HOLDER
-}
-
-"""
-See Session.origin.
-"""
-type SessionOrigin {
-  authMethod: SessionAuthMethod
-  """
-  The CLI login the session was opened through, when authMethod is CLI_LOGIN.
-  """
-  cliSession: ID
-  """
-  The person the session is attributed to, or null when nothing names one -- an organisation
-  key, a federated identity, or a Free Form key with no holder.
-  """
-  ownerUser: ID
-  ownerSource: SessionOwnerSource
-  """
-  What the CLI login recorded about its device when it was approved.
-  """
-  loginDevice: SessionDevice
-  """
-  What the client said about its device when it opened the session.
-  """
-  reportedDevice: SessionDevice
-  """
-  The client address the server saw when the session was opened. Restricted.
-  """
-  observedIp: String
-  """
-  The external identity, when authMethod is FEDERATED.
-  """
-  federation: SessionFederation
-  capturedAt: DateTime
-  """
-  True when this reader is not allowed the personal fields, which then read null. Lets a UI
-  tell "hidden from you" from "never reported".
-  """
-  restricted: Boolean!
-}
-
-"""
-A device as described to ReARM. hostname and observedIp are restricted -- see SessionOrigin.
-"""
-type SessionDevice {
-  hostname: String
-  os: String
-  timeZone: String
-  """
-  The client and its version, e.g. rearm-cli/26.09.4.
-  """
-  client: String
-  """
-  The address the server saw, when the description came with a request.
-  """
-  observedIp: String
-}
-
-"""
-The claims a federated session came through. actor names a person and is restricted.
-"""
-type SessionFederation {
-  ruleUuids: [ID]
-  provider: String
-  issuer: String
-  owner: String
-  repository: String
-  repositoryUri: String
-  ref: String
-  sha: String
-  workflowRef: String
-  environment: String
-  event: String
-  actor: String
-  runId: String
-}
-
 type AgentBoard {
   uuid: ID
   org: ID
@@ -856,11 +704,14 @@ type AgentBoard {
   sources: [String]
   """
   Where this board's documents are written, as the repository row it resolves
-  to. The row is the identity, so a remote written as ssh on one machine and
-  https on another is the same repository here.
+  to. Set by passing a URI to agentBoardUpdate; the row is the identity, so a
+  remote written as ssh on one machine and https on another is the same
+  repository here.
   """
   documentsRepo: VcsRepository
-  """Per-type path templates inside documentsRepo; empty means the defaults."""
+  """
+  Per-type path templates inside documentsRepo; empty means the defaults.
+  """
   documentPaths: Object
   """
   Append-only board notices, newest last (lock transitions auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
@@ -881,10 +732,59 @@ type AgentBoard {
   """
   perAgentWipLimit: Int
   """
+  What every task on this board may spend together, in USD micros; null means no board limit.
+  """
+  budgetMicros: Long
+  """
+  Percent of a budget at which the board posts one alert and nothing stops (default 80).
+  """
+  softAlertPercent: Int
+  """
+  Rounds between one pair of roles before a task parks (default 3).
+  """
+  cycleCap: Int
+  """
+  Repeated rounds at which a task parks; 1, the default, parks on the first repeat.
+  """
+  noProgressRepeatsToStop: Int
+  """
+  Priority number at or below which an open item blocks routing, 1 being most urgent. Null is strict.
+  """
+  blockingPriority: Int
+  """
+  Priority number at or below which an open item prevents a policy completion. Null is strict.
+  """
+  completionPriority: Int
+  """
   Whether coordinator priority is advisory (LAX, default) or enforced at assignment (STRICT).
   """
   priorityType: AgentBoardPriorityType
+  """
+  The component this board builds -- the node documents and implementation hang off.
+  """
+  target: ID
+  targetDetails: Component
+  """
+  Level applied to tasks of this board that do not declare one.
+  """
+  defaultTaskLevel: Int
+  """
+  Resolution mode for requirements of this board that do not name one.
+  """
+  defaultInputResolution: AgentInputResolution
   createdDate: DateTime
+}
+
+"""
+Everything an agent needs to see what else is happening on its board, in one read.
+
+An agent that must ask N questions to understand the board will not ask them; one that gets the
+answer in a poll's worth of latency will. Read-only and board-scoped, and nothing appears before
+it is published -- a hop has no outputs until it signs off.
+"""
+type AgentBoardSnapshot {
+  board: AgentBoard
+  tasks: [AgentTaskSnapshot]
 }
 
 """
@@ -893,20 +793,47 @@ What a polling/assigned worker receives: the task, the role to assume and its se
 type AgentTaskAssignment {
   task: AgentTask
   role: String
+  """
+  The role config row `role` names, so a worker can read that role's configuration without a lookup by name.
+  """
+  roleUuid: ID
   rolePrompt: String
   promptVersion: String
+  """
+  Versions the agent is to work from, resolved at assignment.
+  """
+  resolvedInputs: [AgentResolvedInput]
 }
 
 type AgentTask {
   uuid: ID
-  """The role config row `role` names, so a reader reaches its configuration without a lookup by name."""
-  roleUuid: ID
-  budgetMicros: Long
-  requiredStrength: Int
-  """Who is waiting on whom, innermost last."""
-  questionStack: [AgentQuestionFrame]
   org: ID
   board: ID
+  """
+  What this task may spend, in USD micros; null means only the board's limit applies.
+  """
+  budgetMicros: Long
+  """
+  Coordinator spend apportioned to this task, frozen when computed. An estimate, not a measurement.
+  """
+  coordinatorEstimateMicros: Long
+  """
+  Model strength this task requires, overriding the role's when set.
+  """
+  requiredStrength: Float
+  """
+  Who set requiredStrength, and when. Not a status transition: the status did not change.
+  """
+  strengthSetBy: AgentActor
+  strengthSetAt: DateTime
+  """
+  Rounds counted per pair of roles, keyed by the asking and answering role uuids.
+  """
+  cycles: Object
+  """
+  Who is waiting on whom, innermost last. Empty when nothing is outstanding.
+  """
+  questionStack: [AgentQuestionFrame]
   externalRef: String
   title: String
   sourceUrl: String
@@ -916,11 +843,13 @@ type AgentTask {
   """
   role: String
   """
+  The role config row `role` names, so a reader reaches its prompt, capabilities and gate without a second lookup. Null on tasks authorized before this field existed.
+  """
+  roleUuid: ID
+  """
   Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
   """
   orderIndex: Int
-  """Task level: the coordinator's priority band, served lowest first."""
-  level: Int
   """
   Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
   """
@@ -950,15 +879,49 @@ type AgentTask {
   statusHistory: [AgentTaskStatusChange]
   createdDate: DateTime
   completedAt: DateTime
-  """This task's document releases, newest first."""
+  """
+  The component this task produces -- a document component, or the implementation.
+  """
+  producesComponent: ID
+  producesComponentDetails: Component
+  """
+  Releases produced under this task, linked by the worker.
+  """
+  releases: [ID]
+  """
+  Declared level of the work; falls back to the board's defaultTaskLevel at registration.
+  """
+  level: Int
+  """
+  Requirements this task adds on top of its role's -- add-only.
+  """
+  requiredInputs: [AgentRequiredInput]
+  """
+  Pinned inputs that have since moved below what the requirement asks for; computed per read.
+  """
+  regressedInputs: [String]
+  """
+  Everything attributed to this task, across every hop and session that
+  touched it. Computed per read rather than stored, so late attribution is
+  reflected without a rewrite. Null until the first report lands.
+  """
+  usage: HopUsage
+  """
+  This task's document releases, newest first.
+  """
   documents: [Release]
   """
-  Findings still open on this task, from the NEWEST round of each indexed type,
-  ordered by priority. Newest round only: every round carries forward what the
-  previous one left open, so the newest is the current state.
+  Findings still open on this task, from the NEWEST round of each indexed
+  type, ordered by priority. Newest round only by design: every round
+  carries forward what the previous one left open, so the newest is the
+  current state and summing rounds would count one finding several times.
   """
   openFindings: [Finding]
-  """The open items of the newest QUESTIONS round only, which is what a human answers."""
+  """
+  The open items of the newest QUESTIONS round only, which is what a human answers. Separate
+  from openFindings, which flattens every indexed type and carries nothing on an item saying
+  which round it came from.
+  """
   openQuestions: [Finding]
 }
 
@@ -976,6 +939,29 @@ enum AgentTaskStatus {
 Board-scoped role definition. The coordinator is implicit and never a row here.
 """
 type AgentTaskRoleConfig {
+  """
+  The most one assignment of this role may spend, in USD micros; null means unbounded.
+  """
+  hopBudgetMicros: Long
+  """
+  Model strength this role needs; null admits every model. At most two decimal places;
+  within 0.001 either side counts as meeting it.
+  """
+  requiredStrength: Float
+  """
+  How far above requiredStrength a model may be and still take the role. 0 means an exact match.
+  """
+  strengthHeadroom: Float
+  """
+  Which of a model's per-category strengths this role reads, so a board role with its own name
+  (PLANNER) can use a model's ARCHITECT strength. Null reads the model's base strength.
+  """
+  strengthCategory: ModelRoleCategory
+  """
+  Per-model strength overrides for this role, consulted first: override, then the model's
+  strength for strengthCategory, then its base strength. Re-pointed when a model is merged.
+  """
+  modelStrengths: [RoleModelStrength!]
   uuid: ID
   board: ID
   org: ID
@@ -1010,6 +996,47 @@ type AgentTaskRoleConfig {
   Operator-only: conditional human review of this role's sign-offs (default NONE; AGENTIC roles only).
   """
   humanGate: AgentHumanGate
+  """
+  What every task in this role must be able to read before it starts.
+  """
+  requiredInputs: [AgentRequiredInput]
+  """
+  What a hop in this role must leave behind: the mirror of requiredInputs.
+  Enforced at sign-off, not at assignment -- the hop has to run before it
+  can produce anything.
+  """
+  producesOutputs: [AgentProducedOutput]
+}
+
+"""
+A board as configuration: enough to stand the same board up elsewhere, and no runtime state.
+"""
+type BoardSpec {
+  kind: DeclarativeKind!
+  version: Int!
+  name: String
+  description: String
+  """
+  Name of the component this board builds -- a spec is portable, so names rather than uuids.
+  """
+  target: String
+  defaultTaskLevel: Int
+  defaultInputResolution: AgentInputResolution
+  priorityType: AgentBoardPriorityType
+  perAgentWipLimit: Int
+  sources: [String]
+  """
+  Where documents are written, as the repository URI rather than the row uuid: a spec
+  is portable, and the uuid of a repository row means nothing in another organization.
+  Applying resolves it the same way agentBoardUpdate does.
+  """
+  documentsRepo: String
+  """
+  Per-type path templates, keyed by SpecificationType. Empty means the defaults.
+  """
+  documentPaths: Object
+  coordinatorPrompt: String
+  roles: [BoardRoleSpec]
 }
 
 type DeclarativeApplyResult {
@@ -1239,6 +1266,113 @@ input GetNewVersionInput {
   rebuild: Boolean
 }
 
+"""
+An accountable statement by a user or an agent. Append-only: a correction is a new row plus a
+revocation of the old one, because a record that can be edited afterwards is not one.
+"""
+type Attestation {
+  uuid: ID
+  org: ID
+  type: AttestationType
+  subjectType: AttestationSubjectType
+  subjectUuid: ID
+  subjectRef: AttestationSubjectRef
+  actorType: AttestationActorType
+  actorUuid: ID
+  """
+  AGENT: the session it was filed under.
+  """
+  agentSession: ID
+  verdict: AttestationVerdict
+  note: String
+  """
+  LOCK_RELEASE: released without the requirement being met. Never silent.
+  """
+  override: Boolean
+  status: AttestationRecordStatus
+  revokedAt: DateTime
+  revokeReason: String
+  createdDate: DateTime
+}
+
+"""
+How a programmatic caller names a component: by uuid, or by the VCS coordinates CI already has.
+The same block getversion and addrelease accept, resolved by the same code, so a CI job that can
+call one can call the others without learning a second convention.
+"""
+input ComponentRefInput {
+  component: ID
+  vcsUri: String
+  repoPath: String
+}
+
+"""
+Verdicts of a commit acknowledgement. MINE makes a commit recognized; it does not certify the
+content and is not a review. NOT_MINE leaves it unrecognized and escalates every lock it is a
+cause of.
+"""
+enum AttestationVerdict {
+  MINE
+  NOT_MINE
+}
+
+"""
+A sticky refusal of writes on a component or one of its branches.
+
+Every other gate in ReARM evaluates a point in time, so a rule about a commit is defeated by
+pushing another commit on top of it. A lock is the state that outlives the build: it refuses the
+next one outright and stays until somebody resolves the cause and says so on the record.
+"""
+type Lock {
+  uuid: ID
+  scope: LockScope
+  """
+  Set when scope is BRANCH.
+  """
+  branch: ID
+  status: LockStatus
+  """
+  Shown verbatim in every refusal.
+  """
+  reason: String
+  origin: LockOrigin
+  """
+  POLICY: the output event that raised it, which is also its idempotence key.
+  """
+  outputEvent: ID
+  causes: [LockCause!]
+  """
+  Causes dropped by the retention cap. Above zero the checklist is incomplete, so the lock will
+  not release itself automatically however many causes are claimed.
+  """
+  droppedCauses: Int
+  unlockLevel: UnlockLevel
+  attestationRequirement: AttestationRequirement
+  """
+  The strongest level any cause has ever implied, kept because that cause may since have been
+  dropped. A floor, never lowered.
+  """
+  escalatedLevel: UnlockLevel
+  """
+  Declared level and escalation floor combined -- who may actually release it.
+  """
+  effectiveLevel: UnlockLevel
+  raisedAt: DateTime
+  releasedAt: DateTime
+  """
+  The LOCK_RELEASE attestation that released it.
+  """
+  releaseAttestation: ID
+  """
+  Where the lock lives. A lock is stored inside its component or branch row, so these come from
+  the read rather than from the record -- without them an organization-wide list of locks could
+  not say what any of them was about.
+  """
+  component: ID
+  componentName: String
+  branchName: String
+}
+
 input ReleaseInputProg {
   version: String!
   lifecycle: ReleaseLifecycleEnum
@@ -1412,6 +1546,15 @@ type Component {
   at-risk report and NEVER blocks releases.
   """
   ownership: ComponentOwnership!
+  """
+  Guards written on this component. They accumulate with the guards its perspectives and its
+  organization declare for it -- every applicable guard is evaluated and any one can refuse.
+  """
+  actionGuards: [ActionGuard!]
+  """
+  Locks raised on this component, active and recently released.
+  """
+  locks: [Lock!]
 }
 
 input CreateComponentInput {
@@ -1538,6 +1681,10 @@ type Instance {
 type Branch {
   uuid: ID
   name: String
+  """
+  Locks raised on this branch, active and recently released.
+  """
+  locks: [Lock!]
   component: ID
   componentDetails: Component
   components: [ID]
@@ -1620,21 +1767,34 @@ input SessionInitializeInput {
   device: SessionDeviceInput
 }
 
-"""
-A client's description of its device. Each value is trimmed and clipped to 200 characters.
-hostname is personal data and is shown only to org admins and the session's owner.
-"""
-input SessionDeviceInput {
-  hostname: String
-  os: String
+input SessionUsageReportInput {
+  sessionUuid: ID
+  clientSessionId: String
   """
-  The local UTC offset and zone abbreviation, e.g. "UTC+02:00 CEST".
+  Monotonic per session; the transcript byte offset in the CLI, so 64-bit.
   """
-  timeZone: String
+  clientSeq: Long!
+  source: SessionUsageSource!
+  windowStart: DateTime
+  windowEnd: DateTime
+  turns: Int
+  toolCalls: Int
+  wallSeconds: Int
+  reasoningLevel: String
+  taskUuid: ID
+  raw: Object
+  lines: [SessionUsageLineInput!]!
+}
+
+type SessionUsageAck {
+  accepted: Int!
+  duplicates: Int!
   """
-  The client and its version, e.g. "rearm-cli/26.09.4".
+  One message per line that could not be filed, with the reason.
   """
-  client: String
+  refused: [String!]!
+  attribution: SessionUsageAttribution!
+  task: ID
 }
 
 """
@@ -1659,26 +1819,6 @@ input SessionUpdateMetaInput {
   fill in a remoteId the first report lacked.
   """
   providerSession: ProviderSessionInput
-}
-
-"""
-The agent tool's own session, as a client reports it. See Session.providerSessions.
-"""
-input ProviderSessionInput {
-  """
-  The tool, as a short lower-case identifier ("claude-code"). Stored lower-cased.
-  """
-  provider: String!
-  """
-  The tool's local id for the session -- for Claude Code, the id its transcript is filed
-  under ($CLAUDE_CODE_SESSION_ID). Printable ASCII, no whitespace, at most 256 characters.
-  """
-  id: String!
-  """
-  The id a hosted surface of the tool knows the session by, when there is one -- for Claude
-  Code, the bridge / web session id (session_...). Same character rules as id.
-  """
-  remoteId: String
 }
 
 """
@@ -1836,6 +1976,47 @@ type ModelOntology {
   a fuller card later via setModelOntologyModelCardProgrammatic.
   """
   modelCard: Object
+  """
+  Which CycloneDX spec the stored card is written in: V1_6 or V2_0. Absent means
+  the card predates the converter and is 1.6 by definition. The enum members are
+  V1_6 / V2_0 because "1.6" is not a valid GraphQL enum value; the stored wire
+  form is still "1.6" / "2.0".
+  """
+  modelCardSpecVersion: ModelCardSpecVersion
+  """
+  The provider's own API model id, e.g. claude-fable-5-1.
+  """
+  canonicalId: String
+  """
+  Normalised strings resolving to this row. Provider-qualified forms are not aliases.
+  """
+  aliases: [String]
+  """
+  contextWindow, maxOutputTokens, modalities, hostingKind, releaseDate, ...
+  """
+  facts: ModelFacts
+  """
+  Where the model comes from; admin-set. Provenance, not capability -- see strength.
+  """
+  tier: ModelTier
+  """
+  How capable this model is, on the organization's scale; null means unrated. Operator-set, never
+  declared by an agent. At most two decimal places.
+  """
+  strength: Float
+  """
+  Per-category strengths, each overriding strength for roles of that category.
+  """
+  strengthByRole: [ModelRoleStrength!]
+  """
+  RESOLVED when linked to a bundled entry or admin-confirmed; UNRESOLVED otherwise.
+  """
+  resolution: ModelResolution
+  pricing: [PricingEntry]
+  """
+  Other rows of this org ranked by similarity; the UI offers the top few for merge.
+  """
+  mergeCandidates: [ModelOntology]
   notes: String
   createdDate: DateTime
 }
@@ -1973,6 +2154,31 @@ input AgentTaskRoleConfigInput {
   Operator-only; rejected on the coordinator-seat path.
   """
   humanGate: AgentHumanGate
+  """
+  Operator-only, like prompts and capabilities.
+  """
+  requiredInputs: [AgentRequiredInputInput]
+  """
+  Operator-only, like prompts and capabilities. Also the board's routing graph.
+  """
+  producesOutputs: [AgentProducedOutputInput]
+  """
+  Operator-only. The floor a model must meet for this role, at most two decimal places. Left
+  out, unchanged; sent as null, the floor is removed.
+  """
+  requiredStrength: Float
+  """
+  Operator-only. How far above requiredStrength a model may be; 0 is an exact match.
+  """
+  strengthHeadroom: Float
+  """
+  Operator-only. Which of a model's per-category strengths this role reads; null reads the base.
+  """
+  strengthCategory: ModelRoleCategory
+  """
+  Operator-only. Replaces the role's per-model overrides; an empty list clears them.
+  """
+  modelStrengths: [RoleModelStrengthInput!]
 }
 
 input AgentTaskRegisterInput {
@@ -1985,6 +2191,18 @@ input AgentTaskRegisterInput {
   """
   sessionUuid: ID
   parentTask: ID
+  producesComponent: ID
+  level: Int
+  requiredInputs: [AgentRequiredInputInput]
+}
+
+input AgentRequiredInputInput {
+  kind: AgentInputKind!
+  specification: SpecificationType
+  scope: AgentInputScope
+  component: ID
+  minLifecycle: ReleaseLifecycleEnum!
+  resolution: AgentInputResolution
 }
 
 enum AgentBoardEventKind {
@@ -2002,6 +2220,11 @@ input AgentTaskSplitChildInput {
   Sibling-index dependencies (0-based within this split), encoding the architect's proposed ordering.
   """
   dependsOnSiblingIndexes: [Int!]
+  producesComponent: ID
+  """
+  Omitted children inherit the parent task's level.
+  """
+  level: Int
 }
 
 enum AgentSignOffOutcome {
@@ -2023,11 +2246,56 @@ enum AgentTaskReturnReason {
 }
 
 """
+What an agent states about a document it has already committed.
+"""
+input AgentDocumentPublishInput {
+  sessionUuid: ID!
+  """
+  Required for TASK-scoped types (REVIEW_FINDINGS, TEST_REPORT).
+  """
+  taskUuid: ID
+  specification: SpecificationType!
+  """
+  Required for COMPONENT-scoped types: which document series this belongs to.
+  """
+  component: ID
+  """
+  Repo-relative path of the document at the commit below. Omit it, with digest, commit and
+  vcsUri, to publish an index alone -- a QUESTIONS round usually has no prose worth committing,
+  and requiring a file would put an empty markdown in the repository to satisfy a check.
+  """
+  path: String
+  """
+  sha256 of the file at that path. Required with a path.
+  """
+  digest: String
+  mediaType: String
+  indexPath: String
+  indexDigest: String
+  """
+  The findings index. Required for REVIEW_FINDINGS, TEST_REPORT and QUESTIONS.
+  """
+  index: Object
+  """
+  HEAD of the documents repository when the files were read. Required with a path.
+  """
+  commit: String
+  """
+  Must equal the board's documentsRepo. Required with a path; an index-only round writes no file, so it names no repository.
+  """
+  vcsUri: String
+  commitMessage: String
+  commitDate: DateTime
+  lifecycle: ReleaseLifecycleEnum
+}
+
+"""
 Ownership slice a declarative spec describes. One kind per file; the apply / export operations are per kind.
 """
 enum DeclarativeKind {
   CATALOG
   BRANCHES
+  BOARD
 }
 
 type CatalogComponent {
@@ -2144,6 +2412,17 @@ type ParentRelease {
 
 type SourceCodeEntry {
   uuid: ID
+  """
+  Whether anybody can be held to this commit: an enrolled key signed it, a live agent session
+  owns it, or somebody has claimed it in an attestation. Computed on demand -- a verdict changes
+  when a key is enrolled or revoked and a claim can be revoked later, so a stored flag would be
+  wrong quietly. The same predicate rules read as `c.recognized`.
+  """
+  recognized: Boolean
+  """
+  What the attestations say about this commit, independently of signature and attribution.
+  """
+  attestation: CommitAttestation
   branch: ID
   vcsUuid: ID
   vcsBranch: String
@@ -2446,6 +2725,41 @@ type Identifier {
 }
 
 """
+Pointer from a release to document bytes in a repository, present only on
+releases of specification components. The commit and repository are NOT
+repeated here: they come from the release's source code entry, so the
+recognised-commit predicate and signature verification apply to a document
+exactly as they do to code.
+"""
+type DocumentRef {
+  specification: SpecificationType
+  """
+  Repo-relative path at the release's commit.
+  """
+  path: String
+  digest: String
+  mediaType: String
+  indexPath: String
+  indexDigest: String
+  """
+  The task this round belongs to, for TASK-scoped types.
+  """
+  task: ID
+  """
+  The session that published it.
+  """
+  session: ID
+  """
+  1-based count of this task's rounds of this type.
+  """
+  round: Int
+  """
+  The findings index for REVIEW_FINDINGS and TEST_REPORT; absent otherwise.
+  """
+  findings: FindingsIndex
+}
+
+"""
 Version-specific GUDID record for a UDI-bearing release.
 """
 type GudidRecord {
@@ -2585,6 +2899,43 @@ enum SessionStatus {
 }
 
 """
+Rollup of usage rows. Tokens are facts and never change; cost is derived from a
+dated price entry, so every rollup names the entries it used.
+"""
+type UsageTotals {
+  inputTokens: Long
+  outputTokens: Long
+  cacheReadTokens: Long
+  cacheWriteTokens: Long
+  requests: Int
+  turns: Int
+  toolCalls: Int
+  wallSeconds: Int
+  """
+  Number of report lines rolled up here.
+  """
+  reports: Int
+  byModel: [UsageByModel]
+  derivedCostMicros: Long
+  priceVersions: [ID]
+  """
+  False when some row had no applicable price: the cost is a lower bound.
+  """
+  costComplete: Boolean
+}
+
+"""
+How much of a session's consumption we believe we have. INCOMPLETE means the
+scheduler or an operator ended the session, so the tail is missing; NONE means
+nothing ever reported. A cheap session and an unreported one are not the same claim.
+"""
+enum SessionUsageCompleteness {
+  COMPLETE
+  INCOMPLETE
+  NONE
+}
+
+"""
 A single agent-policy evaluation outcome on a session. SAAS-only --
 on CE deployments the session's {@code policyEvents} list is always
 empty. Persisted append-only on AgentSession.
@@ -2633,22 +2984,71 @@ enum ModelAssertionState {
   RUNTIME_OBSERVED
 }
 
+"""
+One agent-tool session a ReARM session ran in. See Session.providerSessions.
+"""
+type ProviderSession {
+  """
+  The tool, as the reporting client names it ("claude-code").
+  """
+  provider: String!
+  """
+  The tool's local id for the session -- for Claude Code, its transcript id.
+  """
+  id: String!
+  """
+  The id a hosted surface of the tool knows the session by; null for a purely local run.
+  """
+  remoteId: String
+  """
+  When ReARM first heard of this pairing.
+  """
+  reportedAt: DateTime
+}
+
+"""
+See Session.origin.
+"""
+type SessionOrigin {
+  authMethod: SessionAuthMethod
+  """
+  The CLI login the session was opened through, when authMethod is CLI_LOGIN.
+  """
+  cliSession: ID
+  """
+  The person the session is attributed to, or null when nothing names one -- an organisation
+  key, a federated identity, or a Free Form key with no holder.
+  """
+  ownerUser: ID
+  ownerSource: SessionOwnerSource
+  """
+  What the CLI login recorded about its device when it was approved.
+  """
+  loginDevice: SessionDevice
+  """
+  What the client said about its device when it opened the session.
+  """
+  reportedDevice: SessionDevice
+  """
+  The client address the server saw when the session was opened. Restricted.
+  """
+  observedIp: String
+  """
+  The external identity, when authMethod is FEDERATED.
+  """
+  federation: SessionFederation
+  capturedAt: DateTime
+  """
+  True when this reader is not allowed the personal fields, which then read null. Lets a UI
+  tell "hidden from you" from "never reported".
+  """
+  restricted: Boolean!
+}
+
 enum AgentBoardStatus {
   ACTIVE
   ARCHIVED
 }
-
-"""
-Who did something on a board: the identity on a lock, an event, a hold or a human
-sign-off. kind says which identity space uuid belongs to; name is what a human reads.
-"""
-type AgentActor {
-  kind: AgentActorKind
-  uuid: ID
-  name: String
-}
-
-enum AgentActorKind { SESSION USER SYSTEM }
 
 type AgentBoardEvent {
   kind: AgentBoardEventKind
@@ -2673,12 +3073,102 @@ type AgentCoordinatorSeat {
   claimedAt: DateTime
 }
 
+scalar Long
+
 """
 How strictly coordinator priority binds assignment. LAX: the poll offers work in priority order but a worker may assign any eligible task (advisory). STRICT: assignment is refused unless the task is the top eligible offer for that agent.
 """
 enum AgentBoardPriorityType {
   LAX
   STRICT
+}
+
+"""
+Which release satisfies a threshold. LATEST_PASSING (default) takes the newest release at or
+above it, so a fresh draft never un-satisfies a baselined version; STRICT_LATEST demands the
+component's own latest release clear it.
+"""
+enum AgentInputResolution {
+  LATEST_PASSING
+  STRICT_LATEST
+}
+
+type AgentTaskSnapshot {
+  task: AgentTask
+  """
+  Who holds it now, or null when nobody does.
+  """
+  holder: AgentActor
+  heldSince: DateTime
+  """
+  What it waits on, with each dependency's own status.
+  """
+  dependsOn: [AgentTaskDependency]
+  """
+  Newest release per specification type, so a reader sees the current document set.
+  """
+  latestDocuments: [Release]
+  """
+  Top of the question stack. Null when nothing is outstanding.
+  """
+  waitingOn: AgentQuestionFrame
+  spentMicros: Long
+  budgetMicros: Long
+}
+
+"""
+What a requirement resolved to when the task was assigned, pinned on the assignment: the version
+the agent works from, and the trail from a later rejection back to the work that consumed it.
+"""
+type AgentResolvedInput {
+  kind: AgentInputKind
+  specification: SpecificationType
+  component: ID
+  release: ID
+  version: String
+  lifecycle: ReleaseLifecycleEnum
+}
+
+"""
+Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+
+These were all String, and every writer invented its own encoding -- a session uuid behind a
+"coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+to; name is what a human should read. Rows written before this are decoded on read, so an
+older lock still resolves.
+"""
+type AgentActor {
+  kind: AgentActorKind
+  """
+  The session or user uuid, when the writer knew it. Null on older rows and on SYSTEM.
+  """
+  uuid: ID
+  """
+  Display text: an email for a user, a detail such as "humanGate" for SYSTEM.
+  """
+  name: String
+}
+
+"""
+One unanswered question: who asked, about what, and who is expected to answer.
+
+Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+each answer pops one frame and the chain unwinds to whoever started it.
+"""
+type AgentQuestionFrame {
+  askingRole: ID
+  askingSession: ID
+  askingAgent: ID
+  """
+  The index release carrying the items.
+  """
+  questionsRelease: ID
+  """
+  The role that produces the questioned input; null while the coordinator is deciding who that is.
+  """
+  answeringRole: ID
+  askedAt: DateTime
 }
 
 type AgentTaskHold {
@@ -2700,8 +3190,16 @@ type AgentTaskWorkAssignment {
   session: ID
   agent: ID
   role: String
+  """
+  The role config row `role` named when this assignment was made. Null on assignments made before this field existed.
+  """
+  roleUuid: ID
   assignedAt: DateTime
   promptVersion: String
+  """
+  Versions this assignment is bound to work from.
+  """
+  resolvedInputs: [AgentResolvedInput]
 }
 
 """
@@ -2709,6 +3207,10 @@ Append-only per-hop sign-off stored in ReARM; promptVersion pins the served prom
 """
 type AgentTaskSignOff {
   role: String
+  """
+  The role config row `role` named at the time. Null on hops recorded before this field existed.
+  """
+  roleUuid: ID
   agent: ID
   session: ID
   assignedAt: DateTime
@@ -2720,80 +3222,137 @@ type AgentTaskSignOff {
   Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
   """
   reviewedBy: AgentActor
+  """
+  What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+  """
+  usage: HopUsage
+  """
+  Document releases this hop published, in publish order. Recorded on the hop rather
+  than only on the task because a later round's reader needs to know WHICH hop produced
+  a document to carry its open findings forward.
+  """
+  outputs: [ID]
 }
 
 type AgentTaskReturn {
   role: String
+  """
+  The role config row `role` named at the time. Null on hops recorded before this field existed.
+  """
+  roleUuid: ID
   agent: ID
   session: ID
   reason: AgentTaskReturnReason
   description: String
   returnedAt: DateTime
-}
-
-"""One unanswered question: who asked, about what, and who is expected to answer."""
-type AgentQuestionFrame {
-  askingRole: ID
-  askingSession: ID
-  askingAgent: ID
-  questionsRelease: ID
-  answeringRole: ID
-  askedAt: DateTime
-}
-
-"""Everything an agent needs to see what else is happening on its board, in one read."""
-type AgentBoardSnapshot {
-  board: AgentBoard
-  tasks: [AgentTaskSnapshot]
-}
-
-type AgentTaskSnapshot {
-  task: AgentTask
-  holder: AgentActor
-  heldSince: DateTime
-  dependsOn: [AgentTaskDependency]
-  latestDocuments: [Release]
-  waitingOn: AgentQuestionFrame
-  spentMicros: Long
-  budgetMicros: Long
-}
-
-type AgentTaskDependency {
-  task: ID
-  externalRef: String
-  title: String
-  status: AgentTaskStatus
+  """
+  What this hop consumed before it was handed back. A returned hop still costs money.
+  """
+  usage: HopUsage
+  """
+  Document releases published before the hop was handed back; a returned hop can still have produced one.
+  """
+  outputs: [ID]
 }
 
 """
-One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+One status transition, written atomically with the transition. Intervals between rows are the
+cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+
+actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+null -- "who moved this task" had no answer for exactly the moves a person made.
 """
 type AgentTaskStatusChange {
   from: AgentTaskStatus
   to: AgentTaskStatus
   at: DateTime
   trigger: AgentStatusTrigger
-  """Who caused it: the session, the human who approved at a gate, or the system on a sweep."""
   actor: AgentActor
 }
 
-"""What caused a status transition."""
-enum AgentStatusTrigger {
-  REGISTER
-  AUTHORIZE
-  ASSIGN
-  SIGNOFF
-  RETURN
-  COMPLETE
-  CANCEL
-  SPLIT
-  HOLD
-  RELEASE_HOLD
-  HUMAN_GATE
-  HUMAN_APPROVE
-  HUMAN_REJECT
-  HUMAN_SIGNOFF
-  SESSION_CLOSED
+type AgentRequiredInput {
+  kind: AgentInputKind
+  """
+  DOCUMENT only: which specification document, resolved against the board's target node.
+  """
+  specification: SpecificationType
+  """
+  RELEASE only.
+  """
+  scope: AgentInputScope
+  """
+  RELEASE with COMPONENT scope: null means the board's target node.
+  """
+  component: ID
+  minLifecycle: ReleaseLifecycleEnum
+  """
+  Null falls back to the board's defaultInputResolution.
+  """
+  resolution: AgentInputResolution
+}
+
+"""
+One hop's consumption, frozen when the hop ended.
+"""
+type HopUsage {
+  inputTokens: Long
+  outputTokens: Long
+  cacheReadTokens: Long
+  cacheWriteTokens: Long
+  requests: Int
+  turns: Int
+  reports: Int
+  derivedCostMicros: Long
+  priceVersions: [ID]
+  costComplete: Boolean
+}
+
+type Finding {
+  """
+  Stable within a task across rounds: an open finding is carried forward under the same id.
+  """
+  id: String
+  """
+  1 highest, at most the organization's level count.
+  """
+  priority: Int
+  status: FindingStatus
+  """
+  One line; the reasoning is in the markdown under a heading carrying the id.
+  """
+  title: String
+  location: FindingLocation
+  """
+  The uuid of the release whose round closed it -- a pointer, never text. Null while the item is
+  open. A round that closes an item names itself here, unless another release already answers
+  for it: when an upstream role answered by republishing its document, this points at that
+  document rather than at the round recording the closure.
+  """
+  resolvedBy: String
+  """
+  The words that closed it: a fixer's note, a policy stop's reason, or the answer to a question.
+  """
+  resolution: String
+}
+
+"""
+The kinds of work a model's strength can differ by. A board role maps to one of these through
+AgentTaskRoleConfig.strengthCategory.
+"""
+enum ModelRoleCategory {
+  ARCHITECT
+  CODER
+  QA
+  REVIEWER
+}
+
+"""
+A role's strength override for one model.
+"""
+type RoleModelStrength {
+  model: ID!
+  strength: Float!
 }
 
 """
@@ -2829,6 +3388,33 @@ enum AgentHumanGate {
   NONE
   ON_PASS
   ON_ANY_SIGNOFF
+}
+
+"""
+A document a role is expected to publish during its hop.
+"""
+type AgentProducedOutput {
+  specification: SpecificationType
+  scope: AgentInputScope
+  """
+  False makes it advisory, for roles that sometimes have nothing to write.
+  """
+  required: Boolean
+}
+
+type BoardRoleSpec {
+  name: String
+  prompt: String
+  orderIndex: Int
+  wipLimit: Int
+  requireDistinctAgent: Boolean
+  active: Boolean
+  kind: AgentRoleKind
+  necessity: AgentRoleNecessity
+  humanGate: AgentHumanGate
+  requiredCapabilities: [String]
+  requiredInputs: [BoardRequiredInputSpec]
+  producesOutputs: [BoardProducedOutputSpec]
 }
 
 type DeclarativeChange {
@@ -2955,6 +3541,100 @@ input PullRequestInfoInput {
   Link back to the PR in the upstream SCM (e.g., GitHub PR URL).
   """
   endpoint: String
+}
+
+enum AttestationType {
+  COMMIT_ACKNOWLEDGEMENT
+  LOCK_RELEASE
+}
+
+enum AttestationSubjectType {
+  SCE
+  RELEASE
+  LOCK
+}
+
+"""
+What the subject was called when the statement was made; display only.
+"""
+type AttestationSubjectRef {
+  component: ID
+  componentName: String
+  commit: String
+  version: String
+}
+
+enum AttestationActorType {
+  USER
+  AGENT
+}
+
+enum AttestationRecordStatus {
+  ACTIVE
+  REVOKED
+}
+
+enum LockScope {
+  COMPONENT
+  BRANCH
+}
+
+enum LockStatus {
+  ACTIVE
+  RELEASED
+}
+
+enum LockOrigin {
+  MANUAL
+  POLICY
+}
+
+"""
+One thing a lock is waiting on.
+"""
+type LockCause {
+  subjectType: LockSubjectType
+  subjectUuid: ID
+  """
+  Human text carried into the refusal, e.g. "commit a1b2c3d: unsigned, no attribution".
+  """
+  detail: String
+}
+
+"""
+Who may release a lock.
+"""
+enum UnlockLevel {
+  """
+  Any recognized principal, agent or user, through either API.
+  """
+  AGENT
+  """
+  A user; an agent cannot.
+  """
+  HUMAN
+  """
+  A component or organization administrator.
+  """
+  ADMIN
+}
+
+"""
+What must be true of a lock's causes before it may be released.
+"""
+enum AttestationRequirement {
+  """
+  Nothing; the level alone decides.
+  """
+  NONE
+  """
+  Every cause carries an active MINE attestation from any recognized principal.
+  """
+  ANY
+  """
+  Every cause carries an active MINE attestation filed by a user.
+  """
+  HUMAN
 }
 
 input ArtifactInput {
@@ -3124,6 +3804,22 @@ type ReleaseOutputEvent {
   required-check entry (GitHub matches by exact string -- no wildcards).
   """
   checkName: String
+  """
+  LOCK: the branch this release is on, or the whole component. Defaults to BRANCH.
+  """
+  lockScope: LockScope
+  """
+  LOCK: who may release the lock this raises. Defaults to HUMAN.
+  """
+  lockUnlockLevel: UnlockLevel
+  """
+  LOCK: what must be claimed before the lock may be released. Defaults to ANY.
+  """
+  lockAttestationRequirement: AttestationRequirement
+  """
+  LOCK: shown verbatim in every refusal, so it is written for whoever hits it.
+  """
+  lockReason: String
 }
 
 """
@@ -3203,6 +3899,10 @@ type Perspective {
   Perspective-level decoded authority segments (SaaS only).
   """
   sidAuthoritySegments: [String!]
+  """
+  Guards applying to every component of this perspective.
+  """
+  actionGuards: [ActionGuard!]
 }
 
 """
@@ -3263,6 +3963,35 @@ type ComponentOwnership {
   status: ComponentOwnershipStatus!
   derived: Boolean!
   reason: String
+}
+
+"""
+One named rule withholding an action until its CEL expression holds.
+
+Guards accumulate rather than override: every guard that applies to an action is evaluated, any
+one of them can refuse, and the refusal names the guard that did it. A guard is the mirror of a
+release trigger -- same expression language, same release.* variables, plus action.* describing
+what is being attempted -- but where a trigger makes something happen, a guard only refuses.
+"""
+type ActionGuard {
+  """
+  Names the guard in refusals and in the note a WARN guard leaves behind.
+  """
+  name: String
+  action: GuardedAction
+  """
+  CEL over release.* and action.*; the action proceeds only while this is true.
+  """
+  cel: String
+  mode: GuardMode
+  """
+  Java regex matched FULLY against the component name -- `guard-prod` governs the component
+  named exactly that, not `guard-prod-api`; write `guard-prod.*` for a prefix. Same anchoring
+  as the org's approval-policy and team-assignment rules. Meaningful only on organization-wide
+  guards; guards written on a component or a perspective leave it null and are refused if they
+  set it.
+  """
+  namePattern: String
 }
 
 input VcsRepositoryInput {
@@ -3466,6 +4195,87 @@ enum FindingAnalyticsParticipation {
   EXCLUDED
 }
 
+"""
+The agent tool's own session, as a client reports it. See Session.providerSessions.
+"""
+input ProviderSessionInput {
+  """
+  The tool, as a short lower-case identifier ("claude-code"). Stored lower-cased.
+  """
+  provider: String!
+  """
+  The tool's local id for the session -- for Claude Code, the id its transcript is filed
+  under ($CLAUDE_CODE_SESSION_ID). Printable ASCII, no whitespace, at most 256 characters.
+  """
+  id: String!
+  """
+  The id a hosted surface of the tool knows the session by, when there is one -- for Claude
+  Code, the bridge / web session id (session_...). Same character rules as id.
+  """
+  remoteId: String
+}
+
+"""
+A client's description of its device. Each value is trimmed and clipped to 200 characters.
+hostname is personal data and is shown only to org admins and the session's owner.
+"""
+input SessionDeviceInput {
+  hostname: String
+  os: String
+  """
+  The local UTC offset and zone abbreviation, e.g. "UTC+02:00 CEST".
+  """
+  timeZone: String
+  """
+  The client and its version, e.g. "rearm-cli/26.09.4".
+  """
+  client: String
+}
+
+"""
+Where a usage report came from, which is also how far it is to be trusted.
+"""
+enum SessionUsageSource {
+  SELF_REPORTED
+  TRANSCRIPT
+  OTEL
+  PROVIDER
+}
+
+"""
+One line of a usage report: one model, one hosting, one context band.
+"""
+input SessionUsageLineInput {
+  model: String
+  hosting: SessionUsageHosting
+  """
+  Floor of the pricing band these requests fall in, in tokens: 0 for the base
+  band, 200000 above the long-context threshold. A number rather than a label,
+  so it sorts and compares against a pricing entry's contextAboveTokens
+  directly. Absent means the base band.
+  """
+  contextBand: Long
+  requests: Int!
+  inputTokens: Long!
+  outputTokens: Long!
+  cacheReadTokens: Long
+  cacheWriteTokens: Long
+  reasoningTokens: Long
+  maxRequestContextTokens: Long
+  minRequestContextTokens: Long
+  reportedCostMicros: Long
+}
+
+"""
+How a usage row found its task; the answer changes what the number means.
+"""
+enum SessionUsageAttribution {
+  EXPLICIT
+  IMPLICIT
+  COORDINATOR
+  UNATTRIBUTED
+}
+
 enum AgentStatus {
   ACTIVE
   ARCHIVED
@@ -3509,6 +4319,105 @@ type ApiKey {
   has authenticated with this key at least once. FREEFORM keys only.
   """
   boundAgents: [Agent]
+}
+
+"""
+Which CycloneDX spec a stored model card is written in. V1_6 and V2_0 rather than
+"1.6" and "2.0" because those are not valid GraphQL enum values; the persisted
+wire form is unchanged.
+"""
+enum ModelCardSpecVersion {
+  V1_6
+  V2_0
+}
+
+"""
+What is true of a model regardless of who serves it. A typed record rather than a
+free-form map: a routing floor reading contextWindow needs a number, and a typo in
+a key used to become a fact nobody would ever read.
+"""
+type ModelFacts {
+  contextWindow: Long
+  maxOutputTokens: Long
+  modalities: [Modality]
+  hostingKind: ModelHostingKind
+  """
+  ISO-8601 date. A String rather than a scalar: the schema has no Date scalar,
+  and adding one with its coercion for three fields is more surface than it buys.
+  The Java side keeps LocalDate, so a malformed date fails when the catalogue loads.
+  """
+  releaseDate: String
+  deprecatedAt: String
+  knowledgeCutoff: String
+}
+
+"""
+Where a model comes from: who built it and whether its weights are open. Provenance, not
+capability -- how capable a model is lives in `strength`, which an operator sets and a role
+requires.
+"""
+enum ModelTier {
+  """
+  Closed model from a frontier lab.
+  """
+  FRONTIER
+  """
+  Open weights, as released.
+  """
+  OPEN_WEIGHT_STOCK
+  """
+  Open weights tuned by this organization or a vendor.
+  """
+  OPEN_WEIGHT_FINE_TUNED
+  """
+  Closed model from any other vendor.
+  """
+  THIRD_PARTY_PROPRIETARY
+  """
+  This organization's own closed model.
+  """
+  FIRST_PARTY_PROPRIETARY
+}
+
+"""
+A model's strength for one kind of work.
+"""
+type ModelRoleStrength {
+  category: ModelRoleCategory!
+  strength: Float!
+}
+
+"""
+RESOLVED when the row is linked to a bundled catalogue entry or confirmed by an
+admin; UNRESOLVED when it auto-created from a string nobody mapped. Unresolved
+rows price nothing.
+"""
+enum ModelResolution {
+  RESOLVED
+  UNRESOLVED
+}
+
+"""
+A dated rate, in micros per million tokens. Entries are never edited: a
+correction is a new entry plus an expiry on the old one, so a recorded price
+version always means the same numbers.
+"""
+type PricingEntry {
+  uuid: ID
+  effectiveFrom: DateTime
+  effectiveTo: DateTime
+  currency: String
+  unit: PricingUnit
+  inputMicros: Long
+  outputMicros: Long
+  cacheReadMicros: Long
+  cacheWriteMicros: Long
+  reasoningMicros: Long
+  appliesTo: PricingSelector
+  source: String
+  note: String
+  createdBy: ID
+  createdAt: DateTime
 }
 
 """
@@ -3595,6 +4504,85 @@ enum SigningKeyOwnerType {
   COMMITTER
 }
 
+"""
+What a hop in this role must leave behind: the mirror of AgentRequiredInputInput, and the other
+half of the contract between roles. It is also the routing graph -- open items are sent to
+whichever active role produces the specification they are about -- so a board whose roles declare
+nothing routes every question to its coordinator instead.
+
+QUESTIONS is refused here and in requiredInputs: a question is a side channel any role may emit,
+never a role's contracted product or prerequisite.
+"""
+input AgentProducedOutputInput {
+  specification: SpecificationType!
+  scope: AgentInputScope
+  """
+  False makes it advisory, for roles that sometimes have nothing to write.
+  """
+  required: Boolean
+}
+
+"""
+One model's strength for one role, overriding what the catalogue says about the model.
+"""
+input RoleModelStrengthInput {
+  """
+  A model in this organization's catalogue.
+  """
+  model: ID!
+  strength: Float!
+}
+
+"""
+What a task must be able to read before an agent may start it: the board's Ready rule.
+"""
+enum AgentInputKind {
+  DOCUMENT
+  RELEASE
+}
+
+"""
+Well-known specification documents. When an identifier's idType is SPECIFICATION its idValue is
+one of these values -- the design-stage counterpart of TEA's compliance-document-type, so a
+document set is discoverable by identifier rather than by naming convention.
+"""
+enum SpecificationType {
+  CONOPS
+  USE_CASES
+  REQUIREMENTS
+  FUNCTIONS
+  PRODUCT_BREAKDOWN
+  INTERFACES
+  DATA_MODEL
+  ARCHITECTURE
+  DETAILED_DESIGN
+  UX_CONCEPT
+  TEST_PLAN
+  GLOSSARY
+  DECISION_RECORD
+  """
+  One review round of one task. Task-scoped: one component per board target holds every task's rounds.
+  """
+  REVIEW_FINDINGS
+  """
+  One test run of one task. Task-scoped, like REVIEW_FINDINGS.
+  """
+  TEST_REPORT
+  """
+  What one hop could not proceed without knowing. Task-scoped, like REVIEW_FINDINGS, and
+  usually published with no file at all -- the items are the document.
+  """
+  QUESTIONS
+}
+
+"""
+Which release a RELEASE requirement is about: any release of the component, or one linked to this very task.
+"""
+enum AgentInputScope {
+  COMPONENT
+  TASK
+}
+
 type DeclarativeProvenance {
   """
   SHA-256 of the canonical JSON of the spec that last touched this row.
@@ -3635,6 +4623,11 @@ type IgnoreViolation {
 type Settings {
   declarativePrune: DeclarativePruneMode
   justificationMandatory: Boolean
+  """
+  How many finding priority levels this organization uses, 1 being the highest. Null
+  means the default. Write side is SettingsInput.findingPriorityLevels, which bounds it.
+  """
+  findingPriorityLevels: Int
   branchSuffixMode: BranchSuffixMode
   vexComplianceFramework: VexComplianceFramework
   """
@@ -3696,6 +4689,11 @@ NULL MEANS DISABLED. The default is off: support properties do not appear in an
   picked one in their browser. Null means SECURITY.
   """
   defaultView: DashboardView
+  """
+  Guards declared once for the organization, each picking the components it governs by name
+  pattern, the same way the org's approval-policy rules do.
+  """
+  actionGuards: [ActionGuard!]
 }
 
 """
@@ -3781,6 +4779,40 @@ type GlobalTeamAssignmentRule {
   Owner team (UserGroup) UUID; must exist and be active in this org.
   """
   ownerTeam: ID
+}
+
+"""
+What has been claimed about a commit, and by whom.
+"""
+type CommitAttestation {
+  """
+  NONE, MINE, NOT_MINE, or CONFLICT when two different principals each say it is theirs.
+  One principal's latest word replaces their earlier one, so disowning and then claiming is
+  a correction rather than a conflict.
+  """
+  state: String
+  """
+  USER or AGENT, for the claim that made it accountable.
+  """
+  actorType: String
+  actor: ID
+  """
+  Who that is, by name -- an email for a user, the agent's name for an agent.
+  """
+  actorName: String
+  """
+  When the standing claim was made.
+  """
+  claimedAt: DateTime
+  """
+  Why it stands as it does: "signed by an enrolled key", "unsigned, no attribution".
+  """
+  detail: String
+  """
+  Where each principal stands now, latest word per principal, newest first. This is what a
+  contested commit needs to be resolvable: who says what, and which row to revoke.
+  """
+  claims: [CommitClaim]
 }
 
 """
@@ -3892,8 +4924,6 @@ enum SerializationFormat {
   XML
   OTHER
 }
-
-scalar Long
 
 enum PackageType {
   MAVEN
@@ -4037,6 +5067,7 @@ enum ReleaseUpdateScopeEnum {
   MARKETING_VERSION
   TRIGGER
   INPUT_TRIGGER
+  GUARD
   APPROVED_ENVIRONMENT
   SUPPORT_WINDOW
   FDA_NARRATIVE
@@ -4090,6 +5121,10 @@ enum IdentifierType {
   CPE
   TEI
   COMPLIANCE_DOCUMENT
+  """
+  The component IS a specification document; idValue comes from SpecificationType.
+  """
+  SPECIFICATION
   UDI
   UDI_DI
   UDI_PI
@@ -4110,6 +5145,30 @@ enum IdentifierType {
   MAC_ADDRESS
 }
 
+"""
+The machine-read half of a review or test document: what was found, how badly it
+matters and whether it is still open. The prose lives in the markdown the release
+points at, under a heading carrying each finding's id.
+"""
+type FindingsIndex {
+  kind: SpecificationType
+  """
+  1-based round for display; the authoritative value is on the release.
+  """
+  round: Int
+  verdict: FindingsVerdict
+  """
+  Totals on a TEST_REPORT; absent on a review.
+  """
+  counts: TestCounts
+  findings: [Finding]
+  """
+  The input these items are about, which is what sends them to the role that produces it.
+  Absent on a review, where the work under review is meant.
+  """
+  about: FindingsAbout
+}
+
 type ArtifactComparison {
   changelog: ArtifactChangelog
   comparedReleaseUuid: ID
@@ -4123,6 +5182,24 @@ enum MatchOperator {
 input ConditionOnGetLatestReleaseInput {
   approvalEntry: String
   approvalState: ApprovalState
+}
+
+type UsageByModel {
+  model: ID
+  """
+  Display name of the model row, so a breakdown renders without fetching the catalogue.
+  """
+  modelName: String
+  inputTokens: Long
+  outputTokens: Long
+  cacheReadTokens: Long
+  cacheWriteTokens: Long
+  requests: Int
+  turns: Int
+  """
+  Null when no price entry covered these rows.
+  """
+  derivedCostMicros: Long
 }
 
 enum PolicyKind {
@@ -4196,12 +5273,96 @@ type AgentPolicy {
 }
 
 """
+How a session's caller authenticated when it opened the session.
+"""
+enum SessionAuthMethod {
+  """
+  An API key's secret, directly or exchanged for an access token. Says which key, never who.
+  """
+  KEY_SECRET
+  """
+  A CLI browser login (device flow) a signed-in user approved.
+  """
+  CLI_LOGIN
+  """
+  A federated identity exchange, e.g. a GitHub Actions OIDC token.
+  """
+  FEDERATED
+}
+
+"""
+Where SessionOrigin.ownerUser came from, strongest first. A login names who approved the
+device; a personal key names whose key it is; a holder is only the user accountable for a
+secret that may since have been handed to anyone.
+"""
+enum SessionOwnerSource {
+  CLI_LOGIN
+  USER_KEY
+  KEY_HOLDER
+}
+
+"""
+A device as described to ReARM. hostname and observedIp are restricted -- see SessionOrigin.
+"""
+type SessionDevice {
+  hostname: String
+  os: String
+  timeZone: String
+  """
+  The client and its version, e.g. rearm-cli/26.09.4.
+  """
+  client: String
+  """
+  The address the server saw, when the description came with a request.
+  """
+  observedIp: String
+}
+
+"""
+The claims a federated session came through. actor names a person and is restricted.
+"""
+type SessionFederation {
+  ruleUuids: [ID]
+  provider: String
+  issuer: String
+  owner: String
+  repository: String
+  repositoryUri: String
+  ref: String
+  sha: String
+  workflowRef: String
+  environment: String
+  event: String
+  actor: String
+  runId: String
+}
+
+"""
 Locks stop NEW assignments only; the coordinator cannot lift or override an OPERATOR lock.
 """
 enum AgentBoardLockLevel {
   NONE
   COORDINATOR
   OPERATOR
+}
+
+"""
+One task another task waits on, with enough of its state to tell whether the wait is over.
+"""
+type AgentTaskDependency {
+  task: ID
+  externalRef: String
+  title: String
+  status: AgentTaskStatus
+}
+
+"""
+SESSION is an agent session, USER a human, SYSTEM the application acting on its own.
+"""
+enum AgentActorKind {
+  SESSION
+  USER
+  SYSTEM
 }
 
 """
@@ -4213,11 +5374,86 @@ enum AgentTaskHoldLevel {
 }
 
 """
-MANUAL: coordinator/operator parked the task. HUMAN_GATE: a gated role signed off; only a human review verdict (not a plain release) resolves it.
+MANUAL: coordinator/operator parked the task. HUMAN_GATE: a gated role signed off; only a human
+review verdict (not a plain release) resolves it. QUESTION: the board could not route a question
+and the coordinator escalated -- releasing THAT hold with words records them as the answer to the
+open ids, which releasing any other hold must never do.
 """
 enum AgentTaskHoldKind {
   MANUAL
   HUMAN_GATE
+  QUESTION
+}
+
+"""
+What caused a status transition. An enum because the cycle-time metrics filter on
+it -- "time from AUTHORIZE to ASSIGN" is a question asked of this field, and
+asking it of free text means every caller agreeing on spelling forever.
+"""
+enum AgentStatusTrigger {
+  REGISTER
+  AUTHORIZE
+  ASSIGN
+  SIGNOFF
+  RETURN
+  COMPLETE
+  CANCEL
+  SPLIT
+  HOLD
+  RELEASE_HOLD
+  HUMAN_GATE
+  HUMAN_APPROVE
+  HUMAN_REJECT
+  HUMAN_SIGNOFF
+  SESSION_CLOSED
+  """
+  The board completed a task whose loop ran out -- a cycle cap, a no-progress stop or a budget --
+  with items left open below what the board requires resolved. Distinct from COMPLETE: the work
+  finished in one case and the loop stopped in the other.
+  """
+  POLICY_COMPLETE
+}
+
+"""
+Where a finding stands. The closed statuses are not interchangeable: RESOLVED says the work was
+done, ACCEPTED says an operator took the risk knowingly, POLICY_ACCEPTED says nobody looked --
+the loop ran out under a cycle cap, a no-progress stop or a budget, and the board completed the
+task with the item still open -- and WITHDRAWN says the reviewer was wrong. Only OPEN must be
+carried into the next round.
+"""
+enum FindingStatus {
+  OPEN
+  RESOLVED
+  ACCEPTED
+  POLICY_ACCEPTED
+  WITHDRAWN
+}
+
+"""
+path and line for code, ref for a requirement or design section. All optional.
+"""
+type FindingLocation {
+  path: String
+  line: Int
+  ref: String
+}
+
+type BoardRequiredInputSpec {
+  kind: AgentInputKind
+  specification: SpecificationType
+  scope: AgentInputScope
+  component: String
+  minLifecycle: ReleaseLifecycleEnum
+  resolution: AgentInputResolution
+}
+
+"""
+A document a board role is expected to publish; mirrors BoardRequiredInputSpec.
+"""
+type BoardProducedOutputSpec {
+  specification: SpecificationType
+  scope: AgentInputScope
+  required: Boolean
 }
 
 enum DeclarativeAction {
@@ -4250,6 +5486,11 @@ input DependencyPatternSpecInput {
   targetBranchName: String
   defaultStatus: Status
   fallbackToBase: FallbackToBase
+}
+
+enum LockSubjectType {
+  SCE
+  RELEASE
 }
 
 input LinkInput {
@@ -4380,6 +5621,13 @@ enum EventType {
   VALIDATE_PR
   INVALIDATE_PR
   PR_COMMENT
+  """
+  Raise a lock on the component or the branch, with the failing release and every
+  unrecognized commit in it as causes. Unlike every other action, its effect outlives the
+  release that fired it -- which is the point: a rule about a commit is otherwise defeated
+  by pushing another commit on top of it.
+  """
+  LOCK
 }
 
 """
@@ -4464,6 +5712,34 @@ enum ComponentOwnershipStatus {
   ORPHANED
 }
 
+"""
+An action a guard can withhold. New actions bring their own action.* variables.
+"""
+enum GuardedAction {
+  """
+  Moving a release forward through its lifecycle, however the move was requested.
+  """
+  RELEASE_PROMOTION
+}
+
+"""
+What happens when a guard is not satisfied.
+"""
+enum GuardMode {
+  """
+  Kept but not evaluated.
+  """
+  OFF
+  """
+  The action proceeds; the failure is recorded against it.
+  """
+  WARN
+  """
+  The action is refused, naming the guard.
+  """
+  BLOCK
+}
+
 input GudidDefaultsInput {
   brandName: String
   companyName: String
@@ -4517,6 +5793,19 @@ enum FallbackToBase {
 enum DependencySource {
   MANUAL
   PATTERN
+}
+
+"""
+Where a model was served from. Not an identity dimension -- the catalogue holds
+one row per model and the Bedrock / Vertex / Azure forms resolve onto it -- but a
+pricing one, because the same model bills differently per provider.
+"""
+enum SessionUsageHosting {
+  DIRECT
+  BEDROCK
+  VERTEX
+  AZURE
+  OTHER
 }
 
 enum ApiTypeEnum {
@@ -4578,6 +5867,51 @@ type FederatedIdentity {
   lastRef: String
   lastRunId: String
   lastActor: String
+}
+
+"""
+What a model can read and write.
+"""
+enum Modality {
+  TEXT
+  IMAGE
+  AUDIO
+  VIDEO
+}
+
+"""
+How a model is served. Distinct from SessionUsageHosting, which says where ONE
+request went; this says what kind of thing the model is.
+"""
+enum ModelHostingKind {
+  API
+  SELF_HOSTED
+  EMBEDDED
+}
+
+"""
+What pricing rates are quoted per.
+"""
+enum PricingUnit {
+  PER_MILLION_TOKENS
+}
+
+"""
+Which rows an entry applies to. Every stated field must match; the entry with the
+most fields stated wins, so a base rate and a qualified rate coexist without
+priority rules.
+"""
+type PricingSelector {
+  """
+  Matches when a request's FULL context -- input plus cache read plus cache
+  write -- exceeds this. Not inputTokens, which with prompt caching counts only
+  the uncached remainder and on a long session never approaches a threshold.
+  """
+  contextAboveTokens: Long
+  contextVariant: String
+  serviceTier: ServiceTier
+  hosting: SessionUsageHosting
+  reasoning: ReasoningMatch
 }
 
 """
@@ -4697,6 +6031,31 @@ browser has no choice stored.
 enum DashboardView {
   SECURITY
   DEVOPS
+}
+
+"""
+One principal's standing statement about a commit.
+"""
+type CommitClaim {
+  """
+  The attestation row, so it can be revoked by whoever needs to withdraw it.
+  """
+  uuid: ID
+  """
+  MINE or NOT_MINE.
+  """
+  verdict: String
+  """
+  USER or AGENT.
+  """
+  actorType: String
+  actor: ID
+  """
+  Who that is, by name.
+  """
+  actorName: String
+  note: String
+  createdDate: DateTime
 }
 
 enum SignatureVerificationState {
@@ -4840,6 +6199,28 @@ enum ViolationType {
   OPERATIONAL
 }
 
+enum FindingsVerdict {
+  PASSED
+  REJECTED
+}
+
+type TestCounts {
+  passed: Int
+  failed: Int
+  skipped: Int
+}
+
+"""
+What an index's items are about, and therefore who answers them.
+"""
+type FindingsAbout {
+  specification: SpecificationType
+  """
+  The release of that input the items refer to, so an answer is recognisable as one.
+  """
+  release: ID
+}
+
 type ArtifactChangelog {
   added: [DiffComponent]
   removed: [DiffComponent]
@@ -4907,6 +6288,26 @@ enum PropertyTargetType {
 "External identity providers whose tokens an organization can trust"
 enum FederatedProvider {
   GITHUB_ACTIONS
+}
+
+"""
+Provider tier a request ran on; the same model bills differently per tier.
+"""
+enum ServiceTier {
+  STANDARD
+  BATCH
+  PRIORITY
+}
+
+"""
+Whether a pricing entry applies to requests that used extended thinking. ANY is
+not "unset": it deliberately covers both, while an absent field does not
+discriminate at all.
+"""
+enum ReasoningMatch {
+  ON
+  OFF
+  ANY
 }
 
 enum ObservedItemStatus {
@@ -5049,115 +6450,3 @@ input CoordsInput {
   longitude: Float
 }
 
-"""Where a usage report came from, which is also how far it is to be trusted."""
-enum SessionUsageSource { SELF_REPORTED TRANSCRIPT OTEL PROVIDER }
-
-"""
-Where a model was served from. Not an identity dimension -- the catalogue holds
-one row per model and the Bedrock / Vertex / Azure forms resolve onto it -- but a
-pricing one, because the same model bills differently per provider.
-"""
-enum SessionUsageHosting { DIRECT BEDROCK VERTEX AZURE OTHER }
-
-"""How a usage row found its task; the answer changes what the number means."""
-enum SessionUsageAttribution { EXPLICIT IMPLICIT COORDINATOR UNATTRIBUTED }
-
-"""One line of a usage report: one model, one hosting, one context band."""
-input SessionUsageLineInput {
-  model: String
-  hosting: SessionUsageHosting
-  """
-  Floor of the pricing band these requests fall in, in tokens: 0 for the base
-  band, 200000 above the long-context threshold. A number rather than a label,
-  so it sorts and compares against a pricing entry's contextAboveTokens
-  directly. Absent means the base band.
-  """
-  contextBand: Long
-  requests: Int!
-  inputTokens: Long!
-  outputTokens: Long!
-  cacheReadTokens: Long
-  cacheWriteTokens: Long
-  reasoningTokens: Long
-  maxRequestContextTokens: Long
-  minRequestContextTokens: Long
-  reportedCostMicros: Long
-}
-
-input SessionUsageReportInput {
-  sessionUuid: ID
-  clientSessionId: String
-  """Monotonic per session; the transcript byte offset in the CLI, so 64-bit."""
-  clientSeq: Long!
-  source: SessionUsageSource!
-  windowStart: DateTime
-  windowEnd: DateTime
-  turns: Int
-  toolCalls: Int
-  wallSeconds: Int
-  reasoningLevel: String
-  taskUuid: ID
-  raw: Object
-  lines: [SessionUsageLineInput!]!
-}
-
-type SessionUsageAck {
-  accepted: Int!
-  duplicates: Int!
-  """One message per line that could not be filed, with the reason."""
-  refused: [String!]!
-  attribution: SessionUsageAttribution!
-  task: ID
-}
-
-"""Specification document types a component may carry."""
-enum SpecificationType {
-  CONOPS
-  USE_CASES
-  REQUIREMENTS
-  FUNCTIONS
-  PRODUCT_BREAKDOWN
-  INTERFACES
-  DATA_MODEL
-  ARCHITECTURE
-  DETAILED_DESIGN
-  UX_CONCEPT
-  TEST_PLAN
-  GLOSSARY
-  DECISION_RECORD
-  """One review round of one task. Task-scoped."""
-  REVIEW_FINDINGS
-  """One test run of one task. Task-scoped."""
-  TEST_REPORT
-  """Questions one hop asked about one of its inputs; routed to whoever produces that input."""
-  QUESTIONS
-}
-
-"""What an agent states about a document it has already committed."""
-input AgentDocumentPublishInput {
-  sessionUuid: ID!
-  """Required for TASK-scoped types (REVIEW_FINDINGS, TEST_REPORT)."""
-  taskUuid: ID
-  specification: SpecificationType!
-  """Required for COMPONENT-scoped types: which document series this belongs to."""
-  component: ID
-  """
-  Repo-relative path. Omit it, with digest, commit and vcsUri, to publish an index alone --
-  a QUESTIONS round usually has no prose worth committing.
-  """
-  path: String
-  """sha256 of the file at that path. Required with a path."""
-  digest: String
-  mediaType: String
-  indexPath: String
-  indexDigest: String
-  """The findings index. Required for REVIEW_FINDINGS, TEST_REPORT and QUESTIONS."""
-  index: Object
-  """HEAD of the documents repository when the files were read. Required with a path."""
-  commit: String
-  """The documents repository, as a git URI. Required with a path."""
-  vcsUri: String
-  commitMessage: String
-  commitDate: DateTime
-  lifecycle: ReleaseLifecycleEnum
-}

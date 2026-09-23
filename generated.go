@@ -15,8 +15,10 @@ import (
 // instead of eleven copies that share no type. That is the whole reason it is here.
 type ActorFields struct {
 	Kind *AgentActorKind `json:"kind"`
-	Uuid *string         `json:"uuid"`
-	Name *string         `json:"name"`
+	// The session or user uuid, when the writer knew it. Null on older rows and on SYSTEM.
+	Uuid *string `json:"uuid"`
+	// Display text: an email for a user, a detail such as "humanGate" for SYSTEM.
+	Name *string `json:"name"`
 }
 
 // GetKind returns ActorFields.Kind, and is useful for accessing the field via an interface.
@@ -478,6 +480,7 @@ func (v *AddressInput) GetIsoCode() *string { return v.IsoCode }
 // GetCoords returns AddressInput.Coords, and is useful for accessing the field via an interface.
 func (v *AddressInput) GetCoords() *CoordsInput { return v.Coords }
 
+// SESSION is an agent session, USER a human, SYSTEM the application acting on its own.
 type AgentActorKind string
 
 const (
@@ -502,8 +505,9 @@ type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard 
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
 	// Where this board's documents are written, as the repository row it resolves
-	// to. The row is the identity, so a remote written as ssh on one machine and
-	// https on another is the same repository here.
+	// to. Set by passing a URI to agentBoardUpdate; the row is the identity, so a
+	// remote written as ssh on one machine and https on another is the same
+	// repository here.
 	DocumentsRepo *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
 	// Per-type path templates inside documentsRepo; empty means the defaults.
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
@@ -674,8 +678,13 @@ func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBo
 // AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -776,8 +785,13 @@ func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBo
 // AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardLockLockedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardLockLockedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -867,8 +881,9 @@ type AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticA
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
 	// Where this board's documents are written, as the repository row it resolves
-	// to. The row is the identity, so a remote written as ssh on one machine and
-	// https on another is the same repository here.
+	// to. Set by passing a URI to agentBoardUpdate; the row is the identity, so a
+	// remote written as ssh on one machine and https on another is the same
+	// repository here.
 	DocumentsRepo *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
 	// Per-type path templates inside documentsRepo; empty means the defaults.
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
@@ -1039,8 +1054,13 @@ func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgramma
 // AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -1141,8 +1161,13 @@ func (v *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgramma
 // AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardLockLockedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardLockLockedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -1263,8 +1288,9 @@ type AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard st
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
 	// Where this board's documents are written, as the repository row it resolves
-	// to. The row is the identity, so a remote written as ssh on one machine and
-	// https on another is the same repository here.
+	// to. Set by passing a URI to agentBoardUpdate; the row is the identity, so a
+	// remote written as ssh on one machine and https on another is the same
+	// repository here.
 	DocumentsRepo *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
 	// Per-type path templates inside documentsRepo; empty means the defaults.
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
@@ -1435,8 +1461,13 @@ func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoar
 // AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -1537,8 +1568,13 @@ func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoar
 // AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardLockLockedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardLockLockedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -1641,8 +1677,9 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
 	// Where this board's documents are written, as the repository row it resolves
-	// to. The row is the identity, so a remote written as ssh on one machine and
-	// https on another is the same repository here.
+	// to. Set by passing a URI to agentBoardUpdate; the row is the identity, so a
+	// remote written as ssh on one machine and https on another is the same
+	// repository here.
 	DocumentsRepo *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
 	// Per-type path templates inside documentsRepo; empty means the defaults.
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
@@ -1807,8 +1844,13 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEventsAgentBoardE
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -1909,8 +1951,13 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLock) GetLockedAt
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLockLockedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLockLockedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -1995,6 +2042,10 @@ func (v *AgentBoardProgrammaticResponse) GetAgentBoardProgrammatic() *AgentBoard
 // The GraphQL type's documentation follows.
 //
 // Everything an agent needs to see what else is happening on its board, in one read.
+//
+// An agent that must ask N questions to understand the board will not ask them; one that gets the
+// answer in a poll's worth of latency will. Read-only and board-scoped, and nothing appears before
+// it is published -- a hop has no outputs until it signs off.
 type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshot struct {
 	Board *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotBoardAgentBoard          `json:"board"`
 	Tasks []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot `json:"tasks"`
@@ -2034,14 +2085,18 @@ func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardS
 
 // AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot includes the requested fields of the GraphQL type AgentTaskSnapshot.
 type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot struct {
-	Task            *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask                  `json:"task"`
-	Holder          *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor               `json:"holder"`
-	HeldSince       *string                                                                                                                             `json:"heldSince"`
-	DependsOn       []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency `json:"dependsOn"`
-	LatestDocuments []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease       `json:"latestDocuments"`
-	WaitingOn       *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame    `json:"waitingOn"`
-	SpentMicros     *int64                                                                                                                              `json:"spentMicros"`
-	BudgetMicros    *int64                                                                                                                              `json:"budgetMicros"`
+	Task *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask `json:"task"`
+	// Who holds it now, or null when nobody does.
+	Holder    *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor `json:"holder"`
+	HeldSince *string                                                                                                               `json:"heldSince"`
+	// What it waits on, with each dependency's own status.
+	DependsOn []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency `json:"dependsOn"`
+	// Newest release per specification type, so a reader sees the current document set.
+	LatestDocuments []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease `json:"latestDocuments"`
+	// Top of the question stack. Null when nothing is outstanding.
+	WaitingOn    *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame `json:"waitingOn"`
+	SpentMicros  *int64                                                                                                                           `json:"spentMicros"`
+	BudgetMicros *int64                                                                                                                           `json:"budgetMicros"`
 }
 
 // GetTask returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot.Task, and is useful for accessing the field via an interface.
@@ -2085,6 +2140,9 @@ func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardS
 }
 
 // AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency includes the requested fields of the GraphQL type AgentTaskDependency.
+// The GraphQL type's documentation follows.
+//
+// One task another task waits on, with enough of its state to tell whether the wait is over.
 type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotDependsOnAgentTaskDependency struct {
 	Task        *string          `json:"task"`
 	ExternalRef *string          `json:"externalRef"`
@@ -2115,8 +2173,13 @@ func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardS
 // AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -2188,10 +2251,12 @@ func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardS
 
 // AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease includes the requested fields of the GraphQL type Release.
 type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease struct {
-	Uuid      *string                                                                                                                                        `json:"uuid"`
-	Version   *string                                                                                                                                        `json:"version"`
-	Lifecycle *ReleaseLifecycleEnum                                                                                                                          `json:"lifecycle"`
-	Document  *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsReleaseDocumentDocumentRef `json:"document"`
+	Uuid      *string               `json:"uuid"`
+	Version   *string               `json:"version"`
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+	// Pointer to the document bytes this release publishes. Non-null only on releases of
+	// specification components -- an ordinary software release has no document.
+	Document *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsReleaseDocumentDocumentRef `json:"document"`
 }
 
 // GetUuid returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease.Uuid, and is useful for accessing the field via an interface.
@@ -2218,12 +2283,14 @@ func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardS
 // The GraphQL type's documentation follows.
 //
 // Pointer from a release to document bytes in a repository, present only on
-// releases of specification components. The commit and repository come from the
-// release's source code entry, so commit recognition and signature verification
-// apply to a document exactly as to code.
+// releases of specification components. The commit and repository are NOT
+// repeated here: they come from the release's source code entry, so the
+// recognised-commit predicate and signature verification apply to a document
+// exactly as they do to code.
 type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsReleaseDocumentDocumentRef struct {
 	Specification *SpecificationType `json:"specification"`
-	Path          *string            `json:"path"`
+	// Repo-relative path at the release's commit.
+	Path *string `json:"path"`
 	// 1-based count of this task's rounds of this type.
 	Round *int `json:"round"`
 }
@@ -2251,9 +2318,9 @@ type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnaps
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
 	Role *string `json:"role"`
-	// The role config row `role` names, so a reader reaches its configuration without a lookup by name.
+	// The role config row `role` names, so a reader reaches its prompt, capabilities and gate without a second lookup. Null on tasks authorized before this field existed.
 	RoleUuid *string `json:"roleUuid"`
-	// Task level: the coordinator's priority band, served lowest first.
+	// Declared level of the work; falls back to the board's defaultTaskLevel at registration.
 	Level *int `json:"level"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
@@ -2303,13 +2370,18 @@ func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardS
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -2344,7 +2416,9 @@ func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardS
 
 // AgentBoardSnapshotProgrammaticResponse is returned by AgentBoardSnapshotProgrammatic on success.
 type AgentBoardSnapshotProgrammaticResponse struct {
-	// Every task on one board with holder, dependencies, documents and what it waits on, in one call.
+	// Every task on one board with who holds it, what it waits on, its current documents and the
+	// question it is waiting on. One call, so an agent can see what the others are doing without
+	// N round trips -- an agent that has to ask N questions will not ask them.
 	AgentBoardSnapshotProgrammatic *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshot `json:"agentBoardSnapshotProgrammatic"`
 }
 
@@ -2375,8 +2449,9 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
 	// Where this board's documents are written, as the repository row it resolves
-	// to. The row is the identity, so a remote written as ssh on one machine and
-	// https on another is the same repository here.
+	// to. Set by passing a URI to agentBoardUpdate; the row is the identity, so a
+	// remote written as ssh on one machine and https on another is the same
+	// repository here.
 	DocumentsRepo *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
 	// Per-type path templates inside documentsRepo; empty means the defaults.
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
@@ -2541,8 +2616,13 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEventsAgentBoar
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -2643,8 +2723,13 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLock) GetLocked
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLockLockedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLockLockedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -2750,8 +2835,9 @@ type AgentDocumentPublishInput struct {
 	Specification SpecificationType `json:"specification"`
 	// Required for COMPONENT-scoped types: which document series this belongs to.
 	Component *string `json:"component"`
-	// Repo-relative path. Omit it, with digest, commit and vcsUri, to publish an index alone --
-	// a QUESTIONS round usually has no prose worth committing.
+	// Repo-relative path of the document at the commit below. Omit it, with digest, commit and
+	// vcsUri, to publish an index alone -- a QUESTIONS round usually has no prose worth committing,
+	// and requiring a file would put an empty markdown in the repository to satisfy a check.
 	Path *string `json:"path"`
 	// sha256 of the file at that path. Required with a path.
 	Digest      *string `json:"digest"`
@@ -2762,7 +2848,7 @@ type AgentDocumentPublishInput struct {
 	Index *json.RawMessage `json:"index"`
 	// HEAD of the documents repository when the files were read. Required with a path.
 	Commit *string `json:"commit"`
-	// The documents repository, as a git URI. Required with a path.
+	// Must equal the board's documentsRepo. Required with a path; an index-only round writes no file, so it names no repository.
 	VcsUri        *string               `json:"vcsUri"`
 	CommitMessage *string               `json:"commitMessage"`
 	CommitDate    *string               `json:"commitDate"`
@@ -2838,11 +2924,6 @@ func (v *AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease
 
 // AgentDocumentPublishProgrammaticResponse is returned by AgentDocumentPublishProgrammatic on success.
 type AgentDocumentPublishProgrammaticResponse struct {
-	// Publish a document version: a release of a specification component pointing
-	// at bytes already committed in the board's documents repository. Idempotent on
-	// (task or component, specification, commit, digest), so a retry after a timeout
-	// returns the original release rather than opening a round the repository has no
-	// file for.
 	AgentDocumentPublishProgrammatic *AgentDocumentPublishProgrammaticAgentDocumentPublishProgrammaticRelease `json:"agentDocumentPublishProgrammatic"`
 }
 
@@ -2899,6 +2980,97 @@ var AllAgentInboxSource = []AgentInboxSource{
 	AgentInboxSourcePolicyGate,
 	AgentInboxSourceReleaseAuto,
 }
+
+// What a task must be able to read before an agent may start it: the board's Ready rule.
+type AgentInputKind string
+
+const (
+	AgentInputKindDocument AgentInputKind = "DOCUMENT"
+	AgentInputKindRelease  AgentInputKind = "RELEASE"
+)
+
+var AllAgentInputKind = []AgentInputKind{
+	AgentInputKindDocument,
+	AgentInputKindRelease,
+}
+
+// Which release satisfies a threshold. LATEST_PASSING (default) takes the newest release at or
+// above it, so a fresh draft never un-satisfies a baselined version; STRICT_LATEST demands the
+// component's own latest release clear it.
+type AgentInputResolution string
+
+const (
+	AgentInputResolutionLatestPassing AgentInputResolution = "LATEST_PASSING"
+	AgentInputResolutionStrictLatest  AgentInputResolution = "STRICT_LATEST"
+)
+
+var AllAgentInputResolution = []AgentInputResolution{
+	AgentInputResolutionLatestPassing,
+	AgentInputResolutionStrictLatest,
+}
+
+// Which release a RELEASE requirement is about: any release of the component, or one linked to this very task.
+type AgentInputScope string
+
+const (
+	AgentInputScopeComponent AgentInputScope = "COMPONENT"
+	AgentInputScopeTask      AgentInputScope = "TASK"
+)
+
+var AllAgentInputScope = []AgentInputScope{
+	AgentInputScopeComponent,
+	AgentInputScopeTask,
+}
+
+// What a hop in this role must leave behind: the mirror of AgentRequiredInputInput, and the other
+// half of the contract between roles. It is also the routing graph -- open items are sent to
+// whichever active role produces the specification they are about -- so a board whose roles declare
+// nothing routes every question to its coordinator instead.
+//
+// QUESTIONS is refused here and in requiredInputs: a question is a side channel any role may emit,
+// never a role's contracted product or prerequisite.
+type AgentProducedOutputInput struct {
+	Specification SpecificationType `json:"specification"`
+	Scope         *AgentInputScope  `json:"scope"`
+	// False makes it advisory, for roles that sometimes have nothing to write.
+	Required *bool `json:"required"`
+}
+
+// GetSpecification returns AgentProducedOutputInput.Specification, and is useful for accessing the field via an interface.
+func (v *AgentProducedOutputInput) GetSpecification() SpecificationType { return v.Specification }
+
+// GetScope returns AgentProducedOutputInput.Scope, and is useful for accessing the field via an interface.
+func (v *AgentProducedOutputInput) GetScope() *AgentInputScope { return v.Scope }
+
+// GetRequired returns AgentProducedOutputInput.Required, and is useful for accessing the field via an interface.
+func (v *AgentProducedOutputInput) GetRequired() *bool { return v.Required }
+
+type AgentRequiredInputInput struct {
+	Kind          AgentInputKind        `json:"kind"`
+	Specification *SpecificationType    `json:"specification"`
+	Scope         *AgentInputScope      `json:"scope"`
+	Component     *string               `json:"component"`
+	MinLifecycle  ReleaseLifecycleEnum  `json:"minLifecycle"`
+	Resolution    *AgentInputResolution `json:"resolution"`
+}
+
+// GetKind returns AgentRequiredInputInput.Kind, and is useful for accessing the field via an interface.
+func (v *AgentRequiredInputInput) GetKind() AgentInputKind { return v.Kind }
+
+// GetSpecification returns AgentRequiredInputInput.Specification, and is useful for accessing the field via an interface.
+func (v *AgentRequiredInputInput) GetSpecification() *SpecificationType { return v.Specification }
+
+// GetScope returns AgentRequiredInputInput.Scope, and is useful for accessing the field via an interface.
+func (v *AgentRequiredInputInput) GetScope() *AgentInputScope { return v.Scope }
+
+// GetComponent returns AgentRequiredInputInput.Component, and is useful for accessing the field via an interface.
+func (v *AgentRequiredInputInput) GetComponent() *string { return v.Component }
+
+// GetMinLifecycle returns AgentRequiredInputInput.MinLifecycle, and is useful for accessing the field via an interface.
+func (v *AgentRequiredInputInput) GetMinLifecycle() ReleaseLifecycleEnum { return v.MinLifecycle }
+
+// GetResolution returns AgentRequiredInputInput.Resolution, and is useful for accessing the field via an interface.
+func (v *AgentRequiredInputInput) GetResolution() *AgentInputResolution { return v.Resolution }
 
 // Who works this role. AGENTIC: agents poll/assume/sign off through sessions. HUMAN: a deliberate human workflow stage -- never offered to agent polls; an org admin signs off directly from the queue.
 type AgentRoleKind string
@@ -3126,7 +3298,9 @@ func (v *AgentSigningKeyInput) GetIdentity() *string { return v.Identity }
 // GetPubKey returns AgentSigningKeyInput.PubKey, and is useful for accessing the field via an interface.
 func (v *AgentSigningKeyInput) GetPubKey() string { return v.PubKey }
 
-// What caused a status transition.
+// What caused a status transition. An enum because the cycle-time metrics filter on
+// it -- "time from AUTHORIZE to ASSIGN" is a question asked of this field, and
+// asking it of free text means every caller agreeing on spelling forever.
 type AgentStatusTrigger string
 
 const (
@@ -3145,6 +3319,10 @@ const (
 	AgentStatusTriggerHumanReject   AgentStatusTrigger = "HUMAN_REJECT"
 	AgentStatusTriggerHumanSignoff  AgentStatusTrigger = "HUMAN_SIGNOFF"
 	AgentStatusTriggerSessionClosed AgentStatusTrigger = "SESSION_CLOSED"
+	// The board completed a task whose loop ran out -- a cycle cap, a no-progress stop or a budget --
+	// with items left open below what the board requires resolved. Distinct from COMPLETE: the work
+	// finished in one case and the loop stopped in the other.
+	AgentStatusTriggerPolicyComplete AgentStatusTrigger = "POLICY_COMPLETE"
 )
 
 var AllAgentStatusTrigger = []AgentStatusTrigger{
@@ -3163,6 +3341,7 @@ var AllAgentStatusTrigger = []AgentStatusTrigger{
 	AgentStatusTriggerHumanReject,
 	AgentStatusTriggerHumanSignoff,
 	AgentStatusTriggerSessionClosed,
+	AgentStatusTriggerPolicyComplete,
 }
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment includes the requested fields of the GraphQL type AgentTaskAssignment.
@@ -3228,7 +3407,7 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -3433,8 +3612,13 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -3508,13 +3692,18 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -3652,8 +3841,13 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -3726,14 +3920,18 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                                         `json:"from"`
+	To      *AgentTaskStatus                                                                                                                         `json:"to"`
+	At      *string                                                                                                                                  `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                                      `json:"trigger"`
+	Actor   *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -3764,8 +3962,13 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -3860,6 +4063,8 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Model strength this task requires, overriding the role's when set.
+	RequiredStrength *float64 `json:"requiredStrength"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -3879,7 +4084,7 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -3926,6 +4131,11 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) 
 // GetOrderIndex returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetRequiredStrength returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetRequiredStrength() *float64 {
+	return v.RequiredStrength
 }
 
 // GetDependsOn returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -4084,8 +4294,13 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHo
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -4159,13 +4374,18 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHo
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -4303,8 +4523,13 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSi
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -4377,14 +4602,18 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSi
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                        `json:"from"`
+	To      *AgentTaskStatus                                                                                                        `json:"to"`
+	At      *string                                                                                                                 `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                     `json:"trigger"`
+	Actor   *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -4415,8 +4644,13 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSt
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -4488,6 +4722,10 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSt
 
 // AgentTaskAuthorizeProgrammaticResponse is returned by AgentTaskAuthorizeProgrammatic on success.
 type AgentTaskAuthorizeProgrammaticResponse struct {
+	// requiredStrength: raise the model strength this task needs above what its role usually asks,
+	// for work harder than the role usually is. Raise only: at least the task's current requirement
+	// (its override, else the role's floor); lower values and null are refused -- people lower it
+	// through agentTaskSetStrength. At most two decimal places. Left out, unchanged.
 	AgentTaskAuthorizeProgrammatic *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask `json:"agentTaskAuthorizeProgrammatic"`
 }
 
@@ -4528,7 +4766,7 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -4733,8 +4971,13 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -4808,13 +5051,18 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -4952,8 +5200,13 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -5026,14 +5279,18 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                                    `json:"from"`
+	To      *AgentTaskStatus                                                                                                                    `json:"to"`
+	At      *string                                                                                                                             `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                                 `json:"trigger"`
+	Actor   *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -5064,8 +5321,13 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -5177,7 +5439,7 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask struct {
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -5382,8 +5644,13 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHold) Ge
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -5457,13 +5724,18 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHoldHeld
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -5601,8 +5873,13 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffs
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -5675,14 +5952,18 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffs
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                  `json:"from"`
+	To      *AgentTaskStatus                                                                                                  `json:"to"`
+	At      *string                                                                                                           `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                               `json:"trigger"`
+	Actor   *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -5713,8 +5994,13 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskStatusHi
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -5826,7 +6112,7 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask struct 
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -6031,8 +6317,13 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHold
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -6106,13 +6397,18 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHold
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -6250,8 +6546,13 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSign
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -6324,14 +6625,18 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSign
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                      `json:"from"`
+	To      *AgentTaskStatus                                                                                                      `json:"to"`
+	At      *string                                                                                                               `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                   `json:"trigger"`
+	Actor   *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -6362,8 +6667,13 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStat
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -6443,17 +6753,22 @@ func (v *AgentTaskCompleteProgrammaticResponse) GetAgentTaskCompleteProgrammatic
 	return v.AgentTaskCompleteProgrammatic
 }
 
-// MANUAL: coordinator/operator parked the task. HUMAN_GATE: a gated role signed off; only a human review verdict (not a plain release) resolves it.
+// MANUAL: coordinator/operator parked the task. HUMAN_GATE: a gated role signed off; only a human
+// review verdict (not a plain release) resolves it. QUESTION: the board could not route a question
+// and the coordinator escalated -- releasing THAT hold with words records them as the answer to the
+// open ids, which releasing any other hold must never do.
 type AgentTaskHoldKind string
 
 const (
 	AgentTaskHoldKindManual    AgentTaskHoldKind = "MANUAL"
 	AgentTaskHoldKindHumanGate AgentTaskHoldKind = "HUMAN_GATE"
+	AgentTaskHoldKindQuestion  AgentTaskHoldKind = "QUESTION"
 )
 
 var AllAgentTaskHoldKind = []AgentTaskHoldKind{
 	AgentTaskHoldKindManual,
 	AgentTaskHoldKindHumanGate,
+	AgentTaskHoldKindQuestion,
 }
 
 // Two-tier task hold, mirroring board locks: the coordinator cannot lift an OPERATOR hold.
@@ -6501,7 +6816,7 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask struct {
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -6704,8 +7019,13 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHold) GetHel
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -6779,13 +7099,18 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHoldHeldByAg
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -6923,8 +7248,13 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgen
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -6997,14 +7327,18 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgen
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                              `json:"from"`
+	To      *AgentTaskStatus                                                                                              `json:"to"`
+	At      *string                                                                                                       `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                           `json:"trigger"`
+	Actor   *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -7035,8 +7369,13 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskStatusHistor
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -7148,7 +7487,7 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask struct {
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -7353,8 +7692,13 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHold) Ge
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -7428,13 +7772,18 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHoldHeld
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -7572,8 +7921,13 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffs
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -7646,14 +8000,18 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffs
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                  `json:"from"`
+	To      *AgentTaskStatus                                                                                                  `json:"to"`
+	At      *string                                                                                                           `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                               `json:"trigger"`
+	Actor   *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -7684,8 +8042,13 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHi
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -7828,7 +8191,7 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -8033,8 +8396,13 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -8108,13 +8476,18 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -8252,8 +8625,13 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -8326,14 +8704,18 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                                     `json:"from"`
+	To      *AgentTaskStatus                                                                                                                     `json:"to"`
+	At      *string                                                                                                                              `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                                  `json:"trigger"`
+	Actor   *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -8364,8 +8746,13 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -8488,7 +8875,7 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask struct {
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -8693,8 +9080,13 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHold) GetH
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -8768,13 +9160,18 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHoldHeldBy
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -8912,8 +9309,13 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAg
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -8986,14 +9388,18 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAg
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                `json:"from"`
+	To      *AgentTaskStatus                                                                                                `json:"to"`
+	At      *string                                                                                                         `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                             `json:"trigger"`
+	Actor   *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -9024,8 +9430,13 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskStatusHist
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -9137,15 +9548,18 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 	// This task's document releases, newest first.
 	Documents []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease `json:"documents"`
-	// Findings still open on this task, from the NEWEST round of each indexed type,
-	// ordered by priority. Newest round only: every round carries forward what the
-	// previous one left open, so the newest is the current state.
+	// Findings still open on this task, from the NEWEST round of each indexed
+	// type, ordered by priority. Newest round only by design: every round
+	// carries forward what the previous one left open, so the newest is the
+	// current state and summing rounds would count one finding several times.
 	OpenFindings []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding `json:"openFindings"`
-	// The open items of the newest QUESTIONS round only, which is what a human answers.
+	// The open items of the newest QUESTIONS round only, which is what a human answers. Separate
+	// from openFindings, which flattens every indexed type and carries nothing on an item saying
+	// which round it came from.
 	OpenQuestions []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding `json:"openQuestions"`
 }
 
@@ -9311,10 +9725,12 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskW
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease includes the requested fields of the GraphQL type Release.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease struct {
-	Uuid      *string                                                                                 `json:"uuid"`
-	Version   *string                                                                                 `json:"version"`
-	Lifecycle *ReleaseLifecycleEnum                                                                   `json:"lifecycle"`
-	Document  *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef `json:"document"`
+	Uuid      *string               `json:"uuid"`
+	Version   *string               `json:"version"`
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+	// Pointer to the document bytes this release publishes. Non-null only on releases of
+	// specification components -- an ordinary software release has no document.
+	Document *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef `json:"document"`
 }
 
 // GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease.Uuid, and is useful for accessing the field via an interface.
@@ -9341,15 +9757,18 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease) Ge
 // The GraphQL type's documentation follows.
 //
 // Pointer from a release to document bytes in a repository, present only on
-// releases of specification components. The commit and repository come from the
-// release's source code entry, so commit recognition and signature verification
-// apply to a document exactly as to code.
+// releases of specification components. The commit and repository are NOT
+// repeated here: they come from the release's source code entry, so the
+// recognised-commit predicate and signature verification apply to a document
+// exactly as they do to code.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef struct {
 	Specification *SpecificationType `json:"specification"`
-	Path          *string            `json:"path"`
+	// Repo-relative path at the release's commit.
+	Path *string `json:"path"`
 	// 1-based count of this task's rounds of this type.
-	Round *int    `json:"round"`
-	Task  *string `json:"task"`
+	Round *int `json:"round"`
+	// The task this round belongs to, for TASK-scoped types.
+	Task *string `json:"task"`
 	// The findings index for REVIEW_FINDINGS and TEST_REPORT; absent otherwise.
 	Findings *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex `json:"findings"`
 }
@@ -9386,9 +9805,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocu
 // matters and whether it is still open. The prose lives in the markdown the release
 // points at, under a heading carrying each finding's id.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex struct {
-	Kind     *SpecificationType                                                                                                            `json:"kind"`
-	Round    *int                                                                                                                          `json:"round"`
-	Verdict  *FindingsVerdict                                                                                                              `json:"verdict"`
+	Kind *SpecificationType `json:"kind"`
+	// 1-based round for display; the authoritative value is on the release.
+	Round   *int             `json:"round"`
+	Verdict *FindingsVerdict `json:"verdict"`
+	// Totals on a TEST_REPORT; absent on a review.
 	Counts   *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts  `json:"counts"`
 	Findings []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding `json:"findings"`
 }
@@ -9442,16 +9863,20 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocu
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding includes the requested fields of the GraphQL type Finding.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding struct {
-	// Stable within a task across rounds.
+	// Stable within a task across rounds: an open finding is carried forward under the same id.
 	Id *string `json:"id"`
 	// 1 highest, at most the organization's level count.
-	Priority *int                                                                                                                                `json:"priority"`
-	Status   *FindingStatus                                                                                                                      `json:"status"`
+	Priority *int           `json:"priority"`
+	Status   *FindingStatus `json:"status"`
+	// One line; the reasoning is in the markdown under a heading carrying the id.
 	Title    *string                                                                                                                             `json:"title"`
 	Location *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation `json:"location"`
-	// The uuid of the release whose round closed it -- a pointer, never text.
+	// The uuid of the release whose round closed it -- a pointer, never text. Null while the item is
+	// open. A round that closes an item names itself here, unless another release already answers
+	// for it: when an upstream role answered by republishing its document, this points at that
+	// document rather than at the round recording the closure.
 	ResolvedBy *string `json:"resolvedBy"`
-	// The words that closed it: a fixer's note, a policy stop's reason, or an answer.
+	// The words that closed it: a fixer's note, a policy stop's reason, or the answer to a question.
 	Resolution *string `json:"resolution"`
 }
 
@@ -9491,6 +9916,9 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocu
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation includes the requested fields of the GraphQL type FindingLocation.
+// The GraphQL type's documentation follows.
+//
+// path and line for code, ref for a requirement or design section. All optional.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation struct {
 	Path *string `json:"path"`
 	Line *int    `json:"line"`
@@ -9556,8 +9984,13 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold) GetHeldAt() *s
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -9629,16 +10062,20 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHoldHeldByAgentActor
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding includes the requested fields of the GraphQL type Finding.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding struct {
-	// Stable within a task across rounds.
+	// Stable within a task across rounds: an open finding is carried forward under the same id.
 	Id *string `json:"id"`
 	// 1 highest, at most the organization's level count.
-	Priority *int                                                                            `json:"priority"`
-	Status   *FindingStatus                                                                  `json:"status"`
+	Priority *int           `json:"priority"`
+	Status   *FindingStatus `json:"status"`
+	// One line; the reasoning is in the markdown under a heading carrying the id.
 	Title    *string                                                                         `json:"title"`
 	Location *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation `json:"location"`
-	// The uuid of the release whose round closed it -- a pointer, never text.
+	// The uuid of the release whose round closed it -- a pointer, never text. Null while the item is
+	// open. A round that closes an item names itself here, unless another release already answers
+	// for it: when an upstream role answered by republishing its document, this points at that
+	// document rather than at the round recording the closure.
 	ResolvedBy *string `json:"resolvedBy"`
-	// The words that closed it: a fixer's note, a policy stop's reason, or an answer.
+	// The words that closed it: a fixer's note, a policy stop's reason, or the answer to a question.
 	Resolution *string `json:"resolution"`
 }
 
@@ -9678,6 +10115,9 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFinding)
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation includes the requested fields of the GraphQL type FindingLocation.
+// The GraphQL type's documentation follows.
+//
+// path and line for code, ref for a requirement or design section. All optional.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation struct {
 	Path *string `json:"path"`
 	Line *int    `json:"line"`
@@ -9701,16 +10141,20 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingL
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding includes the requested fields of the GraphQL type Finding.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding struct {
-	// Stable within a task across rounds.
+	// Stable within a task across rounds: an open finding is carried forward under the same id.
 	Id *string `json:"id"`
 	// 1 highest, at most the organization's level count.
-	Priority *int                                                                             `json:"priority"`
-	Status   *FindingStatus                                                                   `json:"status"`
+	Priority *int           `json:"priority"`
+	Status   *FindingStatus `json:"status"`
+	// One line; the reasoning is in the markdown under a heading carrying the id.
 	Title    *string                                                                          `json:"title"`
 	Location *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation `json:"location"`
-	// The uuid of the release whose round closed it -- a pointer, never text.
+	// The uuid of the release whose round closed it -- a pointer, never text. Null while the item is
+	// open. A round that closes an item names itself here, unless another release already answers
+	// for it: when an upstream role answered by republishing its document, this points at that
+	// document rather than at the round recording the closure.
 	ResolvedBy *string `json:"resolvedBy"`
-	// The words that closed it: a fixer's note, a policy stop's reason, or an answer.
+	// The words that closed it: a fixer's note, a policy stop's reason, or the answer to a question.
 	Resolution *string `json:"resolution"`
 }
 
@@ -9750,6 +10194,9 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation includes the requested fields of the GraphQL type FindingLocation.
+// The GraphQL type's documentation follows.
+//
+// path and line for code, ref for a requirement or design section. All optional.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation struct {
 	Path *string `json:"path"`
 	Line *int    `json:"line"`
@@ -9775,13 +10222,18 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -9919,8 +10371,13 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSig
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -9993,14 +10450,18 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSig
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                      `json:"from"`
+	To      *AgentTaskStatus                                                                                      `json:"to"`
+	At      *string                                                                                               `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                   `json:"trigger"`
+	Actor   *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -10031,8 +10492,13 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTa
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -10119,8 +10585,11 @@ type AgentTaskRegisterInput struct {
 	Title       string  `json:"title"`
 	SourceUrl   *string `json:"sourceUrl"`
 	// Registering agent's session (intake provenance).
-	SessionUuid *string `json:"sessionUuid"`
-	ParentTask  *string `json:"parentTask"`
+	SessionUuid       *string                    `json:"sessionUuid"`
+	ParentTask        *string                    `json:"parentTask"`
+	ProducesComponent *string                    `json:"producesComponent"`
+	Level             *int                       `json:"level"`
+	RequiredInputs    []*AgentRequiredInputInput `json:"requiredInputs,omitempty"`
 }
 
 // GetBoardUuid returns AgentTaskRegisterInput.BoardUuid, and is useful for accessing the field via an interface.
@@ -10140,6 +10609,17 @@ func (v *AgentTaskRegisterInput) GetSessionUuid() *string { return v.SessionUuid
 
 // GetParentTask returns AgentTaskRegisterInput.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterInput) GetParentTask() *string { return v.ParentTask }
+
+// GetProducesComponent returns AgentTaskRegisterInput.ProducesComponent, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterInput) GetProducesComponent() *string { return v.ProducesComponent }
+
+// GetLevel returns AgentTaskRegisterInput.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterInput) GetLevel() *int { return v.Level }
+
+// GetRequiredInputs returns AgentTaskRegisterInput.RequiredInputs, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterInput) GetRequiredInputs() []*AgentRequiredInputInput {
+	return v.RequiredInputs
+}
 
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask struct {
@@ -10173,7 +10653,7 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask struct 
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -10378,8 +10858,13 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHold
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -10453,13 +10938,18 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHold
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -10597,8 +11087,13 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSign
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -10671,14 +11166,18 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSign
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                      `json:"from"`
+	To      *AgentTaskStatus                                                                                                      `json:"to"`
+	At      *string                                                                                                               `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                   `json:"trigger"`
+	Actor   *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -10709,8 +11208,13 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskStat
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -10822,7 +11326,7 @@ type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask s
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -11027,8 +11531,13 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -11102,13 +11611,18 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -11246,8 +11760,13 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -11320,14 +11839,18 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                            `json:"from"`
+	To      *AgentTaskStatus                                                                                                            `json:"to"`
+	At      *string                                                                                                                     `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                         `json:"trigger"`
+	Actor   *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -11358,8 +11881,13 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -11471,7 +11999,7 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -11676,8 +12204,13 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -11751,13 +12284,18 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -11895,8 +12433,13 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -11969,14 +12512,18 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                                          `json:"from"`
+	To      *AgentTaskStatus                                                                                                                          `json:"to"`
+	At      *string                                                                                                                                   `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                                       `json:"trigger"`
+	Actor   *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -12007,8 +12554,13 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -12121,7 +12673,7 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask struct {
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -12326,8 +12878,13 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHold) Ge
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -12401,13 +12958,18 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHoldHeld
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -12545,8 +13107,13 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffs
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -12619,14 +13186,18 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffs
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                  `json:"from"`
+	To      *AgentTaskStatus                                                                                                  `json:"to"`
+	At      *string                                                                                                           `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                               `json:"trigger"`
+	Actor   *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -12657,8 +13228,13 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHi
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -12730,7 +13306,6 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHi
 
 // AgentTaskReturnProgrammaticResponse is returned by AgentTaskReturnProgrammatic on success.
 type AgentTaskReturnProgrammaticResponse struct {
-	// A return may carry outputs too, and nothing is required of it.
 	AgentTaskReturnProgrammatic *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask `json:"agentTaskReturnProgrammatic"`
 }
 
@@ -12776,6 +13351,19 @@ type AgentTaskRoleConfigInput struct {
 	Necessity *AgentRoleNecessity `json:"necessity"`
 	// Operator-only; rejected on the coordinator-seat path.
 	HumanGate *AgentHumanGate `json:"humanGate"`
+	// Operator-only, like prompts and capabilities.
+	RequiredInputs []*AgentRequiredInputInput `json:"requiredInputs,omitempty"`
+	// Operator-only, like prompts and capabilities. Also the board's routing graph.
+	ProducesOutputs []*AgentProducedOutputInput `json:"producesOutputs,omitempty"`
+	// Operator-only. The floor a model must meet for this role, at most two decimal places. Left
+	// out, unchanged; sent as null, the floor is removed.
+	RequiredStrength *float64 `json:"requiredStrength,omitempty"`
+	// Operator-only. How far above requiredStrength a model may be; 0 is an exact match.
+	StrengthHeadroom *float64 `json:"strengthHeadroom,omitempty"`
+	// Operator-only. Which of a model's per-category strengths this role reads; null reads the base.
+	StrengthCategory *ModelRoleCategory `json:"strengthCategory,omitempty"`
+	// Operator-only. Replaces the role's per-model overrides; an empty list clears them.
+	ModelStrengths []*RoleModelStrengthInput `json:"modelStrengths,omitempty"`
 }
 
 // GetName returns AgentTaskRoleConfigInput.Name, and is useful for accessing the field via an interface.
@@ -12809,6 +13397,32 @@ func (v *AgentTaskRoleConfigInput) GetNecessity() *AgentRoleNecessity { return v
 
 // GetHumanGate returns AgentTaskRoleConfigInput.HumanGate, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigInput) GetHumanGate() *AgentHumanGate { return v.HumanGate }
+
+// GetRequiredInputs returns AgentTaskRoleConfigInput.RequiredInputs, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetRequiredInputs() []*AgentRequiredInputInput {
+	return v.RequiredInputs
+}
+
+// GetProducesOutputs returns AgentTaskRoleConfigInput.ProducesOutputs, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetProducesOutputs() []*AgentProducedOutputInput {
+	return v.ProducesOutputs
+}
+
+// GetRequiredStrength returns AgentTaskRoleConfigInput.RequiredStrength, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetRequiredStrength() *float64 { return v.RequiredStrength }
+
+// GetStrengthHeadroom returns AgentTaskRoleConfigInput.StrengthHeadroom, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetStrengthHeadroom() *float64 { return v.StrengthHeadroom }
+
+// GetStrengthCategory returns AgentTaskRoleConfigInput.StrengthCategory, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetStrengthCategory() *ModelRoleCategory {
+	return v.StrengthCategory
+}
+
+// GetModelStrengths returns AgentTaskRoleConfigInput.ModelStrengths, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetModelStrengths() []*RoleModelStrengthInput {
+	return v.ModelStrengths
+}
 
 // AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfig includes the requested fields of the GraphQL type AgentTaskRoleConfig.
 // The GraphQL type's documentation follows.
@@ -12937,6 +13551,17 @@ type AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRo
 	Necessity *AgentRoleNecessity `json:"necessity"`
 	// Operator-only: conditional human review of this role's sign-offs (default NONE; AGENTIC roles only).
 	HumanGate *AgentHumanGate `json:"humanGate"`
+	// Model strength this role needs; null admits every model. At most two decimal places;
+	// within 0.001 either side counts as meeting it.
+	RequiredStrength *float64 `json:"requiredStrength"`
+	// How far above requiredStrength a model may be and still take the role. 0 means an exact match.
+	StrengthHeadroom *float64 `json:"strengthHeadroom"`
+	// Which of a model's per-category strengths this role reads, so a board role with its own name
+	// (PLANNER) can use a model's ARCHITECT strength. Null reads the model's base strength.
+	StrengthCategory *ModelRoleCategory `json:"strengthCategory"`
+	// Per-model strength overrides for this role, consulted first: override, then the model's
+	// strength for strengthCategory, then its base strength. Re-pointed when a model is merged.
+	ModelStrengths []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength `json:"modelStrengths"`
 }
 
 // GetUuid returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.Uuid, and is useful for accessing the field via an interface.
@@ -13004,6 +13629,45 @@ func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTa
 	return v.HumanGate
 }
 
+// GetRequiredStrength returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.RequiredStrength, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetRequiredStrength() *float64 {
+	return v.RequiredStrength
+}
+
+// GetStrengthHeadroom returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.StrengthHeadroom, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetStrengthHeadroom() *float64 {
+	return v.StrengthHeadroom
+}
+
+// GetStrengthCategory returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.StrengthCategory, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetStrengthCategory() *ModelRoleCategory {
+	return v.StrengthCategory
+}
+
+// GetModelStrengths returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.ModelStrengths, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetModelStrengths() []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength {
+	return v.ModelStrengths
+}
+
+// AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength includes the requested fields of the GraphQL type RoleModelStrength.
+// The GraphQL type's documentation follows.
+//
+// A role's strength override for one model.
+type AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength struct {
+	Model    string  `json:"model"`
+	Strength float64 `json:"strength"`
+}
+
+// GetModel returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength.Model, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength) GetModel() string {
+	return v.Model
+}
+
+// GetStrength returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength.Strength, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength) GetStrength() float64 {
+	return v.Strength
+}
+
 // AgentTaskRoleConfigsProgrammaticResponse is returned by AgentTaskRoleConfigsProgrammatic on success.
 type AgentTaskRoleConfigsProgrammaticResponse struct {
 	// Agent-key auth: a board's role configuration in order.
@@ -13047,7 +13711,7 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask struct {
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -13252,8 +13916,13 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHold) 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -13327,13 +13996,18 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHoldHe
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -13471,8 +14145,13 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOf
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -13545,14 +14224,18 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOf
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                    `json:"from"`
+	To      *AgentTaskStatus                                                                                                    `json:"to"`
+	At      *string                                                                                                             `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                 `json:"trigger"`
+	Actor   *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -13583,8 +14266,13 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatus
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -13656,9 +14344,6 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatus
 
 // AgentTaskSignOffProgrammaticResponse is returned by AgentTaskSignOffProgrammatic on success.
 type AgentTaskSignOffProgrammaticResponse struct {
-	// outputs: document releases produced during this hop. A role that declares
-	// an output as required cannot sign off without it; the task stays assigned
-	// so the refusal lands on the hop that can still fix it.
 	AgentTaskSignOffProgrammatic *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask `json:"agentTaskSignOffProgrammatic"`
 }
 
@@ -13672,7 +14357,10 @@ type AgentTaskSplitChildInput struct {
 	Title       string  `json:"title"`
 	SourceUrl   *string `json:"sourceUrl"`
 	// Sibling-index dependencies (0-based within this split), encoding the architect's proposed ordering.
-	DependsOnSiblingIndexes []int `json:"dependsOnSiblingIndexes"`
+	DependsOnSiblingIndexes []int   `json:"dependsOnSiblingIndexes"`
+	ProducesComponent       *string `json:"producesComponent"`
+	// Omitted children inherit the parent task's level.
+	Level *int `json:"level"`
 }
 
 // GetExternalRef returns AgentTaskSplitChildInput.ExternalRef, and is useful for accessing the field via an interface.
@@ -13688,6 +14376,12 @@ func (v *AgentTaskSplitChildInput) GetSourceUrl() *string { return v.SourceUrl }
 func (v *AgentTaskSplitChildInput) GetDependsOnSiblingIndexes() []int {
 	return v.DependsOnSiblingIndexes
 }
+
+// GetProducesComponent returns AgentTaskSplitChildInput.ProducesComponent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitChildInput) GetProducesComponent() *string { return v.ProducesComponent }
+
+// GetLevel returns AgentTaskSplitChildInput.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitChildInput) GetLevel() *int { return v.Level }
 
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask struct {
@@ -13721,7 +14415,7 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask struct {
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -13926,8 +14620,13 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHold) GetH
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -14001,13 +14700,18 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHoldHeldBy
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -14145,8 +14849,13 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAg
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -14219,14 +14928,18 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAg
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                                `json:"from"`
+	To      *AgentTaskStatus                                                                                                `json:"to"`
+	At      *string                                                                                                         `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                             `json:"trigger"`
+	Actor   *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -14257,8 +14970,13 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskStatusHist
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -14392,7 +15110,7 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTask struct {
 	CompletedAt         *string   `json:"completedAt"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
-	// Who is waiting on whom, innermost last.
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
 
@@ -14587,8 +15305,13 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHold) GetHeldAt() 
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -14662,13 +15385,18 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHoldHeldByAgentAct
 // The GraphQL type's documentation follows.
 //
 // One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
-	AskingRole       *string `json:"askingRole"`
-	AskingSession    *string `json:"askingSession"`
-	AskingAgent      *string `json:"askingAgent"`
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
 	QuestionsRelease *string `json:"questionsRelease"`
-	AnsweringRole    *string `json:"answeringRole"`
-	AskedAt          *string `json:"askedAt"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
 }
 
 // GetAskingRole returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
@@ -14806,8 +15534,13 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskS
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -14880,14 +15613,18 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskS
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
 // The GraphQL type's documentation follows.
 //
-// One status transition, written atomically with the transition. Intervals between rows are the cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency). actor is the causing worker session; null for coordinator/system-side transitions (the seat identity lives on the board).
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
-	From    *AgentTaskStatus    `json:"from"`
-	To      *AgentTaskStatus    `json:"to"`
-	At      *string             `json:"at"`
-	Trigger *AgentStatusTrigger `json:"trigger"`
-	// Who caused it: the session, the human who approved at a gate, or the system on a sweep.
-	Actor *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	From    *AgentTaskStatus                                                                                        `json:"from"`
+	To      *AgentTaskStatus                                                                                        `json:"to"`
+	At      *string                                                                                                 `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                     `json:"trigger"`
+	Actor   *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
 }
 
 // GetFrom returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
@@ -14918,8 +15655,13 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgent
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human
-// sign-off. kind says which identity space uuid belongs to; name is what a human reads.
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -17441,11 +18183,13 @@ type DeclarativeKind string
 const (
 	DeclarativeKindCatalog  DeclarativeKind = "CATALOG"
 	DeclarativeKindBranches DeclarativeKind = "BRANCHES"
+	DeclarativeKindBoard    DeclarativeKind = "BOARD"
 )
 
 var AllDeclarativeKind = []DeclarativeKind{
 	DeclarativeKindCatalog,
 	DeclarativeKindBranches,
+	DeclarativeKindBoard,
 }
 
 // Where an applied spec came from, recorded on every row the apply touched.
@@ -18267,8 +19011,10 @@ var AllFindingAnalyticsParticipation = []FindingAnalyticsParticipation{
 	FindingAnalyticsParticipationExcluded,
 }
 
-// Where a finding stands. RESOLVED says the work was done, ACCEPTED says an operator
-// took the risk knowingly, WITHDRAWN says the reviewer was wrong. Only OPEN must be
+// Where a finding stands. The closed statuses are not interchangeable: RESOLVED says the work was
+// done, ACCEPTED says an operator took the risk knowingly, POLICY_ACCEPTED says nobody looked --
+// the loop ran out under a cycle cap, a no-progress stop or a budget, and the board completed the
+// task with the item still open -- and WITHDRAWN says the reviewer was wrong. Only OPEN must be
 // carried into the next round.
 type FindingStatus string
 
@@ -19692,24 +20438,26 @@ const (
 	IdentifierTypeCpe                IdentifierType = "CPE"
 	IdentifierTypeTei                IdentifierType = "TEI"
 	IdentifierTypeComplianceDocument IdentifierType = "COMPLIANCE_DOCUMENT"
-	IdentifierTypeUdi                IdentifierType = "UDI"
-	IdentifierTypeUdiDi              IdentifierType = "UDI_DI"
-	IdentifierTypeUdiPi              IdentifierType = "UDI_PI"
-	IdentifierTypeSerial             IdentifierType = "SERIAL"
-	IdentifierTypeLot                IdentifierType = "LOT"
-	IdentifierTypeSwid               IdentifierType = "SWID"
-	IdentifierTypeSwhid              IdentifierType = "SWHID"
-	IdentifierTypeOmniborid          IdentifierType = "OMNIBORID"
-	IdentifierTypeGtin               IdentifierType = "GTIN"
-	IdentifierTypeGmn                IdentifierType = "GMN"
-	IdentifierTypeMpn                IdentifierType = "MPN"
-	IdentifierTypePartNumber         IdentifierType = "PART_NUMBER"
-	IdentifierTypeModelNumber        IdentifierType = "MODEL_NUMBER"
-	IdentifierTypeSku                IdentifierType = "SKU"
-	IdentifierTypeAssetTag           IdentifierType = "ASSET_TAG"
-	IdentifierTypeFccId              IdentifierType = "FCC_ID"
-	IdentifierTypeImei               IdentifierType = "IMEI"
-	IdentifierTypeMacAddress         IdentifierType = "MAC_ADDRESS"
+	// The component IS a specification document; idValue comes from SpecificationType.
+	IdentifierTypeSpecification IdentifierType = "SPECIFICATION"
+	IdentifierTypeUdi           IdentifierType = "UDI"
+	IdentifierTypeUdiDi         IdentifierType = "UDI_DI"
+	IdentifierTypeUdiPi         IdentifierType = "UDI_PI"
+	IdentifierTypeSerial        IdentifierType = "SERIAL"
+	IdentifierTypeLot           IdentifierType = "LOT"
+	IdentifierTypeSwid          IdentifierType = "SWID"
+	IdentifierTypeSwhid         IdentifierType = "SWHID"
+	IdentifierTypeOmniborid     IdentifierType = "OMNIBORID"
+	IdentifierTypeGtin          IdentifierType = "GTIN"
+	IdentifierTypeGmn           IdentifierType = "GMN"
+	IdentifierTypeMpn           IdentifierType = "MPN"
+	IdentifierTypePartNumber    IdentifierType = "PART_NUMBER"
+	IdentifierTypeModelNumber   IdentifierType = "MODEL_NUMBER"
+	IdentifierTypeSku           IdentifierType = "SKU"
+	IdentifierTypeAssetTag      IdentifierType = "ASSET_TAG"
+	IdentifierTypeFccId         IdentifierType = "FCC_ID"
+	IdentifierTypeImei          IdentifierType = "IMEI"
+	IdentifierTypeMacAddress    IdentifierType = "MAC_ADDRESS"
 )
 
 var AllIdentifierType = []IdentifierType{
@@ -19717,6 +20465,7 @@ var AllIdentifierType = []IdentifierType{
 	IdentifierTypeCpe,
 	IdentifierTypeTei,
 	IdentifierTypeComplianceDocument,
+	IdentifierTypeSpecification,
 	IdentifierTypeUdi,
 	IdentifierTypeUdiDi,
 	IdentifierTypeUdiPi,
@@ -20289,6 +21038,24 @@ func (v *MedicalProfileInput) GetUdiBearing() *bool { return v.UdiBearing }
 
 // GetGudidDefaults returns MedicalProfileInput.GudidDefaults, and is useful for accessing the field via an interface.
 func (v *MedicalProfileInput) GetGudidDefaults() *GudidDefaultsInput { return v.GudidDefaults }
+
+// The kinds of work a model's strength can differ by. A board role maps to one of these through
+// AgentTaskRoleConfig.strengthCategory.
+type ModelRoleCategory string
+
+const (
+	ModelRoleCategoryArchitect ModelRoleCategory = "ARCHITECT"
+	ModelRoleCategoryCoder     ModelRoleCategory = "CODER"
+	ModelRoleCategoryQa        ModelRoleCategory = "QA"
+	ModelRoleCategoryReviewer  ModelRoleCategory = "REVIEWER"
+)
+
+var AllModelRoleCategory = []ModelRoleCategory{
+	ModelRoleCategoryArchitect,
+	ModelRoleCategoryCoder,
+	ModelRoleCategoryQa,
+	ModelRoleCategoryReviewer,
+}
 
 type OSEnum string
 
@@ -20911,6 +21678,7 @@ const (
 	ReleaseUpdateScopeEnumMarketingVersion    ReleaseUpdateScopeEnum = "MARKETING_VERSION"
 	ReleaseUpdateScopeEnumTrigger             ReleaseUpdateScopeEnum = "TRIGGER"
 	ReleaseUpdateScopeEnumInputTrigger        ReleaseUpdateScopeEnum = "INPUT_TRIGGER"
+	ReleaseUpdateScopeEnumGuard               ReleaseUpdateScopeEnum = "GUARD"
 	ReleaseUpdateScopeEnumApprovedEnvironment ReleaseUpdateScopeEnum = "APPROVED_ENVIRONMENT"
 	ReleaseUpdateScopeEnumSupportWindow       ReleaseUpdateScopeEnum = "SUPPORT_WINDOW"
 	ReleaseUpdateScopeEnumFdaNarrative        ReleaseUpdateScopeEnum = "FDA_NARRATIVE"
@@ -20931,6 +21699,7 @@ var AllReleaseUpdateScopeEnum = []ReleaseUpdateScopeEnum{
 	ReleaseUpdateScopeEnumMarketingVersion,
 	ReleaseUpdateScopeEnumTrigger,
 	ReleaseUpdateScopeEnumInputTrigger,
+	ReleaseUpdateScopeEnumGuard,
 	ReleaseUpdateScopeEnumApprovedEnvironment,
 	ReleaseUpdateScopeEnumSupportWindow,
 	ReleaseUpdateScopeEnumFdaNarrative,
@@ -20945,6 +21714,19 @@ type ReleasecompletionfinalizerProgrammaticResponse struct {
 func (v *ReleasecompletionfinalizerProgrammaticResponse) GetReleasecompletionfinalizerProgrammatic() *bool {
 	return v.ReleasecompletionfinalizerProgrammatic
 }
+
+// One model's strength for one role, overriding what the catalogue says about the model.
+type RoleModelStrengthInput struct {
+	// A model in this organization's catalogue.
+	Model    string  `json:"model"`
+	Strength float64 `json:"strength"`
+}
+
+// GetModel returns RoleModelStrengthInput.Model, and is useful for accessing the field via an interface.
+func (v *RoleModelStrengthInput) GetModel() string { return v.Model }
+
+// GetStrength returns RoleModelStrengthInput.Strength, and is useful for accessing the field via an interface.
+func (v *RoleModelStrengthInput) GetStrength() float64 { return v.Strength }
 
 type SbomProbingStatus string
 
@@ -22233,13 +23015,6 @@ func (v *SessionProgrammaticSessionProgrammaticSessionReleasesRelease) GetLifecy
 
 // SessionReportUsageProgrammaticResponse is returned by SessionReportUsageProgrammatic on success.
 type SessionReportUsageProgrammaticResponse struct {
-	// Report what the session consumed since its last report. One report carries
-	// several lines: a delta may span models and may cross a pricing threshold, and
-	// each line becomes one row that prices under exactly one entry.
-	//
-	// Idempotent on (session, clientSeq, model, hosting, contextBand): a retried
-	// delta inserts nothing and reports duplicates. A clientSeq below the session's
-	// high-water mark is refused.
 	SessionReportUsageProgrammatic *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck `json:"sessionReportUsageProgrammatic"`
 }
 
@@ -22834,7 +23609,9 @@ func (v *SourceCodeEntryInput) GetNotes() *string { return v.Notes }
 // GetArtifacts returns SourceCodeEntryInput.Artifacts, and is useful for accessing the field via an interface.
 func (v *SourceCodeEntryInput) GetArtifacts() []*ArtifactInput { return v.Artifacts }
 
-// Specification document types a component may carry.
+// Well-known specification documents. When an identifier's idType is SPECIFICATION its idValue is
+// one of these values -- the design-stage counterpart of TEA's compliance-document-type, so a
+// document set is discoverable by identifier rather than by naming convention.
 type SpecificationType string
 
 const (
@@ -22851,11 +23628,12 @@ const (
 	SpecificationTypeTestPlan         SpecificationType = "TEST_PLAN"
 	SpecificationTypeGlossary         SpecificationType = "GLOSSARY"
 	SpecificationTypeDecisionRecord   SpecificationType = "DECISION_RECORD"
-	// One review round of one task. Task-scoped.
+	// One review round of one task. Task-scoped: one component per board target holds every task's rounds.
 	SpecificationTypeReviewFindings SpecificationType = "REVIEW_FINDINGS"
-	// One test run of one task. Task-scoped.
+	// One test run of one task. Task-scoped, like REVIEW_FINDINGS.
 	SpecificationTypeTestReport SpecificationType = "TEST_REPORT"
-	// Questions one hop asked about one of its inputs; routed to whoever produces that input.
+	// What one hop could not proceed without knowing. Task-scoped, like REVIEW_FINDINGS, and
+	// usually published with no file at all -- the items are the document.
 	SpecificationTypeQuestions SpecificationType = "QUESTIONS"
 )
 
@@ -23411,11 +24189,12 @@ func (v *__AgentTaskAssignProgrammaticInput) GetRoles() []string { return v.Role
 
 // __AgentTaskAuthorizeProgrammaticInput is used internally by genqlient
 type __AgentTaskAuthorizeProgrammaticInput struct {
-	TaskUuid    string   `json:"taskUuid"`
-	SessionUuid string   `json:"sessionUuid"`
-	Role        string   `json:"role"`
-	OrderIndex  *int     `json:"orderIndex"`
-	DependsOn   []string `json:"dependsOn"`
+	TaskUuid         string   `json:"taskUuid"`
+	SessionUuid      string   `json:"sessionUuid"`
+	Role             string   `json:"role"`
+	OrderIndex       *int     `json:"orderIndex"`
+	DependsOn        []string `json:"dependsOn"`
+	RequiredStrength *float64 `json:"requiredStrength,omitempty"`
 }
 
 // GetTaskUuid returns __AgentTaskAuthorizeProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -23432,6 +24211,11 @@ func (v *__AgentTaskAuthorizeProgrammaticInput) GetOrderIndex() *int { return v.
 
 // GetDependsOn returns __AgentTaskAuthorizeProgrammaticInput.DependsOn, and is useful for accessing the field via an interface.
 func (v *__AgentTaskAuthorizeProgrammaticInput) GetDependsOn() []string { return v.DependsOn }
+
+// GetRequiredStrength returns __AgentTaskAuthorizeProgrammaticInput.RequiredStrength, and is useful for accessing the field via an interface.
+func (v *__AgentTaskAuthorizeProgrammaticInput) GetRequiredStrength() *float64 {
+	return v.RequiredStrength
+}
 
 // __AgentTaskBindExternalRefProgrammaticInput is used internally by genqlient
 type __AgentTaskBindExternalRefProgrammaticInput struct {
@@ -25049,8 +25833,8 @@ func AgentTaskAssignProgrammatic(
 
 // The mutation executed by AgentTaskAuthorizeProgrammatic.
 const AgentTaskAuthorizeProgrammatic_Operation = `
-mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!]) {
-	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn) {
+mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!], $requiredStrength: Float) {
+	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength) {
 		uuid
 		org
 		board
@@ -25060,6 +25844,7 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 		status
 		role
 		orderIndex
+		requiredStrength
 		dependsOn
 		requireHumanReview
 		hold {
@@ -25141,16 +25926,18 @@ func AgentTaskAuthorizeProgrammatic(
 	role string,
 	orderIndex *int,
 	dependsOn []string,
+	requiredStrength *float64,
 ) (data_ *AgentTaskAuthorizeProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskAuthorizeProgrammatic",
 		Query:  AgentTaskAuthorizeProgrammatic_Operation,
 		Variables: &__AgentTaskAuthorizeProgrammaticInput{
-			TaskUuid:    taskUuid,
-			SessionUuid: sessionUuid,
-			Role:        role,
-			OrderIndex:  orderIndex,
-			DependsOn:   dependsOn,
+			TaskUuid:         taskUuid,
+			SessionUuid:      sessionUuid,
+			Role:             role,
+			OrderIndex:       orderIndex,
+			DependsOn:        dependsOn,
+			RequiredStrength: requiredStrength,
 		},
 	}
 
@@ -26622,6 +27409,8 @@ mutation AgentTaskRoleConfigSetProgrammatic ($boardUuid: ID!, $sessionUuid: ID!,
 }
 `
 
+// The server reads a strength field sent as null as "clear it" and one left out as "leave it",
+// so these are omitted when nil: a typed caller that does not set them never clears a floor.
 func AgentTaskRoleConfigSetProgrammatic(
 	ctx_ context.Context,
 	client_ graphql.Client,
@@ -26668,6 +27457,13 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) {
 		kind
 		necessity
 		humanGate
+		requiredStrength
+		strengthHeadroom
+		strengthCategory
+		modelStrengths {
+			model
+			strength
+		}
 	}
 }
 `
