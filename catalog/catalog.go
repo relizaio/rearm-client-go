@@ -1,5 +1,6 @@
-// Package catalog works with declarative ReARM spec files (kind: Catalog, kind: Branches):
-// load and save YAML, apply through the ReARM API, export from it, and print change sets.
+// Package catalog works with declarative ReARM spec files (kind CATALOG, BRANCHES, BOARD and
+// ROLE_PRESETS): load and save YAML, apply through the ReARM API, export from it, and print change
+// sets.
 // The same helpers back `rearm ... apply` in the CLI and the resources of the Terraform
 // provider, so the two never disagree on what a file means.
 package catalog
@@ -9,13 +10,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
 	"gopkg.in/yaml.v3"
 
-	rearm "github.com/relizaio/rearm-client-go"
 	"errors"
+	rearm "github.com/relizaio/rearm-client-go"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
@@ -36,6 +38,27 @@ type BranchesFile struct {
 	rearm.BranchesSpecInput
 }
 
+// BoardFile is a `kind: BOARD` document: one board, its settings and its roles.
+//
+// It stays the map it was read into rather than a typed struct. A field set to null in the file
+// clears it and a field left out leaves it alone (declarative-boards D15); a struct would turn
+// both into the same zero value, so the map is what goes over the wire.
+type BoardFile struct {
+	Spec map[string]any
+}
+
+// RolePresetsFile is a `kind: ROLE_PRESETS` document: an organization's role presets. A map for
+// the same reason as BoardFile.
+type RolePresetsFile struct {
+	Spec map[string]any
+}
+
+// MarshalJSON writes the file as its spec, so ToYAML and callers see the document itself.
+func (f *BoardFile) MarshalJSON() ([]byte, error) { return json.Marshal(f.Spec) }
+
+// MarshalJSON writes the file as its spec.
+func (f *RolePresetsFile) MarshalJSON() ([]byte, error) { return json.Marshal(f.Spec) }
+
 // Change is one entity-level outcome of an apply; Kind says which slice (and so which entity
 // type) the entry is about.
 type Change struct {
@@ -44,6 +67,9 @@ type Change struct {
 	Action  rearm.DeclarativeAction
 	Fields  []string
 	Message string
+	// Warnings are what the change leaves for someone to deal with, such as tasks waiting on a role
+	// the file deactivates. Never a refusal.
+	Warnings []string
 }
 
 // Result is the normalised outcome of an apply, identical for both kinds.
@@ -59,16 +85,27 @@ type Result struct {
 	Changes   []Change
 }
 
-// Load reads a YAML (or JSON) spec file and returns *CatalogFile or *BranchesFile by its kind.
+// Load reads a YAML (or JSON) spec file and returns *CatalogFile, *BranchesFile, *BoardFile or
+// *RolePresetsFile by its kind. A board or presets file has its `file:` and `promptFile:`
+// references inlined, relative to the file's directory (see Inline).
 func Load(path string) (any, error) {
 	raw, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	return Parse(raw)
+	f, err := Parse(raw)
+	if err != nil {
+		return nil, err
+	}
+	if err := Inline(f, filepath.Dir(path)); err != nil {
+		return nil, err
+	}
+	return f, nil
 }
 
-// Parse decodes a YAML (or JSON) spec document and returns *CatalogFile or *BranchesFile by its kind.
+// Parse decodes a YAML (or JSON) spec document and returns *CatalogFile, *BranchesFile, *BoardFile
+// or *RolePresetsFile by its kind. References in a board or presets file are left as they are; Load
+// inlines them, and a caller parsing bytes calls Inline itself.
 func Parse(raw []byte) (any, error) {
 	var generic map[string]any
 	if err := yaml.Unmarshal(raw, &generic); err != nil {
@@ -98,11 +135,177 @@ func Parse(raw []byte) (any, error) {
 			f.Version = 1
 		}
 		return &f, nil
+	case rearm.DeclarativeKindBoard:
+		spec, err := normalised(generic)
+		if err != nil {
+			return nil, fmt.Errorf("spec (%s): %w", kind, err)
+		}
+		if _, ok := spec["version"]; !ok {
+			spec["version"] = 1
+		}
+		return &BoardFile{Spec: spec}, nil
+	case rearm.DeclarativeKindRolePresets:
+		spec, err := normalised(generic)
+		if err != nil {
+			return nil, fmt.Errorf("spec (%s): %w", kind, err)
+		}
+		if _, ok := spec["version"]; !ok {
+			spec["version"] = 1
+		}
+		return &RolePresetsFile{Spec: spec}, nil
 	case "":
-		return nil, fmt.Errorf("spec: missing 'kind' (expected %s or %s)", rearm.DeclarativeKindCatalog, rearm.DeclarativeKindBranches)
+		return nil, fmt.Errorf("spec: missing 'kind' (expected one of %s)", kindList())
 	default:
-		return nil, fmt.Errorf("spec: unsupported kind %q (expected %s or %s)", kind, rearm.DeclarativeKindCatalog, rearm.DeclarativeKindBranches)
+		return nil, fmt.Errorf("spec: unsupported kind %q (expected one of %s)", kind, kindList())
 	}
+}
+
+func kindList() string {
+	return strings.Join([]string{string(rearm.DeclarativeKindCatalog), string(rearm.DeclarativeKindBranches),
+		string(rearm.DeclarativeKindBoard), string(rearm.DeclarativeKindRolePresets)}, ", ")
+}
+
+// normalised round-trips a YAML-decoded document through JSON, so nested maps are
+// map[string]any, numbers are JSON numbers and nulls stay null -- the shape the API takes.
+func normalised(generic map[string]any) (map[string]any, error) {
+	js, err := json.Marshal(generic)
+	if err != nil {
+		return nil, err
+	}
+	var out map[string]any
+	if err := json.Unmarshal(js, &out); err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Inline replaces the references a board or presets file may carry with what they point at, so
+// the spec that leaves the client is complete (declarative-boards D3):
+//
+//   - a role or preset entry `file: roles/coder.yaml` becomes that file's contents;
+//   - `promptFile: roles/coder.md` on a role or preset becomes `prompt`;
+//   - `coordinatorPromptFile:` on a board becomes `coordinatorPrompt`.
+//
+// Paths are relative to baseDir, the spec file's directory, and must stay inside it: a reference
+// that escapes it, is absolute or does not exist is an error. Other kinds pass through unchanged.
+func Inline(file any, baseDir string) error {
+	var spec map[string]any
+	var listKey string
+	switch f := file.(type) {
+	case *BoardFile:
+		spec, listKey = f.Spec, "roles"
+	case *RolePresetsFile:
+		spec, listKey = f.Spec, "presets"
+	default:
+		return nil
+	}
+	if ref, ok := spec["coordinatorPromptFile"]; ok {
+		text, err := readRef(baseDir, ref, "coordinatorPromptFile")
+		if err != nil {
+			return err
+		}
+		spec["coordinatorPrompt"] = text
+		delete(spec, "coordinatorPromptFile")
+	}
+	entries, _ := spec[listKey].([]any)
+	for i, e := range entries {
+		entry, ok := e.(map[string]any)
+		if !ok {
+			continue
+		}
+		if ref, ok := entry["file"]; ok {
+			text, err := readRef(baseDir, ref, fmt.Sprintf("%s[%d].file", listKey, i))
+			if err != nil {
+				return err
+			}
+			var loaded map[string]any
+			if err := yaml.Unmarshal([]byte(text), &loaded); err != nil {
+				return fmt.Errorf("%s[%d].file %v: %w", listKey, i, ref, err)
+			}
+			if loaded, err = normalised(loaded); err != nil {
+				return err
+			}
+			// Anything written beside the reference wins over the file's own value.
+			for k, v := range entry {
+				if k != "file" {
+					loaded[k] = v
+				}
+			}
+			entry = loaded
+		}
+		if ref, ok := entry["promptFile"]; ok {
+			text, err := readRef(baseDir, ref, fmt.Sprintf("%s[%d].promptFile", listKey, i))
+			if err != nil {
+				return err
+			}
+			entry["prompt"] = text
+			delete(entry, "promptFile")
+		}
+		entries[i] = entry
+	}
+	return nil
+}
+
+// References lists the `file:`, `promptFile:` and `coordinatorPromptFile:` entries a board or
+// presets file still carries -- what a caller that cannot read files (an upload) must refuse.
+func References(file any) []string {
+	var spec map[string]any
+	var listKey string
+	switch f := file.(type) {
+	case *BoardFile:
+		spec, listKey = f.Spec, "roles"
+	case *RolePresetsFile:
+		spec, listKey = f.Spec, "presets"
+	default:
+		return nil
+	}
+	var out []string
+	if ref, ok := spec["coordinatorPromptFile"]; ok {
+		out = append(out, fmt.Sprintf("coordinatorPromptFile: %v", ref))
+	}
+	entries, _ := spec[listKey].([]any)
+	for i, e := range entries {
+		entry, _ := e.(map[string]any)
+		for _, k := range []string{"file", "promptFile"} {
+			if ref, ok := entry[k]; ok {
+				out = append(out, fmt.Sprintf("%s[%d].%s: %v", listKey, i, k, ref))
+			}
+		}
+	}
+	return out
+}
+
+// readRef reads a referenced file, refusing one outside baseDir.
+func readRef(baseDir string, ref any, what string) (string, error) {
+	rel, ok := ref.(string)
+	if !ok || strings.TrimSpace(rel) == "" {
+		return "", fmt.Errorf("%s must be a path", what)
+	}
+	if filepath.IsAbs(rel) {
+		return "", fmt.Errorf("%s %q must be relative to the spec file", what, rel)
+	}
+	base, err := filepath.Abs(baseDir)
+	if err != nil {
+		return "", err
+	}
+	if resolved, err := filepath.EvalSymlinks(base); err == nil {
+		base = resolved
+	}
+	target := filepath.Join(base, rel)
+	if resolved, err := filepath.EvalSymlinks(target); err == nil {
+		target = resolved
+	} else {
+		return "", fmt.Errorf("%s %q: %w", what, rel, err)
+	}
+	inside, err := filepath.Rel(base, target)
+	if err != nil || inside == ".." || strings.HasPrefix(inside, ".."+string(filepath.Separator)) {
+		return "", fmt.Errorf("%s %q leaves the spec file's directory", what, rel)
+	}
+	b, err := os.ReadFile(target)
+	if err != nil {
+		return "", fmt.Errorf("%s %q: %w", what, rel, err)
+	}
+	return string(b), nil
 }
 
 // Apply sends a loaded spec to ReARM. With dryRun the server computes the change set without writing.
@@ -126,6 +329,30 @@ func Apply(ctx context.Context, c *rearm.Client, file any, dryRun bool, source *
 			return nil, fmt.Errorf("apply: empty response")
 		}
 		return fromResult(&resp.ApplyBranchesProgrammatic.ApplyResultFields), nil
+	case *BoardFile:
+		if refs := References(f); len(refs) > 0 {
+			return nil, fmt.Errorf("apply: references not inlined: %s", strings.Join(refs, "; "))
+		}
+		resp, err := rearm.ApplyBoard(ctx, c, &f.Spec, &dryRun, source)
+		if err != nil {
+			return nil, err
+		}
+		if resp == nil || resp.ApplyBoardProgrammatic == nil {
+			return nil, fmt.Errorf("apply: empty response")
+		}
+		return fromResult(&resp.ApplyBoardProgrammatic.ApplyResultFields), nil
+	case *RolePresetsFile:
+		if refs := References(f); len(refs) > 0 {
+			return nil, fmt.Errorf("apply: references not inlined: %s", strings.Join(refs, "; "))
+		}
+		resp, err := rearm.ApplyRolePresets(ctx, c, &f.Spec, &dryRun, source)
+		if err != nil {
+			return nil, err
+		}
+		if resp == nil || resp.ApplyRolePresetsProgrammatic == nil {
+			return nil, fmt.Errorf("apply: empty response")
+		}
+		return fromResult(&resp.ApplyRolePresetsProgrammatic.ApplyResultFields), nil
 	default:
 		return nil, fmt.Errorf("apply: unsupported spec type %T", file)
 	}
@@ -166,6 +393,65 @@ func ExportBranches(ctx context.Context, c *rearm.Client, component string) (*Br
 	return &f, nil
 }
 
+// ExportBoard fetches one board of the key's organization as a board file, by name or uuid.
+func ExportBoard(ctx context.Context, c *rearm.Client, board string) (*BoardFile, error) {
+	uuid := board
+	list, err := rearm.AgentBoardsProgrammatic(ctx, c)
+	if err != nil {
+		return nil, err
+	}
+	matched := false
+	for _, b := range list.AgentBoardsProgrammatic {
+		if b == nil || b.Uuid == nil {
+			continue
+		}
+		if *b.Uuid == board || (b.Name != nil && *b.Name == board) {
+			uuid, matched = *b.Uuid, true
+			break
+		}
+	}
+	if !matched {
+		return nil, fmt.Errorf("export: no board named %q in this organization (not found)", board)
+	}
+	resp, err := rearm.ExportBoard(ctx, c, uuid)
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil || resp.AgentBoardSpecProgrammatic == nil {
+		return nil, fmt.Errorf("export: empty response")
+	}
+	spec := map[string]any{}
+	if err := roundTrip(resp.AgentBoardSpecProgrammatic, &spec); err != nil {
+		return nil, err
+	}
+	spec["kind"] = string(rearm.DeclarativeKindBoard)
+	return &BoardFile{Spec: spec}, nil
+}
+
+// ArchiveBoard archives a board by name: what deleting it from Terraform does. Its tasks, roles and
+// history stay, and archiving an archived board changes nothing. An unknown name is IsNotFound.
+func ArchiveBoard(ctx context.Context, c *rearm.Client, name string) error {
+	_, err := rearm.ArchiveBoard(ctx, c, name)
+	return err
+}
+
+// ExportRolePresets fetches the key's organization's role presets as a presets file.
+func ExportRolePresets(ctx context.Context, c *rearm.Client) (*RolePresetsFile, error) {
+	resp, err := rearm.ExportRolePresets(ctx, c)
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil || resp.AgentRolePresetsSpecProgrammatic == nil {
+		return nil, fmt.Errorf("export: empty response")
+	}
+	spec := map[string]any{}
+	if err := roundTrip(resp.AgentRolePresetsSpecProgrammatic, &spec); err != nil {
+		return nil, err
+	}
+	spec["kind"] = string(rearm.DeclarativeKindRolePresets)
+	return &RolePresetsFile{Spec: spec}, nil
+}
+
 // ToYAML renders a spec file for humans and git: nulls dropped, kind first, then version.
 func ToYAML(file any) ([]byte, error) {
 	js, err := json.Marshal(file)
@@ -190,28 +476,48 @@ func Format(r *Result) string {
 	fmt.Fprintf(&b, "%s (%s): %d to create, %d to update, %d unchanged, %d to archive, %d errors\n",
 		r.Kind, mode, r.Created, r.Updated, r.Unchanged, r.Archived, r.Errors)
 	for _, ch := range r.Changes {
-		line := fmt.Sprintf("  %-9s %-9s %s", ch.Action, entityOf(ch.Kind), ch.Name)
+		line := fmt.Sprintf("  %-9s %-9s %s", ch.Action, entityOf(ch), ch.Name)
 		if len(ch.Fields) > 0 {
 			line += " [" + strings.Join(ch.Fields, ", ") + "]"
 		}
-		if ch.Message != "" {
-			line += " — " + ch.Message
+		if msg := messageOf(ch); msg != "" {
+			line += " — " + msg
 		}
 		b.WriteString(line + "\n")
+		for _, w := range ch.Warnings {
+			b.WriteString("            warning: " + w + "\n")
+		}
 	}
 	return b.String()
 }
 
-// entityOf names the entity type a change entry refers to, for humans.
-func entityOf(k Kind) string {
-	switch k {
+// entityOf names the entity type a change entry refers to, for humans. A board file's entries are
+// the board and its roles; the server says which in the message.
+func entityOf(ch Change) string {
+	switch ch.Kind {
 	case rearm.DeclarativeKindCatalog:
 		return "component"
 	case rearm.DeclarativeKindBranches:
 		return "branch"
+	case rearm.DeclarativeKindBoard:
+		// A board file's only archives are roles it no longer lists; the board is never archived.
+		if ch.Message == "role" || ch.Action == rearm.DeclarativeActionArchive {
+			return "role"
+		}
+		return "board"
+	case rearm.DeclarativeKindRolePresets:
+		return "preset"
 	default:
-		return string(k)
+		return string(ch.Kind)
 	}
+}
+
+// messageOf drops the entity marker a board file's changes carry, since entityOf already shows it.
+func messageOf(ch Change) string {
+	if ch.Kind == rearm.DeclarativeKindBoard && (ch.Message == "role" || ch.Message == "board") {
+		return ""
+	}
+	return ch.Message
 }
 
 func fromResult(r *rearm.ApplyResultFields) *Result {
@@ -221,7 +527,7 @@ func fromResult(r *rearm.ApplyResultFields) *Result {
 		if ch == nil {
 			continue
 		}
-		c := Change{Kind: ch.Kind, Name: ch.Name, Action: ch.Action, Fields: ch.Fields}
+		c := Change{Kind: ch.Kind, Name: ch.Name, Action: ch.Action, Fields: ch.Fields, Warnings: ch.Warnings}
 		if ch.Message != nil {
 			c.Message = *ch.Message
 		}
@@ -264,8 +570,10 @@ func stripNulls(v any) any {
 
 // Key order for the document envelope and for nested entries; anything else follows alphabetically.
 var (
-	topLevelKeyOrder = []string{"kind", "version", "authoritative", "component", "components", "branches"}
-	entryKeyOrder    = []string{"name", "type", "component", "branch", "release", "pattern"}
+	topLevelKeyOrder = []string{"kind", "version", "authoritative", "name", "description", "target", "component",
+		"components", "branches", "sources", "settings", "coordinatorPrompt", "roles", "presets"}
+	entryKeyOrder = []string{"name", "type", "component", "branch", "release", "pattern", "orderIndex", "kind",
+		"necessity", "humanGate", "prompt"}
 )
 
 // toNode builds a yaml.Node so map keys keep a stable, human order: preferred keys first, then alphabetical.

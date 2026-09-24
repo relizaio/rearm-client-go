@@ -13,6 +13,10 @@ type Query {
   """
   exportBranchesProgrammatic(
   component: String!): BranchesSpec
+  """
+  Export the key's organization's role presets as a presets file (CONFIGURATION_READ).
+  """
+  agentRolePresetsSpecProgrammatic: RolePresetsSpec
   release(releaseUuid: ID!, orgUuid: ID): Release
   getSbomProbingResult(runId: String!): SbomProbingResult
   getReleaseByHashProgrammatic(hash: String!, componentId: ID): String
@@ -147,6 +151,28 @@ type Mutation {
   spec: BranchesSpecInput!
   dryRun: Boolean
   source: DeclarativeSourceInput): DeclarativeApplyResult
+  """
+  Apply one board file (CONFIGURATION_WRITE with write access on the org). One transaction:
+  any problem refuses the whole file, and the result lists every problem found. A dry run returns
+  the change set the apply would and writes nothing.
+  """
+  applyBoardProgrammatic(
+  spec: BoardSpecInput!
+  dryRun: Boolean
+  source: DeclarativeSourceInput): DeclarativeApplyResult
+  """
+  Apply the organization's presets file (CONFIGURATION_WRITE); the board's rules, per preset.
+  """
+  applyRolePresetsProgrammatic(
+  spec: RolePresetsSpecInput!
+  dryRun: Boolean
+  source: DeclarativeSourceInput): DeclarativeApplyResult
+  """
+  Archive a board by name (CONFIGURATION_WRITE): what deleting a Terraform board does. Tasks, roles
+  and history stay; the board takes no new work. Archiving an archived board changes nothing.
+  """
+  archiveBoardProgrammatic(
+  name: String!): AgentBoard
   """
   Programmatic (API-key) upsert of a PullRequest. CI registers the PR
   row independently of release creation so the registration survives
@@ -321,6 +347,16 @@ type BranchesSpec {
   component: String!
   authoritative: Boolean!
   branches: [BranchSpecEntry!]!
+}
+
+"""
+An organization's role presets as one file. Presets seed every new board's roles.
+"""
+type RolePresetsSpec {
+  kind: DeclarativeKind!
+  version: Int!
+  authoritative: Boolean
+  presets: [BoardRoleSpec]
 }
 
 type Release {
@@ -773,6 +809,10 @@ type AgentBoard {
   """
   defaultInputResolution: AgentInputResolution
   createdDate: DateTime
+  """
+  The board file that last applied to this board; null on a board never applied from a file.
+  """
+  declarative: DeclarativeProvenance
 }
 
 """
@@ -1045,6 +1085,10 @@ type BoardSpec {
   """
   documentPaths: Object
   coordinatorPrompt: String
+  """
+  The board's budget and stops; a null value is the board default.
+  """
+  settings: BoardSettingsSpec
   roles: [BoardRoleSpec]
 }
 
@@ -1107,6 +1151,43 @@ input BranchesSpecInput {
   """
   authoritative: Boolean
   branches: [BranchSpecInput!]!
+}
+
+"""
+A board file (kind BOARD). Keyed by name within the organization. A field left out is untouched;
+a field set to null is cleared where that means something: description, each setting, a role's
+wipLimit, hopBudgetMicros and each part of its strength. A role the file does not list is
+deactivated, never deleted.
+"""
+input BoardSpecInput {
+  kind: DeclarativeKind!
+  version: Int!
+  name: String!
+  description: String
+  """
+  Component name in this organization; required when the file creates the board.
+  """
+  target: String
+  defaultTaskLevel: Int
+  defaultInputResolution: AgentInputResolution
+  priorityType: AgentBoardPriorityType
+  perAgentWipLimit: Int
+  sources: [String!]
+  documentsRepo: String
+  documentPaths: Object
+  coordinatorPrompt: String
+  settings: BoardSettingsSpecInput
+  roles: [BoardRoleSpecInput!]
+}
+
+"""
+A presets file (kind ROLE_PRESETS). authoritative deactivates presets the file does not list.
+"""
+input RolePresetsSpecInput {
+  kind: DeclarativeKind!
+  version: Int!
+  authoritative: Boolean
+  presets: [BoardRoleSpecInput!]
 }
 
 """
@@ -2310,6 +2391,7 @@ enum DeclarativeKind {
   CATALOG
   BRANCHES
   BOARD
+  ROLE_PRESETS
 }
 
 type CatalogComponent {
@@ -2341,6 +2423,26 @@ type BranchSpecEntry {
   dependencies: [DependencySpec!]
   dependencyPatterns: [DependencyPattern!]
   provenance: DeclarativeProvenance
+}
+
+type BoardRoleSpec {
+  name: String
+  prompt: String
+  orderIndex: Int
+  wipLimit: Int
+  requireDistinctAgent: Boolean
+  active: Boolean
+  kind: AgentRoleKind
+  necessity: AgentRoleNecessity
+  humanGate: AgentHumanGate
+  requiredCapabilities: [String]
+  requiredInputs: [BoardRequiredInputSpec]
+  producesOutputs: [BoardProducedOutputSpec]
+  """
+  The most one assignment of this role may spend, in USD micros.
+  """
+  hopBudgetMicros: Long
+  strength: BoardStrengthSpec
 }
 
 enum Status {
@@ -3107,6 +3209,15 @@ enum AgentInputResolution {
   STRICT_LATEST
 }
 
+type DeclarativeProvenance {
+  """
+  SHA-256 of the canonical JSON of the spec that last touched this row.
+  """
+  specHash: String
+  appliedAt: DateTime
+  source: DeclarativeSource
+}
+
 type AgentTaskSnapshot {
   task: AgentTask
   """
@@ -3434,19 +3545,22 @@ type AgentProducedOutput {
   required: Boolean
 }
 
-type BoardRoleSpec {
-  name: String
-  prompt: String
-  orderIndex: Int
-  wipLimit: Int
-  requireDistinctAgent: Boolean
-  active: Boolean
-  kind: AgentRoleKind
-  necessity: AgentRoleNecessity
-  humanGate: AgentHumanGate
-  requiredCapabilities: [String]
-  requiredInputs: [BoardRequiredInputSpec]
-  producesOutputs: [BoardProducedOutputSpec]
+type BoardSettingsSpec {
+  """
+  What the board may spend, in USD micros; null means no board budget.
+  """
+  budgetMicros: Long
+  softAlertPercent: Int
+  cycleCap: Int
+  noProgressRepeatsToStop: Int
+  """
+  Findings at or above this priority send work back; null means every open finding does.
+  """
+  blockingPriority: Int
+  """
+  Findings at or above this priority stop completion; null means every open finding does.
+  """
+  completionPriority: Int
 }
 
 type DeclarativeChange {
@@ -3461,6 +3575,10 @@ type DeclarativeChange {
   """
   fields: [String!]
   message: String
+  """
+  What the change leaves for someone to deal with, e.g. tasks waiting on a role the file deactivates. Never a refusal.
+  """
+  warnings: [String!]
 }
 
 input CatalogComponentInput {
@@ -3497,6 +3615,41 @@ input BranchSpecInput {
   findingAnalyticsParticipation: FindingAnalyticsParticipation
   dependencies: [DependencySpecInput!]
   dependencyPatterns: [DependencyPatternSpecInput!]
+}
+
+input BoardSettingsSpecInput {
+  budgetMicros: Long
+  softAlertPercent: Int
+  cycleCap: Int
+  noProgressRepeatsToStop: Int
+  blockingPriority: Int
+  completionPriority: Int
+}
+
+"""
+One role, or one preset: always complete on the wire -- a file's file: and promptFile: are inlined by the client.
+"""
+input BoardRoleSpecInput {
+  name: String!
+  prompt: String
+  """
+  Absent on a new role: ten times its position in the list. Absent on an existing role: unchanged.
+  """
+  orderIndex: Int
+  wipLimit: Int
+  requireDistinctAgent: Boolean
+  """
+  Absent: true -- declaring a role is what reactivates it.
+  """
+  active: Boolean
+  kind: AgentRoleKind
+  necessity: AgentRoleNecessity
+  humanGate: AgentHumanGate
+  requiredCapabilities: [AgentCapability!]
+  requiredInputs: [BoardRequiredInputSpecInput!]
+  producesOutputs: [BoardProducedOutputSpecInput!]
+  hopBudgetMicros: Long
+  strength: BoardStrengthSpecInput
 }
 
 type PullRequestValidationEvent {
@@ -4615,21 +4768,40 @@ enum AgentInputScope {
   TASK
 }
 
-type DeclarativeProvenance {
-  """
-  SHA-256 of the canonical JSON of the spec that last touched this row.
-  """
-  specHash: String
-  appliedAt: DateTime
-  source: DeclarativeSource
-}
-
 type DependencySpec {
   component: String!
   branch: String
   release: String
   status: Status
   isFollowVersion: Boolean
+}
+
+type BoardRequiredInputSpec {
+  kind: AgentInputKind
+  specification: SpecificationType
+  scope: AgentInputScope
+  component: String
+  minLifecycle: ReleaseLifecycleEnum
+  resolution: AgentInputResolution
+}
+
+"""
+A document a board role is expected to publish; mirrors BoardRequiredInputSpec.
+"""
+type BoardProducedOutputSpec {
+  specification: SpecificationType
+  scope: AgentInputScope
+  required: Boolean
+}
+
+"""
+A role's model strength in portable form: override models by reference, not uuid.
+"""
+type BoardStrengthSpec {
+  requiredStrength: Float
+  strengthHeadroom: Float
+  strengthCategory: ModelRoleCategory
+  modelStrengths: [BoardModelStrengthSpec]
 }
 
 enum OrganizationType {
@@ -5378,6 +5550,12 @@ enum AgentBoardLockLevel {
   OPERATOR
 }
 
+type DeclarativeSource {
+  repo: String
+  path: String
+  commit: String
+}
+
 """
 One task another task waits on, with enough of its state to tell whether the wait is over.
 """
@@ -5470,24 +5648,6 @@ type FindingLocation {
   ref: String
 }
 
-type BoardRequiredInputSpec {
-  kind: AgentInputKind
-  specification: SpecificationType
-  scope: AgentInputScope
-  component: String
-  minLifecycle: ReleaseLifecycleEnum
-  resolution: AgentInputResolution
-}
-
-"""
-A document a board role is expected to publish; mirrors BoardRequiredInputSpec.
-"""
-type BoardProducedOutputSpec {
-  specification: SpecificationType
-  scope: AgentInputScope
-  required: Boolean
-}
-
 enum DeclarativeAction {
   CREATE
   UPDATE
@@ -5518,6 +5678,31 @@ input DependencyPatternSpecInput {
   targetBranchName: String
   defaultStatus: Status
   fallbackToBase: FallbackToBase
+}
+
+input BoardRequiredInputSpecInput {
+  kind: AgentInputKind
+  specification: SpecificationType
+  scope: AgentInputScope
+  """
+  Component name in this organization.
+  """
+  component: String
+  minLifecycle: ReleaseLifecycleEnum
+  resolution: AgentInputResolution
+}
+
+input BoardProducedOutputSpecInput {
+  specification: SpecificationType
+  scope: AgentInputScope
+  required: Boolean
+}
+
+input BoardStrengthSpecInput {
+  requiredStrength: Float
+  strengthHeadroom: Float
+  strengthCategory: ModelRoleCategory
+  modelStrengths: [BoardModelStrengthSpecInput!]
 }
 
 enum LockSubjectType {
@@ -5989,10 +6174,12 @@ enum DeviceWindowSource {
   SHIPMENT
 }
 
-type DeclarativeSource {
-  repo: String
-  path: String
-  commit: String
+type BoardModelStrengthSpec {
+  """
+  The model's canonical id, or name-version: resolved through the organization's model aliases.
+  """
+  model: String
+  strength: Float
 }
 
 """
@@ -6256,6 +6443,11 @@ type FindingsAbout {
 type ArtifactChangelog {
   added: [DiffComponent]
   removed: [DiffComponent]
+}
+
+input BoardModelStrengthSpecInput {
+  model: String!
+  strength: Float!
 }
 
 input PartyInput {
