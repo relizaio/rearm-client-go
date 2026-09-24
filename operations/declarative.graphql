@@ -143,8 +143,8 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
   }
 }
 
-query ExportBoard($boardUuid: ID!) {
-  agentBoardSpecProgrammatic(boardUuid: $boardUuid) {
+query ExportBoard($board: String!) {
+  exportBoardProgrammatic(board: $board) {
     kind
     version
     name

@@ -14,6 +14,11 @@ type Query {
   exportBranchesProgrammatic(
   component: String!): BranchesSpec
   """
+  Export one board of the key's organization as a board file, by name or uuid (CONFIGURATION_READ).
+  """
+  exportBoardProgrammatic(
+  board: String!): BoardSpec
+  """
   Export the key's organization's role presets as a presets file (CONFIGURATION_READ).
   """
   agentRolePresetsSpecProgrammatic: RolePresetsSpec
@@ -347,6 +352,41 @@ type BranchesSpec {
   component: String!
   authoritative: Boolean!
   branches: [BranchSpecEntry!]!
+}
+
+"""
+A board as configuration: enough to stand the same board up elsewhere, and no runtime state.
+"""
+type BoardSpec {
+  kind: DeclarativeKind!
+  version: Int!
+  name: String
+  description: String
+  """
+  Name of the component this board builds -- a spec is portable, so names rather than uuids.
+  """
+  target: String
+  defaultTaskLevel: Int
+  defaultInputResolution: AgentInputResolution
+  priorityType: AgentBoardPriorityType
+  perAgentWipLimit: Int
+  sources: [String]
+  """
+  Where documents are written, as the repository URI rather than the row uuid: a spec
+  is portable, and the uuid of a repository row means nothing in another organization.
+  Applying resolves it the same way agentBoardUpdate does.
+  """
+  documentsRepo: String
+  """
+  Per-type path templates, keyed by SpecificationType. Empty means the defaults.
+  """
+  documentPaths: Object
+  coordinatorPrompt: String
+  """
+  The board's budget and stops; a null value is the board default.
+  """
+  settings: BoardSettingsSpec
+  roles: [BoardRoleSpec]
 }
 
 """
@@ -1055,41 +1095,6 @@ type AgentTaskRoleConfig {
   can produce anything.
   """
   producesOutputs: [AgentProducedOutput]
-}
-
-"""
-A board as configuration: enough to stand the same board up elsewhere, and no runtime state.
-"""
-type BoardSpec {
-  kind: DeclarativeKind!
-  version: Int!
-  name: String
-  description: String
-  """
-  Name of the component this board builds -- a spec is portable, so names rather than uuids.
-  """
-  target: String
-  defaultTaskLevel: Int
-  defaultInputResolution: AgentInputResolution
-  priorityType: AgentBoardPriorityType
-  perAgentWipLimit: Int
-  sources: [String]
-  """
-  Where documents are written, as the repository URI rather than the row uuid: a spec
-  is portable, and the uuid of a repository row means nothing in another organization.
-  Applying resolves it the same way agentBoardUpdate does.
-  """
-  documentsRepo: String
-  """
-  Per-type path templates, keyed by SpecificationType. Empty means the defaults.
-  """
-  documentPaths: Object
-  coordinatorPrompt: String
-  """
-  The board's budget and stops; a null value is the board default.
-  """
-  settings: BoardSettingsSpec
-  roles: [BoardRoleSpec]
 }
 
 type DeclarativeApplyResult {
@@ -2425,6 +2430,42 @@ type BranchSpecEntry {
   provenance: DeclarativeProvenance
 }
 
+"""
+Which release satisfies a threshold. LATEST_PASSING (default) takes the newest release at or
+above it, so a fresh draft never un-satisfies a baselined version; STRICT_LATEST demands the
+component's own latest release clear it.
+"""
+enum AgentInputResolution {
+  LATEST_PASSING
+  STRICT_LATEST
+}
+
+"""
+How strictly coordinator priority binds assignment. LAX: the poll offers work in priority order but a worker may assign any eligible task (advisory). STRICT: assignment is refused unless the task is the top eligible offer for that agent.
+"""
+enum AgentBoardPriorityType {
+  LAX
+  STRICT
+}
+
+type BoardSettingsSpec {
+  """
+  What the board may spend, in USD micros; null means no board budget.
+  """
+  budgetMicros: Long
+  softAlertPercent: Int
+  cycleCap: Int
+  noProgressRepeatsToStop: Int
+  """
+  Findings at or above this priority send work back; null means every open finding does.
+  """
+  blockingPriority: Int
+  """
+  Findings at or above this priority stop completion; null means every open finding does.
+  """
+  completionPriority: Int
+}
+
 type BoardRoleSpec {
   name: String
   prompt: String
@@ -3191,24 +3232,6 @@ type AgentCoordinatorSeat {
 
 scalar Long
 
-"""
-How strictly coordinator priority binds assignment. LAX: the poll offers work in priority order but a worker may assign any eligible task (advisory). STRICT: assignment is refused unless the task is the top eligible offer for that agent.
-"""
-enum AgentBoardPriorityType {
-  LAX
-  STRICT
-}
-
-"""
-Which release satisfies a threshold. LATEST_PASSING (default) takes the newest release at or
-above it, so a fresh draft never un-satisfies a baselined version; STRICT_LATEST demands the
-component's own latest release clear it.
-"""
-enum AgentInputResolution {
-  LATEST_PASSING
-  STRICT_LATEST
-}
-
 type DeclarativeProvenance {
   """
   SHA-256 of the canonical JSON of the spec that last touched this row.
@@ -3543,24 +3566,6 @@ type AgentProducedOutput {
   False makes it advisory, for roles that sometimes have nothing to write.
   """
   required: Boolean
-}
-
-type BoardSettingsSpec {
-  """
-  What the board may spend, in USD micros; null means no board budget.
-  """
-  budgetMicros: Long
-  softAlertPercent: Int
-  cycleCap: Int
-  noProgressRepeatsToStop: Int
-  """
-  Findings at or above this priority send work back; null means every open finding does.
-  """
-  blockingPriority: Int
-  """
-  Findings at or above this priority stop completion; null means every open finding does.
-  """
-  completionPriority: Int
 }
 
 type DeclarativeChange {
