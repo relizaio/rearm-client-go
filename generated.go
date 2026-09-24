@@ -20808,11 +20808,11 @@ func (v *EnrollSigningKeyProgrammaticResponse) GetEnrollSigningKeyProgrammatic()
 	return v.EnrollSigningKeyProgrammatic
 }
 
-// ExportBoardAgentBoardSpecProgrammaticBoardSpec includes the requested fields of the GraphQL type BoardSpec.
+// ExportBoardExportBoardProgrammaticBoardSpec includes the requested fields of the GraphQL type BoardSpec.
 // The GraphQL type's documentation follows.
 //
 // A board as configuration: enough to stand the same board up elsewhere, and no runtime state.
-type ExportBoardAgentBoardSpecProgrammaticBoardSpec struct {
+type ExportBoardExportBoardProgrammaticBoardSpec struct {
 	Kind        DeclarativeKind `json:"kind"`
 	Version     int             `json:"version"`
 	Name        *string         `json:"name"`
@@ -20832,161 +20832,159 @@ type ExportBoardAgentBoardSpecProgrammaticBoardSpec struct {
 	DocumentPaths     *json.RawMessage `json:"documentPaths"`
 	CoordinatorPrompt *string          `json:"coordinatorPrompt"`
 	// The board's budget and stops; a null value is the board default.
-	Settings *ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec `json:"settings"`
-	Roles    []*ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec      `json:"roles"`
+	Settings *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec `json:"settings"`
+	Roles    []*ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec      `json:"roles"`
 }
 
-// GetKind returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.Kind, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetKind() DeclarativeKind { return v.Kind }
+// GetKind returns ExportBoardExportBoardProgrammaticBoardSpec.Kind, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetKind() DeclarativeKind { return v.Kind }
 
-// GetVersion returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.Version, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetVersion() int { return v.Version }
+// GetVersion returns ExportBoardExportBoardProgrammaticBoardSpec.Version, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetVersion() int { return v.Version }
 
-// GetName returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.Name, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetName() *string { return v.Name }
+// GetName returns ExportBoardExportBoardProgrammaticBoardSpec.Name, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetName() *string { return v.Name }
 
-// GetDescription returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.Description, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetDescription() *string {
-	return v.Description
-}
+// GetDescription returns ExportBoardExportBoardProgrammaticBoardSpec.Description, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDescription() *string { return v.Description }
 
-// GetTarget returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.Target, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetTarget() *string { return v.Target }
+// GetTarget returns ExportBoardExportBoardProgrammaticBoardSpec.Target, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetTarget() *string { return v.Target }
 
-// GetDefaultTaskLevel returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.DefaultTaskLevel, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetDefaultTaskLevel() *int {
+// GetDefaultTaskLevel returns ExportBoardExportBoardProgrammaticBoardSpec.DefaultTaskLevel, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDefaultTaskLevel() *int {
 	return v.DefaultTaskLevel
 }
 
-// GetDefaultInputResolution returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.DefaultInputResolution, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetDefaultInputResolution() *AgentInputResolution {
+// GetDefaultInputResolution returns ExportBoardExportBoardProgrammaticBoardSpec.DefaultInputResolution, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDefaultInputResolution() *AgentInputResolution {
 	return v.DefaultInputResolution
 }
 
-// GetPriorityType returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.PriorityType, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetPriorityType() *AgentBoardPriorityType {
+// GetPriorityType returns ExportBoardExportBoardProgrammaticBoardSpec.PriorityType, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetPriorityType() *AgentBoardPriorityType {
 	return v.PriorityType
 }
 
-// GetPerAgentWipLimit returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.PerAgentWipLimit, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetPerAgentWipLimit() *int {
+// GetPerAgentWipLimit returns ExportBoardExportBoardProgrammaticBoardSpec.PerAgentWipLimit, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetPerAgentWipLimit() *int {
 	return v.PerAgentWipLimit
 }
 
-// GetSources returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.Sources, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetSources() []*string { return v.Sources }
+// GetSources returns ExportBoardExportBoardProgrammaticBoardSpec.Sources, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetSources() []*string { return v.Sources }
 
-// GetDocumentsRepo returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.DocumentsRepo, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetDocumentsRepo() *string {
+// GetDocumentsRepo returns ExportBoardExportBoardProgrammaticBoardSpec.DocumentsRepo, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDocumentsRepo() *string {
 	return v.DocumentsRepo
 }
 
-// GetDocumentPaths returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.DocumentPaths, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetDocumentPaths() *json.RawMessage {
+// GetDocumentPaths returns ExportBoardExportBoardProgrammaticBoardSpec.DocumentPaths, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDocumentPaths() *json.RawMessage {
 	return v.DocumentPaths
 }
 
-// GetCoordinatorPrompt returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.CoordinatorPrompt, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetCoordinatorPrompt() *string {
+// GetCoordinatorPrompt returns ExportBoardExportBoardProgrammaticBoardSpec.CoordinatorPrompt, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetCoordinatorPrompt() *string {
 	return v.CoordinatorPrompt
 }
 
-// GetSettings returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.Settings, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetSettings() *ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec {
+// GetSettings returns ExportBoardExportBoardProgrammaticBoardSpec.Settings, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetSettings() *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec {
 	return v.Settings
 }
 
-// GetRoles returns ExportBoardAgentBoardSpecProgrammaticBoardSpec.Roles, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpec) GetRoles() []*ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec {
+// GetRoles returns ExportBoardExportBoardProgrammaticBoardSpec.Roles, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetRoles() []*ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec {
 	return v.Roles
 }
 
-// ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec includes the requested fields of the GraphQL type BoardRoleSpec.
-type ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec struct {
+// ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec includes the requested fields of the GraphQL type BoardRoleSpec.
+type ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec struct {
 	BoardRoleSpecFields `json:"-"`
 }
 
-// GetName returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.Name, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetName() *string {
+// GetName returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.Name, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetName() *string {
 	return v.BoardRoleSpecFields.Name
 }
 
-// GetPrompt returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.Prompt, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetPrompt() *string {
+// GetPrompt returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.Prompt, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetPrompt() *string {
 	return v.BoardRoleSpecFields.Prompt
 }
 
-// GetOrderIndex returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.OrderIndex, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetOrderIndex() *int {
+// GetOrderIndex returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.OrderIndex, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetOrderIndex() *int {
 	return v.BoardRoleSpecFields.OrderIndex
 }
 
-// GetWipLimit returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.WipLimit, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetWipLimit() *int {
+// GetWipLimit returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.WipLimit, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetWipLimit() *int {
 	return v.BoardRoleSpecFields.WipLimit
 }
 
-// GetRequireDistinctAgent returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.RequireDistinctAgent, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetRequireDistinctAgent() *bool {
+// GetRequireDistinctAgent returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.RequireDistinctAgent, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetRequireDistinctAgent() *bool {
 	return v.BoardRoleSpecFields.RequireDistinctAgent
 }
 
-// GetActive returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.Active, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetActive() *bool {
+// GetActive returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.Active, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetActive() *bool {
 	return v.BoardRoleSpecFields.Active
 }
 
-// GetKind returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.Kind, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetKind() *AgentRoleKind {
+// GetKind returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.Kind, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetKind() *AgentRoleKind {
 	return v.BoardRoleSpecFields.Kind
 }
 
-// GetNecessity returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.Necessity, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetNecessity() *AgentRoleNecessity {
+// GetNecessity returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.Necessity, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetNecessity() *AgentRoleNecessity {
 	return v.BoardRoleSpecFields.Necessity
 }
 
-// GetHumanGate returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.HumanGate, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetHumanGate() *AgentHumanGate {
+// GetHumanGate returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.HumanGate, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetHumanGate() *AgentHumanGate {
 	return v.BoardRoleSpecFields.HumanGate
 }
 
-// GetRequiredCapabilities returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.RequiredCapabilities, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetRequiredCapabilities() []*string {
+// GetRequiredCapabilities returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.RequiredCapabilities, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetRequiredCapabilities() []*string {
 	return v.BoardRoleSpecFields.RequiredCapabilities
 }
 
-// GetRequiredInputs returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.RequiredInputs, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetRequiredInputs() []*BoardRoleSpecFieldsRequiredInputsBoardRequiredInputSpec {
+// GetRequiredInputs returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.RequiredInputs, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetRequiredInputs() []*BoardRoleSpecFieldsRequiredInputsBoardRequiredInputSpec {
 	return v.BoardRoleSpecFields.RequiredInputs
 }
 
-// GetProducesOutputs returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.ProducesOutputs, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetProducesOutputs() []*BoardRoleSpecFieldsProducesOutputsBoardProducedOutputSpec {
+// GetProducesOutputs returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.ProducesOutputs, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetProducesOutputs() []*BoardRoleSpecFieldsProducesOutputsBoardProducedOutputSpec {
 	return v.BoardRoleSpecFields.ProducesOutputs
 }
 
-// GetHopBudgetMicros returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.HopBudgetMicros, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetHopBudgetMicros() *int64 {
+// GetHopBudgetMicros returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.HopBudgetMicros, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetHopBudgetMicros() *int64 {
 	return v.BoardRoleSpecFields.HopBudgetMicros
 }
 
-// GetStrength returns ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec.Strength, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
+// GetStrength returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.Strength, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
 	return v.BoardRoleSpecFields.Strength
 }
 
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) UnmarshalJSON(b []byte) error {
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) UnmarshalJSON(b []byte) error {
 
 	if string(b) == "null" {
 		return nil
 	}
 
 	var firstPass struct {
-		*ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec
+		*ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec
 		graphql.NoUnmarshalJSON
 	}
-	firstPass.ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec = v
+	firstPass.ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec = v
 
 	err := json.Unmarshal(b, &firstPass)
 	if err != nil {
@@ -21001,7 +20999,7 @@ func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) Unmar
 	return nil
 }
 
-type __premarshalExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec struct {
+type __premarshalExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec struct {
 	Name *string `json:"name"`
 
 	Prompt *string `json:"prompt"`
@@ -21031,7 +21029,7 @@ type __premarshalExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpe
 	Strength *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
 
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) MarshalJSON() ([]byte, error) {
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) MarshalJSON() ([]byte, error) {
 	premarshaled, err := v.__premarshalJSON()
 	if err != nil {
 		return nil, err
@@ -21039,8 +21037,8 @@ func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) Marsh
 	return json.Marshal(premarshaled)
 }
 
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) __premarshalJSON() (*__premarshalExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec, error) {
-	var retval __premarshalExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) __premarshalJSON() (*__premarshalExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec, error) {
+	var retval __premarshalExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec
 
 	retval.Name = v.BoardRoleSpecFields.Name
 	retval.Prompt = v.BoardRoleSpecFields.Prompt
@@ -21059,8 +21057,8 @@ func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecRolesBoardRoleSpec) __pre
 	return &retval, nil
 }
 
-// ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec includes the requested fields of the GraphQL type BoardSettingsSpec.
-type ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec struct {
+// ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec includes the requested fields of the GraphQL type BoardSettingsSpec.
+type ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec struct {
 	// What the board may spend, in USD micros; null means no board budget.
 	BudgetMicros            *int64 `json:"budgetMicros"`
 	SoftAlertPercent        *int   `json:"softAlertPercent"`
@@ -21072,45 +21070,45 @@ type ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec str
 	CompletionPriority *int `json:"completionPriority"`
 }
 
-// GetBudgetMicros returns ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec.BudgetMicros, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec) GetBudgetMicros() *int64 {
+// GetBudgetMicros returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetBudgetMicros() *int64 {
 	return v.BudgetMicros
 }
 
-// GetSoftAlertPercent returns ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec.SoftAlertPercent, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec) GetSoftAlertPercent() *int {
+// GetSoftAlertPercent returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.SoftAlertPercent, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetSoftAlertPercent() *int {
 	return v.SoftAlertPercent
 }
 
-// GetCycleCap returns ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec.CycleCap, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec) GetCycleCap() *int {
+// GetCycleCap returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.CycleCap, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetCycleCap() *int {
 	return v.CycleCap
 }
 
-// GetNoProgressRepeatsToStop returns ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec.NoProgressRepeatsToStop, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec) GetNoProgressRepeatsToStop() *int {
+// GetNoProgressRepeatsToStop returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.NoProgressRepeatsToStop, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetNoProgressRepeatsToStop() *int {
 	return v.NoProgressRepeatsToStop
 }
 
-// GetBlockingPriority returns ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec.BlockingPriority, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec) GetBlockingPriority() *int {
+// GetBlockingPriority returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.BlockingPriority, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetBlockingPriority() *int {
 	return v.BlockingPriority
 }
 
-// GetCompletionPriority returns ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec.CompletionPriority, and is useful for accessing the field via an interface.
-func (v *ExportBoardAgentBoardSpecProgrammaticBoardSpecSettingsBoardSettingsSpec) GetCompletionPriority() *int {
+// GetCompletionPriority returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.CompletionPriority, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetCompletionPriority() *int {
 	return v.CompletionPriority
 }
 
 // ExportBoardResponse is returned by ExportBoard on success.
 type ExportBoardResponse struct {
-	// Agent-key auth: the board as a declarative spec.
-	AgentBoardSpecProgrammatic *ExportBoardAgentBoardSpecProgrammaticBoardSpec `json:"agentBoardSpecProgrammatic"`
+	// Export one board of the key's organization as a board file, by name or uuid (CONFIGURATION_READ).
+	ExportBoardProgrammatic *ExportBoardExportBoardProgrammaticBoardSpec `json:"exportBoardProgrammatic"`
 }
 
-// GetAgentBoardSpecProgrammatic returns ExportBoardResponse.AgentBoardSpecProgrammatic, and is useful for accessing the field via an interface.
-func (v *ExportBoardResponse) GetAgentBoardSpecProgrammatic() *ExportBoardAgentBoardSpecProgrammaticBoardSpec {
-	return v.AgentBoardSpecProgrammatic
+// GetExportBoardProgrammatic returns ExportBoardResponse.ExportBoardProgrammatic, and is useful for accessing the field via an interface.
+func (v *ExportBoardResponse) GetExportBoardProgrammatic() *ExportBoardExportBoardProgrammaticBoardSpec {
+	return v.ExportBoardProgrammatic
 }
 
 // ExportBranchesExportBranchesProgrammaticBranchesSpec includes the requested fields of the GraphQL type BranchesSpec.
@@ -27422,11 +27420,11 @@ func (v *__EnrollSigningKeyProgrammaticInput) GetSigningKey() *AgentSigningKeyIn
 
 // __ExportBoardInput is used internally by genqlient
 type __ExportBoardInput struct {
-	BoardUuid string `json:"boardUuid"`
+	Board string `json:"board"`
 }
 
-// GetBoardUuid returns __ExportBoardInput.BoardUuid, and is useful for accessing the field via an interface.
-func (v *__ExportBoardInput) GetBoardUuid() string { return v.BoardUuid }
+// GetBoard returns __ExportBoardInput.Board, and is useful for accessing the field via an interface.
+func (v *__ExportBoardInput) GetBoard() string { return v.Board }
 
 // __ExportBranchesInput is used internally by genqlient
 type __ExportBranchesInput struct {
@@ -31496,8 +31494,8 @@ func EnrollSigningKeyProgrammatic(
 
 // The query executed by ExportBoard.
 const ExportBoard_Operation = `
-query ExportBoard ($boardUuid: ID!) {
-	agentBoardSpecProgrammatic(boardUuid: $boardUuid) {
+query ExportBoard ($board: String!) {
+	exportBoardProgrammatic(board: $board) {
 		kind
 		version
 		name
@@ -31564,13 +31562,13 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
 func ExportBoard(
 	ctx_ context.Context,
 	client_ graphql.Client,
-	boardUuid string,
+	board string,
 ) (data_ *ExportBoardResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "ExportBoard",
 		Query:  ExportBoard_Operation,
 		Variables: &__ExportBoardInput{
-			BoardUuid: boardUuid,
+			Board: board,
 		},
 	}
 

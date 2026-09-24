@@ -394,34 +394,20 @@ func ExportBranches(ctx context.Context, c *rearm.Client, component string) (*Br
 }
 
 // ExportBoard fetches one board of the key's organization as a board file, by name or uuid.
+//
+// Through the declarative export, which needs CONFIGURATION_READ like the Catalog export -- not the
+// agent's board queries, which need the AGENT function: a key that applies boards must be able to
+// read them back. A board that does not exist, or belongs to another organization, is IsNotFound.
 func ExportBoard(ctx context.Context, c *rearm.Client, board string) (*BoardFile, error) {
-	uuid := board
-	list, err := rearm.AgentBoardsProgrammatic(ctx, c)
+	resp, err := rearm.ExportBoard(ctx, c, board)
 	if err != nil {
 		return nil, err
 	}
-	matched := false
-	for _, b := range list.AgentBoardsProgrammatic {
-		if b == nil || b.Uuid == nil {
-			continue
-		}
-		if *b.Uuid == board || (b.Name != nil && *b.Name == board) {
-			uuid, matched = *b.Uuid, true
-			break
-		}
-	}
-	if !matched {
-		return nil, fmt.Errorf("export: no board named %q in this organization (not found)", board)
-	}
-	resp, err := rearm.ExportBoard(ctx, c, uuid)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil || resp.AgentBoardSpecProgrammatic == nil {
+	if resp == nil || resp.ExportBoardProgrammatic == nil {
 		return nil, fmt.Errorf("export: empty response")
 	}
 	spec := map[string]any{}
-	if err := roundTrip(resp.AgentBoardSpecProgrammatic, &spec); err != nil {
+	if err := roundTrip(resp.ExportBoardProgrammatic, &spec); err != nil {
 		return nil, err
 	}
 	spec["kind"] = string(rearm.DeclarativeKindBoard)
