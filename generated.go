@@ -3356,6 +3356,10 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment s
 	Role          *string                                                                                 `json:"role"`
 	RolePrompt    *string                                                                                 `json:"rolePrompt"`
 	PromptVersion *string                                                                                 `json:"promptVersion"`
+	// What this hop is expected to cost, in USD micros: the role's allowance. Not a cap -- a hop that
+	// will blow it should be returned (reason OTHER, saying so) rather than pressed on. Null when the
+	// role sets none.
+	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
 }
 
 // GetTask returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment.Task, and is useful for accessing the field via an interface.
@@ -3376,6 +3380,11 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// GetHopBudgetMicros returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment.HopBudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment) GetHopBudgetMicros() *int64 {
+	return v.HopBudgetMicros
 }
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask includes the requested fields of the GraphQL type AgentTask.
@@ -8882,6 +8891,10 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment struc
 	Role          *string                                                                             `json:"role"`
 	RolePrompt    *string                                                                             `json:"rolePrompt"`
 	PromptVersion *string                                                                             `json:"promptVersion"`
+	// What this hop is expected to cost, in USD micros: the role's allowance. Not a cap -- a hop that
+	// will blow it should be returned (reason OTHER, saying so) rather than pressed on. Null when the
+	// role sets none.
+	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
 }
 
 // GetTask returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment.Task, and is useful for accessing the field via an interface.
@@ -8902,6 +8915,11 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment) 
 // GetPromptVersion returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// GetHopBudgetMicros returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment.HopBudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment) GetHopBudgetMicros() *int64 {
+	return v.HopBudgetMicros
 }
 
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask includes the requested fields of the GraphQL type AgentTask.
@@ -19610,7 +19628,7 @@ type BoardRoleSpecFields struct {
 	RequiredCapabilities []*string                                                    `json:"requiredCapabilities"`
 	RequiredInputs       []*BoardRoleSpecFieldsRequiredInputsBoardRequiredInputSpec   `json:"requiredInputs"`
 	ProducesOutputs      []*BoardRoleSpecFieldsProducesOutputsBoardProducedOutputSpec `json:"producesOutputs"`
-	// The most one assignment of this role may spend, in USD micros.
+	// Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported.
 	HopBudgetMicros *int64                                        `json:"hopBudgetMicros"`
 	Strength        *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
@@ -25824,6 +25842,10 @@ type SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck
 	Refused     []string                `json:"refused"`
 	Attribution SessionUsageAttribution `json:"attribution"`
 	Task        *string                 `json:"task"`
+	// The allowance of the hop this session is working, when its role sets one.
+	HopAllowanceMicros *int64 `json:"hopAllowanceMicros"`
+	// What that hop has cost so far; compare with hopAllowanceMicros. Null without an allowance.
+	HopSpentMicros *int64 `json:"hopSpentMicros"`
 }
 
 // GetAccepted returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Accepted, and is useful for accessing the field via an interface.
@@ -25849,6 +25871,16 @@ func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsag
 // GetTask returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Task, and is useful for accessing the field via an interface.
 func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetTask() *string {
 	return v.Task
+}
+
+// GetHopAllowanceMicros returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.HopAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetHopAllowanceMicros() *int64 {
+	return v.HopAllowanceMicros
+}
+
+// GetHopSpentMicros returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.HopSpentMicros, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetHopSpentMicros() *int64 {
+	return v.HopSpentMicros
 }
 
 type SessionStatus string
@@ -28640,6 +28672,7 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 		role
 		rolePrompt
 		promptVersion
+		hopBudgetMicros
 	}
 }
 fragment ActorFields on AgentActor {
@@ -29497,6 +29530,7 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 		role
 		rolePrompt
 		promptVersion
+		hopBudgetMicros
 	}
 }
 fragment ActorFields on AgentActor {
@@ -32890,6 +32924,8 @@ mutation SessionReportUsageProgrammatic ($input: SessionUsageReportInput!) {
 		refused
 		attribution
 		task
+		hopAllowanceMicros
+		hopSpentMicros
 	}
 }
 `

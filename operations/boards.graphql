@@ -108,7 +108,7 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
  }
-	role rolePrompt promptVersion
+	role rolePrompt promptVersion hopBudgetMicros
 } }
 
 mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles: [String!]) {
@@ -125,7 +125,7 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
  }
-	role rolePrompt promptVersion
+	role rolePrompt promptVersion hopBudgetMicros
 } }
 
 mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!]) {
