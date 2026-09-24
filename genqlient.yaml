@@ -19,3 +19,10 @@ bindings:
     type: encoding/json.RawMessage
   Upload:
     type: string
+  # Board and presets files go over the wire as the maps they were read into: a field
+  # declared null clears it and one left out does not (declarative-boards D15), and a
+  # typed struct cannot keep that difference.
+  BoardSpecInput:
+    type: map[string]interface{}
+  RolePresetsSpecInput:
+    type: map[string]interface{}

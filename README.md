@@ -12,8 +12,8 @@ Go client for the [ReARM](https://rearmhq.com) GraphQL API, shared by the
 - Talks to the programmatic endpoint `/api/programmatic/graphql` (stateless, no CSRF). On
   an older server without it the client falls back to `/graphql` and performs the CSRF
   session handshake that endpoint requires; `WithLegacyEndpoint()` forces that mode.
-- `catalog/` works with declarative spec files (`kind: CATALOG`, `kind: BRANCHES`): load,
-  apply (with dry run), export, render YAML, print change sets.
+- `catalog/` works with declarative spec files (`kind: CATALOG`, `BRANCHES`, `BOARD`,
+  `ROLE_PRESETS`): load, apply (with dry run), export, render YAML, print change sets.
 
 ```go
 c, err := rearm.New("https://app.rearmhq.com", os.Getenv("REARM_APIKEYID"), os.Getenv("REARM_APIKEY"))
@@ -54,6 +54,40 @@ A field left out of a spec is not managed by that file and keeps its value in Re
 Rows absent from an authoritative spec follow the organization's declarative prune
 setting (`LEAVE` reports them, `ARCHIVE` archives them); the setting lives on the
 organization on purpose, a file cannot widen its own blast radius.
+
+A task board and an organization's role presets are files too:
+
+```yaml
+kind: BOARD
+version: 1
+name: platform
+target: platform-api
+coordinatorPromptFile: prompts/coordinator.md   # inlined by Load
+settings:
+  budgetMicros: null          # null clears; a field left out is untouched
+  cycleCap: 6
+roles:
+  - name: designer
+    promptFile: prompts/designer.md             # inlined by Load
+  - file: roles/coder.yaml                      # the whole role, inlined by Load
+```
+
+```yaml
+kind: ROLE_PRESETS
+version: 1
+authoritative: true           # presets the file does not list are deactivated
+presets:
+  - name: coordinator-board-truth
+    promptFile: presets/coordinator.md
+```
+
+These two stay the maps they were read into (`BoardFile.Spec`, `RolePresetsFile.Spec`) and go
+to the server as such, because a field set to `null` clears it and a field left out does not --
+a typed struct would lose the difference. `Load` inlines `file:`, `promptFile:` and
+`coordinatorPromptFile:` relative to the spec's directory and refuses a path that leaves it;
+`References` lists what is left to inline, for callers that cannot read files. A role the file
+does not list is deactivated, never deleted; a change that strands tasks carries `Warnings`.
+`ExportBoard(name)` and `ExportRolePresets()` return files that apply back unchanged.
 
 ## Regenerating
 

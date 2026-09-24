@@ -1,4 +1,4 @@
-# Declarative configuration: Catalog and Branches slices.
+# Declarative configuration: Catalog, Branches, board and role-presets slices.
 
 fragment ChangeFields on DeclarativeChange {
   kind
@@ -6,6 +6,7 @@ fragment ChangeFields on DeclarativeChange {
   action
   fields
   message
+  warnings
 }
 
 fragment ApplyResultFields on DeclarativeApplyResult {
@@ -105,5 +106,75 @@ query ExportBranches($component: String!) {
         ...ProvenanceFields
       }
     }
+  }
+}
+
+mutation ApplyBoard($spec: BoardSpecInput!, $dryRun: Boolean, $source: DeclarativeSourceInput) {
+  applyBoardProgrammatic(spec: $spec, dryRun: $dryRun, source: $source) {
+    ...ApplyResultFields
+  }
+}
+
+mutation ApplyRolePresets($spec: RolePresetsSpecInput!, $dryRun: Boolean, $source: DeclarativeSourceInput) {
+  applyRolePresetsProgrammatic(spec: $spec, dryRun: $dryRun, source: $source) {
+    ...ApplyResultFields
+  }
+}
+
+fragment BoardRoleSpecFields on BoardRoleSpec {
+  name
+  prompt
+  orderIndex
+  wipLimit
+  requireDistinctAgent
+  active
+  kind
+  necessity
+  humanGate
+  requiredCapabilities
+  requiredInputs { kind specification scope component minLifecycle resolution }
+  producesOutputs { specification scope required }
+  hopBudgetMicros
+  strength {
+    requiredStrength
+    strengthHeadroom
+    strengthCategory
+    modelStrengths { model strength }
+  }
+}
+
+query ExportBoard($boardUuid: ID!) {
+  agentBoardSpecProgrammatic(boardUuid: $boardUuid) {
+    kind
+    version
+    name
+    description
+    target
+    defaultTaskLevel
+    defaultInputResolution
+    priorityType
+    perAgentWipLimit
+    sources
+    documentsRepo
+    documentPaths
+    coordinatorPrompt
+    settings {
+      budgetMicros
+      softAlertPercent
+      cycleCap
+      noProgressRepeatsToStop
+      blockingPriority
+      completionPriority
+    }
+    roles { ...BoardRoleSpecFields }
+  }
+}
+
+query ExportRolePresets {
+  agentRolePresetsSpecProgrammatic {
+    kind
+    version
+    authoritative
+    presets { ...BoardRoleSpecFields }
   }
 }
