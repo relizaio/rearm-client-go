@@ -851,6 +851,15 @@ type AgentTask {
   """
   orderIndex: Int
   """
+  Who last set orderIndex, the coordinator or a person, and when.
+  """
+  orderSetBy: AgentActor
+  orderSetAt: DateTime
+  """
+  Required roles a person completed the task without, having said why in the completing status change.
+  """
+  requiredRolesSkipped: [String]
+  """
   Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
   """
   dependsOn: [ID]
@@ -2286,6 +2295,11 @@ input AgentDocumentPublishInput {
   vcsUri: String
   commitMessage: String
   commitDate: DateTime
+  """
+  Deprecated: leave it out. A document is published as DRAFT and the board promotes it to
+  ASSEMBLED when the hop that produced it signs off. DRAFT is the only value accepted; anything
+  else is refused. Removed in a later release.
+  """
   lifecycle: ReleaseLifecycleEnum
 }
 
@@ -3269,6 +3283,10 @@ type AgentTaskStatusChange {
   at: DateTime
   trigger: AgentStatusTrigger
   actor: AgentActor
+  """
+  What the actor said: a completion's or cancellation's note. Null on changes recorded before notes were kept.
+  """
+  note: String
 }
 
 type AgentRequiredInput {
@@ -3334,6 +3352,20 @@ type Finding {
   The words that closed it: a fixer's note, a policy stop's reason, or the answer to a question.
   """
   resolution: String
+  """
+  Who last decided this finding -- accepted, dismissed or re-prioritised it, or filed it by hand --
+  a person or the agent session whose round did. Written by the server, never by an agent. Null
+  when nobody has decided it: an agent's finding as filed, or a decision made before this was kept.
+  """
+  decidedBy: AgentActor
+  """
+  The release of the round that made that decision.
+  """
+  decidedIn: ID
+  """
+  When that decision was made: the creation time of decidedIn's release. Computed per read.
+  """
+  decidedAt: DateTime
 }
 
 """
