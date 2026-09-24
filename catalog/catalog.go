@@ -428,6 +428,13 @@ func ExportBoard(ctx context.Context, c *rearm.Client, board string) (*BoardFile
 	return &BoardFile{Spec: spec}, nil
 }
 
+// ArchiveBoard archives a board by name: what deleting it from Terraform does. Its tasks, roles and
+// history stay, and archiving an archived board changes nothing. An unknown name is IsNotFound.
+func ArchiveBoard(ctx context.Context, c *rearm.Client, name string) error {
+	_, err := rearm.ArchiveBoard(ctx, c, name)
+	return err
+}
+
 // ExportRolePresets fetches the key's organization's role presets as a presets file.
 func ExportRolePresets(ctx context.Context, c *rearm.Client) (*RolePresetsFile, error) {
 	resp, err := rearm.ExportRolePresets(ctx, c)

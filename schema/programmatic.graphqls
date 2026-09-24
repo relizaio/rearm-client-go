@@ -168,6 +168,12 @@ type Mutation {
   dryRun: Boolean
   source: DeclarativeSourceInput): DeclarativeApplyResult
   """
+  Archive a board by name (CONFIGURATION_WRITE): what deleting a Terraform board does. Tasks, roles
+  and history stay; the board takes no new work. Archiving an archived board changes nothing.
+  """
+  archiveBoardProgrammatic(
+  name: String!): AgentBoard
+  """
   Programmatic (API-key) upsert of a PullRequest. CI registers the PR
   row independently of release creation so the registration survives
   push/pull_request races and DO_BUILD=false short-circuits.

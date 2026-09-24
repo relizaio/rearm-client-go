@@ -19378,6 +19378,36 @@ func (v *ApproveReleaseProgrammaticResponse) GetApproveReleaseProgrammatic() *Ap
 	return v.ApproveReleaseProgrammatic
 }
 
+// ArchiveBoardArchiveBoardProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
+type ArchiveBoardArchiveBoardProgrammaticAgentBoard struct {
+	Uuid   *string           `json:"uuid"`
+	Name   *string           `json:"name"`
+	Status *AgentBoardStatus `json:"status"`
+}
+
+// GetUuid returns ArchiveBoardArchiveBoardProgrammaticAgentBoard.Uuid, and is useful for accessing the field via an interface.
+func (v *ArchiveBoardArchiveBoardProgrammaticAgentBoard) GetUuid() *string { return v.Uuid }
+
+// GetName returns ArchiveBoardArchiveBoardProgrammaticAgentBoard.Name, and is useful for accessing the field via an interface.
+func (v *ArchiveBoardArchiveBoardProgrammaticAgentBoard) GetName() *string { return v.Name }
+
+// GetStatus returns ArchiveBoardArchiveBoardProgrammaticAgentBoard.Status, and is useful for accessing the field via an interface.
+func (v *ArchiveBoardArchiveBoardProgrammaticAgentBoard) GetStatus() *AgentBoardStatus {
+	return v.Status
+}
+
+// ArchiveBoardResponse is returned by ArchiveBoard on success.
+type ArchiveBoardResponse struct {
+	// Archive a board by name (CONFIGURATION_WRITE): what deleting a Terraform board does. Tasks, roles
+	// and history stay; the board takes no new work. Archiving an archived board changes nothing.
+	ArchiveBoardProgrammatic *ArchiveBoardArchiveBoardProgrammaticAgentBoard `json:"archiveBoardProgrammatic"`
+}
+
+// GetArchiveBoardProgrammatic returns ArchiveBoardResponse.ArchiveBoardProgrammatic, and is useful for accessing the field via an interface.
+func (v *ArchiveBoardResponse) GetArchiveBoardProgrammatic() *ArchiveBoardArchiveBoardProgrammaticAgentBoard {
+	return v.ArchiveBoardProgrammatic
+}
+
 type ArtifactBelonging string
 
 const (
@@ -27326,6 +27356,14 @@ func (v *__ApproveReleaseProgrammaticInput) GetReleaseApprovals() *ReleaseApprov
 	return v.ReleaseApprovals
 }
 
+// __ArchiveBoardInput is used internally by genqlient
+type __ArchiveBoardInput struct {
+	Name string `json:"name"`
+}
+
+// GetName returns __ArchiveBoardInput.Name, and is useful for accessing the field via an interface.
+func (v *__ArchiveBoardInput) GetName() string { return v.Name }
+
 // __CreateComponentInPerspectiveProgrammaticInput is used internally by genqlient
 type __CreateComponentInPerspectiveProgrammaticInput struct {
 	CreateComponentInput *CreateComponentInput `json:"CreateComponentInput,omitempty"`
@@ -31229,6 +31267,42 @@ func ApproveReleaseProgrammatic(
 	}
 
 	data_ = &ApproveReleaseProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by ArchiveBoard.
+const ArchiveBoard_Operation = `
+mutation ArchiveBoard ($name: String!) {
+	archiveBoardProgrammatic(name: $name) {
+		uuid
+		name
+		status
+	}
+}
+`
+
+func ArchiveBoard(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	name string,
+) (data_ *ArchiveBoardResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ArchiveBoard",
+		Query:  ArchiveBoard_Operation,
+		Variables: &__ArchiveBoardInput{
+			Name: name,
+		},
+	}
+
+	data_ = &ArchiveBoardResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

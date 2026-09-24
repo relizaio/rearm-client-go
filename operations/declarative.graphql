@@ -178,3 +178,11 @@ query ExportRolePresets {
     presets { ...BoardRoleSpecFields }
   }
 }
+
+mutation ArchiveBoard($name: String!) {
+  archiveBoardProgrammatic(name: $name) {
+    uuid
+    name
+    status
+  }
+}
