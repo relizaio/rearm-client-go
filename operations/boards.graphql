@@ -19,7 +19,12 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	events { kind message actor { ...ActorFields } eventAt }
 	lock { level reason lockedBy { ...ActorFields } lockedAt }
 	coordinatorSeat { session agent claimedAt }
-	perAgentWipLimit priorityType createdDate
+	perAgentWipLimit priorityType
+	target defaultTaskLevel defaultInputResolution
+	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
+	blockingPriority completionPriority
+	declarative { specHash appliedAt source { repo path commit } }
+	createdDate
 } }
 
 query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUuid: $boardUuid) {
@@ -29,7 +34,12 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	events { kind message actor { ...ActorFields } eventAt }
 	lock { level reason lockedBy { ...ActorFields } lockedAt }
 	coordinatorSeat { session agent claimedAt }
-	perAgentWipLimit priorityType createdDate
+	perAgentWipLimit priorityType
+	target defaultTaskLevel defaultInputResolution
+	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
+	blockingPriority completionPriority
+	declarative { specHash appliedAt source { repo path commit } }
+	createdDate
 } }
 
 mutation AgentBoardCoordinateProgrammatic ($boardUuid: ID!, $sessionUuid: ID!) {
@@ -82,6 +92,9 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsP
 	uuid board org name prompt orderIndex wipLimit requireDistinctAgent active requiredCapabilities
 	kind necessity humanGate
 	requiredStrength strengthHeadroom strengthCategory modelStrengths { model strength }
+	hopBudgetMicros
+	requiredInputs { kind specification scope minLifecycle resolution }
+	producesOutputs { specification scope required }
 } }
 
 mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
