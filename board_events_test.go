@@ -40,3 +40,20 @@ func TestTheEventLogRetention(t *testing.T) {
 	_ = page.GetTruncatedBefore()
 	_ = page.GetGap()
 }
+
+// The merge procedure (task 71a3dd22): the board reads, the export and the seat carry it.
+func TestTheMergeProcedureIsRead(t *testing.T) {
+	merge := "merge { by method atTestedHead requireAttestation order }"
+	for name, doc := range map[string]string{
+		"AgentBoardsProgrammatic": AgentBoardsProgrammatic_Operation,
+		"AgentBoardProgrammatic":  AgentBoardProgrammatic_Operation,
+		"ExportBoard":             ExportBoard_Operation,
+	} {
+		if !strings.Contains(strings.Join(strings.Fields(doc), " "), merge) {
+			t.Errorf("%s lacks the merge procedure", name)
+		}
+	}
+	if !strings.Contains(AgentBoardCoordinateProgrammatic_Operation, "servedCoordinatorPrompt") {
+		t.Error("taking the seat reads the served coordinator prompt")
+	}
+}

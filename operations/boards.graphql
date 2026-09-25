@@ -25,7 +25,8 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
 	blockingPriority completionPriority humanQueueAgeMinutes
 	coordinatorStopRelease effectiveCoordinatorStopRelease
-	deliveryPolicy { mode attest } effectiveDeliveryPolicy { mode attest }
+	deliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
+	effectiveDeliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
 	eventRetentionDays effectiveEventRetentionDays
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
@@ -53,7 +54,8 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
 	blockingPriority completionPriority humanQueueAgeMinutes
 	coordinatorStopRelease effectiveCoordinatorStopRelease
-	deliveryPolicy { mode attest } effectiveDeliveryPolicy { mode attest }
+	deliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
+	effectiveDeliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
 	eventRetentionDays effectiveEventRetentionDays
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
@@ -63,7 +65,7 @@ mutation AgentBoardCoordinateProgrammatic ($boardUuid: ID!, $sessionUuid: ID!) {
 	agentBoardCoordinateProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid) {
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths
-	coordinatorPrompt missingCapabilities
+	coordinatorPrompt servedCoordinatorPrompt missingCapabilities
 	events { kind message actor { ...ActorFields } eventAt }
 	lock { level reason lockedBy { ...ActorFields } lockedAt }
 	coordinatorSeat { session agent claimedAt }
