@@ -1828,6 +1828,10 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	ElementFamilies *json.RawMessage `json:"elementFamilies"`
 	// The defaults with this board's entries over them: what the CLI parses documents against (gaps §2.A).
 	EffectiveElementFamilies *json.RawMessage `json:"effectiveElementFamilies"`
+	// The element check policy as this board declared it; null when it uses the defaults (elements.md §7).
+	CheckPolicy *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy `json:"checkPolicy"`
+	// The policy in force: the declared one, or the defaults (report only, test and requirement orphans).
+	EffectiveCheckPolicy *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy `json:"effectiveCheckPolicy"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
@@ -1862,6 +1866,8 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	BlockingPriority *int `json:"blockingPriority"`
 	// Priority number at or below which an open item prevents a policy completion. Null is strict.
 	CompletionPriority *int `json:"completionPriority"`
+	// Minutes a task may wait on a person before AGENT_TASK_QUEUE_AGE is sent; null or 0 is off.
+	HumanQueueAgeMinutes *int `json:"humanQueueAgeMinutes"`
 	// The board file that last applied to this board; null on a board never applied from a file.
 	Declarative *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance `json:"declarative"`
 	CreatedDate *string                                                                                 `json:"createdDate"`
@@ -1909,6 +1915,16 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetElementFamil
 // GetEffectiveElementFamilies returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.EffectiveElementFamilies, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetEffectiveElementFamilies() *json.RawMessage {
 	return v.EffectiveElementFamilies
+}
+
+// GetCheckPolicy returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CheckPolicy, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCheckPolicy() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy {
+	return v.CheckPolicy
+}
+
+// GetEffectiveCheckPolicy returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.EffectiveCheckPolicy, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetEffectiveCheckPolicy() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy {
+	return v.EffectiveCheckPolicy
 }
 
 // GetCoordinatorPrompt returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -1994,6 +2010,11 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCompletionPr
 	return v.CompletionPriority
 }
 
+// GetHumanQueueAgeMinutes returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.HumanQueueAgeMinutes, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetHumanQueueAgeMinutes() *int {
+	return v.HumanQueueAgeMinutes
+}
+
 // GetDeclarative returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Declarative, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDeclarative() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance {
 	return v.Declarative
@@ -2002,6 +2023,41 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDeclarative(
 // GetCreatedDate returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CreatedDate, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCreatedDate() *string {
 	return v.CreatedDate
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy includes the requested fields of the GraphQL type CheckPolicy.
+// The GraphQL type's documentation follows.
+//
+// What a board does with the element checks (elements.md §7).
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy struct {
+	// Checks whose failure refuses the sign-off that hands the document over; empty means report only.
+	Blocking []*string `json:"blocking"`
+	// Level to the attributes an element at that level must carry (parent, traces, assumes, speculative).
+	MandatoryFields *json.RawMessage `json:"mandatoryFields"`
+	// Families that must take part in verification: test, requirement.
+	Orphans []*string `json:"orphans"`
+	// The board's coverage gates by name, each {select, require, description}: the check coverage.<name> (elements.md §7.5).
+	Coverage *json.RawMessage `json:"coverage"`
+}
+
+// GetBlocking returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy.Blocking, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy) GetBlocking() []*string {
+	return v.Blocking
+}
+
+// GetMandatoryFields returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy.MandatoryFields, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy) GetMandatoryFields() *json.RawMessage {
+	return v.MandatoryFields
+}
+
+// GetOrphans returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy.Orphans, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy) GetOrphans() []*string {
+	return v.Orphans
+}
+
+// GetCoverage returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy.Coverage, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy) GetCoverage() *json.RawMessage {
+	return v.Coverage
 }
 
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat includes the requested fields of the GraphQL type AgentCoordinatorSeat.
@@ -2088,6 +2144,41 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsR
 // GetUri returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository.Uri, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUri() *string {
 	return v.Uri
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy includes the requested fields of the GraphQL type CheckPolicy.
+// The GraphQL type's documentation follows.
+//
+// What a board does with the element checks (elements.md §7).
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy struct {
+	// Checks whose failure refuses the sign-off that hands the document over; empty means report only.
+	Blocking []*string `json:"blocking"`
+	// Level to the attributes an element at that level must carry (parent, traces, assumes, speculative).
+	MandatoryFields *json.RawMessage `json:"mandatoryFields"`
+	// Families that must take part in verification: test, requirement.
+	Orphans []*string `json:"orphans"`
+	// The board's coverage gates by name, each {select, require, description}: the check coverage.<name> (elements.md §7.5).
+	Coverage *json.RawMessage `json:"coverage"`
+}
+
+// GetBlocking returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy.Blocking, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy) GetBlocking() []*string {
+	return v.Blocking
+}
+
+// GetMandatoryFields returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy.MandatoryFields, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy) GetMandatoryFields() *json.RawMessage {
+	return v.MandatoryFields
+}
+
+// GetOrphans returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy.Orphans, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy) GetOrphans() []*string {
+	return v.Orphans
+}
+
+// GetCoverage returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy.Coverage, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy) GetCoverage() *json.RawMessage {
+	return v.Coverage
 }
 
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -2918,6 +3009,10 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	ElementFamilies *json.RawMessage `json:"elementFamilies"`
 	// The defaults with this board's entries over them: what the CLI parses documents against (gaps §2.A).
 	EffectiveElementFamilies *json.RawMessage `json:"effectiveElementFamilies"`
+	// The element check policy as this board declared it; null when it uses the defaults (elements.md §7).
+	CheckPolicy *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy `json:"checkPolicy"`
+	// The policy in force: the declared one, or the defaults (report only, test and requirement orphans).
+	EffectiveCheckPolicy *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy `json:"effectiveCheckPolicy"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
@@ -2952,6 +3047,8 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	BlockingPriority *int `json:"blockingPriority"`
 	// Priority number at or below which an open item prevents a policy completion. Null is strict.
 	CompletionPriority *int `json:"completionPriority"`
+	// Minutes a task may wait on a person before AGENT_TASK_QUEUE_AGE is sent; null or 0 is off.
+	HumanQueueAgeMinutes *int `json:"humanQueueAgeMinutes"`
 	// The board file that last applied to this board; null on a board never applied from a file.
 	Declarative *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance `json:"declarative"`
 	CreatedDate *string                                                                                   `json:"createdDate"`
@@ -2999,6 +3096,16 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetElementFam
 // GetEffectiveElementFamilies returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.EffectiveElementFamilies, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetEffectiveElementFamilies() *json.RawMessage {
 	return v.EffectiveElementFamilies
+}
+
+// GetCheckPolicy returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CheckPolicy, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetCheckPolicy() *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy {
+	return v.CheckPolicy
+}
+
+// GetEffectiveCheckPolicy returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.EffectiveCheckPolicy, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetEffectiveCheckPolicy() *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy {
+	return v.EffectiveCheckPolicy
 }
 
 // GetCoordinatorPrompt returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -3086,6 +3193,11 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetCompletion
 	return v.CompletionPriority
 }
 
+// GetHumanQueueAgeMinutes returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.HumanQueueAgeMinutes, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetHumanQueueAgeMinutes() *int {
+	return v.HumanQueueAgeMinutes
+}
+
 // GetDeclarative returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Declarative, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDeclarative() *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance {
 	return v.Declarative
@@ -3094,6 +3206,41 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDeclarativ
 // GetCreatedDate returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CreatedDate, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetCreatedDate() *string {
 	return v.CreatedDate
+}
+
+// AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy includes the requested fields of the GraphQL type CheckPolicy.
+// The GraphQL type's documentation follows.
+//
+// What a board does with the element checks (elements.md §7).
+type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy struct {
+	// Checks whose failure refuses the sign-off that hands the document over; empty means report only.
+	Blocking []*string `json:"blocking"`
+	// Level to the attributes an element at that level must carry (parent, traces, assumes, speculative).
+	MandatoryFields *json.RawMessage `json:"mandatoryFields"`
+	// Families that must take part in verification: test, requirement.
+	Orphans []*string `json:"orphans"`
+	// The board's coverage gates by name, each {select, require, description}: the check coverage.<name> (elements.md §7.5).
+	Coverage *json.RawMessage `json:"coverage"`
+}
+
+// GetBlocking returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy.Blocking, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy) GetBlocking() []*string {
+	return v.Blocking
+}
+
+// GetMandatoryFields returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy.MandatoryFields, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy) GetMandatoryFields() *json.RawMessage {
+	return v.MandatoryFields
+}
+
+// GetOrphans returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy.Orphans, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy) GetOrphans() []*string {
+	return v.Orphans
+}
+
+// GetCoverage returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy.Coverage, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy) GetCoverage() *json.RawMessage {
+	return v.Coverage
 }
 
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat includes the requested fields of the GraphQL type AgentCoordinatorSeat.
@@ -3180,6 +3327,41 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVc
 // GetUri returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository.Uri, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUri() *string {
 	return v.Uri
+}
+
+// AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy includes the requested fields of the GraphQL type CheckPolicy.
+// The GraphQL type's documentation follows.
+//
+// What a board does with the element checks (elements.md §7).
+type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy struct {
+	// Checks whose failure refuses the sign-off that hands the document over; empty means report only.
+	Blocking []*string `json:"blocking"`
+	// Level to the attributes an element at that level must carry (parent, traces, assumes, speculative).
+	MandatoryFields *json.RawMessage `json:"mandatoryFields"`
+	// Families that must take part in verification: test, requirement.
+	Orphans []*string `json:"orphans"`
+	// The board's coverage gates by name, each {select, require, description}: the check coverage.<name> (elements.md §7.5).
+	Coverage *json.RawMessage `json:"coverage"`
+}
+
+// GetBlocking returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy.Blocking, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy) GetBlocking() []*string {
+	return v.Blocking
+}
+
+// GetMandatoryFields returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy.MandatoryFields, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy) GetMandatoryFields() *json.RawMessage {
+	return v.MandatoryFields
+}
+
+// GetOrphans returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy.Orphans, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy) GetOrphans() []*string {
+	return v.Orphans
+}
+
+// GetCoverage returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy.Coverage, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy) GetCoverage() *json.RawMessage {
+	return v.Coverage
 }
 
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -3422,6 +3604,307 @@ var AllAgentCapability = []AgentCapability{
 	AgentCapabilityTrackerWrite,
 	AgentCapabilityCodePush,
 	AgentCapabilityPrMerge,
+}
+
+// AgentCheckReportProgrammaticAgentCheckReportProgrammaticRelease includes the requested fields of the GraphQL type Release.
+type AgentCheckReportProgrammaticAgentCheckReportProgrammaticRelease struct {
+	Uuid      *string               `json:"uuid"`
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+	// Pointer to the document bytes this release publishes. Non-null only on releases of
+	// specification components -- an ordinary software release has no document.
+	Document *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRef `json:"document"`
+}
+
+// GetUuid returns AgentCheckReportProgrammaticAgentCheckReportProgrammaticRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentCheckReportProgrammaticAgentCheckReportProgrammaticRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetLifecycle returns AgentCheckReportProgrammaticAgentCheckReportProgrammaticRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentCheckReportProgrammaticAgentCheckReportProgrammaticRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetDocument returns AgentCheckReportProgrammaticAgentCheckReportProgrammaticRelease.Document, and is useful for accessing the field via an interface.
+func (v *AgentCheckReportProgrammaticAgentCheckReportProgrammaticRelease) GetDocument() *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRef {
+	return v.Document
+}
+
+// AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRef includes the requested fields of the GraphQL type DocumentRef.
+// The GraphQL type's documentation follows.
+//
+// Pointer from a release to document bytes in a repository, present only on
+// releases of specification components. The commit and repository are NOT
+// repeated here: they come from the release's source code entry, so the
+// recognised-commit predicate and signature verification apply to a document
+// exactly as they do to code.
+type AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRef struct {
+	// 1-based count of this task's rounds of this type.
+	Round *int `json:"round"`
+	// On a CHECK_REPORT round: what the element checks found (elements.md §7).
+	Checks *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport `json:"checks"`
+}
+
+// GetRound returns AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRef.Round, and is useful for accessing the field via an interface.
+func (v *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRef) GetRound() *int {
+	return v.Round
+}
+
+// GetChecks returns AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRef.Checks, and is useful for accessing the field via an interface.
+func (v *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRef) GetChecks() *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport {
+	return v.Checks
+}
+
+// AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport includes the requested fields of the GraphQL type CheckReport.
+// The GraphQL type's documentation follows.
+//
+// What the named element checks found on one document (elements.md §7). Deterministic: the same
+// scope gives the same report, and the digest is its identity.
+type AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport struct {
+	CheckReportFields `json:"-"`
+}
+
+// GetCatalogueVersion returns AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport.CatalogueVersion, and is useful for accessing the field via an interface.
+func (v *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport) GetCatalogueVersion() *string {
+	return v.CheckReportFields.CatalogueVersion
+}
+
+// GetGrammarVersion returns AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport.GrammarVersion, and is useful for accessing the field via an interface.
+func (v *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport) GetGrammarVersion() *string {
+	return v.CheckReportFields.GrammarVersion
+}
+
+// GetDigest returns AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport.Digest, and is useful for accessing the field via an interface.
+func (v *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport) GetDigest() *string {
+	return v.CheckReportFields.Digest
+}
+
+// GetScope returns AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport.Scope, and is useful for accessing the field via an interface.
+func (v *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport) GetScope() *CheckReportFieldsScopeCheckScope {
+	return v.CheckReportFields.Scope
+}
+
+// GetResults returns AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport.Results, and is useful for accessing the field via an interface.
+func (v *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport) GetResults() []*CheckReportFieldsResultsCheckResult {
+	return v.CheckReportFields.Results
+}
+
+func (v *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.CheckReportFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport struct {
+	CatalogueVersion *string `json:"catalogueVersion"`
+
+	GrammarVersion *string `json:"grammarVersion"`
+
+	Digest *string `json:"digest"`
+
+	Scope *CheckReportFieldsScopeCheckScope `json:"scope"`
+
+	Results []*CheckReportFieldsResultsCheckResult `json:"results"`
+}
+
+func (v *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport) __premarshalJSON() (*__premarshalAgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport, error) {
+	var retval __premarshalAgentCheckReportProgrammaticAgentCheckReportProgrammaticReleaseDocumentDocumentRefChecksCheckReport
+
+	retval.CatalogueVersion = v.CheckReportFields.CatalogueVersion
+	retval.GrammarVersion = v.CheckReportFields.GrammarVersion
+	retval.Digest = v.CheckReportFields.Digest
+	retval.Scope = v.CheckReportFields.Scope
+	retval.Results = v.CheckReportFields.Results
+	return &retval, nil
+}
+
+// AgentCheckReportProgrammaticResponse is returned by AgentCheckReportProgrammatic on success.
+type AgentCheckReportProgrammaticResponse struct {
+	// The newest CHECK_REPORT round about a document (elements.md §7): the release, whose
+	// document.checks is the report. Null when the document has none.
+	AgentCheckReportProgrammatic *AgentCheckReportProgrammaticAgentCheckReportProgrammaticRelease `json:"agentCheckReportProgrammatic"`
+}
+
+// GetAgentCheckReportProgrammatic returns AgentCheckReportProgrammaticResponse.AgentCheckReportProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentCheckReportProgrammaticResponse) GetAgentCheckReportProgrammatic() *AgentCheckReportProgrammaticAgentCheckReportProgrammaticRelease {
+	return v.AgentCheckReportProgrammatic
+}
+
+// AgentCheckRunProgrammaticAgentCheckRunProgrammaticRelease includes the requested fields of the GraphQL type Release.
+type AgentCheckRunProgrammaticAgentCheckRunProgrammaticRelease struct {
+	Uuid      *string               `json:"uuid"`
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+	// Pointer to the document bytes this release publishes. Non-null only on releases of
+	// specification components -- an ordinary software release has no document.
+	Document *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRef `json:"document"`
+}
+
+// GetUuid returns AgentCheckRunProgrammaticAgentCheckRunProgrammaticRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentCheckRunProgrammaticAgentCheckRunProgrammaticRelease) GetUuid() *string { return v.Uuid }
+
+// GetLifecycle returns AgentCheckRunProgrammaticAgentCheckRunProgrammaticRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentCheckRunProgrammaticAgentCheckRunProgrammaticRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetDocument returns AgentCheckRunProgrammaticAgentCheckRunProgrammaticRelease.Document, and is useful for accessing the field via an interface.
+func (v *AgentCheckRunProgrammaticAgentCheckRunProgrammaticRelease) GetDocument() *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRef {
+	return v.Document
+}
+
+// AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRef includes the requested fields of the GraphQL type DocumentRef.
+// The GraphQL type's documentation follows.
+//
+// Pointer from a release to document bytes in a repository, present only on
+// releases of specification components. The commit and repository are NOT
+// repeated here: they come from the release's source code entry, so the
+// recognised-commit predicate and signature verification apply to a document
+// exactly as they do to code.
+type AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRef struct {
+	// 1-based count of this task's rounds of this type.
+	Round *int `json:"round"`
+	// On a CHECK_REPORT round: what the element checks found (elements.md §7).
+	Checks *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport `json:"checks"`
+}
+
+// GetRound returns AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRef.Round, and is useful for accessing the field via an interface.
+func (v *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRef) GetRound() *int {
+	return v.Round
+}
+
+// GetChecks returns AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRef.Checks, and is useful for accessing the field via an interface.
+func (v *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRef) GetChecks() *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport {
+	return v.Checks
+}
+
+// AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport includes the requested fields of the GraphQL type CheckReport.
+// The GraphQL type's documentation follows.
+//
+// What the named element checks found on one document (elements.md §7). Deterministic: the same
+// scope gives the same report, and the digest is its identity.
+type AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport struct {
+	CheckReportFields `json:"-"`
+}
+
+// GetCatalogueVersion returns AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport.CatalogueVersion, and is useful for accessing the field via an interface.
+func (v *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport) GetCatalogueVersion() *string {
+	return v.CheckReportFields.CatalogueVersion
+}
+
+// GetGrammarVersion returns AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport.GrammarVersion, and is useful for accessing the field via an interface.
+func (v *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport) GetGrammarVersion() *string {
+	return v.CheckReportFields.GrammarVersion
+}
+
+// GetDigest returns AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport.Digest, and is useful for accessing the field via an interface.
+func (v *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport) GetDigest() *string {
+	return v.CheckReportFields.Digest
+}
+
+// GetScope returns AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport.Scope, and is useful for accessing the field via an interface.
+func (v *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport) GetScope() *CheckReportFieldsScopeCheckScope {
+	return v.CheckReportFields.Scope
+}
+
+// GetResults returns AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport.Results, and is useful for accessing the field via an interface.
+func (v *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport) GetResults() []*CheckReportFieldsResultsCheckResult {
+	return v.CheckReportFields.Results
+}
+
+func (v *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.CheckReportFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport struct {
+	CatalogueVersion *string `json:"catalogueVersion"`
+
+	GrammarVersion *string `json:"grammarVersion"`
+
+	Digest *string `json:"digest"`
+
+	Scope *CheckReportFieldsScopeCheckScope `json:"scope"`
+
+	Results []*CheckReportFieldsResultsCheckResult `json:"results"`
+}
+
+func (v *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport) __premarshalJSON() (*__premarshalAgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport, error) {
+	var retval __premarshalAgentCheckRunProgrammaticAgentCheckRunProgrammaticReleaseDocumentDocumentRefChecksCheckReport
+
+	retval.CatalogueVersion = v.CheckReportFields.CatalogueVersion
+	retval.GrammarVersion = v.CheckReportFields.GrammarVersion
+	retval.Digest = v.CheckReportFields.Digest
+	retval.Scope = v.CheckReportFields.Scope
+	retval.Results = v.CheckReportFields.Results
+	return &retval, nil
+}
+
+// AgentCheckRunProgrammaticResponse is returned by AgentCheckRunProgrammatic on success.
+type AgentCheckRunProgrammaticResponse struct {
+	// Re-run the element checks of a document of the session's task in its current scope, and cut a
+	// new CHECK_REPORT round when anything changed (the newest one otherwise). The session must hold
+	// the task.
+	AgentCheckRunProgrammatic *AgentCheckRunProgrammaticAgentCheckRunProgrammaticRelease `json:"agentCheckRunProgrammatic"`
+}
+
+// GetAgentCheckRunProgrammatic returns AgentCheckRunProgrammaticResponse.AgentCheckRunProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentCheckRunProgrammaticResponse) GetAgentCheckRunProgrammatic() *AgentCheckRunProgrammaticAgentCheckRunProgrammaticRelease {
+	return v.AgentCheckRunProgrammatic
 }
 
 // AgentDocumentPathAgentBoardProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
@@ -8422,6 +8905,112 @@ func (v *AgentTaskCancelResponse) GetAgentTaskCancel() *AgentTaskCancelAgentTask
 	return v.AgentTaskCancel
 }
 
+// AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTask struct {
+	Uuid *string `json:"uuid"`
+	// This task's document releases, newest first.
+	Documents []*AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease `json:"documents"`
+}
+
+// GetUuid returns AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTask) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetDocuments returns AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTask.Documents, and is useful for accessing the field via an interface.
+func (v *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTask) GetDocuments() []*AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease {
+	return v.Documents
+}
+
+// AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease includes the requested fields of the GraphQL type Release.
+type AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease struct {
+	Uuid      *string               `json:"uuid"`
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+	// Pointer to the document bytes this release publishes. Non-null only on releases of
+	// specification components -- an ordinary software release has no document.
+	Document *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef `json:"document"`
+}
+
+// GetUuid returns AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetLifecycle returns AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetDocument returns AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease.Document, and is useful for accessing the field via an interface.
+func (v *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease) GetDocument() *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef {
+	return v.Document
+}
+
+// AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef includes the requested fields of the GraphQL type DocumentRef.
+// The GraphQL type's documentation follows.
+//
+// Pointer from a release to document bytes in a repository, present only on
+// releases of specification components. The commit and repository are NOT
+// repeated here: they come from the release's source code entry, so the
+// recognised-commit predicate and signature verification apply to a document
+// exactly as they do to code.
+type AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef struct {
+	Specification *SpecificationType `json:"specification"`
+	// 1-based count of this task's rounds of this type.
+	Round *int `json:"round"`
+	// The task this round belongs to, for TASK-scoped types.
+	Task *string `json:"task"`
+	// The element index of a prose document, as the CLI parsed it and the server checked it (gaps §2.A); absent when none was published.
+	Elements *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefElementsElementIndex `json:"elements"`
+}
+
+// GetSpecification returns AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetRound returns AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetRound() *int {
+	return v.Round
+}
+
+// GetTask returns AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Task, and is useful for accessing the field via an interface.
+func (v *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetTask() *string {
+	return v.Task
+}
+
+// GetElements returns AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Elements, and is useful for accessing the field via an interface.
+func (v *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetElements() *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefElementsElementIndex {
+	return v.Elements
+}
+
+// AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefElementsElementIndex includes the requested fields of the GraphQL type ElementIndex.
+// The GraphQL type's documentation follows.
+//
+// What a prose document says about its elements: requirements, functions, interfaces, tests and
+// the like, each with an id, a title, a parent, typed links and a digest of its content. Problems are
+// warnings on the index; nothing here refuses a publish.
+type AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefElementsElementIndex struct {
+	// sha256 of the JSON the CLI sent, tying the index to one parse of the file.
+	Digest *string `json:"digest"`
+}
+
+// GetDigest returns AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefElementsElementIndex.Digest, and is useful for accessing the field via an interface.
+func (v *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefElementsElementIndex) GetDigest() *string {
+	return v.Digest
+}
+
+// AgentTaskCheckTargetsProgrammaticResponse is returned by AgentTaskCheckTargetsProgrammatic on success.
+type AgentTaskCheckTargetsProgrammaticResponse struct {
+	// Agent-key auth: read one task.
+	AgentTaskProgrammatic *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTask `json:"agentTaskProgrammatic"`
+}
+
+// GetAgentTaskProgrammatic returns AgentTaskCheckTargetsProgrammaticResponse.AgentTaskProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentTaskCheckTargetsProgrammaticResponse) GetAgentTaskProgrammatic() *AgentTaskCheckTargetsProgrammaticAgentTaskProgrammaticAgentTask {
+	return v.AgentTaskProgrammatic
+}
+
 // AgentTaskCompleteAgentTaskCompleteAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskCompleteAgentTaskCompleteAgentTask struct {
 	PersonTaskFields `json:"-"`
@@ -9799,6 +10388,220 @@ type AgentTaskDecideFindingsResponse struct {
 // GetAgentTaskDecideFindings returns AgentTaskDecideFindingsResponse.AgentTaskDecideFindings, and is useful for accessing the field via an interface.
 func (v *AgentTaskDecideFindingsResponse) GetAgentTaskDecideFindings() *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask {
 	return v.AgentTaskDecideFindings
+}
+
+// AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask struct {
+	Uuid *string `json:"uuid"`
+	// What depends on an element, transitively, nearest first (elements.md §8): over the task's
+	// documents, its bound inputs and the latest release of each document series under the board's
+	// target. depth defaults to 8; truncated says the bound was hit.
+	DependentsOf *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents `json:"dependentsOf"`
+	// An element across the task's rounds of the document that defines it, oldest first: which rounds changed it.
+	ElementHistory []*AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion `json:"elementHistory"`
+}
+
+// GetUuid returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask) GetUuid() *string { return v.Uuid }
+
+// GetDependentsOf returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask.DependentsOf, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask) GetDependentsOf() *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents {
+	return v.DependentsOf
+}
+
+// GetElementHistory returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask.ElementHistory, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask) GetElementHistory() []*AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion {
+	return v.ElementHistory
+}
+
+// AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents includes the requested fields of the GraphQL type ElementDependents.
+// The GraphQL type's documentation follows.
+//
+// The closure of what depends on an element.
+type AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents struct {
+	Element *string `json:"element"`
+	// False when no release in scope defines the element.
+	Found *bool `json:"found"`
+	// The size of the closure.
+	Count *int `json:"count"`
+	// Whether the depth bound stopped the walk.
+	Truncated  *bool                                                                                                                `json:"truncated"`
+	Dependents []*AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent `json:"dependents"`
+}
+
+// GetElement returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents.Element, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents) GetElement() *string {
+	return v.Element
+}
+
+// GetFound returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents.Found, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents) GetFound() *bool {
+	return v.Found
+}
+
+// GetCount returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents.Count, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents) GetCount() *int {
+	return v.Count
+}
+
+// GetTruncated returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents.Truncated, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents) GetTruncated() *bool {
+	return v.Truncated
+}
+
+// GetDependents returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents.Dependents, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents) GetDependents() []*AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent {
+	return v.Dependents
+}
+
+// AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent includes the requested fields of the GraphQL type ElementDependent.
+// The GraphQL type's documentation follows.
+//
+// One element of the closure, with the edges that pulled it in.
+type AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent struct {
+	// 1 for a direct dependent.
+	Distance *int                                                                                                                                      `json:"distance"`
+	Via      []*AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge        `json:"via"`
+	Element  *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement `json:"element"`
+}
+
+// GetDistance returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent.Distance, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent) GetDistance() *int {
+	return v.Distance
+}
+
+// GetVia returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent.Via, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent) GetVia() []*AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge {
+	return v.Via
+}
+
+// GetElement returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent.Element, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent) GetElement() *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement {
+	return v.Element
+}
+
+// AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement includes the requested fields of the GraphQL type AgentTaskElement.
+// The GraphQL type's documentation follows.
+//
+// An element of one of a task's documents, with the release and specification it came from.
+type AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement struct {
+	Id            *string `json:"id"`
+	Family        *string `json:"family"`
+	Title         *string `json:"title"`
+	Release       *string `json:"release"`
+	Specification *string `json:"specification"`
+	Line          *int    `json:"line"`
+}
+
+// GetId returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement.Id, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement) GetId() *string {
+	return v.Id
+}
+
+// GetFamily returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement.Family, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement) GetFamily() *string {
+	return v.Family
+}
+
+// GetTitle returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement) GetTitle() *string {
+	return v.Title
+}
+
+// GetRelease returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement) GetRelease() *string {
+	return v.Release
+}
+
+// GetSpecification returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement) GetSpecification() *string {
+	return v.Specification
+}
+
+// GetLine returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement.Line, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement) GetLine() *int {
+	return v.Line
+}
+
+// AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge includes the requested fields of the GraphQL type ElementEdge.
+// The GraphQL type's documentation follows.
+//
+// An edge from a dependent to what it depends on.
+type AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge struct {
+	From *string `json:"from"`
+	To   *string `json:"to"`
+	// parent, assumes, or the trace verb as written.
+	Kind *string `json:"kind"`
+}
+
+// GetFrom returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge.From, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge) GetFrom() *string {
+	return v.From
+}
+
+// GetTo returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge.To, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge) GetTo() *string {
+	return v.To
+}
+
+// GetKind returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge) GetKind() *string {
+	return v.Kind
+}
+
+// AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion includes the requested fields of the GraphQL type ElementVersion.
+// The GraphQL type's documentation follows.
+//
+// An element in one round of its document.
+type AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion struct {
+	Release       *string `json:"release"`
+	Round         *int    `json:"round"`
+	Specification *string `json:"specification"`
+	ContentDigest *string `json:"contentDigest"`
+	Line          *int    `json:"line"`
+	// Whether the content digest differs from the round before; false on the first.
+	Changed *bool `json:"changed"`
+}
+
+// GetRelease returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion) GetRelease() *string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion) GetRound() *int {
+	return v.Round
+}
+
+// GetSpecification returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion) GetSpecification() *string {
+	return v.Specification
+}
+
+// GetContentDigest returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion.ContentDigest, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion) GetContentDigest() *string {
+	return v.ContentDigest
+}
+
+// GetLine returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion.Line, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion) GetLine() *int {
+	return v.Line
+}
+
+// GetChanged returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion.Changed, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion) GetChanged() *bool {
+	return v.Changed
+}
+
+// AgentTaskElementProgrammaticResponse is returned by AgentTaskElementProgrammatic on success.
+type AgentTaskElementProgrammaticResponse struct {
+	// Agent-key auth: read one task.
+	AgentTaskProgrammatic *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask `json:"agentTaskProgrammatic"`
+}
+
+// GetAgentTaskProgrammatic returns AgentTaskElementProgrammaticResponse.AgentTaskProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticResponse) GetAgentTaskProgrammatic() *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask {
+	return v.AgentTaskProgrammatic
 }
 
 // MANUAL: coordinator/operator parked the task. HUMAN_GATE: a gated role signed off; only a human
@@ -14947,6 +15750,9 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocument
 	Path *string `json:"path"`
 	Line *int    `json:"line"`
 	Ref  *string `json:"ref"`
+	// The id of the element the finding is about (elements.md §8). With it, path and line are filled
+	// in from the index when the author left them out; the rework point is about.release + element.
+	Element *string `json:"element"`
 }
 
 // GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Path, and is useful for accessing the field via an interface.
@@ -14962,6 +15768,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocu
 // GetRef returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Ref, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetRef() *string {
 	return v.Ref
+}
+
+// GetElement returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Element, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetElement() *string {
+	return v.Element
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -15146,6 +15957,9 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocat
 	Path *string `json:"path"`
 	Line *int    `json:"line"`
 	Ref  *string `json:"ref"`
+	// The id of the element the finding is about (elements.md §8). With it, path and line are filled
+	// in from the index when the author left them out; the rework point is about.release + element.
+	Element *string `json:"element"`
 }
 
 // GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation.Path, and is useful for accessing the field via an interface.
@@ -15161,6 +15975,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingL
 // GetRef returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation.Ref, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation) GetRef() *string {
 	return v.Ref
+}
+
+// GetElement returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation.Element, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation) GetElement() *string {
+	return v.Element
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding includes the requested fields of the GraphQL type Finding.
@@ -15225,6 +16044,9 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLoca
 	Path *string `json:"path"`
 	Line *int    `json:"line"`
 	Ref  *string `json:"ref"`
+	// The id of the element the finding is about (elements.md §8). With it, path and line are filled
+	// in from the index when the author left them out; the rework point is about.release + element.
+	Element *string `json:"element"`
 }
 
 // GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation.Path, and is useful for accessing the field via an interface.
@@ -15240,6 +16062,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding
 // GetRef returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation.Ref, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation) GetRef() *string {
 	return v.Ref
+}
+
+// GetElement returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation.Element, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation) GetElement() *string {
+	return v.Element
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -21434,11 +22261,13 @@ var AllAgentTaskReturnReason = []AgentTaskReturnReason{
 }
 
 type AgentTaskRoleConfigInput struct {
-	Name                 string            `json:"name"`
-	Prompt               *string           `json:"prompt"`
-	OrderIndex           *int              `json:"orderIndex"`
-	WipLimit             *int              `json:"wipLimit"`
-	RequireDistinctAgent *bool             `json:"requireDistinctAgent"`
+	Name                 string  `json:"name"`
+	Prompt               *string `json:"prompt"`
+	OrderIndex           *int    `json:"orderIndex"`
+	WipLimit             *int    `json:"wipLimit"`
+	RequireDistinctAgent *bool   `json:"requireDistinctAgent"`
+	// Operator-only; rejected on the coordinator-seat path.
+	BlindReview          *bool             `json:"blindReview"`
 	Active               *bool             `json:"active"`
 	RequiredCapabilities []AgentCapability `json:"requiredCapabilities"`
 	// Operator-only; rejected on the coordinator-seat path.
@@ -21460,6 +22289,9 @@ type AgentTaskRoleConfigInput struct {
 	StrengthCategory *ModelRoleCategory `json:"strengthCategory,omitempty"`
 	// Operator-only. Replaces the role's per-model overrides; an empty list clears them.
 	ModelStrengths []*RoleModelStrengthInput `json:"modelStrengths,omitempty"`
+	// Operator-only. The allowance for one hop of this role, in USD micros; left out, unchanged; sent
+	// as null, removed. Refused when negative.
+	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
 }
 
 // GetName returns AgentTaskRoleConfigInput.Name, and is useful for accessing the field via an interface.
@@ -21476,6 +22308,9 @@ func (v *AgentTaskRoleConfigInput) GetWipLimit() *int { return v.WipLimit }
 
 // GetRequireDistinctAgent returns AgentTaskRoleConfigInput.RequireDistinctAgent, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigInput) GetRequireDistinctAgent() *bool { return v.RequireDistinctAgent }
+
+// GetBlindReview returns AgentTaskRoleConfigInput.BlindReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetBlindReview() *bool { return v.BlindReview }
 
 // GetActive returns AgentTaskRoleConfigInput.Active, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigInput) GetActive() *bool { return v.Active }
@@ -21519,6 +22354,9 @@ func (v *AgentTaskRoleConfigInput) GetStrengthCategory() *ModelRoleCategory {
 func (v *AgentTaskRoleConfigInput) GetModelStrengths() []*RoleModelStrengthInput {
 	return v.ModelStrengths
 }
+
+// GetHopBudgetMicros returns AgentTaskRoleConfigInput.HopBudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetHopBudgetMicros() *int64 { return v.HopBudgetMicros }
 
 // AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfig includes the requested fields of the GraphQL type AgentTaskRoleConfig.
 // The GraphQL type's documentation follows.
@@ -21660,6 +22498,8 @@ type AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRo
 	ModelStrengths []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength `json:"modelStrengths"`
 	// Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported. Null sets no allowance.
 	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
+	// A session assigned in this role reads its task without earlier hops' note, session, agent and return description; documents are untouched.
+	BlindReview *bool `json:"blindReview"`
 	// What every task in this role must be able to read before it starts.
 	RequiredInputs []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput `json:"requiredInputs"`
 	// What a hop in this role must leave behind: the mirror of requiredInputs.
@@ -21756,6 +22596,11 @@ func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTa
 // GetHopBudgetMicros returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.HopBudgetMicros, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetHopBudgetMicros() *int64 {
 	return v.HopBudgetMicros
+}
+
+// GetBlindReview returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.BlindReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetBlindReview() *bool {
+	return v.BlindReview
 }
 
 // GetRequiredInputs returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.RequiredInputs, and is useful for accessing the field via an interface.
@@ -27436,6 +28281,7 @@ type BoardRoleSpecFields struct {
 	ProducesOutputs      []*BoardRoleSpecFieldsProducesOutputsBoardProducedOutputSpec `json:"producesOutputs"`
 	// Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported.
 	HopBudgetMicros *int64                                        `json:"hopBudgetMicros"`
+	BlindReview     *bool                                         `json:"blindReview"`
 	Strength        *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
 
@@ -27481,6 +28327,9 @@ func (v *BoardRoleSpecFields) GetProducesOutputs() []*BoardRoleSpecFieldsProduce
 
 // GetHopBudgetMicros returns BoardRoleSpecFields.HopBudgetMicros, and is useful for accessing the field via an interface.
 func (v *BoardRoleSpecFields) GetHopBudgetMicros() *int64 { return v.HopBudgetMicros }
+
+// GetBlindReview returns BoardRoleSpecFields.BlindReview, and is useful for accessing the field via an interface.
+func (v *BoardRoleSpecFields) GetBlindReview() *bool { return v.BlindReview }
 
 // GetStrength returns BoardRoleSpecFields.Strength, and is useful for accessing the field via an interface.
 func (v *BoardRoleSpecFields) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
@@ -27916,6 +28765,194 @@ func (v *ChangeFields) GetMessage() *string { return v.Message }
 
 // GetWarnings returns ChangeFields.Warnings, and is useful for accessing the field via an interface.
 func (v *ChangeFields) GetWarnings() []string { return v.Warnings }
+
+// CheckCatalogueCheckCatalogueCheckCatalogueEntry includes the requested fields of the GraphQL type CheckCatalogueEntry.
+// The GraphQL type's documentation follows.
+//
+// One check of the catalogue.
+type CheckCatalogueCheckCatalogueCheckCatalogueEntry struct {
+	// The check's name; coverage.<gate> stands for every board gate.
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+	// When the check reports SKIP instead of a result; null when it always runs.
+	SkipsWhen *string `json:"skipsWhen"`
+}
+
+// GetName returns CheckCatalogueCheckCatalogueCheckCatalogueEntry.Name, and is useful for accessing the field via an interface.
+func (v *CheckCatalogueCheckCatalogueCheckCatalogueEntry) GetName() *string { return v.Name }
+
+// GetDescription returns CheckCatalogueCheckCatalogueCheckCatalogueEntry.Description, and is useful for accessing the field via an interface.
+func (v *CheckCatalogueCheckCatalogueCheckCatalogueEntry) GetDescription() *string {
+	return v.Description
+}
+
+// GetSkipsWhen returns CheckCatalogueCheckCatalogueCheckCatalogueEntry.SkipsWhen, and is useful for accessing the field via an interface.
+func (v *CheckCatalogueCheckCatalogueCheckCatalogueEntry) GetSkipsWhen() *string { return v.SkipsWhen }
+
+// CheckCatalogueResponse is returned by CheckCatalogue on success.
+type CheckCatalogueResponse struct {
+	// The element check catalogue (elements.md §7): every fixed check with what it means and when it
+	// skips, and the coverage.<gate> pattern the board's gates are named by. Served on both endpoints.
+	CheckCatalogue []*CheckCatalogueCheckCatalogueCheckCatalogueEntry `json:"checkCatalogue"`
+}
+
+// GetCheckCatalogue returns CheckCatalogueResponse.CheckCatalogue, and is useful for accessing the field via an interface.
+func (v *CheckCatalogueResponse) GetCheckCatalogue() []*CheckCatalogueCheckCatalogueCheckCatalogueEntry {
+	return v.CheckCatalogue
+}
+
+// SKIP is a result, never silence: a check that cannot run says why.
+type CheckOutcome string
+
+const (
+	CheckOutcomePass CheckOutcome = "PASS"
+	CheckOutcomeFail CheckOutcome = "FAIL"
+	CheckOutcomeSkip CheckOutcome = "SKIP"
+)
+
+var AllCheckOutcome = []CheckOutcome{
+	CheckOutcomePass,
+	CheckOutcomeFail,
+	CheckOutcomeSkip,
+}
+
+// CheckReportFields includes the GraphQL fields of CheckReport requested by the fragment CheckReportFields.
+// The GraphQL type's documentation follows.
+//
+// What the named element checks found on one document (elements.md §7). Deterministic: the same
+// scope gives the same report, and the digest is its identity.
+type CheckReportFields struct {
+	// The catalogue the checks came from; bumped on any change to a check's meaning.
+	CatalogueVersion *string `json:"catalogueVersion"`
+	// The element grammar of the checked document's index.
+	GrammarVersion *string `json:"grammarVersion"`
+	// sha256 of the report's canonical JSON without the digest.
+	Digest *string                           `json:"digest"`
+	Scope  *CheckReportFieldsScopeCheckScope `json:"scope"`
+	// One per check in the catalogue, in catalogue order.
+	Results []*CheckReportFieldsResultsCheckResult `json:"results"`
+}
+
+// GetCatalogueVersion returns CheckReportFields.CatalogueVersion, and is useful for accessing the field via an interface.
+func (v *CheckReportFields) GetCatalogueVersion() *string { return v.CatalogueVersion }
+
+// GetGrammarVersion returns CheckReportFields.GrammarVersion, and is useful for accessing the field via an interface.
+func (v *CheckReportFields) GetGrammarVersion() *string { return v.GrammarVersion }
+
+// GetDigest returns CheckReportFields.Digest, and is useful for accessing the field via an interface.
+func (v *CheckReportFields) GetDigest() *string { return v.Digest }
+
+// GetScope returns CheckReportFields.Scope, and is useful for accessing the field via an interface.
+func (v *CheckReportFields) GetScope() *CheckReportFieldsScopeCheckScope { return v.Scope }
+
+// GetResults returns CheckReportFields.Results, and is useful for accessing the field via an interface.
+func (v *CheckReportFields) GetResults() []*CheckReportFieldsResultsCheckResult { return v.Results }
+
+// CheckReportFieldsResultsCheckResult includes the requested fields of the GraphQL type CheckResult.
+type CheckReportFieldsResultsCheckResult struct {
+	// The check's name, e.g. trace.parent_exists.
+	Check  *string       `json:"check"`
+	Result *CheckOutcome `json:"result"`
+	// Whether the board blocked the hand-over on this check when it ran.
+	Blocking *bool `json:"blocking"`
+	// Why a check was skipped, or a one-line summary of a failure.
+	Reason   *string                                                    `json:"reason"`
+	Offences []*CheckReportFieldsResultsCheckResultOffencesCheckOffence `json:"offences"`
+}
+
+// GetCheck returns CheckReportFieldsResultsCheckResult.Check, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsResultsCheckResult) GetCheck() *string { return v.Check }
+
+// GetResult returns CheckReportFieldsResultsCheckResult.Result, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsResultsCheckResult) GetResult() *CheckOutcome { return v.Result }
+
+// GetBlocking returns CheckReportFieldsResultsCheckResult.Blocking, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsResultsCheckResult) GetBlocking() *bool { return v.Blocking }
+
+// GetReason returns CheckReportFieldsResultsCheckResult.Reason, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsResultsCheckResult) GetReason() *string { return v.Reason }
+
+// GetOffences returns CheckReportFieldsResultsCheckResult.Offences, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsResultsCheckResult) GetOffences() []*CheckReportFieldsResultsCheckResultOffencesCheckOffence {
+	return v.Offences
+}
+
+// CheckReportFieldsResultsCheckResultOffencesCheckOffence includes the requested fields of the GraphQL type CheckOffence.
+// The GraphQL type's documentation follows.
+//
+// One element a check failed on.
+type CheckReportFieldsResultsCheckResultOffencesCheckOffence struct {
+	ElementId *string `json:"elementId"`
+	Release   *string `json:"release"`
+	Message   *string `json:"message"`
+}
+
+// GetElementId returns CheckReportFieldsResultsCheckResultOffencesCheckOffence.ElementId, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsResultsCheckResultOffencesCheckOffence) GetElementId() *string {
+	return v.ElementId
+}
+
+// GetRelease returns CheckReportFieldsResultsCheckResultOffencesCheckOffence.Release, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsResultsCheckResultOffencesCheckOffence) GetRelease() *string {
+	return v.Release
+}
+
+// GetMessage returns CheckReportFieldsResultsCheckResultOffencesCheckOffence.Message, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsResultsCheckResultOffencesCheckOffence) GetMessage() *string {
+	return v.Message
+}
+
+// CheckReportFieldsScopeCheckScope includes the requested fields of the GraphQL type CheckScope.
+type CheckReportFieldsScopeCheckScope struct {
+	// The task the report was cut on.
+	Task *string `json:"task"`
+	// The release the report is about.
+	Checked *string `json:"checked"`
+	// Every release whose elements the checks could see, the checked one first.
+	Releases []*CheckReportFieldsScopeCheckScopeReleasesCheckScopedRelease `json:"releases"`
+}
+
+// GetTask returns CheckReportFieldsScopeCheckScope.Task, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsScopeCheckScope) GetTask() *string { return v.Task }
+
+// GetChecked returns CheckReportFieldsScopeCheckScope.Checked, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsScopeCheckScope) GetChecked() *string { return v.Checked }
+
+// GetReleases returns CheckReportFieldsScopeCheckScope.Releases, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsScopeCheckScope) GetReleases() []*CheckReportFieldsScopeCheckScopeReleasesCheckScopedRelease {
+	return v.Releases
+}
+
+// CheckReportFieldsScopeCheckScopeReleasesCheckScopedRelease includes the requested fields of the GraphQL type CheckScopedRelease.
+// The GraphQL type's documentation follows.
+//
+// One release in scope, as it stood when the checks ran.
+type CheckReportFieldsScopeCheckScopeReleasesCheckScopedRelease struct {
+	Release        *string            `json:"release"`
+	Specification  *SpecificationType `json:"specification"`
+	ElementsDigest *string            `json:"elementsDigest"`
+	Lifecycle      *string            `json:"lifecycle"`
+}
+
+// GetRelease returns CheckReportFieldsScopeCheckScopeReleasesCheckScopedRelease.Release, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsScopeCheckScopeReleasesCheckScopedRelease) GetRelease() *string {
+	return v.Release
+}
+
+// GetSpecification returns CheckReportFieldsScopeCheckScopeReleasesCheckScopedRelease.Specification, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsScopeCheckScopeReleasesCheckScopedRelease) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetElementsDigest returns CheckReportFieldsScopeCheckScopeReleasesCheckScopedRelease.ElementsDigest, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsScopeCheckScopeReleasesCheckScopedRelease) GetElementsDigest() *string {
+	return v.ElementsDigest
+}
+
+// GetLifecycle returns CheckReportFieldsScopeCheckScopeReleasesCheckScopedRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *CheckReportFieldsScopeCheckScopeReleasesCheckScopedRelease) GetLifecycle() *string {
+	return v.Lifecycle
+}
 
 type ComponentKind string
 
@@ -28653,9 +29690,11 @@ type ExportBoardExportBoardProgrammaticBoardSpec struct {
 	// Applying resolves it the same way agentBoardUpdate does.
 	DocumentsRepo *string `json:"documentsRepo"`
 	// Per-type path templates, keyed by SpecificationType. Omitted types use the defaults by scope.
-	DocumentPaths     *json.RawMessage `json:"documentPaths"`
-	ElementFamilies   *json.RawMessage `json:"elementFamilies"`
-	CoordinatorPrompt *string          `json:"coordinatorPrompt"`
+	DocumentPaths   *json.RawMessage `json:"documentPaths"`
+	ElementFamilies *json.RawMessage `json:"elementFamilies"`
+	// The element checks: which block the hand-over, mandatory fields per level, orphan families.
+	Checks            *ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy `json:"checks"`
+	CoordinatorPrompt *string                                                       `json:"coordinatorPrompt"`
 	// Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
 	CoordinatorCapabilities []AgentCapability `json:"coordinatorCapabilities"`
 	// The board's budget and stops; a null value is the board default.
@@ -28716,6 +29755,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetElementFamilies() *json
 	return v.ElementFamilies
 }
 
+// GetChecks returns ExportBoardExportBoardProgrammaticBoardSpec.Checks, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetChecks() *ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy {
+	return v.Checks
+}
+
 // GetCoordinatorPrompt returns ExportBoardExportBoardProgrammaticBoardSpec.CoordinatorPrompt, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetCoordinatorPrompt() *string {
 	return v.CoordinatorPrompt
@@ -28734,6 +29778,41 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetSettings() *ExportBoard
 // GetRoles returns ExportBoardExportBoardProgrammaticBoardSpec.Roles, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetRoles() []*ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec {
 	return v.Roles
+}
+
+// ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy includes the requested fields of the GraphQL type CheckPolicy.
+// The GraphQL type's documentation follows.
+//
+// What a board does with the element checks (elements.md §7).
+type ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy struct {
+	// Checks whose failure refuses the sign-off that hands the document over; empty means report only.
+	Blocking []*string `json:"blocking"`
+	// Level to the attributes an element at that level must carry (parent, traces, assumes, speculative).
+	MandatoryFields *json.RawMessage `json:"mandatoryFields"`
+	// Families that must take part in verification: test, requirement.
+	Orphans []*string `json:"orphans"`
+	// The board's coverage gates by name, each {select, require, description}: the check coverage.<name> (elements.md §7.5).
+	Coverage *json.RawMessage `json:"coverage"`
+}
+
+// GetBlocking returns ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy.Blocking, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy) GetBlocking() []*string {
+	return v.Blocking
+}
+
+// GetMandatoryFields returns ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy.MandatoryFields, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy) GetMandatoryFields() *json.RawMessage {
+	return v.MandatoryFields
+}
+
+// GetOrphans returns ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy.Orphans, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy) GetOrphans() []*string {
+	return v.Orphans
+}
+
+// GetCoverage returns ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy.Coverage, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy) GetCoverage() *json.RawMessage {
+	return v.Coverage
 }
 
 // ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec includes the requested fields of the GraphQL type BoardRoleSpec.
@@ -28806,6 +29885,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetHopBu
 	return v.BoardRoleSpecFields.HopBudgetMicros
 }
 
+// GetBlindReview returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.BlindReview, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetBlindReview() *bool {
+	return v.BoardRoleSpecFields.BlindReview
+}
+
 // GetStrength returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.Strength, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
 	return v.BoardRoleSpecFields.Strength
@@ -28863,6 +29947,8 @@ type __premarshalExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec s
 
 	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
 
+	BlindReview *bool `json:"blindReview"`
+
 	Strength *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
 
@@ -28890,6 +29976,7 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) __premar
 	retval.RequiredInputs = v.BoardRoleSpecFields.RequiredInputs
 	retval.ProducesOutputs = v.BoardRoleSpecFields.ProducesOutputs
 	retval.HopBudgetMicros = v.BoardRoleSpecFields.HopBudgetMicros
+	retval.BlindReview = v.BoardRoleSpecFields.BlindReview
 	retval.Strength = v.BoardRoleSpecFields.Strength
 	return &retval, nil
 }
@@ -28904,7 +29991,8 @@ type ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec struct
 	// Findings at or above this priority send work back; null means every open finding does.
 	BlockingPriority *int `json:"blockingPriority"`
 	// Findings at or above this priority stop completion; null means every open finding does.
-	CompletionPriority *int `json:"completionPriority"`
+	CompletionPriority   *int `json:"completionPriority"`
+	HumanQueueAgeMinutes *int `json:"humanQueueAgeMinutes"`
 }
 
 // GetBudgetMicros returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.BudgetMicros, and is useful for accessing the field via an interface.
@@ -28935,6 +30023,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) G
 // GetCompletionPriority returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.CompletionPriority, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetCompletionPriority() *int {
 	return v.CompletionPriority
+}
+
+// GetHumanQueueAgeMinutes returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.HumanQueueAgeMinutes, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetHumanQueueAgeMinutes() *int {
+	return v.HumanQueueAgeMinutes
 }
 
 // ExportBoardResponse is returned by ExportBoard on success.
@@ -29503,6 +30596,11 @@ func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresets
 	return v.BoardRoleSpecFields.HopBudgetMicros
 }
 
+// GetBlindReview returns ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec.BlindReview, and is useful for accessing the field via an interface.
+func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec) GetBlindReview() *bool {
+	return v.BoardRoleSpecFields.BlindReview
+}
+
 // GetStrength returns ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec.Strength, and is useful for accessing the field via an interface.
 func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
 	return v.BoardRoleSpecFields.Strength
@@ -29560,6 +30658,8 @@ type __premarshalExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpe
 
 	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
 
+	BlindReview *bool `json:"blindReview"`
+
 	Strength *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
 
@@ -29587,6 +30687,7 @@ func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresets
 	retval.RequiredInputs = v.BoardRoleSpecFields.RequiredInputs
 	retval.ProducesOutputs = v.BoardRoleSpecFields.ProducesOutputs
 	retval.HopBudgetMicros = v.BoardRoleSpecFields.HopBudgetMicros
+	retval.BlindReview = v.BoardRoleSpecFields.BlindReview
 	retval.Strength = v.BoardRoleSpecFields.Strength
 	return &retval, nil
 }
@@ -29716,6 +30817,8 @@ type FindingLocationInput struct {
 	Path *string `json:"path"`
 	Line *int    `json:"line"`
 	Ref  *string `json:"ref"`
+	// The element the finding is about; path and line are filled in from the index when left out.
+	Element *string `json:"element"`
 }
 
 // GetPath returns FindingLocationInput.Path, and is useful for accessing the field via an interface.
@@ -29726,6 +30829,9 @@ func (v *FindingLocationInput) GetLine() *int { return v.Line }
 
 // GetRef returns FindingLocationInput.Ref, and is useful for accessing the field via an interface.
 func (v *FindingLocationInput) GetRef() *string { return v.Ref }
+
+// GetElement returns FindingLocationInput.Element, and is useful for accessing the field via an interface.
+func (v *FindingLocationInput) GetElement() *string { return v.Element }
 
 // Where a finding stands. The closed statuses are not interchangeable: RESOLVED says the work was
 // done, ACCEPTED says an operator took the risk knowingly, POLICY_ACCEPTED says nobody looked --
@@ -34863,6 +35969,9 @@ const (
 	// What one hop could not proceed without knowing. Task-scoped, like REVIEW_FINDINGS, and
 	// usually published with no file at all -- the items are the document.
 	SpecificationTypeQuestions SpecificationType = "QUESTIONS"
+	// What the element checks found on one document of one task (gaps §2.A). Task-scoped and always
+	// index-only: the board cuts it, no agent publishes it, and it has no path.
+	SpecificationTypeCheckReport SpecificationType = "CHECK_REPORT"
 )
 
 var AllSpecificationType = []SpecificationType{
@@ -34882,6 +35991,7 @@ var AllSpecificationType = []SpecificationType{
 	SpecificationTypeReviewFindings,
 	SpecificationTypeTestReport,
 	SpecificationTypeQuestions,
+	SpecificationTypeCheckReport,
 }
 
 type Status string
@@ -35403,6 +36513,26 @@ type __AgentBoardsOfOrgInput struct {
 // GetOrgUuid returns __AgentBoardsOfOrgInput.OrgUuid, and is useful for accessing the field via an interface.
 func (v *__AgentBoardsOfOrgInput) GetOrgUuid() string { return v.OrgUuid }
 
+// __AgentCheckReportProgrammaticInput is used internally by genqlient
+type __AgentCheckReportProgrammaticInput struct {
+	ReleaseUuid string `json:"releaseUuid"`
+}
+
+// GetReleaseUuid returns __AgentCheckReportProgrammaticInput.ReleaseUuid, and is useful for accessing the field via an interface.
+func (v *__AgentCheckReportProgrammaticInput) GetReleaseUuid() string { return v.ReleaseUuid }
+
+// __AgentCheckRunProgrammaticInput is used internally by genqlient
+type __AgentCheckRunProgrammaticInput struct {
+	SessionUuid string `json:"sessionUuid"`
+	ReleaseUuid string `json:"releaseUuid"`
+}
+
+// GetSessionUuid returns __AgentCheckRunProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__AgentCheckRunProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetReleaseUuid returns __AgentCheckRunProgrammaticInput.ReleaseUuid, and is useful for accessing the field via an interface.
+func (v *__AgentCheckRunProgrammaticInput) GetReleaseUuid() string { return v.ReleaseUuid }
+
 // __AgentDocumentPathInput is used internally by genqlient
 type __AgentDocumentPathInput struct {
 	BoardUuid     string            `json:"boardUuid"`
@@ -35581,6 +36711,14 @@ func (v *__AgentTaskCancelProgrammaticInput) GetSessionUuid() string { return v.
 // GetNote returns __AgentTaskCancelProgrammaticInput.Note, and is useful for accessing the field via an interface.
 func (v *__AgentTaskCancelProgrammaticInput) GetNote() *string { return v.Note }
 
+// __AgentTaskCheckTargetsProgrammaticInput is used internally by genqlient
+type __AgentTaskCheckTargetsProgrammaticInput struct {
+	TaskUuid string `json:"taskUuid"`
+}
+
+// GetTaskUuid returns __AgentTaskCheckTargetsProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskCheckTargetsProgrammaticInput) GetTaskUuid() string { return v.TaskUuid }
+
 // __AgentTaskCompleteInput is used internally by genqlient
 type __AgentTaskCompleteInput struct {
 	TaskUuid          string  `json:"taskUuid"`
@@ -35632,6 +36770,22 @@ func (v *__AgentTaskDecideFindingsInput) GetDecisions() []*FindingDecisionInput 
 
 // GetAbout returns __AgentTaskDecideFindingsInput.About, and is useful for accessing the field via an interface.
 func (v *__AgentTaskDecideFindingsInput) GetAbout() *FindingsAboutInput { return v.About }
+
+// __AgentTaskElementProgrammaticInput is used internally by genqlient
+type __AgentTaskElementProgrammaticInput struct {
+	TaskUuid string `json:"taskUuid"`
+	Element  string `json:"element"`
+	Depth    *int   `json:"depth"`
+}
+
+// GetTaskUuid returns __AgentTaskElementProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskElementProgrammaticInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetElement returns __AgentTaskElementProgrammaticInput.Element, and is useful for accessing the field via an interface.
+func (v *__AgentTaskElementProgrammaticInput) GetElement() string { return v.Element }
+
+// GetDepth returns __AgentTaskElementProgrammaticInput.Depth, and is useful for accessing the field via an interface.
+func (v *__AgentTaskElementProgrammaticInput) GetDepth() *int { return v.Depth }
 
 // __AgentTaskHoldProgrammaticInput is used internally by genqlient
 type __AgentTaskHoldProgrammaticInput struct {
@@ -37015,6 +38169,18 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		documentPaths
 		elementFamilies
 		effectiveElementFamilies
+		checkPolicy {
+			blocking
+			mandatoryFields
+			orphans
+			coverage
+		}
+		effectiveCheckPolicy {
+			blocking
+			mandatoryFields
+			orphans
+			coverage
+		}
 		coordinatorPrompt
 		missingCapabilities
 		coordinatorCapabilities
@@ -37050,6 +38216,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		noProgressRepeatsToStop
 		blockingPriority
 		completionPriority
+		humanQueueAgeMinutes
 		declarative {
 			specHash
 			appliedAt
@@ -37255,6 +38422,18 @@ query AgentBoardsProgrammatic {
 		documentPaths
 		elementFamilies
 		effectiveElementFamilies
+		checkPolicy {
+			blocking
+			mandatoryFields
+			orphans
+			coverage
+		}
+		effectiveCheckPolicy {
+			blocking
+			mandatoryFields
+			orphans
+			coverage
+		}
 		coordinatorPrompt
 		missingCapabilities
 		coordinatorCapabilities
@@ -37290,6 +38469,7 @@ query AgentBoardsProgrammatic {
 		noProgressRepeatsToStop
 		blockingPriority
 		completionPriority
+		humanQueueAgeMinutes
 		declarative {
 			specHash
 			appliedAt
@@ -37319,6 +38499,142 @@ func AgentBoardsProgrammatic(
 	}
 
 	data_ = &AgentBoardsProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentCheckReportProgrammatic.
+const AgentCheckReportProgrammatic_Operation = `
+query AgentCheckReportProgrammatic ($releaseUuid: ID!) {
+	agentCheckReportProgrammatic(releaseUuid: $releaseUuid) {
+		uuid
+		lifecycle
+		document {
+			round
+			checks {
+				... CheckReportFields
+			}
+		}
+	}
+}
+fragment CheckReportFields on CheckReport {
+	catalogueVersion
+	grammarVersion
+	digest
+	scope {
+		task
+		checked
+		releases {
+			release
+			specification
+			elementsDigest
+			lifecycle
+		}
+	}
+	results {
+		check
+		result
+		blocking
+		reason
+		offences {
+			elementId
+			release
+			message
+		}
+	}
+}
+`
+
+func AgentCheckReportProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	releaseUuid string,
+) (data_ *AgentCheckReportProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentCheckReportProgrammatic",
+		Query:  AgentCheckReportProgrammatic_Operation,
+		Variables: &__AgentCheckReportProgrammaticInput{
+			ReleaseUuid: releaseUuid,
+		},
+	}
+
+	data_ = &AgentCheckReportProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AgentCheckRunProgrammatic.
+const AgentCheckRunProgrammatic_Operation = `
+mutation AgentCheckRunProgrammatic ($sessionUuid: ID!, $releaseUuid: ID!) {
+	agentCheckRunProgrammatic(sessionUuid: $sessionUuid, releaseUuid: $releaseUuid) {
+		uuid
+		lifecycle
+		document {
+			round
+			checks {
+				... CheckReportFields
+			}
+		}
+	}
+}
+fragment CheckReportFields on CheckReport {
+	catalogueVersion
+	grammarVersion
+	digest
+	scope {
+		task
+		checked
+		releases {
+			release
+			specification
+			elementsDigest
+			lifecycle
+		}
+	}
+	results {
+		check
+		result
+		blocking
+		reason
+		offences {
+			elementId
+			release
+			message
+		}
+	}
+}
+`
+
+func AgentCheckRunProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	sessionUuid string,
+	releaseUuid string,
+) (data_ *AgentCheckRunProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentCheckRunProgrammatic",
+		Query:  AgentCheckRunProgrammatic_Operation,
+		Variables: &__AgentCheckRunProgrammaticInput{
+			SessionUuid: sessionUuid,
+			ReleaseUuid: releaseUuid,
+		},
+	}
+
+	data_ = &AgentCheckRunProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -38337,6 +39653,53 @@ func AgentTaskCancelProgrammatic(
 	return data_, err_
 }
 
+// The query executed by AgentTaskCheckTargetsProgrammatic.
+const AgentTaskCheckTargetsProgrammatic_Operation = `
+query AgentTaskCheckTargetsProgrammatic ($taskUuid: ID!) {
+	agentTaskProgrammatic(taskUuid: $taskUuid) {
+		uuid
+		documents {
+			uuid
+			lifecycle
+			document {
+				specification
+				round
+				task
+				elements {
+					digest
+				}
+			}
+		}
+	}
+}
+`
+
+// What `doc check --task` runs over: the task's documents that carry an element index.
+func AgentTaskCheckTargetsProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+) (data_ *AgentTaskCheckTargetsProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskCheckTargetsProgrammatic",
+		Query:  AgentTaskCheckTargetsProgrammatic_Operation,
+		Variables: &__AgentTaskCheckTargetsProgrammaticInput{
+			TaskUuid: taskUuid,
+		},
+	}
+
+	data_ = &AgentTaskCheckTargetsProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by AgentTaskComplete.
 const AgentTaskComplete_Operation = `
 mutation AgentTaskComplete ($taskUuid: ID!, $note: String, $skipRequiredRoles: Boolean) {
@@ -38685,6 +40048,76 @@ func AgentTaskDecideFindings(
 	}
 
 	data_ = &AgentTaskDecideFindingsResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentTaskElementProgrammatic.
+const AgentTaskElementProgrammatic_Operation = `
+query AgentTaskElementProgrammatic ($taskUuid: ID!, $element: String!, $depth: Int) {
+	agentTaskProgrammatic(taskUuid: $taskUuid) {
+		uuid
+		dependentsOf(element: $element, depth: $depth) {
+			element
+			found
+			count
+			truncated
+			dependents {
+				distance
+				via {
+					from
+					to
+					kind
+				}
+				element {
+					id
+					family
+					title
+					release
+					specification
+					line
+				}
+			}
+		}
+		elementHistory(element: $element) {
+			release
+			round
+			specification
+			contentDigest
+			line
+			changed
+		}
+	}
+}
+`
+
+// The rework point of an element (elements.md §8): what depends on it across the board, and which
+// of the task's rounds changed it.
+func AgentTaskElementProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+	element string,
+	depth *int,
+) (data_ *AgentTaskElementProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskElementProgrammatic",
+		Query:  AgentTaskElementProgrammatic_Operation,
+		Variables: &__AgentTaskElementProgrammaticInput{
+			TaskUuid: taskUuid,
+			Element:  element,
+			Depth:    depth,
+		},
+	}
+
+	data_ = &AgentTaskElementProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -39813,6 +41246,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 							path
 							line
 							ref
+							element
 						}
 						resolvedBy
 						resolution
@@ -39829,6 +41263,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 				path
 				line
 				ref
+				element
 			}
 			resolvedBy
 			resolution
@@ -39842,6 +41277,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 				path
 				line
 				ref
+				element
 			}
 			resolvedBy
 			resolution
@@ -40860,6 +42296,7 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) {
 			strength
 		}
 		hopBudgetMicros
+		blindReview
 		requiredInputs {
 			kind
 			specification
@@ -42064,6 +43501,40 @@ func ArchiveBoard(
 	return data_, err_
 }
 
+// The query executed by CheckCatalogue.
+const CheckCatalogue_Operation = `
+query CheckCatalogue {
+	checkCatalogue {
+		name
+		description
+		skipsWhen
+	}
+}
+`
+
+// The check catalogue (elements.md §7): every fixed check, what it means and when it skips, and the
+// coverage.<gate> pattern a board's own gates are named by.
+func CheckCatalogue(
+	ctx_ context.Context,
+	client_ graphql.Client,
+) (data_ *CheckCatalogueResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "CheckCatalogue",
+		Query:  CheckCatalogue_Operation,
+	}
+
+	data_ = &CheckCatalogueResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by CreateComponentInPerspectiveProgrammatic.
 const CreateComponentInPerspectiveProgrammatic_Operation = `
 mutation CreateComponentInPerspectiveProgrammatic ($CreateComponentInput: CreateComponentInput!, $perspectiveUuid: ID!) {
@@ -42261,6 +43732,12 @@ query ExportBoard ($board: String!) {
 		documentsRepo
 		documentPaths
 		elementFamilies
+		checks {
+			blocking
+			mandatoryFields
+			orphans
+			coverage
+		}
 		coordinatorPrompt
 		coordinatorCapabilities
 		settings {
@@ -42270,6 +43747,7 @@ query ExportBoard ($board: String!) {
 			noProgressRepeatsToStop
 			blockingPriority
 			completionPriority
+			humanQueueAgeMinutes
 		}
 		roles {
 			... BoardRoleSpecFields
@@ -42301,6 +43779,7 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
 		required
 	}
 	hopBudgetMicros
+	blindReview
 	strength {
 		requiredStrength
 		strengthHeadroom
@@ -42513,6 +43992,7 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
 		required
 	}
 	hopBudgetMicros
+	blindReview
 	strength {
 		requiredStrength
 		strengthHeadroom

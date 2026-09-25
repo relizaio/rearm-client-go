@@ -138,6 +138,17 @@ roles: the roles this agent can take, each a role name on the board
   agentBoardSpecProgrammatic(
   boardUuid: ID!): BoardSpec
   """
+  The newest CHECK_REPORT round about a document (elements.md §7): the release, whose
+  document.checks is the report. Null when the document has none.
+  """
+  agentCheckReportProgrammatic(
+  releaseUuid: ID!): Release
+  """
+  The element check catalogue (elements.md §7): every fixed check with what it means and when it
+  skips, and the coverage.<gate> pattern the board's gates are named by. Served on both endpoints.
+  """
+  checkCatalogue: [CheckCatalogueEntry]
+  """
   A person's read: the org's boards.
   """
   agentBoardsOfOrg(
@@ -369,6 +380,14 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskLinkReleaseProgrammatic(
   taskUuid: ID!
   releaseUuid: ID!): AgentTask
+  """
+  Re-run the element checks of a document of the session's task in its current scope, and cut a
+  new CHECK_REPORT round when anything changed (the newest one otherwise). The session must hold
+  the task.
+  """
+  agentCheckRunProgrammatic(
+  sessionUuid: ID!
+  releaseUuid: ID!): Release
   agentBoardOperatorLock(boardUuid: ID!, lock: Boolean!, reason: String): AgentBoard
   """
   Require a model of at least this strength for one task, overriding what its role asks for.
@@ -535,6 +554,10 @@ type BoardSpec {
   """
   documentPaths: Object
   elementFamilies: Object
+  """
+  The element checks: which block the hand-over, mandatory fields per level, orphan families.
+  """
+  checks: CheckPolicy
   coordinatorPrompt: String
   """
   Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
@@ -973,6 +996,14 @@ type AgentBoard {
   """
   effectiveElementFamilies: Object
   """
+  The element check policy as this board declared it; null when it uses the defaults (elements.md §7).
+  """
+  checkPolicy: CheckPolicy
+  """
+  The policy in force: the declared one, or the defaults (report only, test and requirement orphans).
+  """
+  effectiveCheckPolicy: CheckPolicy
+  """
   Append-only board notices, newest last (lock transitions auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
   """
   events: [AgentBoardEvent]
@@ -1026,6 +1057,10 @@ type AgentBoard {
   Repeated rounds at which a task parks; 1, the default, parks on the first repeat.
   """
   noProgressRepeatsToStop: Int
+  """
+  Minutes a task may wait on a person before AGENT_TASK_QUEUE_AGE is sent; null or 0 is off.
+  """
+  humanQueueAgeMinutes: Int
   """
   Priority number at or below which an open item blocks routing, 1 being most urgent. Null is strict.
   """
@@ -1115,6 +1150,23 @@ type AgentTask {
   The elements of the task's documents: the union over its latest release per specification (gaps §2.A).
   """
   elements: [AgentTaskElement]
+  """
+  The newest check report for each of the task's element-bearing documents (elements.md §7).
+  """
+  checks: [CheckReport]
+  """
+  What depends on an element, transitively, nearest first (elements.md §8): over the task's
+  documents, its bound inputs and the latest release of each document series under the board's
+  target. depth defaults to 8; truncated says the bound was hit.
+  """
+  dependentsOf(
+  element: String!
+  depth: Int): ElementDependents
+  """
+  An element across the task's rounds of the document that defines it, oldest first: which rounds changed it.
+  """
+  elementHistory(
+  element: String!): [ElementVersion]
   """
   When the task was last reopened; null when never.
   """
@@ -1314,6 +1366,10 @@ type AgentTaskRoleConfig {
   Assigned agent must differ from the last sign-off's agent (separation of duties).
   """
   requireDistinctAgent: Boolean
+  """
+  A session assigned in this role reads its task without earlier hops' note, session, agent and return description; documents are untouched.
+  """
+  blindReview: Boolean
   active: Boolean
   """
   Capabilities an assignee of this role must hold (declared, unverified in v1).
@@ -1341,6 +1397,21 @@ type AgentTaskRoleConfig {
   can produce anything.
   """
   producesOutputs: [AgentProducedOutput]
+}
+
+"""
+One check of the catalogue.
+"""
+type CheckCatalogueEntry {
+  """
+  The check's name; coverage.<gate> stands for every board gate.
+  """
+  name: String
+  description: String
+  """
+  When the check reports SKIP instead of a result; null when it always runs.
+  """
+  skipsWhen: String
 }
 
 type DeclarativeApplyResult {
@@ -1430,6 +1501,10 @@ input BoardSpecInput {
   Element id families over the defaults; declared null restores the defaults, absent leaves them.
   """
   elementFamilies: Object
+  """
+  The element checks (elements.md §7); declared null restores the defaults, absent leaves them.
+  """
+  checks: CheckPolicyInput
   coordinatorPrompt: String
   """
   Verbs the coordinator seat performs itself: PR_MERGE, CODE_PUSH. The tracker verbs are
@@ -2498,6 +2573,10 @@ input AgentTaskRoleConfigInput {
   orderIndex: Int
   wipLimit: Int
   requireDistinctAgent: Boolean
+  """
+  Operator-only; rejected on the coordinator-seat path.
+  """
+  blindReview: Boolean
   active: Boolean
   requiredCapabilities: [AgentCapability!]
   """
@@ -2537,6 +2616,11 @@ input AgentTaskRoleConfigInput {
   Operator-only. Replaces the role's per-model overrides; an empty list clears them.
   """
   modelStrengths: [RoleModelStrengthInput!]
+  """
+  Operator-only. The allowance for one hop of this role, in USD micros; left out, unchanged; sent
+  as null, removed. Refused when negative.
+  """
+  hopBudgetMicros: Long
 }
 
 input AgentTaskRegisterInput {
@@ -2754,6 +2838,11 @@ enum SpecificationType {
   usually published with no file at all -- the items are the document.
   """
   QUESTIONS
+  """
+  What the element checks found on one document of one task (gaps §2.A). Task-scoped and always
+  index-only: the board cuts it, no agent publishes it, and it has no path.
+  """
+  CHECK_REPORT
 }
 
 """
@@ -2816,6 +2905,28 @@ enum AgentBoardPriorityType {
 }
 
 """
+What a board does with the element checks (elements.md §7).
+"""
+type CheckPolicy {
+  """
+  Checks whose failure refuses the sign-off that hands the document over; empty means report only.
+  """
+  blocking: [String]
+  """
+  Level to the attributes an element at that level must carry (parent, traces, assumes, speculative).
+  """
+  mandatoryFields: Object
+  """
+  Families that must take part in verification: test, requirement.
+  """
+  orphans: [String]
+  """
+  The board's coverage gates by name, each {select, require, description}: the check coverage.<name> (elements.md §7.5).
+  """
+  coverage: Object
+}
+
+"""
 The verbs an assignee must be able to perform. Declared on roles; implicit/unverified on agents in v1.
 """
 enum AgentCapability {
@@ -2833,6 +2944,7 @@ type BoardSettingsSpec {
   softAlertPercent: Int
   cycleCap: Int
   noProgressRepeatsToStop: Int
+  humanQueueAgeMinutes: Int
   """
   Findings at or above this priority send work back; null means every open finding does.
   """
@@ -2849,6 +2961,7 @@ type BoardRoleSpec {
   orderIndex: Int
   wipLimit: Int
   requireDistinctAgent: Boolean
+  blindReview: Boolean
   active: Boolean
   kind: AgentRoleKind
   necessity: AgentRoleNecessity
@@ -3295,6 +3408,10 @@ type DocumentRef {
   The element index of a prose document, as the CLI parsed it and the server checked it (gaps §2.A); absent when none was published.
   """
   elements: ElementIndex
+  """
+  On a CHECK_REPORT round: what the element checks found (elements.md §7).
+  """
+  checks: CheckReport
 }
 
 """
@@ -3679,6 +3796,69 @@ type AgentTaskElement {
   line: Int
   release: ID
   specification: String
+  """
+  Glossary terms the element uses (grammar 1.1).
+  """
+  terms: [String]
+}
+
+"""
+What the named element checks found on one document (elements.md §7). Deterministic: the same
+scope gives the same report, and the digest is its identity.
+"""
+type CheckReport {
+  """
+  The catalogue the checks came from; bumped on any change to a check's meaning.
+  """
+  catalogueVersion: String
+  """
+  The element grammar of the checked document's index.
+  """
+  grammarVersion: String
+  scope: CheckScope
+  """
+  One per check in the catalogue, in catalogue order.
+  """
+  results: [CheckResult]
+  """
+  sha256 of the report's canonical JSON without the digest.
+  """
+  digest: String
+}
+
+"""
+The closure of what depends on an element.
+"""
+type ElementDependents {
+  element: String
+  """
+  False when no release in scope defines the element.
+  """
+  found: Boolean
+  """
+  The size of the closure.
+  """
+  count: Int
+  """
+  Whether the depth bound stopped the walk.
+  """
+  truncated: Boolean
+  dependents: [ElementDependent]
+}
+
+"""
+An element in one round of its document.
+"""
+type ElementVersion {
+  release: ID
+  round: Int
+  specification: String
+  contentDigest: String
+  line: Int
+  """
+  Whether the content digest differs from the round before; false on the first.
+  """
+  changed: Boolean
 }
 
 """
@@ -3950,6 +4130,11 @@ type Finding {
   When that decision was made: the creation time of decidedIn's release. Computed per read.
   """
   decidedAt: DateTime
+  """
+  The element location.element names, as it was in the index of the release the round is about
+  (or, in a task's open items, as the task's documents have it now); null without an element or an index.
+  """
+  element: AgentTaskElement
 }
 
 """
@@ -4062,11 +4247,34 @@ input BranchSpecInput {
   dependencyPatterns: [DependencyPatternSpecInput!]
 }
 
+input CheckPolicyInput {
+  """
+  Check names from the catalogue; an unknown name is refused with the catalogue's list.
+  """
+  blocking: [String!]
+  """
+  Level (as a key) to attribute names.
+  """
+  mandatoryFields: Object
+  """
+  test and/or requirement; absent means test.
+  """
+  orphans: [String!]
+  """
+  Gate name to {select, require, description}; both expressions are CEL over e and scope, validated on save.
+  """
+  coverage: Object
+}
+
 input BoardSettingsSpecInput {
   budgetMicros: Long
   softAlertPercent: Int
   cycleCap: Int
   noProgressRepeatsToStop: Int
+  """
+  Minutes a task may wait on a person before AGENT_TASK_QUEUE_AGE is sent; null or 0 is off.
+  """
+  humanQueueAgeMinutes: Int
   blockingPriority: Int
   completionPriority: Int
 }
@@ -4083,6 +4291,10 @@ input BoardRoleSpecInput {
   orderIndex: Int
   wipLimit: Int
   requireDistinctAgent: Boolean
+  """
+  Operator-only. The role reads its task without earlier hops' notes, sessions and agents (task 0192a587).
+  """
+  blindReview: Boolean
   """
   Absent: true -- declaring a role is what reactivates it.
   """
@@ -5208,6 +5420,10 @@ input FindingLocationInput {
   path: String
   line: Int
   ref: String
+  """
+  The element the finding is about; path and line are filled in from the index when left out.
+  """
+  element: String
 }
 
 """
@@ -6049,6 +6265,50 @@ type ElementLink {
   target: String
 }
 
+type CheckScope {
+  """
+  The task the report was cut on.
+  """
+  task: ID
+  """
+  The release the report is about.
+  """
+  checked: ID
+  """
+  Every release whose elements the checks could see, the checked one first.
+  """
+  releases: [CheckScopedRelease]
+}
+
+type CheckResult {
+  """
+  The check's name, e.g. trace.parent_exists.
+  """
+  check: String
+  result: CheckOutcome
+  """
+  Whether the board blocked the hand-over on this check when it ran.
+  """
+  blocking: Boolean
+  """
+  Why a check was skipped, or a one-line summary of a failure.
+  """
+  reason: String
+  offences: [CheckOffence]
+}
+
+"""
+One element of the closure, with the edges that pulled it in.
+"""
+type ElementDependent {
+  element: AgentTaskElement
+  via: [ElementEdge]
+  """
+  1 for a direct dependent.
+  """
+  distance: Int
+}
+
 """
 SESSION is an agent session, USER a human, SYSTEM the application acting on its own.
 """
@@ -6130,6 +6390,11 @@ type FindingLocation {
   path: String
   line: Int
   ref: String
+  """
+  The id of the element the finding is about (elements.md §8). With it, path and line are filled
+  in from the index when the author left them out; the rework point is about.release + element.
+  """
+  element: String
 }
 
 enum DeclarativeAction {
@@ -6421,6 +6686,10 @@ enum GuardedAction {
   Moving a release forward through its lifecycle, however the move was requested.
   """
   RELEASE_PROMOTION
+  """
+  Recording approvals on a release, from a person or an API key; the expression sees action.approvals.
+  """
+  RELEASE_APPROVAL
 }
 
 """
@@ -6950,6 +7219,10 @@ type Element {
   1-based line of the heading or table row.
   """
   line: Int
+  """
+  Glossary terms the element's content uses, **term** (grammar 1.1); empty under grammar 1.
+  """
+  terms: [String]
 }
 
 """
@@ -6964,6 +7237,46 @@ type ElementWarning {
 type ArtifactChangelog {
   added: [DiffComponent]
   removed: [DiffComponent]
+}
+
+"""
+One release in scope, as it stood when the checks ran.
+"""
+type CheckScopedRelease {
+  release: ID
+  specification: SpecificationType
+  elementsDigest: String
+  lifecycle: String
+}
+
+"""
+SKIP is a result, never silence: a check that cannot run says why.
+"""
+enum CheckOutcome {
+  PASS
+  FAIL
+  SKIP
+}
+
+"""
+One element a check failed on.
+"""
+type CheckOffence {
+  elementId: String
+  release: ID
+  message: String
+}
+
+"""
+An edge from a dependent to what it depends on.
+"""
+type ElementEdge {
+  from: String
+  to: String
+  """
+  parent, assumes, or the trace verb as written.
+  """
+  kind: String
 }
 
 input BoardModelStrengthSpecInput {
