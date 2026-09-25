@@ -23,7 +23,7 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	perAgentWipLimit priorityType
 	target defaultTaskLevel defaultInputResolution
 	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
-	blockingPriority completionPriority
+	blockingPriority completionPriority humanQueueAgeMinutes
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
 } }
@@ -39,7 +39,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	perAgentWipLimit priorityType
 	target defaultTaskLevel defaultInputResolution
 	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
-	blockingPriority completionPriority
+	blockingPriority completionPriority humanQueueAgeMinutes
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
 } }

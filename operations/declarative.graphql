@@ -169,6 +169,7 @@ query ExportBoard($board: String!) {
       noProgressRepeatsToStop
       blockingPriority
       completionPriority
+      humanQueueAgeMinutes
     }
     roles { ...BoardRoleSpecFields }
   }

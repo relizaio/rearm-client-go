@@ -916,6 +916,10 @@ type AgentBoard {
   """
   noProgressRepeatsToStop: Int
   """
+  Minutes a task may wait on a person before AGENT_TASK_QUEUE_AGE is sent; null or 0 is off.
+  """
+  humanQueueAgeMinutes: Int
+  """
   Priority number at or below which an open item blocks routing, 1 being most urgent. Null is strict.
   """
   blockingPriority: Int
@@ -2694,6 +2698,7 @@ type BoardSettingsSpec {
   softAlertPercent: Int
   cycleCap: Int
   noProgressRepeatsToStop: Int
+  humanQueueAgeMinutes: Int
   """
   Findings at or above this priority send work back; null means every open finding does.
   """
@@ -4059,6 +4064,10 @@ input BoardSettingsSpecInput {
   softAlertPercent: Int
   cycleCap: Int
   noProgressRepeatsToStop: Int
+  """
+  Minutes a task may wait on a person before AGENT_TASK_QUEUE_AGE is sent; null or 0 is off.
+  """
+  humanQueueAgeMinutes: Int
   blockingPriority: Int
   completionPriority: Int
 }
