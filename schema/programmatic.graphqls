@@ -1113,6 +1113,11 @@ type AgentBoard {
   """
   coordinatorPrompt: String
   """
+  The coordinator seat's prompt as served (task 71a3dd22): coordinatorPrompt, then who merges on
+  this board and how. Read this one when taking the seat; edit coordinatorPrompt.
+  """
+  servedCoordinatorPrompt: String
+  """
   Verbs the coordinator seat performs itself on this board, e.g. PR_MERGE when it merges once
   the last required role has passed. Unverified, like a role's capabilities; the delivery-loop
   alert (missingCapabilities) counts them as covered.
@@ -3098,6 +3103,11 @@ type AgentDeliveryPolicy {
   On NONE: wait for an attestation of a push or release instead of completing at the last pass.
   """
   attest: Boolean
+  """
+  Who merges and how (task 71a3dd22). As declared on deliveryPolicy, null parts meaning their
+  defaults; resolved on effectiveDeliveryPolicy.
+  """
+  merge: AgentMergeProcedure
 }
 
 """
@@ -4505,6 +4515,7 @@ input CheckPolicyInput {
 input AgentDeliveryPolicyInput {
   mode: AgentDeliveryMode
   attest: Boolean
+  merge: AgentMergeProcedureInput
 }
 
 input BoardSettingsSpecInput {
@@ -5710,6 +5721,33 @@ enum AgentDeliveryMode {
   NONE
 }
 
+"""
+A board's merge procedure (task 71a3dd22).
+"""
+type AgentMergeProcedure {
+  """
+  Who merges: COORDINATOR, PERSON, or ROLE:<name>. Resolved default: the coordinator when its
+  capabilities cover PR_MERGE, else the first active role that carries PR_MERGE, else a person.
+  """
+  by: String
+  """
+  Default MERGE.
+  """
+  method: AgentMergeMethod
+  """
+  Merge only at the head the passing review or test covered. Default true.
+  """
+  atTestedHead: Boolean
+  """
+  Attest each merge (task delivered). Default false; always true on an ATTESTED board.
+  """
+  requireAttestation: Boolean
+  """
+  Default NOTE_ORDER.
+  """
+  order: AgentMergeOrder
+}
+
 type BoardRequiredInputSpec {
   kind: AgentInputKind
   specification: SpecificationType
@@ -6708,6 +6746,20 @@ input DependencyPatternSpecInput {
   fallbackToBase: FallbackToBase
 }
 
+input AgentMergeProcedureInput {
+  """
+  COORDINATOR, PERSON, or ROLE:<name>; the role must be active and carry PR_MERGE.
+  """
+  by: String
+  method: AgentMergeMethod
+  atTestedHead: Boolean
+  """
+  Refused as false on an ATTESTED board.
+  """
+  requireAttestation: Boolean
+  order: AgentMergeOrder
+}
+
 input BoardRequiredInputSpecInput {
   kind: AgentInputKind
   specification: SpecificationType
@@ -7204,6 +7256,24 @@ enum DeviceWindowSource {
   The shipment -- this batch differs from the model.
   """
   SHIPMENT
+}
+
+"""
+How a board's PRs are merged: a merge commit, a squash, a rebase, or a fast-forward of the target.
+"""
+enum AgentMergeMethod {
+  MERGE
+  SQUASH
+  REBASE
+  FAST_FORWARD
+}
+
+"""
+Which of several passed tasks merges first: the order the notes give, or the oldest pass first.
+"""
+enum AgentMergeOrder {
+  NOTE_ORDER
+  OLDEST_PASS_FIRST
 }
 
 type BoardModelStrengthSpec {

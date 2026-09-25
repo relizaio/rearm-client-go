@@ -513,6 +513,9 @@ type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard 
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
+	// The coordinator seat's prompt as served (task 71a3dd22): coordinatorPrompt, then who merges on
+	// this board and how. Read this one when taking the seat; edit coordinatorPrompt.
+	ServedCoordinatorPrompt *string `json:"servedCoordinatorPrompt"`
 	// Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
 	MissingCapabilities []*string `json:"missingCapabilities"`
 	// Append-only board notices, newest last (lock transitions auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
@@ -569,6 +572,11 @@ func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBo
 // GetCoordinatorPrompt returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
 func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard) GetCoordinatorPrompt() *string {
 	return v.CoordinatorPrompt
+}
+
+// GetServedCoordinatorPrompt returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard.ServedCoordinatorPrompt, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard) GetServedCoordinatorPrompt() *string {
+	return v.ServedCoordinatorPrompt
 }
 
 // GetMissingCapabilities returns AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard.MissingCapabilities, and is useful for accessing the field via an interface.
@@ -2358,6 +2366,9 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDe
 	Mode *AgentDeliveryMode `json:"mode"`
 	// On NONE: wait for an attestation of a push or release instead of completing at the last pass.
 	Attest *bool `json:"attest"`
+	// Who merges and how (task 71a3dd22). As declared on deliveryPolicy, null parts meaning their
+	// defaults; resolved on effectiveDeliveryPolicy.
+	Merge *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure `json:"merge"`
 }
 
 // GetMode returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicy.Mode, and is useful for accessing the field via an interface.
@@ -2368,6 +2379,54 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAge
 // GetAttest returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicy.Attest, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicy) GetAttest() *bool {
 	return v.Attest
+}
+
+// GetMerge returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicy.Merge, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicy) GetMerge() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure {
+	return v.Merge
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure includes the requested fields of the GraphQL type AgentMergeProcedure.
+// The GraphQL type's documentation follows.
+//
+// A board's merge procedure (task 71a3dd22).
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure struct {
+	// Who merges: COORDINATOR, PERSON, or ROLE:<name>. Resolved default: the coordinator when its
+	// capabilities cover PR_MERGE, else the first active role that carries PR_MERGE, else a person.
+	By *string `json:"by"`
+	// Default MERGE.
+	Method *AgentMergeMethod `json:"method"`
+	// Merge only at the head the passing review or test covered. Default true.
+	AtTestedHead *bool `json:"atTestedHead"`
+	// Attest each merge (task delivered). Default false; always true on an ATTESTED board.
+	RequireAttestation *bool `json:"requireAttestation"`
+	// Default NOTE_ORDER.
+	Order *AgentMergeOrder `json:"order"`
+}
+
+// GetBy returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.By, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetBy() *string {
+	return v.By
+}
+
+// GetMethod returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.Method, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetMethod() *AgentMergeMethod {
+	return v.Method
+}
+
+// GetAtTestedHead returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.AtTestedHead, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetAtTestedHead() *bool {
+	return v.AtTestedHead
+}
+
+// GetRequireAttestation returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.RequireAttestation, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetRequireAttestation() *bool {
+	return v.RequireAttestation
+}
+
+// GetOrder returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.Order, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetOrder() *AgentMergeOrder {
+	return v.Order
 }
 
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
@@ -2426,6 +2485,9 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPoli
 	Mode *AgentDeliveryMode `json:"mode"`
 	// On NONE: wait for an attestation of a push or release instead of completing at the last pass.
 	Attest *bool `json:"attest"`
+	// Who merges and how (task 71a3dd22). As declared on deliveryPolicy, null parts meaning their
+	// defaults; resolved on effectiveDeliveryPolicy.
+	Merge *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure `json:"merge"`
 }
 
 // GetMode returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicy.Mode, and is useful for accessing the field via an interface.
@@ -2436,6 +2498,54 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDelivery
 // GetAttest returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicy.Attest, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicy) GetAttest() *bool {
 	return v.Attest
+}
+
+// GetMerge returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicy.Merge, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicy) GetMerge() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure {
+	return v.Merge
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure includes the requested fields of the GraphQL type AgentMergeProcedure.
+// The GraphQL type's documentation follows.
+//
+// A board's merge procedure (task 71a3dd22).
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure struct {
+	// Who merges: COORDINATOR, PERSON, or ROLE:<name>. Resolved default: the coordinator when its
+	// capabilities cover PR_MERGE, else the first active role that carries PR_MERGE, else a person.
+	By *string `json:"by"`
+	// Default MERGE.
+	Method *AgentMergeMethod `json:"method"`
+	// Merge only at the head the passing review or test covered. Default true.
+	AtTestedHead *bool `json:"atTestedHead"`
+	// Attest each merge (task delivered). Default false; always true on an ATTESTED board.
+	RequireAttestation *bool `json:"requireAttestation"`
+	// Default NOTE_ORDER.
+	Order *AgentMergeOrder `json:"order"`
+}
+
+// GetBy returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.By, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetBy() *string {
+	return v.By
+}
+
+// GetMethod returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.Method, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetMethod() *AgentMergeMethod {
+	return v.Method
+}
+
+// GetAtTestedHead returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.AtTestedHead, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetAtTestedHead() *bool {
+	return v.AtTestedHead
+}
+
+// GetRequireAttestation returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.RequireAttestation, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetRequireAttestation() *bool {
+	return v.RequireAttestation
+}
+
+// GetOrder returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.Order, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetOrder() *AgentMergeOrder {
+	return v.Order
 }
 
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -3619,6 +3729,9 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgent
 	Mode *AgentDeliveryMode `json:"mode"`
 	// On NONE: wait for an attestation of a push or release instead of completing at the last pass.
 	Attest *bool `json:"attest"`
+	// Who merges and how (task 71a3dd22). As declared on deliveryPolicy, null parts meaning their
+	// defaults; resolved on effectiveDeliveryPolicy.
+	Merge *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure `json:"merge"`
 }
 
 // GetMode returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicy.Mode, and is useful for accessing the field via an interface.
@@ -3629,6 +3742,54 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyA
 // GetAttest returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicy.Attest, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicy) GetAttest() *bool {
 	return v.Attest
+}
+
+// GetMerge returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicy.Merge, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicy) GetMerge() *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure {
+	return v.Merge
+}
+
+// AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure includes the requested fields of the GraphQL type AgentMergeProcedure.
+// The GraphQL type's documentation follows.
+//
+// A board's merge procedure (task 71a3dd22).
+type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure struct {
+	// Who merges: COORDINATOR, PERSON, or ROLE:<name>. Resolved default: the coordinator when its
+	// capabilities cover PR_MERGE, else the first active role that carries PR_MERGE, else a person.
+	By *string `json:"by"`
+	// Default MERGE.
+	Method *AgentMergeMethod `json:"method"`
+	// Merge only at the head the passing review or test covered. Default true.
+	AtTestedHead *bool `json:"atTestedHead"`
+	// Attest each merge (task delivered). Default false; always true on an ATTESTED board.
+	RequireAttestation *bool `json:"requireAttestation"`
+	// Default NOTE_ORDER.
+	Order *AgentMergeOrder `json:"order"`
+}
+
+// GetBy returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.By, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetBy() *string {
+	return v.By
+}
+
+// GetMethod returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.Method, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetMethod() *AgentMergeMethod {
+	return v.Method
+}
+
+// GetAtTestedHead returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.AtTestedHead, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetAtTestedHead() *bool {
+	return v.AtTestedHead
+}
+
+// GetRequireAttestation returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.RequireAttestation, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetRequireAttestation() *bool {
+	return v.RequireAttestation
+}
+
+// GetOrder returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.Order, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetOrder() *AgentMergeOrder {
+	return v.Order
 }
 
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
@@ -3687,6 +3848,9 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPo
 	Mode *AgentDeliveryMode `json:"mode"`
 	// On NONE: wait for an attestation of a push or release instead of completing at the last pass.
 	Attest *bool `json:"attest"`
+	// Who merges and how (task 71a3dd22). As declared on deliveryPolicy, null parts meaning their
+	// defaults; resolved on effectiveDeliveryPolicy.
+	Merge *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure `json:"merge"`
 }
 
 // GetMode returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicy.Mode, and is useful for accessing the field via an interface.
@@ -3697,6 +3861,54 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDelive
 // GetAttest returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicy.Attest, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicy) GetAttest() *bool {
 	return v.Attest
+}
+
+// GetMerge returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicy.Merge, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicy) GetMerge() *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure {
+	return v.Merge
+}
+
+// AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure includes the requested fields of the GraphQL type AgentMergeProcedure.
+// The GraphQL type's documentation follows.
+//
+// A board's merge procedure (task 71a3dd22).
+type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure struct {
+	// Who merges: COORDINATOR, PERSON, or ROLE:<name>. Resolved default: the coordinator when its
+	// capabilities cover PR_MERGE, else the first active role that carries PR_MERGE, else a person.
+	By *string `json:"by"`
+	// Default MERGE.
+	Method *AgentMergeMethod `json:"method"`
+	// Merge only at the head the passing review or test covered. Default true.
+	AtTestedHead *bool `json:"atTestedHead"`
+	// Attest each merge (task delivered). Default false; always true on an ATTESTED board.
+	RequireAttestation *bool `json:"requireAttestation"`
+	// Default NOTE_ORDER.
+	Order *AgentMergeOrder `json:"order"`
+}
+
+// GetBy returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.By, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetBy() *string {
+	return v.By
+}
+
+// GetMethod returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.Method, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetMethod() *AgentMergeMethod {
+	return v.Method
+}
+
+// GetAtTestedHead returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.AtTestedHead, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetAtTestedHead() *bool {
+	return v.AtTestedHead
+}
+
+// GetRequireAttestation returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.RequireAttestation, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetRequireAttestation() *bool {
+	return v.RequireAttestation
+}
+
+// GetOrder returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.Order, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetOrder() *AgentMergeOrder {
+	return v.Order
 }
 
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -4510,6 +4722,36 @@ const (
 var AllAgentInputScope = []AgentInputScope{
 	AgentInputScopeComponent,
 	AgentInputScopeTask,
+}
+
+// How a board's PRs are merged: a merge commit, a squash, a rebase, or a fast-forward of the target.
+type AgentMergeMethod string
+
+const (
+	AgentMergeMethodMerge       AgentMergeMethod = "MERGE"
+	AgentMergeMethodSquash      AgentMergeMethod = "SQUASH"
+	AgentMergeMethodRebase      AgentMergeMethod = "REBASE"
+	AgentMergeMethodFastForward AgentMergeMethod = "FAST_FORWARD"
+)
+
+var AllAgentMergeMethod = []AgentMergeMethod{
+	AgentMergeMethodMerge,
+	AgentMergeMethodSquash,
+	AgentMergeMethodRebase,
+	AgentMergeMethodFastForward,
+}
+
+// Which of several passed tasks merges first: the order the notes give, or the oldest pass first.
+type AgentMergeOrder string
+
+const (
+	AgentMergeOrderNoteOrder       AgentMergeOrder = "NOTE_ORDER"
+	AgentMergeOrderOldestPassFirst AgentMergeOrder = "OLDEST_PASS_FIRST"
+)
+
+var AllAgentMergeOrder = []AgentMergeOrder{
+	AgentMergeOrderNoteOrder,
+	AgentMergeOrderOldestPassFirst,
 }
 
 // What a hop in this role must leave behind: the mirror of AgentRequiredInputInput, and the other
@@ -35404,6 +35646,9 @@ type ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicy stru
 	Mode *AgentDeliveryMode `json:"mode"`
 	// On NONE: wait for an attestation of a push or release instead of completing at the last pass.
 	Attest *bool `json:"attest"`
+	// Who merges and how (task 71a3dd22). As declared on deliveryPolicy, null parts meaning their
+	// defaults; resolved on effectiveDeliveryPolicy.
+	Merge *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure `json:"merge"`
 }
 
 // GetMode returns ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicy.Mode, and is useful for accessing the field via an interface.
@@ -35414,6 +35659,54 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicy)
 // GetAttest returns ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicy.Attest, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicy) GetAttest() *bool {
 	return v.Attest
+}
+
+// GetMerge returns ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicy.Merge, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicy) GetMerge() *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure {
+	return v.Merge
+}
+
+// ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure includes the requested fields of the GraphQL type AgentMergeProcedure.
+// The GraphQL type's documentation follows.
+//
+// A board's merge procedure (task 71a3dd22).
+type ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure struct {
+	// Who merges: COORDINATOR, PERSON, or ROLE:<name>. Resolved default: the coordinator when its
+	// capabilities cover PR_MERGE, else the first active role that carries PR_MERGE, else a person.
+	By *string `json:"by"`
+	// Default MERGE.
+	Method *AgentMergeMethod `json:"method"`
+	// Merge only at the head the passing review or test covered. Default true.
+	AtTestedHead *bool `json:"atTestedHead"`
+	// Attest each merge (task delivered). Default false; always true on an ATTESTED board.
+	RequireAttestation *bool `json:"requireAttestation"`
+	// Default NOTE_ORDER.
+	Order *AgentMergeOrder `json:"order"`
+}
+
+// GetBy returns ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure.By, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure) GetBy() *string {
+	return v.By
+}
+
+// GetMethod returns ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure.Method, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure) GetMethod() *AgentMergeMethod {
+	return v.Method
+}
+
+// GetAtTestedHead returns ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure.AtTestedHead, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure) GetAtTestedHead() *bool {
+	return v.AtTestedHead
+}
+
+// GetRequireAttestation returns ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure.RequireAttestation, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure) GetRequireAttestation() *bool {
+	return v.RequireAttestation
+}
+
+// GetOrder returns ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure.Order, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure) GetOrder() *AgentMergeOrder {
+	return v.Order
 }
 
 // ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec includes the requested fields of the GraphQL type BoardRoleSpec.
@@ -43711,6 +44004,7 @@ mutation AgentBoardCoordinateProgrammatic ($boardUuid: ID!, $sessionUuid: ID!) {
 		}
 		documentPaths
 		coordinatorPrompt
+		servedCoordinatorPrompt
 		missingCapabilities
 		events {
 			kind
@@ -44118,10 +44412,24 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		deliveryPolicy {
 			mode
 			attest
+			merge {
+				by
+				method
+				atTestedHead
+				requireAttestation
+				order
+			}
 		}
 		effectiveDeliveryPolicy {
 			mode
 			attest
+			merge {
+				by
+				method
+				atTestedHead
+				requireAttestation
+				order
+			}
 		}
 		eventRetentionDays
 		effectiveEventRetentionDays
@@ -44383,10 +44691,24 @@ query AgentBoardsProgrammatic {
 		deliveryPolicy {
 			mode
 			attest
+			merge {
+				by
+				method
+				atTestedHead
+				requireAttestation
+				order
+			}
 		}
 		effectiveDeliveryPolicy {
 			mode
 			attest
+			merge {
+				by
+				method
+				atTestedHead
+				requireAttestation
+				order
+			}
 		}
 		eventRetentionDays
 		effectiveEventRetentionDays
@@ -50555,6 +50877,13 @@ query ExportBoard ($board: String!) {
 		delivery {
 			mode
 			attest
+			merge {
+				by
+				method
+				atTestedHead
+				requireAttestation
+				order
+			}
 		}
 		coordinatorPrompt
 		coordinatorCapabilities
