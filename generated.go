@@ -1695,7 +1695,27 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	PerAgentWipLimit *int `json:"perAgentWipLimit"`
 	// Whether coordinator priority is advisory (LAX, default) or enforced at assignment (STRICT).
 	PriorityType *AgentBoardPriorityType `json:"priorityType"`
-	CreatedDate  *string                 `json:"createdDate"`
+	// The component this board builds -- the node documents and implementation hang off.
+	Target *string `json:"target"`
+	// Level applied to tasks of this board that do not declare one.
+	DefaultTaskLevel *int `json:"defaultTaskLevel"`
+	// Resolution mode for requirements of this board that do not name one.
+	DefaultInputResolution *AgentInputResolution `json:"defaultInputResolution"`
+	// What every task on this board may spend together, in USD micros; null means no board limit.
+	BudgetMicros *int64 `json:"budgetMicros"`
+	// Percent of a budget at which the board posts one alert and nothing stops (default 80).
+	SoftAlertPercent *int `json:"softAlertPercent"`
+	// Rounds between one pair of roles before a task parks (default 3).
+	CycleCap *int `json:"cycleCap"`
+	// Repeated rounds at which a task parks; 1, the default, parks on the first repeat.
+	NoProgressRepeatsToStop *int `json:"noProgressRepeatsToStop"`
+	// Priority number at or below which an open item blocks routing, 1 being most urgent. Null is strict.
+	BlockingPriority *int `json:"blockingPriority"`
+	// Priority number at or below which an open item prevents a policy completion. Null is strict.
+	CompletionPriority *int `json:"completionPriority"`
+	// The board file that last applied to this board; null on a board never applied from a file.
+	Declarative *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance `json:"declarative"`
+	CreatedDate *string                                                                                 `json:"createdDate"`
 }
 
 // GetUuid returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Uuid, and is useful for accessing the field via an interface.
@@ -1767,6 +1787,54 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetPriorityType
 	return v.PriorityType
 }
 
+// GetTarget returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Target, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetTarget() *string { return v.Target }
+
+// GetDefaultTaskLevel returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DefaultTaskLevel, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDefaultTaskLevel() *int {
+	return v.DefaultTaskLevel
+}
+
+// GetDefaultInputResolution returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DefaultInputResolution, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDefaultInputResolution() *AgentInputResolution {
+	return v.DefaultInputResolution
+}
+
+// GetBudgetMicros returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetBudgetMicros() *int64 {
+	return v.BudgetMicros
+}
+
+// GetSoftAlertPercent returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.SoftAlertPercent, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetSoftAlertPercent() *int {
+	return v.SoftAlertPercent
+}
+
+// GetCycleCap returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CycleCap, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCycleCap() *int {
+	return v.CycleCap
+}
+
+// GetNoProgressRepeatsToStop returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.NoProgressRepeatsToStop, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetNoProgressRepeatsToStop() *int {
+	return v.NoProgressRepeatsToStop
+}
+
+// GetBlockingPriority returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.BlockingPriority, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetBlockingPriority() *int {
+	return v.BlockingPriority
+}
+
+// GetCompletionPriority returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CompletionPriority, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCompletionPriority() *int {
+	return v.CompletionPriority
+}
+
+// GetDeclarative returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Declarative, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDeclarative() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance {
+	return v.Declarative
+}
+
 // GetCreatedDate returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CreatedDate, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCreatedDate() *string {
 	return v.CreatedDate
@@ -1795,6 +1863,51 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCoordinatorSeatAg
 // GetClaimedAt returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.ClaimedAt, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetClaimedAt() *string {
 	return v.ClaimedAt
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance includes the requested fields of the GraphQL type DeclarativeProvenance.
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance struct {
+	// SHA-256 of the canonical JSON of the spec that last touched this row.
+	SpecHash  *string                                                                                                        `json:"specHash"`
+	AppliedAt *string                                                                                                        `json:"appliedAt"`
+	Source    *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource `json:"source"`
+}
+
+// GetSpecHash returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance.SpecHash, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance) GetSpecHash() *string {
+	return v.SpecHash
+}
+
+// GetAppliedAt returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance.AppliedAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance) GetAppliedAt() *string {
+	return v.AppliedAt
+}
+
+// GetSource returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance.Source, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance) GetSource() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource {
+	return v.Source
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource includes the requested fields of the GraphQL type DeclarativeSource.
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource struct {
+	Repo   *string `json:"repo"`
+	Path   *string `json:"path"`
+	Commit *string `json:"commit"`
+}
+
+// GetRepo returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource.Repo, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource) GetRepo() *string {
+	return v.Repo
+}
+
+// GetPath returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource.Path, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource) GetPath() *string {
+	return v.Path
+}
+
+// GetCommit returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource.Commit, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource) GetCommit() *string {
+	return v.Commit
 }
 
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
@@ -2470,7 +2583,27 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	PerAgentWipLimit *int `json:"perAgentWipLimit"`
 	// Whether coordinator priority is advisory (LAX, default) or enforced at assignment (STRICT).
 	PriorityType *AgentBoardPriorityType `json:"priorityType"`
-	CreatedDate  *string                 `json:"createdDate"`
+	// The component this board builds -- the node documents and implementation hang off.
+	Target *string `json:"target"`
+	// Level applied to tasks of this board that do not declare one.
+	DefaultTaskLevel *int `json:"defaultTaskLevel"`
+	// Resolution mode for requirements of this board that do not name one.
+	DefaultInputResolution *AgentInputResolution `json:"defaultInputResolution"`
+	// What every task on this board may spend together, in USD micros; null means no board limit.
+	BudgetMicros *int64 `json:"budgetMicros"`
+	// Percent of a budget at which the board posts one alert and nothing stops (default 80).
+	SoftAlertPercent *int `json:"softAlertPercent"`
+	// Rounds between one pair of roles before a task parks (default 3).
+	CycleCap *int `json:"cycleCap"`
+	// Repeated rounds at which a task parks; 1, the default, parks on the first repeat.
+	NoProgressRepeatsToStop *int `json:"noProgressRepeatsToStop"`
+	// Priority number at or below which an open item blocks routing, 1 being most urgent. Null is strict.
+	BlockingPriority *int `json:"blockingPriority"`
+	// Priority number at or below which an open item prevents a policy completion. Null is strict.
+	CompletionPriority *int `json:"completionPriority"`
+	// The board file that last applied to this board; null on a board never applied from a file.
+	Declarative *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance `json:"declarative"`
+	CreatedDate *string                                                                                   `json:"createdDate"`
 }
 
 // GetUuid returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Uuid, and is useful for accessing the field via an interface.
@@ -2542,6 +2675,56 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetPriorityTy
 	return v.PriorityType
 }
 
+// GetTarget returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Target, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetTarget() *string {
+	return v.Target
+}
+
+// GetDefaultTaskLevel returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DefaultTaskLevel, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDefaultTaskLevel() *int {
+	return v.DefaultTaskLevel
+}
+
+// GetDefaultInputResolution returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DefaultInputResolution, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDefaultInputResolution() *AgentInputResolution {
+	return v.DefaultInputResolution
+}
+
+// GetBudgetMicros returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetBudgetMicros() *int64 {
+	return v.BudgetMicros
+}
+
+// GetSoftAlertPercent returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.SoftAlertPercent, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetSoftAlertPercent() *int {
+	return v.SoftAlertPercent
+}
+
+// GetCycleCap returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CycleCap, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetCycleCap() *int {
+	return v.CycleCap
+}
+
+// GetNoProgressRepeatsToStop returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.NoProgressRepeatsToStop, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetNoProgressRepeatsToStop() *int {
+	return v.NoProgressRepeatsToStop
+}
+
+// GetBlockingPriority returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.BlockingPriority, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetBlockingPriority() *int {
+	return v.BlockingPriority
+}
+
+// GetCompletionPriority returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CompletionPriority, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetCompletionPriority() *int {
+	return v.CompletionPriority
+}
+
+// GetDeclarative returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Declarative, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDeclarative() *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance {
+	return v.Declarative
+}
+
 // GetCreatedDate returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CreatedDate, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetCreatedDate() *string {
 	return v.CreatedDate
@@ -2570,6 +2753,51 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCoordinatorSeat
 // GetClaimedAt returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.ClaimedAt, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetClaimedAt() *string {
 	return v.ClaimedAt
+}
+
+// AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance includes the requested fields of the GraphQL type DeclarativeProvenance.
+type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance struct {
+	// SHA-256 of the canonical JSON of the spec that last touched this row.
+	SpecHash  *string                                                                                                          `json:"specHash"`
+	AppliedAt *string                                                                                                          `json:"appliedAt"`
+	Source    *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource `json:"source"`
+}
+
+// GetSpecHash returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance.SpecHash, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance) GetSpecHash() *string {
+	return v.SpecHash
+}
+
+// GetAppliedAt returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance.AppliedAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance) GetAppliedAt() *string {
+	return v.AppliedAt
+}
+
+// GetSource returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance.Source, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance) GetSource() *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource {
+	return v.Source
+}
+
+// AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource includes the requested fields of the GraphQL type DeclarativeSource.
+type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource struct {
+	Repo   *string `json:"repo"`
+	Path   *string `json:"path"`
+	Commit *string `json:"commit"`
+}
+
+// GetRepo returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource.Repo, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource) GetRepo() *string {
+	return v.Repo
+}
+
+// GetPath returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource.Path, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource) GetPath() *string {
+	return v.Path
+}
+
+// GetCommit returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource.Commit, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenanceSourceDeclarativeSource) GetCommit() *string {
+	return v.Commit
 }
 
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
@@ -17536,6 +17764,14 @@ type AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRo
 	// Per-model strength overrides for this role, consulted first: override, then the model's
 	// strength for strengthCategory, then its base strength. Re-pointed when a model is merged.
 	ModelStrengths []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength `json:"modelStrengths"`
+	// Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported. Null sets no allowance.
+	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
+	// What every task in this role must be able to read before it starts.
+	RequiredInputs []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput `json:"requiredInputs"`
+	// What a hop in this role must leave behind: the mirror of requiredInputs.
+	// Enforced at sign-off, not at assignment -- the hop has to run before it
+	// can produce anything.
+	ProducesOutputs []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput `json:"producesOutputs"`
 }
 
 // GetUuid returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.Uuid, and is useful for accessing the field via an interface.
@@ -17623,6 +17859,21 @@ func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTa
 	return v.ModelStrengths
 }
 
+// GetHopBudgetMicros returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.HopBudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetHopBudgetMicros() *int64 {
+	return v.HopBudgetMicros
+}
+
+// GetRequiredInputs returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.RequiredInputs, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetRequiredInputs() []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput {
+	return v.RequiredInputs
+}
+
+// GetProducesOutputs returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.ProducesOutputs, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetProducesOutputs() []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput {
+	return v.ProducesOutputs
+}
+
 // AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength includes the requested fields of the GraphQL type RoleModelStrength.
 // The GraphQL type's documentation follows.
 //
@@ -17640,6 +17891,69 @@ func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTa
 // GetStrength returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength.Strength, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength) GetStrength() float64 {
 	return v.Strength
+}
+
+// AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput includes the requested fields of the GraphQL type AgentProducedOutput.
+// The GraphQL type's documentation follows.
+//
+// A document a role is expected to publish during its hop.
+type AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput struct {
+	Specification *SpecificationType `json:"specification"`
+	Scope         *AgentInputScope   `json:"scope"`
+	// False makes it advisory, for roles that sometimes have nothing to write.
+	Required *bool `json:"required"`
+}
+
+// GetSpecification returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetScope returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput.Scope, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput) GetScope() *AgentInputScope {
+	return v.Scope
+}
+
+// GetRequired returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput.Required, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput) GetRequired() *bool {
+	return v.Required
+}
+
+// AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput includes the requested fields of the GraphQL type AgentRequiredInput.
+type AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput struct {
+	Kind *AgentInputKind `json:"kind"`
+	// DOCUMENT only: which specification document, resolved against the board's target node.
+	Specification *SpecificationType `json:"specification"`
+	// RELEASE only.
+	Scope        *AgentInputScope      `json:"scope"`
+	MinLifecycle *ReleaseLifecycleEnum `json:"minLifecycle"`
+	// Null falls back to the board's defaultInputResolution.
+	Resolution *AgentInputResolution `json:"resolution"`
+}
+
+// GetKind returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput) GetKind() *AgentInputKind {
+	return v.Kind
+}
+
+// GetSpecification returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetScope returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput.Scope, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput) GetScope() *AgentInputScope {
+	return v.Scope
+}
+
+// GetMinLifecycle returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput.MinLifecycle, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput) GetMinLifecycle() *ReleaseLifecycleEnum {
+	return v.MinLifecycle
+}
+
+// GetResolution returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput.Resolution, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput) GetResolution() *AgentInputResolution {
+	return v.Resolution
 }
 
 // AgentTaskRoleConfigsProgrammaticResponse is returned by AgentTaskRoleConfigsProgrammatic on success.
@@ -31335,6 +31649,24 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		}
 		perAgentWipLimit
 		priorityType
+		target
+		defaultTaskLevel
+		defaultInputResolution
+		budgetMicros
+		softAlertPercent
+		cycleCap
+		noProgressRepeatsToStop
+		blockingPriority
+		completionPriority
+		declarative {
+			specHash
+			appliedAt
+			source {
+				repo
+				path
+				commit
+			}
+		}
 		createdDate
 	}
 }
@@ -31497,6 +31829,24 @@ query AgentBoardsProgrammatic {
 		}
 		perAgentWipLimit
 		priorityType
+		target
+		defaultTaskLevel
+		defaultInputResolution
+		budgetMicros
+		softAlertPercent
+		cycleCap
+		noProgressRepeatsToStop
+		blockingPriority
+		completionPriority
+		declarative {
+			specHash
+			appliedAt
+			source {
+				repo
+				path
+				commit
+			}
+		}
 		createdDate
 	}
 }
@@ -33676,6 +34026,19 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) {
 		modelStrengths {
 			model
 			strength
+		}
+		hopBudgetMicros
+		requiredInputs {
+			kind
+			specification
+			scope
+			minLifecycle
+			resolution
+		}
+		producesOutputs {
+			specification
+			scope
+			required
 		}
 	}
 }

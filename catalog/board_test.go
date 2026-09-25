@@ -171,3 +171,20 @@ func TestFormatShowsRolesAndWarnings(t *testing.T) {
 		t.Errorf("warnings are printed under the change:\n%s", out)
 	}
 }
+
+// The day-to-day views print what these operations select, so a trimmed selection hides a board's
+// settings or what a role must publish from every CLI reader (gaps §1.19).
+func TestTheBoardAndRoleViewsSelectWhatTheCLIShows(t *testing.T) {
+	for _, op := range []string{rearm.AgentBoardProgrammatic_Operation, rearm.AgentBoardsProgrammatic_Operation} {
+		for _, field := range []string{"target", "budgetMicros", "cycleCap", "completionPriority", "declarative"} {
+			if !strings.Contains(op, field) {
+				t.Errorf("board operation lost %s", field)
+			}
+		}
+	}
+	for _, field := range []string{"hopBudgetMicros", "requiredInputs", "producesOutputs"} {
+		if !strings.Contains(rearm.AgentTaskRoleConfigsProgrammatic_Operation, field) {
+			t.Errorf("role config list lost %s", field)
+		}
+	}
+}
