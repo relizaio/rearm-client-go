@@ -27,3 +27,16 @@ query AgentTaskCheckTargetsProgrammatic ($taskUuid: ID!) {
 		documents { uuid lifecycle document { specification round task elements { digest } } }
 	}
 }
+
+# The rework point of an element (elements.md §8): what depends on it across the board, and which
+# of the task's rounds changed it.
+query AgentTaskElementProgrammatic ($taskUuid: ID!, $element: String!, $depth: Int) {
+	agentTaskProgrammatic(taskUuid: $taskUuid) {
+		uuid
+		dependentsOf(element: $element, depth: $depth) {
+			element found count truncated
+			dependents { distance via { from to kind } element { id family title release specification line } }
+		}
+		elementHistory(element: $element) { release round specification contentDigest line changed }
+	}
+}

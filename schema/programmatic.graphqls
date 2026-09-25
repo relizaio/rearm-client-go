@@ -1004,6 +1004,19 @@ type AgentTask {
   """
   checks: [CheckReport]
   """
+  What depends on an element, transitively, nearest first (elements.md §8): over the task's
+  documents, its bound inputs and the latest release of each document series under the board's
+  target. depth defaults to 8; truncated says the bound was hit.
+  """
+  dependentsOf(
+  element: String!
+  depth: Int): ElementDependents
+  """
+  An element across the task's rounds of the document that defines it, oldest first: which rounds changed it.
+  """
+  elementHistory(
+  element: String!): [ElementVersion]
+  """
   When the task was last reopened; null when never.
   """
   reopenedAt: DateTime
@@ -3565,6 +3578,41 @@ type CheckReport {
 }
 
 """
+The closure of what depends on an element.
+"""
+type ElementDependents {
+  element: String
+  """
+  False when no release in scope defines the element.
+  """
+  found: Boolean
+  """
+  The size of the closure.
+  """
+  count: Int
+  """
+  Whether the depth bound stopped the walk.
+  """
+  truncated: Boolean
+  dependents: [ElementDependent]
+}
+
+"""
+An element in one round of its document.
+"""
+type ElementVersion {
+  release: ID
+  round: Int
+  specification: String
+  contentDigest: String
+  line: Int
+  """
+  Whether the content digest differs from the round before; false on the first.
+  """
+  changed: Boolean
+}
+
+"""
 A completed task sent back to a role.
 """
 type AgentTaskReopen {
@@ -3833,6 +3881,11 @@ type Finding {
   When that decision was made: the creation time of decidedIn's release. Computed per read.
   """
   decidedAt: DateTime
+  """
+  The element location.element names, as it was in the index of the release the round is about
+  (or, in a task's open items, as the task's documents have it now); null without an element or an index.
+  """
+  element: AgentTaskElement
 }
 
 """
@@ -5937,6 +5990,18 @@ type CheckResult {
 }
 
 """
+One element of the closure, with the edges that pulled it in.
+"""
+type ElementDependent {
+  element: AgentTaskElement
+  via: [ElementEdge]
+  """
+  1 for a direct dependent.
+  """
+  distance: Int
+}
+
+"""
 SESSION is an agent session, USER a human, SYSTEM the application acting on its own.
 """
 enum AgentActorKind {
@@ -6032,6 +6097,11 @@ type FindingLocation {
   path: String
   line: Int
   ref: String
+  """
+  The id of the element the finding is about (elements.md §8). With it, path and line are filled
+  in from the index when the author left them out; the rework point is about.release + element.
+  """
+  element: String
 }
 
 enum DeclarativeAction {
@@ -6894,6 +6964,18 @@ type CheckOffence {
   elementId: String
   release: ID
   message: String
+}
+
+"""
+An edge from a dependent to what it depends on.
+"""
+type ElementEdge {
+  from: String
+  to: String
+  """
+  parent, assumes, or the trace verb as written.
+  """
+  kind: String
 }
 
 input BoardModelStrengthSpecInput {
