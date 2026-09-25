@@ -1273,6 +1273,11 @@ type AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage
 	NextAfter *int64 `json:"nextAfter"`
 	// True when more events follow this page.
 	HasMore *bool `json:"hasMore"`
+	// Where the board's retention window starts: now minus its eventRetentionDays. Null when the board keeps everything.
+	TruncatedBefore *string `json:"truncatedBefore"`
+	// True when the retention sweep deleted events this read's after or since asked for: the page starts
+	// at the oldest event still kept. Re-read the tasks rather than trusting the feed for the time between.
+	Gap *bool `json:"gap"`
 }
 
 // GetEvents returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage.Events, and is useful for accessing the field via an interface.
@@ -1288,6 +1293,16 @@ func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEvent
 // GetHasMore returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage.HasMore, and is useful for accessing the field via an interface.
 func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage) GetHasMore() *bool {
 	return v.HasMore
+}
+
+// GetTruncatedBefore returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage.TruncatedBefore, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage) GetTruncatedBefore() *string {
+	return v.TruncatedBefore
+}
+
+// GetGap returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage.Gap, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage) GetGap() *bool {
+	return v.Gap
 }
 
 // AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent includes the requested fields of the GraphQL type AgentBoardLoggedEvent.
@@ -2037,6 +2052,11 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	CoordinatorStopRelease *bool `json:"coordinatorStopRelease"`
 	// coordinatorStopRelease with its default resolved.
 	EffectiveCoordinatorStopRelease *bool `json:"effectiveCoordinatorStopRelease"`
+	// Days the event log keeps an event before the daily sweep deletes it (task 04dedcc5). As set: null
+	// is the default, 15; 0 keeps everything.
+	EventRetentionDays *int `json:"eventRetentionDays"`
+	// eventRetentionDays with its default resolved; 0 keeps everything.
+	EffectiveEventRetentionDays *int `json:"effectiveEventRetentionDays"`
 	// The board file that last applied to this board; null on a board never applied from a file.
 	Declarative *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance `json:"declarative"`
 	CreatedDate *string                                                                                 `json:"createdDate"`
@@ -2192,6 +2212,16 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCoordinatorS
 // GetEffectiveCoordinatorStopRelease returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.EffectiveCoordinatorStopRelease, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetEffectiveCoordinatorStopRelease() *bool {
 	return v.EffectiveCoordinatorStopRelease
+}
+
+// GetEventRetentionDays returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.EventRetentionDays, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetEventRetentionDays() *int {
+	return v.EventRetentionDays
+}
+
+// GetEffectiveEventRetentionDays returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.EffectiveEventRetentionDays, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetEffectiveEventRetentionDays() *int {
+	return v.EffectiveEventRetentionDays
 }
 
 // GetDeclarative returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Declarative, and is useful for accessing the field via an interface.
@@ -3233,6 +3263,11 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	CoordinatorStopRelease *bool `json:"coordinatorStopRelease"`
 	// coordinatorStopRelease with its default resolved.
 	EffectiveCoordinatorStopRelease *bool `json:"effectiveCoordinatorStopRelease"`
+	// Days the event log keeps an event before the daily sweep deletes it (task 04dedcc5). As set: null
+	// is the default, 15; 0 keeps everything.
+	EventRetentionDays *int `json:"eventRetentionDays"`
+	// eventRetentionDays with its default resolved; 0 keeps everything.
+	EffectiveEventRetentionDays *int `json:"effectiveEventRetentionDays"`
 	// The board file that last applied to this board; null on a board never applied from a file.
 	Declarative *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance `json:"declarative"`
 	CreatedDate *string                                                                                   `json:"createdDate"`
@@ -3390,6 +3425,16 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetCoordinato
 // GetEffectiveCoordinatorStopRelease returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.EffectiveCoordinatorStopRelease, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetEffectiveCoordinatorStopRelease() *bool {
 	return v.EffectiveCoordinatorStopRelease
+}
+
+// GetEventRetentionDays returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.EventRetentionDays, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetEventRetentionDays() *int {
+	return v.EventRetentionDays
+}
+
+// GetEffectiveEventRetentionDays returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.EffectiveEventRetentionDays, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetEffectiveEventRetentionDays() *int {
+	return v.EffectiveEventRetentionDays
 }
 
 // GetDeclarative returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Declarative, and is useful for accessing the field via an interface.
@@ -31962,6 +32007,8 @@ type ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec struct
 	HumanQueueAgeMinutes *int `json:"humanQueueAgeMinutes"`
 	// Whether a no-progress or cycle-cap stop parks for the coordinator first; null means the default, on.
 	CoordinatorStopRelease *bool `json:"coordinatorStopRelease"`
+	// Days the event log keeps an event; null means the default, 15, and 0 keeps everything.
+	EventRetentionDays *int `json:"eventRetentionDays"`
 }
 
 // GetBudgetMicros returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.BudgetMicros, and is useful for accessing the field via an interface.
@@ -32002,6 +32049,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) G
 // GetCoordinatorStopRelease returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.CoordinatorStopRelease, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetCoordinatorStopRelease() *bool {
 	return v.CoordinatorStopRelease
+}
+
+// GetEventRetentionDays returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.EventRetentionDays, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetEventRetentionDays() *int {
+	return v.EventRetentionDays
 }
 
 // ExportBoardResponse is returned by ExportBoard on success.
@@ -40168,6 +40220,8 @@ query AgentBoardEventsProgrammatic ($boardUuid: ID!, $after: Long, $since: DateT
 		}
 		nextAfter
 		hasMore
+		truncatedBefore
+		gap
 	}
 }
 fragment ActorFields on AgentActor {
@@ -40178,7 +40232,8 @@ fragment ActorFields on AgentActor {
 `
 
 // A board's event log since a point, oldest first (task 1c5442d2): follow the feed by passing the
-// page's nextAfter as the next $after.
+// page's nextAfter as the next $after. gap says the board's retention deleted events this read
+// asked for (task 04dedcc5); truncatedBefore is where its window starts.
 func AgentBoardEventsProgrammatic(
 	ctx_ context.Context,
 	client_ graphql.Client,
@@ -40411,6 +40466,8 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		humanQueueAgeMinutes
 		coordinatorStopRelease
 		effectiveCoordinatorStopRelease
+		eventRetentionDays
+		effectiveEventRetentionDays
 		declarative {
 			specHash
 			appliedAt
@@ -40666,6 +40723,8 @@ query AgentBoardsProgrammatic {
 		humanQueueAgeMinutes
 		coordinatorStopRelease
 		effectiveCoordinatorStopRelease
+		eventRetentionDays
+		effectiveEventRetentionDays
 		declarative {
 			specHash
 			appliedAt
@@ -46301,6 +46360,7 @@ query ExportBoard ($board: String!) {
 			completionPriority
 			humanQueueAgeMinutes
 			coordinatorStopRelease
+			eventRetentionDays
 		}
 		roles {
 			... BoardRoleSpecFields

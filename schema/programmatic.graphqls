@@ -1128,6 +1128,15 @@ type AgentBoard {
   """
   effectiveCoordinatorStopRelease: Boolean
   """
+  Days the event log keeps an event before the daily sweep deletes it (task 04dedcc5). As set: null
+  is the default, 15; 0 keeps everything.
+  """
+  eventRetentionDays: Int
+  """
+  eventRetentionDays with its default resolved; 0 keeps everything.
+  """
+  effectiveEventRetentionDays: Int
+  """
   Whether coordinator priority is advisory (LAX, default) or enforced at assignment (STRICT).
   """
   priorityType: AgentBoardPriorityType
@@ -1176,6 +1185,15 @@ type AgentBoardEventPage {
   True when more events follow this page.
   """
   hasMore: Boolean
+  """
+  Where the board's retention window starts: now minus its eventRetentionDays. Null when the board keeps everything.
+  """
+  truncatedBefore: DateTime
+  """
+  True when the retention sweep deleted events this read's after or since asked for: the page starts
+  at the oldest event still kept. Re-read the tasks rather than trusting the feed for the time between.
+  """
+  gap: Boolean
 }
 
 scalar Long
@@ -3039,6 +3057,10 @@ type BoardSettingsSpec {
   Whether a no-progress or cycle-cap stop parks for the coordinator first; null means the default, on.
   """
   coordinatorStopRelease: Boolean
+  """
+  Days the event log keeps an event; null means the default, 15, and 0 keeps everything.
+  """
+  eventRetentionDays: Int
 }
 
 type BoardRoleSpec {
@@ -4384,6 +4406,10 @@ input BoardSettingsSpecInput {
   Whether a no-progress or cycle-cap stop parks for the coordinator first; null restores the default, on.
   """
   coordinatorStopRelease: Boolean
+  """
+  Days the event log keeps an event; null restores the default, 15, 0 keeps everything, and a negative number is refused.
+  """
+  eventRetentionDays: Int
 }
 
 """

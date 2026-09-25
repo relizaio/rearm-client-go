@@ -25,16 +25,18 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
 	blockingPriority completionPriority humanQueueAgeMinutes
 	coordinatorStopRelease effectiveCoordinatorStopRelease
+	eventRetentionDays effectiveEventRetentionDays
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
 } }
 
 # A board's event log since a point, oldest first (task 1c5442d2): follow the feed by passing the
-# page's nextAfter as the next $after.
+# page's nextAfter as the next $after. gap says the board's retention deleted events this read
+# asked for (task 04dedcc5); truncatedBefore is where its window starts.
 query AgentBoardEventsProgrammatic ($boardUuid: ID!, $after: Long, $since: DateTime, $limit: Int) {
 	agentBoardEventsProgrammatic(boardUuid: $boardUuid, after: $after, since: $since, limit: $limit) {
 	events { seq uuid kind message actor { ...ActorFields } eventAt }
-	nextAfter hasMore
+	nextAfter hasMore truncatedBefore gap
 } }
 
 query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUuid: $boardUuid) {
@@ -50,6 +52,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
 	blockingPriority completionPriority humanQueueAgeMinutes
 	coordinatorStopRelease effectiveCoordinatorStopRelease
+	eventRetentionDays effectiveEventRetentionDays
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
 } }
