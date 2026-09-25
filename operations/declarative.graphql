@@ -157,6 +157,7 @@ query ExportBoard($board: String!) {
     sources
     documentsRepo
     documentPaths
+    elementFamilies
     coordinatorPrompt
     coordinatorCapabilities
     settings {

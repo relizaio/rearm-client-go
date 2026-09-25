@@ -1683,6 +1683,10 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	DocumentsRepo *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
 	// Per-type path templates inside documentsRepo, as overridden on this board; omitted types use the defaults by scope (effectiveDocumentPaths).
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
+	// Element id families as this board declared them over the defaults (prefix to family name); null when it uses the defaults alone.
+	ElementFamilies *json.RawMessage `json:"elementFamilies"`
+	// The defaults with this board's entries over them: what the CLI parses documents against (gaps §2.A).
+	EffectiveElementFamilies *json.RawMessage `json:"effectiveElementFamilies"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
@@ -1754,6 +1758,16 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentsRep
 // GetDocumentPaths returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DocumentPaths, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentPaths() *json.RawMessage {
 	return v.DocumentPaths
+}
+
+// GetElementFamilies returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.ElementFamilies, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetElementFamilies() *json.RawMessage {
+	return v.ElementFamilies
+}
+
+// GetEffectiveElementFamilies returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.EffectiveElementFamilies, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetEffectiveElementFamilies() *json.RawMessage {
+	return v.EffectiveElementFamilies
 }
 
 // GetCoordinatorPrompt returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -2580,6 +2594,10 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	DocumentsRepo *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
 	// Per-type path templates inside documentsRepo, as overridden on this board; omitted types use the defaults by scope (effectiveDocumentPaths).
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
+	// Element id families as this board declared them over the defaults (prefix to family name); null when it uses the defaults alone.
+	ElementFamilies *json.RawMessage `json:"elementFamilies"`
+	// The defaults with this board's entries over them: what the CLI parses documents against (gaps §2.A).
+	EffectiveElementFamilies *json.RawMessage `json:"effectiveElementFamilies"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
@@ -2651,6 +2669,16 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentsR
 // GetDocumentPaths returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DocumentPaths, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentPaths() *json.RawMessage {
 	return v.DocumentPaths
+}
+
+// GetElementFamilies returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.ElementFamilies, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetElementFamilies() *json.RawMessage {
+	return v.ElementFamilies
+}
+
+// GetEffectiveElementFamilies returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.EffectiveElementFamilies, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetEffectiveElementFamilies() *json.RawMessage {
+	return v.EffectiveElementFamilies
 }
 
 // GetCoordinatorPrompt returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -3125,6 +3153,12 @@ type AgentDocumentPublishInput struct {
 	IndexDigest *string `json:"indexDigest"`
 	// The findings index. Required for REVIEW_FINDINGS, TEST_REPORT and QUESTIONS.
 	Index *json.RawMessage `json:"index"`
+	// The element index of a prose document (gaps §2.A), as the exact JSON text the CLI parsed and
+	// digested -- text, not an object, so the digest is over the bytes both sides see. Warnings, never
+	// refusals, for what it says; refused for an index type, and when it does not match elementsDigest.
+	Elements *string `json:"elements"`
+	// sha256 (hex) of elements. Required with elements.
+	ElementsDigest *string `json:"elementsDigest"`
 	// HEAD of the documents repository when the files were read. Required with a path.
 	Commit *string `json:"commit"`
 	// Must equal the board's documentsRepo. Required with a path; an index-only round writes no file, so it names no repository.
@@ -3166,6 +3200,12 @@ func (v *AgentDocumentPublishInput) GetIndexDigest() *string { return v.IndexDig
 
 // GetIndex returns AgentDocumentPublishInput.Index, and is useful for accessing the field via an interface.
 func (v *AgentDocumentPublishInput) GetIndex() *json.RawMessage { return v.Index }
+
+// GetElements returns AgentDocumentPublishInput.Elements, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetElements() *string { return v.Elements }
+
+// GetElementsDigest returns AgentDocumentPublishInput.ElementsDigest, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetElementsDigest() *string { return v.ElementsDigest }
 
 // GetCommit returns AgentDocumentPublishInput.Commit, and is useful for accessing the field via an interface.
 func (v *AgentDocumentPublishInput) GetCommit() *string { return v.Commit }
@@ -25791,6 +25831,7 @@ type ExportBoardExportBoardProgrammaticBoardSpec struct {
 	DocumentsRepo *string `json:"documentsRepo"`
 	// Per-type path templates, keyed by SpecificationType. Omitted types use the defaults by scope.
 	DocumentPaths     *json.RawMessage `json:"documentPaths"`
+	ElementFamilies   *json.RawMessage `json:"elementFamilies"`
 	CoordinatorPrompt *string          `json:"coordinatorPrompt"`
 	// Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
 	CoordinatorCapabilities []AgentCapability `json:"coordinatorCapabilities"`
@@ -25845,6 +25886,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDocumentsRepo() *string
 // GetDocumentPaths returns ExportBoardExportBoardProgrammaticBoardSpec.DocumentPaths, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDocumentPaths() *json.RawMessage {
 	return v.DocumentPaths
+}
+
+// GetElementFamilies returns ExportBoardExportBoardProgrammaticBoardSpec.ElementFamilies, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetElementFamilies() *json.RawMessage {
+	return v.ElementFamilies
 }
 
 // GetCoordinatorPrompt returns ExportBoardExportBoardProgrammaticBoardSpec.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -33289,6 +33335,8 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 			uri
 		}
 		documentPaths
+		elementFamilies
+		effectiveElementFamilies
 		coordinatorPrompt
 		missingCapabilities
 		coordinatorCapabilities
@@ -33470,6 +33518,8 @@ query AgentBoardsProgrammatic {
 			uri
 		}
 		documentPaths
+		elementFamilies
+		effectiveElementFamilies
 		coordinatorPrompt
 		missingCapabilities
 		coordinatorCapabilities
@@ -37069,6 +37119,7 @@ query ExportBoard ($board: String!) {
 		sources
 		documentsRepo
 		documentPaths
+		elementFamilies
 		coordinatorPrompt
 		coordinatorCapabilities
 		settings {

@@ -392,6 +392,7 @@ type BoardSpec {
   Per-type path templates, keyed by SpecificationType. Omitted types use the defaults by scope.
   """
   documentPaths: Object
+  elementFamilies: Object
   coordinatorPrompt: String
   """
   Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
@@ -822,6 +823,14 @@ type AgentBoard {
   """
   effectiveDocumentPaths: Object
   """
+  Element id families as this board declared them over the defaults (prefix to family name); null when it uses the defaults alone.
+  """
+  elementFamilies: Object
+  """
+  The defaults with this board's entries over them: what the CLI parses documents against (gaps §2.A).
+  """
+  effectiveElementFamilies: Object
+  """
   Append-only board notices, newest last (lock transitions auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
   """
   events: [AgentBoardEvent]
@@ -853,6 +862,20 @@ type AgentBoard {
   Percent of a budget at which the board posts one alert and nothing stops (default 80).
   """
   softAlertPercent: Int
+  """
+  The board's average coordinator share per coordinator-caused transition, in
+  micros (board-mechanics §5.3): coordinatorSharesMicros / coordinatorTransitions,
+  0 before any. Added to every projected round, and named in a refusal.
+  """
+  coordinatorOverheadMicros: Long
+  """
+  Coordinator spend apportioned to tasks so far (D16), in micros. The same money as the seat's usage rows, which board spend already counts.
+  """
+  coordinatorSharesMicros: Long
+  """
+  Coordinator-caused transitions the apportioned spend was split over (D16).
+  """
+  coordinatorTransitions: Long
   """
   Rounds between one pair of roles before a task parks (default 3).
   """
@@ -938,9 +961,18 @@ type AgentTask {
   """
   budgetMicros: Long
   """
-  Coordinator spend apportioned to this task, frozen when computed. An estimate, not a measurement.
+  Coordinator spend apportioned to this task (D16): each coordinator usage delta
+  is split equally among the tasks the seat moved since the previous one, else
+  the board's open tasks, and frozen when computed. An estimate, not a
+  measurement. The task's spend in the budget is its usage rows plus this; the
+  board's spend counts the seat's rows and never these shares, so task spends do
+  not add up to the board's.
   """
   coordinatorEstimateMicros: Long
+  """
+  The elements of the task's documents: the union over its latest release per specification (gaps §2.A).
+  """
+  elements: [AgentTaskElement]
   """
   When the task was last reopened; null when never.
   """
@@ -1056,7 +1088,8 @@ type AgentTask {
   reflected without a rewrite. Null until the first report lands. Built from
   the hop snapshots, which are frozen when a hop ends: a hop reported after it
   closed reads lower here than in the budget, which reads the usage rows
-  (spentMicros on the board snapshot), until the snapshot is refreshed.
+  (spentMicros on the board snapshot), until the snapshot is refreshed. The
+  coordinator's share is not in it: see coordinatorEstimateMicros.
   """
   usage: HopUsage
   """
@@ -1250,6 +1283,10 @@ input BoardSpecInput {
   sources: [String!]
   documentsRepo: String
   documentPaths: Object
+  """
+  Element id families over the defaults; declared null restores the defaults, absent leaves them.
+  """
+  elementFamilies: Object
   coordinatorPrompt: String
   """
   Verbs the coordinator seat performs itself: PR_MERGE, CODE_PUSH. The tracker verbs are
@@ -2455,6 +2492,16 @@ input AgentDocumentPublishInput {
   """
   index: Object
   """
+  The element index of a prose document (gaps §2.A), as the exact JSON text the CLI parsed and
+  digested -- text, not an object, so the digest is over the bytes both sides see. Warnings, never
+  refusals, for what it says; refused for an index type, and when it does not match elementsDigest.
+  """
+  elements: String
+  """
+  sha256 (hex) of elements. Required with elements.
+  """
+  elementsDigest: String
+  """
   HEAD of the documents repository when the files were read. Required with a path.
   """
   commit: String
@@ -3007,6 +3054,10 @@ type DocumentRef {
   The findings index for REVIEW_FINDINGS and TEST_REPORT; absent otherwise.
   """
   findings: FindingsIndex
+  """
+  The element index of a prose document, as the CLI parsed it and the server checked it (gaps §2.A); absent when none was published.
+  """
+  elements: ElementIndex
 }
 
 """
@@ -3407,6 +3458,24 @@ type AgentResolvedInput {
   release: ID
   version: String
   lifecycle: ReleaseLifecycleEnum
+}
+
+"""
+An element of one of a task's documents, with the release and specification it came from.
+"""
+type AgentTaskElement {
+  id: String
+  family: String
+  title: String
+  parent: String
+  level: Int
+  traces: [ElementLink]
+  assumes: [String]
+  speculative: [String]
+  contentDigest: String
+  line: Int
+  release: ID
+  specification: String
 }
 
 """
@@ -5509,6 +5578,24 @@ type FindingsIndex {
   about: FindingsAbout
 }
 
+"""
+What a prose document says about its elements: requirements, functions, interfaces, tests and
+the like, each with an id, a title, a parent, typed links and a digest of its content. Problems are
+warnings on the index; nothing here refuses a publish.
+"""
+type ElementIndex {
+  """
+  The grammar the parser implemented; "1".
+  """
+  grammarVersion: String
+  elements: [Element]
+  warnings: [ElementWarning]
+  """
+  sha256 of the JSON the CLI sent, tying the index to one parse of the file.
+  """
+  digest: String
+}
+
 type ArtifactComparison {
   changelog: ArtifactChangelog
   comparedReleaseUuid: ID
@@ -5700,6 +5787,14 @@ type AgentTaskDependency {
   externalRef: String
   title: String
   status: AgentTaskStatus
+}
+
+"""
+A typed link. Verbs are kept as written.
+"""
+type ElementLink {
+  verb: String
+  target: String
 }
 
 """
@@ -6590,6 +6685,43 @@ type FindingsAbout {
   The release of that input the items refer to, so an answer is recognisable as one.
   """
   release: ID
+}
+
+type Element {
+  id: String
+  """
+  The family name the board maps the id's prefix to; null for an unknown family.
+  """
+  family: String
+  title: String
+  """
+  Explicit parent, else the enclosing element heading.
+  """
+  parent: String
+  level: Int
+  traces: [ElementLink]
+  assumes: [String]
+  """
+  Inputs cited below their floor.
+  """
+  speculative: [String]
+  """
+  sha256 of the element's content, line endings normalised: what a per-element diff compares.
+  """
+  contentDigest: String
+  """
+  1-based line of the heading or table row.
+  """
+  line: Int
+}
+
+"""
+DUPLICATE_ID, UNKNOWN_FAMILY, UNRESOLVED_PARENT, UNRESOLVED_TARGET or MALFORMED_ATTRIBUTE.
+"""
+type ElementWarning {
+  code: String
+  elementId: String
+  message: String
 }
 
 type ArtifactChangelog {
