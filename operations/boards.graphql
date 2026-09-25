@@ -352,3 +352,12 @@ query AgentBoardSnapshotProgrammatic($boardUuid: ID!) { agentBoardSnapshotProgra
 		budgetMicros
 	}
 } }
+
+# Where a new document of a type would go on a board, every placeholder filled by the server:
+# what rearm agent doc publish uses when it is not given a file.
+query AgentDocumentPath ($boardUuid: ID!, $specification: SpecificationType!, $task: ID, $component: ID) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		documentPath(specification: $specification, task: $task, component: $component)
+	}
+}
