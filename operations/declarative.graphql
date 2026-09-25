@@ -160,6 +160,7 @@ query ExportBoard($board: String!) {
     documentPaths
     elementFamilies
     checks { blocking mandatoryFields orphans coverage }
+    delivery { mode attest }
     coordinatorPrompt
     coordinatorCapabilities
     settings {

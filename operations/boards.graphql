@@ -25,6 +25,7 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
 	blockingPriority completionPriority humanQueueAgeMinutes
 	coordinatorStopRelease effectiveCoordinatorStopRelease
+	deliveryPolicy { mode attest } effectiveDeliveryPolicy { mode attest }
 	eventRetentionDays effectiveEventRetentionDays
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
@@ -52,6 +53,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
 	blockingPriority completionPriority humanQueueAgeMinutes
 	coordinatorStopRelease effectiveCoordinatorStopRelease
+	deliveryPolicy { mode attest } effectiveDeliveryPolicy { mode attest }
 	eventRetentionDays effectiveEventRetentionDays
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
@@ -226,6 +228,22 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
+# Attest a delivery unit (task 18c5c293): a linked PR merged where this ReARM cannot see it, or on a
+# board delivering without PRs a push or release; ABANDONED sends the task to the coordinator.
+mutation AgentTaskDeliveredProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $unit: String!, $commit: String, $outcome: AgentDeliveryOutcome, $note: String) {
+	agentTaskDeliveredProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, unit: $unit, commit: $commit, outcome: $outcome, note: $note) {
+	uuid org board externalRef title sourceUrl status role orderIndex
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
 mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
 	agentTaskEscalateHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
 	uuid org board externalRef title sourceUrl status role orderIndex
@@ -378,8 +396,10 @@ query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate registered head }
+	pullRequests { url state targetBranch mergedDate registered head
+		attestation { unit commit outcome by { ...ActorFields } at note } }
 	testedHeads { pr head }
+	deliveries { unit commit outcome by { ...ActorFields } at note }
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -401,8 +421,10 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgra
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate registered head }
+	pullRequests { url state targetBranch mergedDate registered head
+		attestation { unit commit outcome by { ...ActorFields } at note } }
 	testedHeads { pr head }
+	deliveries { unit commit outcome by { ...ActorFields } at note }
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped

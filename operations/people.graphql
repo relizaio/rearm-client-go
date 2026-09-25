@@ -67,6 +67,11 @@ mutation AgentTaskOperatorHold ($taskUuid: ID!, $hold: Boolean!, $reason: String
 	agentTaskOperatorHold(taskUuid: $taskUuid, hold: $hold, reason: $reason, role: $role) { ...PersonTaskFields }
 }
 
+# A person's attestation of a delivery unit (task 18c5c293). Org admin.
+mutation AgentTaskDelivered ($taskUuid: ID!, $unit: String!, $commit: String, $outcome: AgentDeliveryOutcome, $note: String) {
+	agentTaskDelivered(taskUuid: $taskUuid, unit: $unit, commit: $commit, outcome: $outcome, note: $note) { ...PersonTaskFields }
+}
+
 mutation AgentTaskRequireHumanReview ($taskUuid: ID!, $value: Boolean!) {
 	agentTaskRequireHumanReview(taskUuid: $taskUuid, value: $value) { ...PersonTaskFields }
 }

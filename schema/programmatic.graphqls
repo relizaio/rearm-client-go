@@ -384,6 +384,20 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   role: String
   note: String): AgentTask
   """
+  Attest that a delivery unit of a task landed, or never will (task 18c5c293): unit is a linked PR's
+  URL, or on a board delivering without PRs a branch or release; commit is the merged or pushed sha
+  (required for DELIVERED). The coordinator seat, or a session that worked this task in a role that
+  merges (PR_MERGE). A DELIVERING task then settles: completed once every unit is delivered, to the
+  coordinator when one is abandoned.
+  """
+  agentTaskDeliveredProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  unit: String!
+  commit: String
+  outcome: AgentDeliveryOutcome = DELIVERED
+  note: String): AgentTask
+  """
   Hand a COORDINATOR-level hold to the operator (task c0a2134c): the level becomes OPERATOR, the
   reason keeps what the hold said with yours after it, and the board ALERTs. For a judgement call
   -- two roles disagree, an item needs accepting. Refused on any other hold.
@@ -539,6 +553,15 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   note: String
   skipRequiredRoles: Boolean): AgentTask
   """
+  A person's attestation of a delivery unit, as agentTaskDeliveredProgrammatic (task 18c5c293). Org admin.
+  """
+  agentTaskDelivered(
+  taskUuid: ID!
+  unit: String!
+  commit: String
+  outcome: AgentDeliveryOutcome = DELIVERED
+  note: String): AgentTask
+  """
   Cancel a task from any state but COMPLETED. An agent working it finds it gone at its next call.
   """
   agentTaskCancel(
@@ -620,6 +643,10 @@ type BoardSpec {
   The element checks: which block the hand-over, mandatory fields per level, orphan families.
   """
   checks: CheckPolicy
+  """
+  How a task proves it was delivered (task 18c5c293); absent means PR_ROWS.
+  """
+  delivery: AgentDeliveryPolicy
   coordinatorPrompt: String
   """
   Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
@@ -1066,6 +1093,14 @@ type AgentBoard {
   """
   effectiveCheckPolicy: CheckPolicy
   """
+  How a task on this board proves it was delivered, as set; null is the default (task 18c5c293).
+  """
+  deliveryPolicy: AgentDeliveryPolicy
+  """
+  deliveryPolicy with its defaults resolved.
+  """
+  effectiveDeliveryPolicy: AgentDeliveryPolicy
+  """
   Append-only board notices, newest last (lock transitions auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
   """
   events: [AgentBoardEvent]
@@ -1297,6 +1332,10 @@ type AgentTask {
   (task 3b97ccfd): merge at these. Empty when no passing round names any.
   """
   testedHeads: [TestedHead]
+  """
+  Delivery attestations, oldest first; the newest per unit counts (task 18c5c293).
+  """
+  deliveries: [AgentTaskDelivery]
   """
   Model strength this task requires, overriding the role's when set.
   """
@@ -1623,6 +1662,10 @@ input BoardSpecInput {
   The element checks (elements.md §7); declared null restores the defaults, absent leaves them.
   """
   checks: CheckPolicyInput
+  """
+  How a task proves it was delivered; declared null restores the default, PR_ROWS.
+  """
+  delivery: AgentDeliveryPolicyInput
   coordinatorPrompt: String
   """
   Verbs the coordinator seat performs itself: PR_MERGE, CODE_PUSH. The tracker verbs are
@@ -2765,6 +2808,11 @@ input AgentRequiredInputInput {
   resolution: AgentInputResolution
 }
 
+enum AgentDeliveryOutcome {
+  DELIVERED
+  ABANDONED
+}
+
 enum AgentBoardEventKind {
   LOCKED
   UNLOCKED
@@ -3042,6 +3090,14 @@ type CheckPolicy {
   The board's coverage gates by name, each {select, require, description}: the check coverage.<name> (elements.md §7.5).
   """
   coverage: Object
+}
+
+type AgentDeliveryPolicy {
+  mode: AgentDeliveryMode
+  """
+  On NONE: wait for an attestation of a push or release instead of completing at the last pass.
+  """
+  attest: Boolean
 }
 
 """
@@ -4028,6 +4084,10 @@ type AgentTaskPullRequest {
   The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
   """
   head: String
+  """
+  The newest attestation for this PR, when one was recorded (task 18c5c293).
+  """
+  attestation: AgentTaskDelivery
 }
 
 """
@@ -4039,6 +4099,24 @@ type TestedHead {
   The commit sha tested, 7 to 40 hex characters.
   """
   head: String
+}
+
+"""
+An attestation that a delivery unit landed, or never will (task 18c5c293).
+"""
+type AgentTaskDelivery {
+  """
+  A linked PR's URL, or on a board delivering without PRs a branch or release reference.
+  """
+  unit: String
+  """
+  The merged or pushed sha.
+  """
+  commit: String
+  outcome: AgentDeliveryOutcome
+  by: AgentActor
+  at: DateTime
+  note: String
 }
 
 """
@@ -4422,6 +4500,11 @@ input CheckPolicyInput {
   Gate name to {select, require, description}; both expressions are CEL over e and scope, validated on save.
   """
   coverage: Object
+}
+
+input AgentDeliveryPolicyInput {
+  mode: AgentDeliveryMode
+  attest: Boolean
 }
 
 input BoardSettingsSpecInput {
@@ -5615,6 +5698,18 @@ type DependencySpec {
   isFollowVersion: Boolean
 }
 
+"""
+How a board's tasks prove delivery (task 18c5c293). PR_ROWS: the linked PRs' rows on this ReARM,
+merged, or an attestation per PR. ATTESTED: the linked PRs register elsewhere, so an attestation per
+PR (a merged row here counts too). NONE: no PRs; the task completes at its last pass, or with
+attest, once its delivery is attested.
+"""
+enum AgentDeliveryMode {
+  PR_ROWS
+  ATTESTED
+  NONE
+}
+
 type BoardRequiredInputSpec {
   kind: AgentInputKind
   specification: SpecificationType
@@ -6561,6 +6656,10 @@ enum AgentStatusTrigger {
   A linked PR closed without merging: to the coordinator.
   """
   PR_CLOSED
+  """
+  A delivery unit was attested abandoned: to the coordinator (task 18c5c293).
+  """
+  DELIVERY_ABANDONED
 }
 
 """

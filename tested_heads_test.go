@@ -10,7 +10,9 @@ import (
 // task's PRs carries the current head too, so a coordinator can compare them.
 func TestTheTaskReadCarriesTestedAndCurrentHeads(t *testing.T) {
 	show := normalised(AgentTaskProgrammatic_Operation)
-	for _, want := range []string{"testedHeads { pr head }", "registered head }", "tested { pr head }"} {
+	// "registered head" rather than "registered head }": task show's PR selection goes on to the
+	// attestation (task 18c5c293).
+	for _, want := range []string{"testedHeads { pr head }", "registered head ", "tested { pr head }"} {
 		if !strings.Contains(show, want) {
 			t.Errorf("task show lacks %q", want)
 		}
