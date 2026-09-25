@@ -171,6 +171,7 @@ query ExportBoard($board: String!) {
       completionPriority
       humanQueueAgeMinutes
       coordinatorStopRelease
+      eventRetentionDays
     }
     roles { ...BoardRoleSpecFields }
   }
