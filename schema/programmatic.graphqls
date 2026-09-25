@@ -128,6 +128,13 @@ roles: the roles this agent can take, each a role name on the board
   boardUuid: ID!
   status: AgentTaskStatus): [AgentTask]
   """
+  Agent-key auth: a named set of tasks in one read, in the order given (task cc14f4cb). At most 100;
+  an unknown uuid, or one of another organization, is absent. For a board's tasks by status, read
+  agentTasksProgrammatic instead: one request, not one per task.
+  """
+  agentTasksByUuidProgrammatic(
+  taskUuids: [ID!]!): [AgentTask]
+  """
   Agent-key auth: a board's role configuration in order.
   """
   agentTaskRoleConfigsProgrammatic(
@@ -164,6 +171,12 @@ roles: the roles this agent can take, each a role name on the board
   agentTasksOfBoard(
   boardUuid: ID!
   status: AgentTaskStatus): [AgentTask]
+  """
+  A person's read: a named set of tasks in one read, as agentTasksByUuidProgrammatic (task cc14f4cb).
+  A task of an organization the person cannot read is absent.
+  """
+  agentTasksByUuid(
+  taskUuids: [ID!]!): [AgentTask]
   """
   A person's read: a board's role configuration in order.
   """
