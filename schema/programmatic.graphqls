@@ -315,7 +315,8 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   producesComponent: ID
   level: Int
   requiredInputs: [AgentRequiredInputInput]
-  requiredStrength: Float): AgentTask
+  requiredStrength: Float
+  budgetMicros: Long): AgentTask
   agentTaskHoldProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: String!): AgentTask
   agentTaskReleaseHoldProgrammatic(taskUuid: ID!, sessionUuid: ID!): AgentTask
   """
@@ -1079,6 +1080,11 @@ type AgentTask {
   Who last set orderIndex, the coordinator or a person, and when.
   """
   orderSetBy: AgentActor
+  """
+  Who last set or cleared budgetMicros, and when.
+  """
+  budgetSetBy: AgentActor
+  budgetSetAt: DateTime
   orderSetAt: DateTime
   """
   Required roles a person completed the task without, having said why in the completing status change.
@@ -2474,6 +2480,11 @@ input AgentTaskRoleConfigInput {
   Operator-only. Replaces the role's per-model overrides; an empty list clears them.
   """
   modelStrengths: [RoleModelStrengthInput!]
+  """
+  Operator-only. The allowance for one hop of this role, in USD micros; left out, unchanged; sent
+  as null, removed. Refused when negative.
+  """
+  hopBudgetMicros: Long
 }
 
 input AgentTaskRegisterInput {
@@ -2499,6 +2510,8 @@ input AgentRequiredInputInput {
   minLifecycle: ReleaseLifecycleEnum!
   resolution: AgentInputResolution
 }
+
+scalar Long
 
 enum AgentBoardEventKind {
   LOCKED
@@ -3520,8 +3533,6 @@ type AgentCoordinatorSeat {
   agent: ID
   claimedAt: DateTime
 }
-
-scalar Long
 
 type DeclarativeProvenance {
   """
@@ -6447,6 +6458,10 @@ enum GuardedAction {
   Moving a release forward through its lifecycle, however the move was requested.
   """
   RELEASE_PROMOTION
+  """
+  Recording approvals on a release, from a person or an API key; the expression sees action.approvals.
+  """
+  RELEASE_APPROVAL
 }
 
 """

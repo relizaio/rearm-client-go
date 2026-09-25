@@ -5175,6 +5175,11 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	OrderIndex *int `json:"orderIndex"`
 	// Model strength this task requires, overriding the role's when set.
 	RequiredStrength *float64 `json:"requiredStrength"`
+	// What this task may spend, in USD micros; null means only the board's limit applies.
+	BudgetMicros *int64 `json:"budgetMicros"`
+	// Who last set or cleared budgetMicros, and when.
+	BudgetSetBy *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor `json:"budgetSetBy"`
+	BudgetSetAt *string                                                                                     `json:"budgetSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -5251,6 +5256,21 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) 
 // GetRequiredStrength returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetRequiredStrength() *float64 {
 	return v.RequiredStrength
+}
+
+// GetBudgetMicros returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetBudgetMicros() *int64 {
+	return v.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetBudgetSetBy() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor {
+	return v.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetBudgetSetAt() *string {
+	return v.BudgetSetAt
 }
 
 // GetDependsOn returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -5378,6 +5398,85 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskAs
 // GetPromptVersion returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor, error) {
+	var retval __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -19944,6 +20043,9 @@ type AgentTaskRoleConfigInput struct {
 	StrengthCategory *ModelRoleCategory `json:"strengthCategory,omitempty"`
 	// Operator-only. Replaces the role's per-model overrides; an empty list clears them.
 	ModelStrengths []*RoleModelStrengthInput `json:"modelStrengths,omitempty"`
+	// Operator-only. The allowance for one hop of this role, in USD micros; left out, unchanged; sent
+	// as null, removed. Refused when negative.
+	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
 }
 
 // GetName returns AgentTaskRoleConfigInput.Name, and is useful for accessing the field via an interface.
@@ -20006,6 +20108,9 @@ func (v *AgentTaskRoleConfigInput) GetStrengthCategory() *ModelRoleCategory {
 func (v *AgentTaskRoleConfigInput) GetModelStrengths() []*RoleModelStrengthInput {
 	return v.ModelStrengths
 }
+
+// GetHopBudgetMicros returns AgentTaskRoleConfigInput.HopBudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetHopBudgetMicros() *int64 { return v.HopBudgetMicros }
 
 // AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfig includes the requested fields of the GraphQL type AgentTaskRoleConfig.
 // The GraphQL type's documentation follows.
@@ -33245,6 +33350,7 @@ type __AgentTaskAuthorizeProgrammaticInput struct {
 	OrderIndex       *int     `json:"orderIndex"`
 	DependsOn        []string `json:"dependsOn"`
 	RequiredStrength *float64 `json:"requiredStrength,omitempty"`
+	BudgetMicros     *int64   `json:"budgetMicros,omitempty"`
 }
 
 // GetTaskUuid returns __AgentTaskAuthorizeProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -33266,6 +33372,9 @@ func (v *__AgentTaskAuthorizeProgrammaticInput) GetDependsOn() []string { return
 func (v *__AgentTaskAuthorizeProgrammaticInput) GetRequiredStrength() *float64 {
 	return v.RequiredStrength
 }
+
+// GetBudgetMicros returns __AgentTaskAuthorizeProgrammaticInput.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *__AgentTaskAuthorizeProgrammaticInput) GetBudgetMicros() *int64 { return v.BudgetMicros }
 
 // __AgentTaskBindExternalRefProgrammaticInput is used internally by genqlient
 type __AgentTaskBindExternalRefProgrammaticInput struct {
@@ -35242,8 +35351,8 @@ func AgentTaskAssignProgrammatic(
 
 // The mutation executed by AgentTaskAuthorizeProgrammatic.
 const AgentTaskAuthorizeProgrammatic_Operation = `
-mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!], $requiredStrength: Float) {
-	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength) {
+mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!], $requiredStrength: Float, $budgetMicros: Long) {
+	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength, budgetMicros: $budgetMicros) {
 		uuid
 		org
 		board
@@ -35254,6 +35363,11 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 		role
 		orderIndex
 		requiredStrength
+		budgetMicros
+		budgetSetBy {
+			... ActorFields
+		}
+		budgetSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -35355,6 +35469,7 @@ func AgentTaskAuthorizeProgrammatic(
 	orderIndex *int,
 	dependsOn []string,
 	requiredStrength *float64,
+	budgetMicros *int64,
 ) (data_ *AgentTaskAuthorizeProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskAuthorizeProgrammatic",
@@ -35366,6 +35481,7 @@ func AgentTaskAuthorizeProgrammatic(
 			OrderIndex:       orderIndex,
 			DependsOn:        dependsOn,
 			RequiredStrength: requiredStrength,
+			BudgetMicros:     budgetMicros,
 		},
 	}
 

@@ -182,9 +182,12 @@ mutation AgentTaskAuthorizeProgrammatic (
 	# Raise only: left out, the task's strength requirement stands; null is refused on this
 	# coordinator path. So a typed caller passing nil must omit it rather than send null.
 	# @genqlient(omitempty: true)
-	$requiredStrength: Float) {
-	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength) {
+	$requiredStrength: Float,
+	# @genqlient(omitempty: true)
+	$budgetMicros: Long) {
+	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength, budgetMicros: $budgetMicros) {
 	uuid org board externalRef title sourceUrl status role orderIndex requiredStrength
+	budgetMicros budgetSetBy { ...ActorFields } budgetSetAt
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
