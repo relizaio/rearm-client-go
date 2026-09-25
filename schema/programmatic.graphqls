@@ -425,12 +425,15 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   outcome: AgentSignOffOutcome!
   note: String): AgentTask
   """
-  Operator manual hold (OPERATOR level; the coordinator cannot lift it) or release. HUMAN_GATE holds resolve via agentTaskHumanReview, not here.
+  Operator manual hold (OPERATOR level; the coordinator cannot lift it) or release. HUMAN_GATE holds resolve via
+  agentTaskHumanReview, not here. On a release, role optionally names an active role to route to instead of the one
+  routing would pick; a release of a no-progress or cycle-cap stop routes past that stop once (task 4c566d0d).
   """
   agentTaskOperatorHold(
   taskUuid: ID!
   hold: Boolean!
-  reason: String): AgentTask
+  reason: String
+  role: String): AgentTask
   """
   Operator set/clear of the per-task add-only human-review flag.
   """

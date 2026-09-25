@@ -38,3 +38,13 @@ func TestPeopleTaskResultsSelectTheOutcome(t *testing.T) {
 		}
 	}
 }
+
+// A person's hold release names the role to route to, as the coordinator's does (task 4c566d0d);
+// the operator hold moved to this lane, and the role must come with it.
+func TestPersonHoldReleaseSendsTheRole(t *testing.T) {
+	for _, want := range []string{"$role: String", "role: $role"} {
+		if !strings.Contains(AgentTaskOperatorHold_Operation, want) {
+			t.Errorf("person hold operation lacks %q", want)
+		}
+	}
+}

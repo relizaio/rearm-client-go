@@ -63,8 +63,8 @@ mutation AgentTaskHumanSignOff ($taskUuid: ID!, $outcome: AgentSignOffOutcome!, 
 	agentTaskHumanSignOff(taskUuid: $taskUuid, outcome: $outcome, note: $note) { ...PersonTaskFields }
 }
 
-mutation AgentTaskOperatorHold ($taskUuid: ID!, $hold: Boolean!, $reason: String) {
-	agentTaskOperatorHold(taskUuid: $taskUuid, hold: $hold, reason: $reason) { ...PersonTaskFields }
+mutation AgentTaskOperatorHold ($taskUuid: ID!, $hold: Boolean!, $reason: String, $role: String) {
+	agentTaskOperatorHold(taskUuid: $taskUuid, hold: $hold, reason: $reason, role: $role) { ...PersonTaskFields }
 }
 
 mutation AgentTaskRequireHumanReview ($taskUuid: ID!, $value: Boolean!) {

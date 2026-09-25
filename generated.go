@@ -14442,7 +14442,9 @@ func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) __premarshalJSON()
 
 // AgentTaskOperatorHoldResponse is returned by AgentTaskOperatorHold on success.
 type AgentTaskOperatorHoldResponse struct {
-	// Operator manual hold (OPERATOR level; the coordinator cannot lift it) or release. HUMAN_GATE holds resolve via agentTaskHumanReview, not here.
+	// Operator manual hold (OPERATOR level; the coordinator cannot lift it) or release. HUMAN_GATE holds resolve via
+	// agentTaskHumanReview, not here. On a release, role optionally names an active role to route to instead of the one
+	// routing would pick; a release of a no-progress or cycle-cap stop routes past that stop once (task 4c566d0d).
 	AgentTaskOperatorHold *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask `json:"agentTaskOperatorHold"`
 }
 
@@ -37591,6 +37593,7 @@ type __AgentTaskOperatorHoldInput struct {
 	TaskUuid string  `json:"taskUuid"`
 	Hold     bool    `json:"hold"`
 	Reason   *string `json:"reason"`
+	Role     *string `json:"role"`
 }
 
 // GetTaskUuid returns __AgentTaskOperatorHoldInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -37601,6 +37604,9 @@ func (v *__AgentTaskOperatorHoldInput) GetHold() bool { return v.Hold }
 
 // GetReason returns __AgentTaskOperatorHoldInput.Reason, and is useful for accessing the field via an interface.
 func (v *__AgentTaskOperatorHoldInput) GetReason() *string { return v.Reason }
+
+// GetRole returns __AgentTaskOperatorHoldInput.Role, and is useful for accessing the field via an interface.
+func (v *__AgentTaskOperatorHoldInput) GetRole() *string { return v.Role }
 
 // __AgentTaskOrderInput is used internally by genqlient
 type __AgentTaskOrderInput struct {
@@ -41537,8 +41543,8 @@ func AgentTaskNextProgrammatic(
 
 // The mutation executed by AgentTaskOperatorHold.
 const AgentTaskOperatorHold_Operation = `
-mutation AgentTaskOperatorHold ($taskUuid: ID!, $hold: Boolean!, $reason: String) {
-	agentTaskOperatorHold(taskUuid: $taskUuid, hold: $hold, reason: $reason) {
+mutation AgentTaskOperatorHold ($taskUuid: ID!, $hold: Boolean!, $reason: String, $role: String) {
+	agentTaskOperatorHold(taskUuid: $taskUuid, hold: $hold, reason: $reason, role: $role) {
 		... PersonTaskFields
 	}
 }
@@ -41625,6 +41631,7 @@ func AgentTaskOperatorHold(
 	taskUuid string,
 	hold bool,
 	reason *string,
+	role *string,
 ) (data_ *AgentTaskOperatorHoldResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskOperatorHold",
@@ -41633,6 +41640,7 @@ func AgentTaskOperatorHold(
 			TaskUuid: taskUuid,
 			Hold:     hold,
 			Reason:   reason,
+			Role:     role,
 		},
 	}
 
