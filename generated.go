@@ -9110,6 +9110,220 @@ func (v *AgentTaskCompleteProgrammaticResponse) GetAgentTaskCompleteProgrammatic
 	return v.AgentTaskCompleteProgrammatic
 }
 
+// AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask struct {
+	Uuid *string `json:"uuid"`
+	// What depends on an element, transitively, nearest first (elements.md §8): over the task's
+	// documents, its bound inputs and the latest release of each document series under the board's
+	// target. depth defaults to 8; truncated says the bound was hit.
+	DependentsOf *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents `json:"dependentsOf"`
+	// An element across the task's rounds of the document that defines it, oldest first: which rounds changed it.
+	ElementHistory []*AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion `json:"elementHistory"`
+}
+
+// GetUuid returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask) GetUuid() *string { return v.Uuid }
+
+// GetDependentsOf returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask.DependentsOf, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask) GetDependentsOf() *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents {
+	return v.DependentsOf
+}
+
+// GetElementHistory returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask.ElementHistory, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask) GetElementHistory() []*AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion {
+	return v.ElementHistory
+}
+
+// AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents includes the requested fields of the GraphQL type ElementDependents.
+// The GraphQL type's documentation follows.
+//
+// The closure of what depends on an element.
+type AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents struct {
+	Element *string `json:"element"`
+	// False when no release in scope defines the element.
+	Found *bool `json:"found"`
+	// The size of the closure.
+	Count *int `json:"count"`
+	// Whether the depth bound stopped the walk.
+	Truncated  *bool                                                                                                                `json:"truncated"`
+	Dependents []*AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent `json:"dependents"`
+}
+
+// GetElement returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents.Element, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents) GetElement() *string {
+	return v.Element
+}
+
+// GetFound returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents.Found, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents) GetFound() *bool {
+	return v.Found
+}
+
+// GetCount returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents.Count, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents) GetCount() *int {
+	return v.Count
+}
+
+// GetTruncated returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents.Truncated, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents) GetTruncated() *bool {
+	return v.Truncated
+}
+
+// GetDependents returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents.Dependents, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependents) GetDependents() []*AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent {
+	return v.Dependents
+}
+
+// AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent includes the requested fields of the GraphQL type ElementDependent.
+// The GraphQL type's documentation follows.
+//
+// One element of the closure, with the edges that pulled it in.
+type AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent struct {
+	// 1 for a direct dependent.
+	Distance *int                                                                                                                                      `json:"distance"`
+	Via      []*AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge        `json:"via"`
+	Element  *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement `json:"element"`
+}
+
+// GetDistance returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent.Distance, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent) GetDistance() *int {
+	return v.Distance
+}
+
+// GetVia returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent.Via, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent) GetVia() []*AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge {
+	return v.Via
+}
+
+// GetElement returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent.Element, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependent) GetElement() *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement {
+	return v.Element
+}
+
+// AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement includes the requested fields of the GraphQL type AgentTaskElement.
+// The GraphQL type's documentation follows.
+//
+// An element of one of a task's documents, with the release and specification it came from.
+type AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement struct {
+	Id            *string `json:"id"`
+	Family        *string `json:"family"`
+	Title         *string `json:"title"`
+	Release       *string `json:"release"`
+	Specification *string `json:"specification"`
+	Line          *int    `json:"line"`
+}
+
+// GetId returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement.Id, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement) GetId() *string {
+	return v.Id
+}
+
+// GetFamily returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement.Family, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement) GetFamily() *string {
+	return v.Family
+}
+
+// GetTitle returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement) GetTitle() *string {
+	return v.Title
+}
+
+// GetRelease returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement) GetRelease() *string {
+	return v.Release
+}
+
+// GetSpecification returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement) GetSpecification() *string {
+	return v.Specification
+}
+
+// GetLine returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement.Line, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentElementAgentTaskElement) GetLine() *int {
+	return v.Line
+}
+
+// AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge includes the requested fields of the GraphQL type ElementEdge.
+// The GraphQL type's documentation follows.
+//
+// An edge from a dependent to what it depends on.
+type AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge struct {
+	From *string `json:"from"`
+	To   *string `json:"to"`
+	// parent, assumes, or the trace verb as written.
+	Kind *string `json:"kind"`
+}
+
+// GetFrom returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge.From, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge) GetFrom() *string {
+	return v.From
+}
+
+// GetTo returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge.To, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge) GetTo() *string {
+	return v.To
+}
+
+// GetKind returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskDependentsOfElementDependentsDependentsElementDependentViaElementEdge) GetKind() *string {
+	return v.Kind
+}
+
+// AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion includes the requested fields of the GraphQL type ElementVersion.
+// The GraphQL type's documentation follows.
+//
+// An element in one round of its document.
+type AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion struct {
+	Release       *string `json:"release"`
+	Round         *int    `json:"round"`
+	Specification *string `json:"specification"`
+	ContentDigest *string `json:"contentDigest"`
+	Line          *int    `json:"line"`
+	// Whether the content digest differs from the round before; false on the first.
+	Changed *bool `json:"changed"`
+}
+
+// GetRelease returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion) GetRelease() *string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion) GetRound() *int {
+	return v.Round
+}
+
+// GetSpecification returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion) GetSpecification() *string {
+	return v.Specification
+}
+
+// GetContentDigest returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion.ContentDigest, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion) GetContentDigest() *string {
+	return v.ContentDigest
+}
+
+// GetLine returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion.Line, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion) GetLine() *int {
+	return v.Line
+}
+
+// GetChanged returns AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion.Changed, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTaskElementHistoryElementVersion) GetChanged() *bool {
+	return v.Changed
+}
+
+// AgentTaskElementProgrammaticResponse is returned by AgentTaskElementProgrammatic on success.
+type AgentTaskElementProgrammaticResponse struct {
+	// Agent-key auth: read one task.
+	AgentTaskProgrammatic *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask `json:"agentTaskProgrammatic"`
+}
+
+// GetAgentTaskProgrammatic returns AgentTaskElementProgrammaticResponse.AgentTaskProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentTaskElementProgrammaticResponse) GetAgentTaskProgrammatic() *AgentTaskElementProgrammaticAgentTaskProgrammaticAgentTask {
+	return v.AgentTaskProgrammatic
+}
+
 // MANUAL: coordinator/operator parked the task. HUMAN_GATE: a gated role signed off; only a human
 // review verdict (not a plain release) resolves it. QUESTION: the board could not route a question
 // and the coordinator escalated -- releasing THAT hold with words records them as the answer to the
@@ -13521,6 +13735,9 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocument
 	Path *string `json:"path"`
 	Line *int    `json:"line"`
 	Ref  *string `json:"ref"`
+	// The id of the element the finding is about (elements.md §8). With it, path and line are filled
+	// in from the index when the author left them out; the rework point is about.release + element.
+	Element *string `json:"element"`
 }
 
 // GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Path, and is useful for accessing the field via an interface.
@@ -13536,6 +13753,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocu
 // GetRef returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Ref, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetRef() *string {
 	return v.Ref
+}
+
+// GetElement returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Element, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetElement() *string {
+	return v.Element
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -13720,6 +13942,9 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocat
 	Path *string `json:"path"`
 	Line *int    `json:"line"`
 	Ref  *string `json:"ref"`
+	// The id of the element the finding is about (elements.md §8). With it, path and line are filled
+	// in from the index when the author left them out; the rework point is about.release + element.
+	Element *string `json:"element"`
 }
 
 // GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation.Path, and is useful for accessing the field via an interface.
@@ -13735,6 +13960,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingL
 // GetRef returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation.Ref, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation) GetRef() *string {
 	return v.Ref
+}
+
+// GetElement returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation.Element, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenFindingsFindingLocation) GetElement() *string {
+	return v.Element
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding includes the requested fields of the GraphQL type Finding.
@@ -13799,6 +14029,9 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLoca
 	Path *string `json:"path"`
 	Line *int    `json:"line"`
 	Ref  *string `json:"ref"`
+	// The id of the element the finding is about (elements.md §8). With it, path and line are filled
+	// in from the index when the author left them out; the rework point is about.release + element.
+	Element *string `json:"element"`
 }
 
 // GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation.Path, and is useful for accessing the field via an interface.
@@ -13814,6 +14047,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding
 // GetRef returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation.Ref, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation) GetRef() *string {
 	return v.Ref
+}
+
+// GetElement returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation.Element, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFindingLocation) GetElement() *string {
+	return v.Element
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -32963,6 +33201,22 @@ func (v *__AgentTaskCompleteProgrammaticInput) GetSessionUuid() string { return 
 // GetNote returns __AgentTaskCompleteProgrammaticInput.Note, and is useful for accessing the field via an interface.
 func (v *__AgentTaskCompleteProgrammaticInput) GetNote() *string { return v.Note }
 
+// __AgentTaskElementProgrammaticInput is used internally by genqlient
+type __AgentTaskElementProgrammaticInput struct {
+	TaskUuid string `json:"taskUuid"`
+	Element  string `json:"element"`
+	Depth    *int   `json:"depth"`
+}
+
+// GetTaskUuid returns __AgentTaskElementProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskElementProgrammaticInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetElement returns __AgentTaskElementProgrammaticInput.Element, and is useful for accessing the field via an interface.
+func (v *__AgentTaskElementProgrammaticInput) GetElement() string { return v.Element }
+
+// GetDepth returns __AgentTaskElementProgrammaticInput.Depth, and is useful for accessing the field via an interface.
+func (v *__AgentTaskElementProgrammaticInput) GetDepth() *int { return v.Depth }
+
 // __AgentTaskHoldProgrammaticInput is used internally by genqlient
 type __AgentTaskHoldProgrammaticInput struct {
 	TaskUuid    string `json:"taskUuid"`
@@ -35455,6 +35709,76 @@ func AgentTaskCompleteProgrammatic(
 	return data_, err_
 }
 
+// The query executed by AgentTaskElementProgrammatic.
+const AgentTaskElementProgrammatic_Operation = `
+query AgentTaskElementProgrammatic ($taskUuid: ID!, $element: String!, $depth: Int) {
+	agentTaskProgrammatic(taskUuid: $taskUuid) {
+		uuid
+		dependentsOf(element: $element, depth: $depth) {
+			element
+			found
+			count
+			truncated
+			dependents {
+				distance
+				via {
+					from
+					to
+					kind
+				}
+				element {
+					id
+					family
+					title
+					release
+					specification
+					line
+				}
+			}
+		}
+		elementHistory(element: $element) {
+			release
+			round
+			specification
+			contentDigest
+			line
+			changed
+		}
+	}
+}
+`
+
+// The rework point of an element (elements.md §8): what depends on it across the board, and which
+// of the task's rounds changed it.
+func AgentTaskElementProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+	element string,
+	depth *int,
+) (data_ *AgentTaskElementProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskElementProgrammatic",
+		Query:  AgentTaskElementProgrammatic_Operation,
+		Variables: &__AgentTaskElementProgrammaticInput{
+			TaskUuid: taskUuid,
+			Element:  element,
+			Depth:    depth,
+		},
+	}
+
+	data_ = &AgentTaskElementProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by AgentTaskHoldProgrammatic.
 const AgentTaskHoldProgrammatic_Operation = `
 mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
@@ -36138,6 +36462,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 							path
 							line
 							ref
+							element
 						}
 						resolvedBy
 						resolution
@@ -36154,6 +36479,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 				path
 				line
 				ref
+				element
 			}
 			resolvedBy
 			resolution
@@ -36167,6 +36493,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 				path
 				line
 				ref
+				element
 			}
 			resolvedBy
 			resolution
