@@ -18989,11 +18989,13 @@ var AllAgentTaskReturnReason = []AgentTaskReturnReason{
 }
 
 type AgentTaskRoleConfigInput struct {
-	Name                 string            `json:"name"`
-	Prompt               *string           `json:"prompt"`
-	OrderIndex           *int              `json:"orderIndex"`
-	WipLimit             *int              `json:"wipLimit"`
-	RequireDistinctAgent *bool             `json:"requireDistinctAgent"`
+	Name                 string  `json:"name"`
+	Prompt               *string `json:"prompt"`
+	OrderIndex           *int    `json:"orderIndex"`
+	WipLimit             *int    `json:"wipLimit"`
+	RequireDistinctAgent *bool   `json:"requireDistinctAgent"`
+	// Operator-only; rejected on the coordinator-seat path.
+	BlindReview          *bool             `json:"blindReview"`
 	Active               *bool             `json:"active"`
 	RequiredCapabilities []AgentCapability `json:"requiredCapabilities"`
 	// Operator-only; rejected on the coordinator-seat path.
@@ -19031,6 +19033,9 @@ func (v *AgentTaskRoleConfigInput) GetWipLimit() *int { return v.WipLimit }
 
 // GetRequireDistinctAgent returns AgentTaskRoleConfigInput.RequireDistinctAgent, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigInput) GetRequireDistinctAgent() *bool { return v.RequireDistinctAgent }
+
+// GetBlindReview returns AgentTaskRoleConfigInput.BlindReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetBlindReview() *bool { return v.BlindReview }
 
 // GetActive returns AgentTaskRoleConfigInput.Active, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigInput) GetActive() *bool { return v.Active }
@@ -19215,6 +19220,8 @@ type AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRo
 	ModelStrengths []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigModelStrengthsRoleModelStrength `json:"modelStrengths"`
 	// Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported. Null sets no allowance.
 	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
+	// A session assigned in this role reads its task without earlier hops' note, session, agent and return description; documents are untouched.
+	BlindReview *bool `json:"blindReview"`
 	// What every task in this role must be able to read before it starts.
 	RequiredInputs []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput `json:"requiredInputs"`
 	// What a hop in this role must leave behind: the mirror of requiredInputs.
@@ -19311,6 +19318,11 @@ func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTa
 // GetHopBudgetMicros returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.HopBudgetMicros, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetHopBudgetMicros() *int64 {
 	return v.HopBudgetMicros
+}
+
+// GetBlindReview returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.BlindReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetBlindReview() *bool {
+	return v.BlindReview
 }
 
 // GetRequiredInputs returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.RequiredInputs, and is useful for accessing the field via an interface.
@@ -24573,6 +24585,7 @@ type BoardRoleSpecFields struct {
 	ProducesOutputs      []*BoardRoleSpecFieldsProducesOutputsBoardProducedOutputSpec `json:"producesOutputs"`
 	// Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported.
 	HopBudgetMicros *int64                                        `json:"hopBudgetMicros"`
+	BlindReview     *bool                                         `json:"blindReview"`
 	Strength        *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
 
@@ -24618,6 +24631,9 @@ func (v *BoardRoleSpecFields) GetProducesOutputs() []*BoardRoleSpecFieldsProduce
 
 // GetHopBudgetMicros returns BoardRoleSpecFields.HopBudgetMicros, and is useful for accessing the field via an interface.
 func (v *BoardRoleSpecFields) GetHopBudgetMicros() *int64 { return v.HopBudgetMicros }
+
+// GetBlindReview returns BoardRoleSpecFields.BlindReview, and is useful for accessing the field via an interface.
+func (v *BoardRoleSpecFields) GetBlindReview() *bool { return v.BlindReview }
 
 // GetStrength returns BoardRoleSpecFields.Strength, and is useful for accessing the field via an interface.
 func (v *BoardRoleSpecFields) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
@@ -25937,6 +25953,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetHopBu
 	return v.BoardRoleSpecFields.HopBudgetMicros
 }
 
+// GetBlindReview returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.BlindReview, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetBlindReview() *bool {
+	return v.BoardRoleSpecFields.BlindReview
+}
+
 // GetStrength returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.Strength, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
 	return v.BoardRoleSpecFields.Strength
@@ -25994,6 +26015,8 @@ type __premarshalExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec s
 
 	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
 
+	BlindReview *bool `json:"blindReview"`
+
 	Strength *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
 
@@ -26021,6 +26044,7 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) __premar
 	retval.RequiredInputs = v.BoardRoleSpecFields.RequiredInputs
 	retval.ProducesOutputs = v.BoardRoleSpecFields.ProducesOutputs
 	retval.HopBudgetMicros = v.BoardRoleSpecFields.HopBudgetMicros
+	retval.BlindReview = v.BoardRoleSpecFields.BlindReview
 	retval.Strength = v.BoardRoleSpecFields.Strength
 	return &retval, nil
 }
@@ -26634,6 +26658,11 @@ func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresets
 	return v.BoardRoleSpecFields.HopBudgetMicros
 }
 
+// GetBlindReview returns ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec.BlindReview, and is useful for accessing the field via an interface.
+func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec) GetBlindReview() *bool {
+	return v.BoardRoleSpecFields.BlindReview
+}
+
 // GetStrength returns ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec.Strength, and is useful for accessing the field via an interface.
 func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
 	return v.BoardRoleSpecFields.Strength
@@ -26691,6 +26720,8 @@ type __premarshalExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpe
 
 	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
 
+	BlindReview *bool `json:"blindReview"`
+
 	Strength *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
 
@@ -26718,6 +26749,7 @@ func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresets
 	retval.RequiredInputs = v.BoardRoleSpecFields.RequiredInputs
 	retval.ProducesOutputs = v.BoardRoleSpecFields.ProducesOutputs
 	retval.HopBudgetMicros = v.BoardRoleSpecFields.HopBudgetMicros
+	retval.BlindReview = v.BoardRoleSpecFields.BlindReview
 	retval.Strength = v.BoardRoleSpecFields.Strength
 	return &retval, nil
 }
@@ -35881,6 +35913,7 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) {
 			strength
 		}
 		hopBudgetMicros
+		blindReview
 		requiredInputs {
 			kind
 			specification
@@ -37109,6 +37142,7 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
 		required
 	}
 	hopBudgetMicros
+	blindReview
 	strength {
 		requiredStrength
 		strengthHeadroom
@@ -37321,6 +37355,7 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
 		required
 	}
 	hopBudgetMicros
+	blindReview
 	strength {
 		requiredStrength
 		strengthHeadroom

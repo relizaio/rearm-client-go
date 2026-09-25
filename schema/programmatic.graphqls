@@ -1138,6 +1138,10 @@ type AgentTaskRoleConfig {
   Assigned agent must differ from the last sign-off's agent (separation of duties).
   """
   requireDistinctAgent: Boolean
+  """
+  A session assigned in this role reads its task without earlier hops' note, session, agent and return description; documents are untouched.
+  """
+  blindReview: Boolean
   active: Boolean
   """
   Capabilities an assignee of this role must hold (declared, unverified in v1).
@@ -2318,6 +2322,10 @@ input AgentTaskRoleConfigInput {
   orderIndex: Int
   wipLimit: Int
   requireDistinctAgent: Boolean
+  """
+  Operator-only; rejected on the coordinator-seat path.
+  """
+  blindReview: Boolean
   active: Boolean
   requiredCapabilities: [AgentCapability!]
   """
@@ -2565,6 +2573,7 @@ type BoardRoleSpec {
   orderIndex: Int
   wipLimit: Int
   requireDistinctAgent: Boolean
+  blindReview: Boolean
   active: Boolean
   kind: AgentRoleKind
   necessity: AgentRoleNecessity
@@ -3805,6 +3814,10 @@ input BoardRoleSpecInput {
   orderIndex: Int
   wipLimit: Int
   requireDistinctAgent: Boolean
+  """
+  Operator-only. The role reads its task without earlier hops' notes, sessions and agents (task 0192a587).
+  """
+  blindReview: Boolean
   """
   Absent: true -- declaring a role is what reactivates it.
   """

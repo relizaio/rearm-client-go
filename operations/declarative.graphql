@@ -135,6 +135,7 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
   requiredInputs { kind specification scope component minLifecycle resolution }
   producesOutputs { specification scope required }
   hopBudgetMicros
+  blindReview
   strength {
     requiredStrength
     strengthHeadroom
