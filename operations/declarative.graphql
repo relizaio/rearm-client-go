@@ -158,6 +158,7 @@ query ExportBoard($board: String!) {
     documentsRepo
     documentPaths
     elementFamilies
+    checks { blocking mandatoryFields orphans }
     coordinatorPrompt
     coordinatorCapabilities
     settings {

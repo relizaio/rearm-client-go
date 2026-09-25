@@ -1,0 +1,29 @@
+# Element checks (elements.md §7): the report the board cut for a document, and a re-run.
+# `rearm agent doc publish` reads the report after an element-bearing publish; `rearm agent doc
+# check` re-runs it. Both come back as the report's release, whose round says which report it is.
+
+fragment CheckReportFields on CheckReport {
+	catalogueVersion grammarVersion digest
+	scope { task checked releases { release specification elementsDigest lifecycle } }
+	results { check result blocking reason offences { elementId release message } }
+}
+
+query AgentCheckReportProgrammatic ($releaseUuid: ID!) {
+	agentCheckReportProgrammatic(releaseUuid: $releaseUuid) {
+		uuid lifecycle document { round checks { ...CheckReportFields } }
+	}
+}
+
+mutation AgentCheckRunProgrammatic ($sessionUuid: ID!, $releaseUuid: ID!) {
+	agentCheckRunProgrammatic(sessionUuid: $sessionUuid, releaseUuid: $releaseUuid) {
+		uuid lifecycle document { round checks { ...CheckReportFields } }
+	}
+}
+
+# What `doc check --task` runs over: the task's documents that carry an element index.
+query AgentTaskCheckTargetsProgrammatic ($taskUuid: ID!) {
+	agentTaskProgrammatic(taskUuid: $taskUuid) {
+		uuid
+		documents { uuid lifecycle document { specification round task elements { digest } } }
+	}
+}

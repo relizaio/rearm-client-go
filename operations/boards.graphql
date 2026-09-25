@@ -15,6 +15,7 @@ fragment HopUsageFields on HopUsage { derivedCostMicros costComplete allowanceMi
 query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths elementFamilies effectiveElementFamilies
+	checkPolicy { blocking mandatoryFields orphans } effectiveCheckPolicy { blocking mandatoryFields orphans }
 	coordinatorPrompt missingCapabilities coordinatorCapabilities
 	events { kind message actor { ...ActorFields } eventAt }
 	lock { level reason lockedBy { ...ActorFields } lockedAt }
@@ -30,6 +31,7 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUuid: $boardUuid) {
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths elementFamilies effectiveElementFamilies
+	checkPolicy { blocking mandatoryFields orphans } effectiveCheckPolicy { blocking mandatoryFields orphans }
 	coordinatorPrompt missingCapabilities coordinatorCapabilities
 	events { kind message actor { ...ActorFields } eventAt }
 	lock { level reason lockedBy { ...ActorFields } lockedAt }
