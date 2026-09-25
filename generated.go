@@ -1263,6 +1263,170 @@ var AllAgentBoardEventKind = []AgentBoardEventKind{
 	AgentBoardEventKindInfo,
 }
 
+// AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage includes the requested fields of the GraphQL type AgentBoardEventPage.
+// The GraphQL type's documentation follows.
+//
+// A page of a board's event log, oldest first (task 1c5442d2).
+type AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage struct {
+	Events []*AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent `json:"events"`
+	// Pass this as the next page's after: the last seq returned, or the after asked for when the page is empty.
+	NextAfter *int64 `json:"nextAfter"`
+	// True when more events follow this page.
+	HasMore *bool `json:"hasMore"`
+}
+
+// GetEvents returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage.Events, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage) GetEvents() []*AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent {
+	return v.Events
+}
+
+// GetNextAfter returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage.NextAfter, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage) GetNextAfter() *int64 {
+	return v.NextAfter
+}
+
+// GetHasMore returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage.HasMore, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage) GetHasMore() *bool {
+	return v.HasMore
+}
+
+// AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent includes the requested fields of the GraphQL type AgentBoardLoggedEvent.
+// The GraphQL type's documentation follows.
+//
+// An event as a board's event log holds it: the event with its cursor (task 1c5442d2).
+type AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent struct {
+	// The cursor: strictly increasing in the order events were written.
+	Seq     *int64                                                                                                                 `json:"seq"`
+	Uuid    *string                                                                                                                `json:"uuid"`
+	Kind    *AgentBoardEventKind                                                                                                   `json:"kind"`
+	Message *string                                                                                                                `json:"message"`
+	Actor   *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor `json:"actor"`
+	EventAt *string                                                                                                                `json:"eventAt"`
+}
+
+// GetSeq returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent.Seq, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent) GetSeq() *int64 {
+	return v.Seq
+}
+
+// GetUuid returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKind returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent.Kind, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent) GetKind() *AgentBoardEventKind {
+	return v.Kind
+}
+
+// GetMessage returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent.Message, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent) GetMessage() *string {
+	return v.Message
+}
+
+// GetActor returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent.Actor, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent) GetActor() *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor {
+	return v.Actor
+}
+
+// GetEventAt returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent.EventAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent) GetEventAt() *string {
+	return v.EventAt
+}
+
+// AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor) __premarshalJSON() (*__premarshalAgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor, error) {
+	var retval __premarshalAgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentBoardEventsProgrammaticResponse is returned by AgentBoardEventsProgrammatic on success.
+type AgentBoardEventsProgrammaticResponse struct {
+	// Agent-key auth: a board's events since a point, oldest first (task 1c5442d2). The board's events
+	// field holds only the newest 50; this is the whole log. after is exclusive (a seq), since is
+	// inclusive (an eventAt); both may be given. limit defaults to 200 and is capped at 1000. Follow the
+	// feed by passing the page's nextAfter as the next after; never count the board's events list.
+	AgentBoardEventsProgrammatic *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage `json:"agentBoardEventsProgrammatic"`
+}
+
+// GetAgentBoardEventsProgrammatic returns AgentBoardEventsProgrammaticResponse.AgentBoardEventsProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticResponse) GetAgentBoardEventsProgrammatic() *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage {
+	return v.AgentBoardEventsProgrammatic
+}
+
 // Locks stop NEW assignments only; the coordinator cannot lift or override an OPERATOR lock.
 type AgentBoardLockLevel string
 
@@ -38359,6 +38523,26 @@ func (v *__AgentBoardCoordinatorLockProgrammaticInput) GetLock() bool { return v
 // GetReason returns __AgentBoardCoordinatorLockProgrammaticInput.Reason, and is useful for accessing the field via an interface.
 func (v *__AgentBoardCoordinatorLockProgrammaticInput) GetReason() *string { return v.Reason }
 
+// __AgentBoardEventsProgrammaticInput is used internally by genqlient
+type __AgentBoardEventsProgrammaticInput struct {
+	BoardUuid string  `json:"boardUuid"`
+	After     *int64  `json:"after"`
+	Since     *string `json:"since"`
+	Limit     *int    `json:"limit"`
+}
+
+// GetBoardUuid returns __AgentBoardEventsProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentBoardEventsProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
+
+// GetAfter returns __AgentBoardEventsProgrammaticInput.After, and is useful for accessing the field via an interface.
+func (v *__AgentBoardEventsProgrammaticInput) GetAfter() *int64 { return v.After }
+
+// GetSince returns __AgentBoardEventsProgrammaticInput.Since, and is useful for accessing the field via an interface.
+func (v *__AgentBoardEventsProgrammaticInput) GetSince() *string { return v.Since }
+
+// GetLimit returns __AgentBoardEventsProgrammaticInput.Limit, and is useful for accessing the field via an interface.
+func (v *__AgentBoardEventsProgrammaticInput) GetLimit() *int { return v.Limit }
+
 // __AgentBoardOperatorLockInput is used internally by genqlient
 type __AgentBoardOperatorLockInput struct {
 	BoardUuid string  `json:"boardUuid"`
@@ -39957,6 +40141,64 @@ func AgentBoardCoordinatorLockProgrammatic(
 	}
 
 	data_ = &AgentBoardCoordinatorLockProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentBoardEventsProgrammatic.
+const AgentBoardEventsProgrammatic_Operation = `
+query AgentBoardEventsProgrammatic ($boardUuid: ID!, $after: Long, $since: DateTime, $limit: Int) {
+	agentBoardEventsProgrammatic(boardUuid: $boardUuid, after: $after, since: $since, limit: $limit) {
+		events {
+			seq
+			uuid
+			kind
+			message
+			actor {
+				... ActorFields
+			}
+			eventAt
+		}
+		nextAfter
+		hasMore
+	}
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+`
+
+// A board's event log since a point, oldest first (task 1c5442d2): follow the feed by passing the
+// page's nextAfter as the next $after.
+func AgentBoardEventsProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+	after *int64,
+	since *string,
+	limit *int,
+) (data_ *AgentBoardEventsProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentBoardEventsProgrammatic",
+		Query:  AgentBoardEventsProgrammatic_Operation,
+		Variables: &__AgentBoardEventsProgrammaticInput{
+			BoardUuid: boardUuid,
+			After:     after,
+			Since:     since,
+			Limit:     limit,
+		},
+	}
+
+	data_ = &AgentBoardEventsProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
