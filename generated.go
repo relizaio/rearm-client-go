@@ -1263,6 +1263,170 @@ var AllAgentBoardEventKind = []AgentBoardEventKind{
 	AgentBoardEventKindInfo,
 }
 
+// AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage includes the requested fields of the GraphQL type AgentBoardEventPage.
+// The GraphQL type's documentation follows.
+//
+// A page of a board's event log, oldest first (task 1c5442d2).
+type AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage struct {
+	Events []*AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent `json:"events"`
+	// Pass this as the next page's after: the last seq returned, or the after asked for when the page is empty.
+	NextAfter *int64 `json:"nextAfter"`
+	// True when more events follow this page.
+	HasMore *bool `json:"hasMore"`
+}
+
+// GetEvents returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage.Events, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage) GetEvents() []*AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent {
+	return v.Events
+}
+
+// GetNextAfter returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage.NextAfter, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage) GetNextAfter() *int64 {
+	return v.NextAfter
+}
+
+// GetHasMore returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage.HasMore, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage) GetHasMore() *bool {
+	return v.HasMore
+}
+
+// AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent includes the requested fields of the GraphQL type AgentBoardLoggedEvent.
+// The GraphQL type's documentation follows.
+//
+// An event as a board's event log holds it: the event with its cursor (task 1c5442d2).
+type AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent struct {
+	// The cursor: strictly increasing in the order events were written.
+	Seq     *int64                                                                                                                 `json:"seq"`
+	Uuid    *string                                                                                                                `json:"uuid"`
+	Kind    *AgentBoardEventKind                                                                                                   `json:"kind"`
+	Message *string                                                                                                                `json:"message"`
+	Actor   *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor `json:"actor"`
+	EventAt *string                                                                                                                `json:"eventAt"`
+}
+
+// GetSeq returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent.Seq, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent) GetSeq() *int64 {
+	return v.Seq
+}
+
+// GetUuid returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKind returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent.Kind, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent) GetKind() *AgentBoardEventKind {
+	return v.Kind
+}
+
+// GetMessage returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent.Message, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent) GetMessage() *string {
+	return v.Message
+}
+
+// GetActor returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent.Actor, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent) GetActor() *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor {
+	return v.Actor
+}
+
+// GetEventAt returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent.EventAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEvent) GetEventAt() *string {
+	return v.EventAt
+}
+
+// AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor) __premarshalJSON() (*__premarshalAgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor, error) {
+	var retval __premarshalAgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentBoardEventsProgrammaticResponse is returned by AgentBoardEventsProgrammatic on success.
+type AgentBoardEventsProgrammaticResponse struct {
+	// Agent-key auth: a board's events since a point, oldest first (task 1c5442d2). The board's events
+	// field holds only the newest 50; this is the whole log. after is exclusive (a seq), since is
+	// inclusive (an eventAt); both may be given. limit defaults to 200 and is capped at 1000. Follow the
+	// feed by passing the page's nextAfter as the next after; never count the board's events list.
+	AgentBoardEventsProgrammatic *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage `json:"agentBoardEventsProgrammatic"`
+}
+
+// GetAgentBoardEventsProgrammatic returns AgentBoardEventsProgrammaticResponse.AgentBoardEventsProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentBoardEventsProgrammaticResponse) GetAgentBoardEventsProgrammatic() *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage {
+	return v.AgentBoardEventsProgrammatic
+}
+
 // Locks stop NEW assignments only; the coordinator cannot lift or override an OPERATOR lock.
 type AgentBoardLockLevel string
 
@@ -10016,6 +10180,8 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequ
 	MergedDate   *string `json:"mergedDate"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
+	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
+	Head *string `json:"head"`
 }
 
 // GetUrl returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
@@ -10041,6 +10207,11 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPull
 // GetRegistered returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
 	return v.Registered
+}
+
+// GetHead returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetHead() *string {
+	return v.Head
 }
 
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -15048,6 +15219,8 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequests
 	MergedDate   *string `json:"mergedDate"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
+	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
+	Head *string `json:"head"`
 }
 
 // GetUrl returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
@@ -15073,6 +15246,11 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequ
 // GetRegistered returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
 	return v.Registered
+}
+
+// GetHead returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetHead() *string {
+	return v.Head
 }
 
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -18048,6 +18226,9 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	// The linked PRs (prUrls) as ReARM knows them from CI's PR registrations, resolved per read.
 	// A task completes when every one has merged; registered false means CI never reported the URL.
 	PullRequests []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest `json:"pullRequests"`
+	// The PR heads the newest passing TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR
+	// (task 3b97ccfd): merge at these. Empty when no passing round names any.
+	TestedHeads []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead `json:"testedHeads"`
 	// Delivery attestations, oldest first; the newest per unit counts (task 18c5c293).
 	Deliveries []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDeliveriesAgentTaskDelivery `json:"deliveries"`
 	// When the task was last reopened; null when never.
@@ -18179,6 +18360,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetCompletedAt() *
 // GetPullRequests returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.PullRequests, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetPullRequests() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest {
 	return v.PullRequests
+}
+
+// GetTestedHeads returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.TestedHeads, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetTestedHeads() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead {
+	return v.TestedHeads
 }
 
 // GetDeliveries returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Deliveries, and is useful for accessing the field via an interface.
@@ -18489,8 +18675,11 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocument
 	Round   *int             `json:"round"`
 	Verdict *FindingsVerdict `json:"verdict"`
 	// Totals on a TEST_REPORT; absent on a review.
-	Counts   *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts  `json:"counts"`
-	Findings []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding `json:"findings"`
+	Counts *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts `json:"counts"`
+	// The PR heads a TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR (task 3b97ccfd).
+	// A passing round of a task with linked PRs names every one of them.
+	Tested   []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead `json:"tested"`
+	Findings []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding  `json:"findings"`
 }
 
 // GetKind returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Kind, and is useful for accessing the field via an interface.
@@ -18511,6 +18700,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocu
 // GetCounts returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Counts, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetCounts() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts {
 	return v.Counts
+}
+
+// GetTested returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Tested, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetTested() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead {
+	return v.Tested
 }
 
 // GetFindings returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Findings, and is useful for accessing the field via an interface.
@@ -18625,6 +18819,26 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocu
 // GetElement returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Element, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetElement() *string {
 	return v.Element
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead includes the requested fields of the GraphQL type TestedHead.
+// The GraphQL type's documentation follows.
+//
+// A linked PR and the commit a review or test covered.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead struct {
+	Pr *string `json:"pr"`
+	// The commit sha tested, 7 to 40 hex characters.
+	Head *string `json:"head"`
+}
+
+// GetPr returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead.Pr, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead) GetPr() *string {
+	return v.Pr
+}
+
+// GetHead returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead) GetHead() *string {
+	return v.Head
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -19021,6 +19235,8 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPul
 	MergedDate   *string `json:"mergedDate"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
+	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
+	Head *string `json:"head"`
 	// The newest attestation for this PR, when one was recorded (task 18c5c293).
 	Attestation *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequestAttestationAgentTaskDelivery `json:"attestation"`
 }
@@ -19048,6 +19264,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTas
 // GetRegistered returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
 	return v.Registered
+}
+
+// GetHead returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetHead() *string {
+	return v.Head
 }
 
 // GetAttestation returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Attestation, and is useful for accessing the field via an interface.
@@ -19828,6 +20049,26 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTa
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead includes the requested fields of the GraphQL type TestedHead.
+// The GraphQL type's documentation follows.
+//
+// A linked PR and the commit a review or test covered.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead struct {
+	Pr *string `json:"pr"`
+	// The commit sha tested, 7 to 40 hex characters.
+	Head *string `json:"head"`
+}
+
+// GetPr returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead.Pr, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead) GetPr() *string {
+	return v.Pr
+}
+
+// GetHead returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead) GetHead() *string {
+	return v.Head
 }
 
 // AgentTaskProgrammaticResponse is returned by AgentTaskProgrammatic on success.
@@ -22493,6 +22734,8 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequests
 	MergedDate   *string `json:"mergedDate"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
+	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
+	Head *string `json:"head"`
 }
 
 // GetUrl returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
@@ -22518,6 +22761,11 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequ
 // GetRegistered returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
 	return v.Registered
+}
+
+// GetHead returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetHead() *string {
+	return v.Head
 }
 
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -26657,6 +26905,8 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullReques
 	MergedDate   *string `json:"mergedDate"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
+	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
+	Head *string `json:"head"`
 }
 
 // GetUrl returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
@@ -26682,6 +26932,11 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRe
 // GetRegistered returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
 	return v.Registered
+}
+
+// GetHead returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetHead() *string {
+	return v.Head
 }
 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -39954,6 +40209,26 @@ func (v *__AgentBoardCoordinatorLockProgrammaticInput) GetLock() bool { return v
 // GetReason returns __AgentBoardCoordinatorLockProgrammaticInput.Reason, and is useful for accessing the field via an interface.
 func (v *__AgentBoardCoordinatorLockProgrammaticInput) GetReason() *string { return v.Reason }
 
+// __AgentBoardEventsProgrammaticInput is used internally by genqlient
+type __AgentBoardEventsProgrammaticInput struct {
+	BoardUuid string  `json:"boardUuid"`
+	After     *int64  `json:"after"`
+	Since     *string `json:"since"`
+	Limit     *int    `json:"limit"`
+}
+
+// GetBoardUuid returns __AgentBoardEventsProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentBoardEventsProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
+
+// GetAfter returns __AgentBoardEventsProgrammaticInput.After, and is useful for accessing the field via an interface.
+func (v *__AgentBoardEventsProgrammaticInput) GetAfter() *int64 { return v.After }
+
+// GetSince returns __AgentBoardEventsProgrammaticInput.Since, and is useful for accessing the field via an interface.
+func (v *__AgentBoardEventsProgrammaticInput) GetSince() *string { return v.Since }
+
+// GetLimit returns __AgentBoardEventsProgrammaticInput.Limit, and is useful for accessing the field via an interface.
+func (v *__AgentBoardEventsProgrammaticInput) GetLimit() *int { return v.Limit }
+
 // __AgentBoardOperatorLockInput is used internally by genqlient
 type __AgentBoardOperatorLockInput struct {
 	BoardUuid string  `json:"boardUuid"`
@@ -41604,6 +41879,64 @@ func AgentBoardCoordinatorLockProgrammatic(
 	}
 
 	data_ = &AgentBoardCoordinatorLockProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentBoardEventsProgrammatic.
+const AgentBoardEventsProgrammatic_Operation = `
+query AgentBoardEventsProgrammatic ($boardUuid: ID!, $after: Long, $since: DateTime, $limit: Int) {
+	agentBoardEventsProgrammatic(boardUuid: $boardUuid, after: $after, since: $since, limit: $limit) {
+		events {
+			seq
+			uuid
+			kind
+			message
+			actor {
+				... ActorFields
+			}
+			eventAt
+		}
+		nextAfter
+		hasMore
+	}
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+`
+
+// A board's event log since a point, oldest first (task 1c5442d2): follow the feed by passing the
+// page's nextAfter as the next $after.
+func AgentBoardEventsProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+	after *int64,
+	since *string,
+	limit *int,
+) (data_ *AgentBoardEventsProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentBoardEventsProgrammatic",
+		Query:  AgentBoardEventsProgrammatic_Operation,
+		Variables: &__AgentBoardEventsProgrammaticInput{
+			BoardUuid: boardUuid,
+			After:     after,
+			Since:     since,
+			Limit:     limit,
+		},
+	}
+
+	data_ = &AgentBoardEventsProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -43535,6 +43868,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 			targetBranch
 			mergedDate
 			registered
+			head
 		}
 		statusHistory {
 			from
@@ -44627,6 +44961,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 			targetBranch
 			mergedDate
 			registered
+			head
 		}
 		statusHistory {
 			from
@@ -45271,6 +45606,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 			targetBranch
 			mergedDate
 			registered
+			head
 			attestation {
 				unit
 				commit
@@ -45281,6 +45617,10 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 				at
 				note
 			}
+		}
+		testedHeads {
+			pr
+			head
 		}
 		deliveries {
 			unit
@@ -45343,6 +45683,10 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 						passed
 						failed
 						skipped
+					}
+					tested {
+						pr
+						head
 					}
 					findings {
 						id
@@ -45883,6 +46227,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 			targetBranch
 			mergedDate
 			registered
+			head
 		}
 		statusHistory {
 			from
@@ -46765,6 +47110,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 			targetBranch
 			mergedDate
 			registered
+			head
 		}
 		statusHistory {
 			from

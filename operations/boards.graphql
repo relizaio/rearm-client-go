@@ -30,6 +30,14 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	createdDate
 } }
 
+# A board's event log since a point, oldest first (task 1c5442d2): follow the feed by passing the
+# page's nextAfter as the next $after.
+query AgentBoardEventsProgrammatic ($boardUuid: ID!, $after: Long, $since: DateTime, $limit: Int) {
+	agentBoardEventsProgrammatic(boardUuid: $boardUuid, after: $after, since: $since, limit: $limit) {
+	events { seq uuid kind message actor { ...ActorFields } eventAt }
+	nextAfter hasMore
+} }
+
 query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUuid: $boardUuid) {
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths elementFamilies effectiveElementFamilies
@@ -161,7 +169,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate registered }
+	pullRequests { url state targetBranch mergedDate registered head }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
@@ -312,7 +320,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate registered }
+	pullRequests { url state targetBranch mergedDate registered head }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
@@ -341,7 +349,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate registered }
+	pullRequests { url state targetBranch mergedDate registered head }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -371,7 +379,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate registered }
+	pullRequests { url state targetBranch mergedDate registered head }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
@@ -385,15 +393,16 @@ query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate registered
+	pullRequests { url state targetBranch mergedDate registered head
 		attestation { unit commit outcome by { ...ActorFields } at note } }
+	testedHeads { pr head }
 	deliveries { unit commit outcome by { ...ActorFields } at note }
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 	documents { uuid version lifecycle document { specification path round task
-		findings { kind round verdict counts { passed failed skipped }
+		findings { kind round verdict counts { passed failed skipped } tested { pr head }
 			findings { id priority status title location { path line ref element } resolvedBy resolution } } } }
 	openFindings { id priority status title location { path line ref element } resolvedBy resolution }
 	openQuestions { id priority status title location { path line ref element } resolvedBy resolution }
