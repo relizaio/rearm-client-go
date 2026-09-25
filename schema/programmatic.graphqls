@@ -100,6 +100,17 @@ type Query {
   agentBoardProgrammatic(
   boardUuid: ID!): AgentBoard
   """
+  Agent-key auth: a board's events since a point, oldest first (task 1c5442d2). The board's events
+  field holds only the newest 50; this is the whole log. after is exclusive (a seq), since is
+  inclusive (an eventAt); both may be given. limit defaults to 200 and is capped at 1000. Follow the
+  feed by passing the page's nextAfter as the next after; never count the board's events list.
+  """
+  agentBoardEventsProgrammatic(
+  boardUuid: ID!
+  after: Long
+  since: DateTime
+  limit: Int = 200): AgentBoardEventPage
+  """
   Worker poll: the lowest-ordered QUEUED task across the org's
   unlocked boards (or one board) whose constraints admit the calling
   session's agent (WIP limits, distinct-agent, seat exclusion).
@@ -165,6 +176,14 @@ roles: the roles this agent can take, each a role name on the board
   """
   agentBoard(
   uuid: ID!): AgentBoard
+  """
+  A person's read: a board's events since a point, as agentBoardEventsProgrammatic (task 1c5442d2).
+  """
+  agentBoardEvents(
+  boardUuid: ID!
+  after: Long
+  since: DateTime
+  limit: Int = 200): AgentBoardEventPage
   """
   A person's read: tasks of a board, optionally by status.
   """
@@ -1158,6 +1177,25 @@ type AgentBoardSnapshot {
 }
 
 """
+A page of a board's event log, oldest first (task 1c5442d2).
+"""
+type AgentBoardEventPage {
+  events: [AgentBoardLoggedEvent]
+  """
+  Pass this as the next page's after: the last seq returned, or the after asked for when the page is empty.
+  """
+  nextAfter: Long
+  """
+  True when more events follow this page.
+  """
+  hasMore: Boolean
+}
+
+scalar Long
+
+scalar DateTime
+
+"""
 What a polling/assigned worker receives: the task, the role to assume and its served prompt.
 """
 type AgentTaskAssignment {
@@ -1236,6 +1274,11 @@ type AgentTask {
   A task completes when every one has merged; registered false means CI never reported the URL.
   """
   pullRequests: [AgentTaskPullRequest]
+  """
+  The PR heads the newest passing TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR
+  (task 3b97ccfd): merge at these. Empty when no passing round names any.
+  """
+  testedHeads: [TestedHead]
   """
   Model strength this task requires, overriding the role's when set.
   """
@@ -2704,8 +2747,6 @@ input AgentRequiredInputInput {
   resolution: AgentInputResolution
 }
 
-scalar Long
-
 enum AgentBoardEventKind {
   LOCKED
   UNLOCKED
@@ -3194,8 +3235,6 @@ type SourceCodeEntry {
   """
   attributionReason: String
 }
-
-scalar DateTime
 
 type Artifact {
   uuid: ID
@@ -3829,6 +3868,21 @@ type AgentTaskSnapshot {
 }
 
 """
+An event as a board's event log holds it: the event with its cursor (task 1c5442d2).
+"""
+type AgentBoardLoggedEvent {
+  """
+  The cursor: strictly increasing in the order events were written.
+  """
+  seq: Long
+  uuid: ID
+  kind: AgentBoardEventKind
+  message: String
+  actor: AgentActor
+  eventAt: DateTime
+}
+
+"""
 What a requirement resolved to when the task was assigned, pinned on the assignment: the version
 the agent works from, and the trail from a later rejection back to the work that consumed it.
 """
@@ -3948,6 +4002,21 @@ type AgentTaskPullRequest {
   False when no PR row has this URL: the repository's CI is not reporting PRs.
   """
   registered: Boolean
+  """
+  The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
+  """
+  head: String
+}
+
+"""
+A linked PR and the commit a review or test covered.
+"""
+type TestedHead {
+  pr: String
+  """
+  The commit sha tested, 7 to 40 hex characters.
+  """
+  head: String
 }
 
 """
@@ -6115,6 +6184,11 @@ type FindingsIndex {
   Absent on a review, where the work under review is meant.
   """
   about: FindingsAbout
+  """
+  The PR heads a TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR (task 3b97ccfd).
+  A passing round of a task with linked PRs names every one of them.
+  """
+  tested: [TestedHead]
 }
 
 """
