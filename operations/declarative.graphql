@@ -158,6 +158,7 @@ query ExportBoard($board: String!) {
     documentsRepo
     documentPaths
     coordinatorPrompt
+    coordinatorCapabilities
     settings {
       budgetMicros
       softAlertPercent
