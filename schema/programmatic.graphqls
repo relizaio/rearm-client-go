@@ -319,6 +319,17 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskCompleteProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
   agentTaskCancelProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
   """
+  Coordinator: send a COMPLETED task back to an active role, with a reason -- its delivery cannot
+  land, e.g. its PR no longer merges. The role's earlier passes stop counting; whoever read its
+  part re-runs when the redone hop republishes. Refused on a cancelled task (register a new one)
+  and on a locked board; a round the budget does not cover holds for an operator.
+  """
+  agentTaskReopenProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  role: String!
+  reason: String!): AgentTask
+  """
   roles: the roles this agent declared on agentTaskNextProgrammatic, if any. A task for any
   other role is refused, and on a STRICT board priority is enforced among these roles only.
   """
@@ -383,6 +394,10 @@ type BoardSpec {
   documentPaths: Object
   elementFamilies: Object
   coordinatorPrompt: String
+  """
+  Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
+  """
+  coordinatorCapabilities: [AgentCapability!]
   """
   The board's budget and stops; a null value is the board default.
   """
@@ -820,13 +835,19 @@ type AgentBoard {
   """
   events: [AgentBoardEvent]
   """
-  Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
+  Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
   """
   missingCapabilities: [String]
   """
   Served prompt of the implicit, non-removable coordinator role.
   """
   coordinatorPrompt: String
+  """
+  Verbs the coordinator seat performs itself on this board, e.g. PR_MERGE when it merges once
+  the last required role has passed. Unverified, like a role's capabilities; the delivery-loop
+  alert (missingCapabilities) counts them as covered.
+  """
+  coordinatorCapabilities: [AgentCapability]
   lock: AgentBoardLock
   coordinatorSeat: AgentCoordinatorSeat
   """
@@ -841,6 +862,20 @@ type AgentBoard {
   Percent of a budget at which the board posts one alert and nothing stops (default 80).
   """
   softAlertPercent: Int
+  """
+  The board's average coordinator share per coordinator-caused transition, in
+  micros (board-mechanics §5.3): coordinatorSharesMicros / coordinatorTransitions,
+  0 before any. Added to every projected round, and named in a refusal.
+  """
+  coordinatorOverheadMicros: Long
+  """
+  Coordinator spend apportioned to tasks so far (D16), in micros. The same money as the seat's usage rows, which board spend already counts.
+  """
+  coordinatorSharesMicros: Long
+  """
+  Coordinator-caused transitions the apportioned spend was split over (D16).
+  """
+  coordinatorTransitions: Long
   """
   Rounds between one pair of roles before a task parks (default 3).
   """
@@ -926,13 +961,35 @@ type AgentTask {
   """
   budgetMicros: Long
   """
-  Coordinator spend apportioned to this task, frozen when computed. An estimate, not a measurement.
+  Coordinator spend apportioned to this task (D16): each coordinator usage delta
+  is split equally among the tasks the seat moved since the previous one, else
+  the board's open tasks, and frozen when computed. An estimate, not a
+  measurement. The task's spend in the budget is its usage rows plus this; the
+  board's spend counts the seat's rows and never these shares, so task spends do
+  not add up to the board's.
   """
   coordinatorEstimateMicros: Long
   """
   The elements of the task's documents: the union over its latest release per specification (gaps §2.A).
   """
   elements: [AgentTaskElement]
+  """
+  When the task was last reopened; null when never.
+  """
+  reopenedAt: DateTime
+  """
+  How many times the task has been reopened. A second reopen is a signal to split or cancel.
+  """
+  reopenCount: Int
+  """
+  Every reopen, oldest first: the role it went back to, when, by whom and why.
+  """
+  reopens: [AgentTaskReopen]
+  """
+  The linked PRs (prUrls) as ReARM knows them from CI's PR registrations, resolved per read.
+  A task completes when every one has merged; registered false means CI never reported the URL.
+  """
+  pullRequests: [AgentTaskPullRequest]
   """
   Model strength this task requires, overriding the role's when set.
   """
@@ -1031,7 +1088,8 @@ type AgentTask {
   reflected without a rewrite. Null until the first report lands. Built from
   the hop snapshots, which are frozen when a hop ends: a hop reported after it
   closed reads lower here than in the budget, which reads the usage rows
-  (spentMicros on the board snapshot), until the snapshot is refreshed.
+  (spentMicros on the board snapshot), until the snapshot is refreshed. The
+  coordinator's share is not in it: see coordinatorEstimateMicros.
   """
   usage: HopUsage
   """
@@ -1053,12 +1111,18 @@ type AgentTask {
   openQuestions: [Finding]
 }
 
+"""
+DELIVERING: every required role passed and a linked PR is not merged yet. Not terminal -- dependents
+wait for COMPLETED, which means merged. It completes when the PR merges and goes back to the
+coordinator when a PR closes without merging.
+"""
 enum AgentTaskStatus {
   PENDING_INTAKE
   QUEUED
   ASSIGNED
   AWAITING_COORDINATOR
   ON_HOLD
+  DELIVERING
   COMPLETED
   CANCELLED
 }
@@ -1224,6 +1288,11 @@ input BoardSpecInput {
   """
   elementFamilies: Object
   coordinatorPrompt: String
+  """
+  Verbs the coordinator seat performs itself: PR_MERGE, CODE_PUSH. The tracker verbs are
+  implicit and refused. Declared null clears, as [] does; absent leaves them.
+  """
+  coordinatorCapabilities: [AgentCapability!]
   settings: BoardSettingsSpecInput
   roles: [BoardRoleSpecInput!]
 }
@@ -2509,6 +2578,16 @@ enum AgentBoardPriorityType {
   STRICT
 }
 
+"""
+The verbs an assignee must be able to perform. Declared on roles; implicit/unverified on agents in v1.
+"""
+enum AgentCapability {
+  TRACKER_READ
+  TRACKER_WRITE
+  CODE_PUSH
+  PR_MERGE
+}
+
 type BoardSettingsSpec {
   """
   What the board may spend, in USD micros; null means no board budget.
@@ -3400,6 +3479,34 @@ type AgentTaskElement {
 }
 
 """
+A completed task sent back to a role.
+"""
+type AgentTaskReopen {
+  role: String
+  roleUuid: ID
+  at: DateTime
+  by: AgentActor
+  reason: String
+}
+
+"""
+A task's linked PR, from the PR rows CI registers.
+"""
+type AgentTaskPullRequest {
+  url: String
+  """
+  OPEN, CLOSED or MERGED; null when unregistered.
+  """
+  state: String
+  targetBranch: String
+  mergedDate: DateTime
+  """
+  False when no PR row has this URL: the repository's CI is not reporting PRs.
+  """
+  registered: Boolean
+}
+
+"""
 Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
 
 These were all String, and every writer invented its own encoding -- a session uuid behind a
@@ -3653,16 +3760,6 @@ A role's strength override for one model.
 type RoleModelStrength {
   model: ID!
   strength: Float!
-}
-
-"""
-The verbs an assignee must be able to perform. Declared on roles; implicit/unverified on agents in v1.
-"""
-enum AgentCapability {
-  TRACKER_READ
-  TRACKER_WRITE
-  CODE_PUSH
-  PR_MERGE
 }
 
 """
@@ -5756,6 +5853,22 @@ enum AgentStatusTrigger {
   finished in one case and the loop stopped in the other.
   """
   POLICY_COMPLETE
+  """
+  A completed task sent back to a role, with a reason. A decision, not a loop.
+  """
+  REOPEN
+  """
+  The work passed and a linked PR is not merged yet: into DELIVERING.
+  """
+  DELIVER_WAIT
+  """
+  Every linked PR merged: DELIVERING to COMPLETED.
+  """
+  DELIVERED
+  """
+  A linked PR closed without merging: to the coordinator.
+  """
+  PR_CLOSED
 }
 
 """
