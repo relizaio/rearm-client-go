@@ -509,7 +509,7 @@ type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard 
 	// remote written as ssh on one machine and https on another is the same
 	// repository here.
 	DocumentsRepo *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
-	// Per-type path templates inside documentsRepo; empty means the defaults.
+	// Per-type path templates inside documentsRepo, as overridden on this board; omitted types use the defaults by scope (effectiveDocumentPaths).
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
@@ -885,7 +885,7 @@ type AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticA
 	// remote written as ssh on one machine and https on another is the same
 	// repository here.
 	DocumentsRepo *AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
-	// Per-type path templates inside documentsRepo; empty means the defaults.
+	// Per-type path templates inside documentsRepo, as overridden on this board; omitted types use the defaults by scope (effectiveDocumentPaths).
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
@@ -1292,7 +1292,7 @@ type AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard st
 	// remote written as ssh on one machine and https on another is the same
 	// repository here.
 	DocumentsRepo *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
-	// Per-type path templates inside documentsRepo; empty means the defaults.
+	// Per-type path templates inside documentsRepo, as overridden on this board; omitted types use the defaults by scope (effectiveDocumentPaths).
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
@@ -1681,7 +1681,7 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	// remote written as ssh on one machine and https on another is the same
 	// repository here.
 	DocumentsRepo *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
-	// Per-type path templates inside documentsRepo; empty means the defaults.
+	// Per-type path templates inside documentsRepo, as overridden on this board; omitted types use the defaults by scope (effectiveDocumentPaths).
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
@@ -2094,9 +2094,12 @@ type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnaps
 	// Newest release per specification type, so a reader sees the current document set.
 	LatestDocuments []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease `json:"latestDocuments"`
 	// Top of the question stack. Null when nothing is outstanding.
-	WaitingOn    *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame `json:"waitingOn"`
-	SpentMicros  *int64                                                                                                                           `json:"spentMicros"`
-	BudgetMicros *int64                                                                                                                           `json:"budgetMicros"`
+	WaitingOn *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame `json:"waitingOn"`
+	// What the task has spent, in USD micros, as the budget counts it: the derived
+	// cost of every usage row attributed to it, whenever it was reported, plus its
+	// apportioned coordinator estimate. Rows without a price count 0.
+	SpentMicros  *int64 `json:"spentMicros"`
+	BudgetMicros *int64 `json:"budgetMicros"`
 }
 
 // GetTask returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot.Task, and is useful for accessing the field via an interface.
@@ -2453,7 +2456,7 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	// remote written as ssh on one machine and https on another is the same
 	// repository here.
 	DocumentsRepo *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
-	// Per-type path templates inside documentsRepo; empty means the defaults.
+	// Per-type path templates inside documentsRepo, as overridden on this board; omitted types use the defaults by scope (effectiveDocumentPaths).
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
@@ -2825,6 +2828,36 @@ var AllAgentCapability = []AgentCapability{
 	AgentCapabilityTrackerWrite,
 	AgentCapabilityCodePush,
 	AgentCapabilityPrMerge,
+}
+
+// AgentDocumentPathAgentBoardProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
+type AgentDocumentPathAgentBoardProgrammaticAgentBoard struct {
+	Uuid *string `json:"uuid"`
+	// The repository path a new document of this type would take, with every placeholder filled:
+	// {task} = first eight characters of the task uuid, {round} = the task's next round of this type,
+	// {type} = lower case, {component} = the component's name slugged. task is required for
+	// task-scoped types, component for component-scoped ones. The release records the path actually
+	// used; this is what the CLI uses when no --file is given.
+	DocumentPath *string `json:"documentPath"`
+}
+
+// GetUuid returns AgentDocumentPathAgentBoardProgrammaticAgentBoard.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPathAgentBoardProgrammaticAgentBoard) GetUuid() *string { return v.Uuid }
+
+// GetDocumentPath returns AgentDocumentPathAgentBoardProgrammaticAgentBoard.DocumentPath, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPathAgentBoardProgrammaticAgentBoard) GetDocumentPath() *string {
+	return v.DocumentPath
+}
+
+// AgentDocumentPathResponse is returned by AgentDocumentPath on success.
+type AgentDocumentPathResponse struct {
+	// Agent-key auth: one board (includes coordinatorPrompt and lock state).
+	AgentBoardProgrammatic *AgentDocumentPathAgentBoardProgrammaticAgentBoard `json:"agentBoardProgrammatic"`
+}
+
+// GetAgentBoardProgrammatic returns AgentDocumentPathResponse.AgentBoardProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPathResponse) GetAgentBoardProgrammatic() *AgentDocumentPathAgentBoardProgrammaticAgentBoard {
+	return v.AgentBoardProgrammatic
 }
 
 // What an agent states about a document it has already committed.
@@ -23804,7 +23837,7 @@ type ExportBoardExportBoardProgrammaticBoardSpec struct {
 	// is portable, and the uuid of a repository row means nothing in another organization.
 	// Applying resolves it the same way agentBoardUpdate does.
 	DocumentsRepo *string `json:"documentsRepo"`
-	// Per-type path templates, keyed by SpecificationType. Empty means the defaults.
+	// Per-type path templates, keyed by SpecificationType. Omitted types use the defaults by scope.
 	DocumentPaths     *json.RawMessage `json:"documentPaths"`
 	CoordinatorPrompt *string          `json:"coordinatorPrompt"`
 	// The board's budget and stops; a null value is the board default.
@@ -29952,6 +29985,26 @@ type __AgentBoardSnapshotProgrammaticInput struct {
 // GetBoardUuid returns __AgentBoardSnapshotProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
 func (v *__AgentBoardSnapshotProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
 
+// __AgentDocumentPathInput is used internally by genqlient
+type __AgentDocumentPathInput struct {
+	BoardUuid     string            `json:"boardUuid"`
+	Specification SpecificationType `json:"specification"`
+	Task          *string           `json:"task"`
+	Component     *string           `json:"component"`
+}
+
+// GetBoardUuid returns __AgentDocumentPathInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathInput) GetBoardUuid() string { return v.BoardUuid }
+
+// GetSpecification returns __AgentDocumentPathInput.Specification, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathInput) GetSpecification() SpecificationType { return v.Specification }
+
+// GetTask returns __AgentDocumentPathInput.Task, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathInput) GetTask() *string { return v.Task }
+
+// GetComponent returns __AgentDocumentPathInput.Component, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathInput) GetComponent() *string { return v.Component }
+
 // __AgentDocumentPublishProgrammaticInput is used internally by genqlient
 type __AgentDocumentPublishProgrammaticInput struct {
 	Input *AgentDocumentPublishInput `json:"input,omitempty"`
@@ -31464,6 +31517,49 @@ func AgentBoardsProgrammatic(
 	}
 
 	data_ = &AgentBoardsProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentDocumentPath.
+const AgentDocumentPath_Operation = `
+query AgentDocumentPath ($boardUuid: ID!, $specification: SpecificationType!, $task: ID, $component: ID) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		documentPath(specification: $specification, task: $task, component: $component)
+	}
+}
+`
+
+// Where a new document of a type would go on a board, every placeholder filled by the server:
+// what rearm agent doc publish uses when it is not given a file.
+func AgentDocumentPath(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+	specification SpecificationType,
+	task *string,
+	component *string,
+) (data_ *AgentDocumentPathResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentDocumentPath",
+		Query:  AgentDocumentPath_Operation,
+		Variables: &__AgentDocumentPathInput{
+			BoardUuid:     boardUuid,
+			Specification: specification,
+			Task:          task,
+			Component:     component,
+		},
+	}
+
+	data_ = &AgentDocumentPathResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
