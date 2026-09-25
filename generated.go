@@ -9887,6 +9887,8 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequ
 	MergedDate   *string `json:"mergedDate"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
+	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
+	Head *string `json:"head"`
 }
 
 // GetUrl returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
@@ -9912,6 +9914,11 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPull
 // GetRegistered returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
 	return v.Registered
+}
+
+// GetHead returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetHead() *string {
+	return v.Head
 }
 
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -13739,6 +13746,8 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequests
 	MergedDate   *string `json:"mergedDate"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
+	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
+	Head *string `json:"head"`
 }
 
 // GetUrl returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
@@ -13764,6 +13773,11 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequ
 // GetRegistered returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
 	return v.Registered
+}
+
+// GetHead returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetHead() *string {
+	return v.Head
 }
 
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -16739,6 +16753,9 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	// The linked PRs (prUrls) as ReARM knows them from CI's PR registrations, resolved per read.
 	// A task completes when every one has merged; registered false means CI never reported the URL.
 	PullRequests []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest `json:"pullRequests"`
+	// The PR heads the newest passing TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR
+	// (task 3b97ccfd): merge at these. Empty when no passing round names any.
+	TestedHeads []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead `json:"testedHeads"`
 	// When the task was last reopened; null when never.
 	ReopenedAt *string `json:"reopenedAt"`
 	// How many times the task has been reopened. A second reopen is a signal to split or cancel.
@@ -16868,6 +16885,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetCompletedAt() *
 // GetPullRequests returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.PullRequests, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetPullRequests() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest {
 	return v.PullRequests
+}
+
+// GetTestedHeads returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.TestedHeads, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetTestedHeads() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead {
+	return v.TestedHeads
 }
 
 // GetReopenedAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.ReopenedAt, and is useful for accessing the field via an interface.
@@ -17049,8 +17071,11 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocument
 	Round   *int             `json:"round"`
 	Verdict *FindingsVerdict `json:"verdict"`
 	// Totals on a TEST_REPORT; absent on a review.
-	Counts   *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts  `json:"counts"`
-	Findings []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding `json:"findings"`
+	Counts *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts `json:"counts"`
+	// The PR heads a TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR (task 3b97ccfd).
+	// A passing round of a task with linked PRs names every one of them.
+	Tested   []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead `json:"tested"`
+	Findings []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding  `json:"findings"`
 }
 
 // GetKind returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Kind, and is useful for accessing the field via an interface.
@@ -17071,6 +17096,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocu
 // GetCounts returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Counts, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetCounts() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts {
 	return v.Counts
+}
+
+// GetTested returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Tested, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetTested() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead {
+	return v.Tested
 }
 
 // GetFindings returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Findings, and is useful for accessing the field via an interface.
@@ -17185,6 +17215,26 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocu
 // GetElement returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Element, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetElement() *string {
 	return v.Element
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead includes the requested fields of the GraphQL type TestedHead.
+// The GraphQL type's documentation follows.
+//
+// A linked PR and the commit a review or test covered.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead struct {
+	Pr *string `json:"pr"`
+	// The commit sha tested, 7 to 40 hex characters.
+	Head *string `json:"head"`
+}
+
+// GetPr returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead.Pr, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead) GetPr() *string {
+	return v.Pr
+}
+
+// GetHead returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead) GetHead() *string {
+	return v.Head
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -17581,6 +17631,8 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPul
 	MergedDate   *string `json:"mergedDate"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
+	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
+	Head *string `json:"head"`
 }
 
 // GetUrl returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
@@ -17606,6 +17658,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTas
 // GetRegistered returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
 	return v.Registered
+}
+
+// GetHead returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetHead() *string {
+	return v.Head
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -18257,6 +18314,26 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTa
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead includes the requested fields of the GraphQL type TestedHead.
+// The GraphQL type's documentation follows.
+//
+// A linked PR and the commit a review or test covered.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead struct {
+	Pr *string `json:"pr"`
+	// The commit sha tested, 7 to 40 hex characters.
+	Head *string `json:"head"`
+}
+
+// GetPr returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead.Pr, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead) GetPr() *string {
+	return v.Pr
+}
+
+// GetHead returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead) GetHead() *string {
+	return v.Head
 }
 
 // AgentTaskProgrammaticResponse is returned by AgentTaskProgrammatic on success.
@@ -20922,6 +20999,8 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequests
 	MergedDate   *string `json:"mergedDate"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
+	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
+	Head *string `json:"head"`
 }
 
 // GetUrl returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
@@ -20947,6 +21026,11 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequ
 // GetRegistered returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
 	return v.Registered
+}
+
+// GetHead returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetHead() *string {
+	return v.Head
 }
 
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -25086,6 +25170,8 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullReques
 	MergedDate   *string `json:"mergedDate"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
+	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
+	Head *string `json:"head"`
 }
 
 // GetUrl returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
@@ -25111,6 +25197,11 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRe
 // GetRegistered returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
 	return v.Registered
+}
+
+// GetHead returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Head, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetHead() *string {
+	return v.Head
 }
 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -41872,6 +41963,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 			targetBranch
 			mergedDate
 			registered
+			head
 		}
 		statusHistory {
 			from
@@ -42702,6 +42794,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 			targetBranch
 			mergedDate
 			registered
+			head
 		}
 		statusHistory {
 			from
@@ -43346,6 +43439,11 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 			targetBranch
 			mergedDate
 			registered
+			head
+		}
+		testedHeads {
+			pr
+			head
 		}
 		reopenedAt
 		reopenCount
@@ -43398,6 +43496,10 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 						passed
 						failed
 						skipped
+					}
+					tested {
+						pr
+						head
 					}
 					findings {
 						id
@@ -43938,6 +44040,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 			targetBranch
 			mergedDate
 			registered
+			head
 		}
 		statusHistory {
 			from
@@ -44820,6 +44923,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 			targetBranch
 			mergedDate
 			registered
+			head
 		}
 		statusHistory {
 			from

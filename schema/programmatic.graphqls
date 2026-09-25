@@ -1224,6 +1224,11 @@ type AgentTask {
   """
   pullRequests: [AgentTaskPullRequest]
   """
+  The PR heads the newest passing TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR
+  (task 3b97ccfd): merge at these. Empty when no passing round names any.
+  """
+  testedHeads: [TestedHead]
+  """
   Model strength this task requires, overriding the role's when set.
   """
   requiredStrength: Float
@@ -3935,6 +3940,21 @@ type AgentTaskPullRequest {
   False when no PR row has this URL: the repository's CI is not reporting PRs.
   """
   registered: Boolean
+  """
+  The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
+  """
+  head: String
+}
+
+"""
+A linked PR and the commit a review or test covered.
+"""
+type TestedHead {
+  pr: String
+  """
+  The commit sha tested, 7 to 40 hex characters.
+  """
+  head: String
 }
 
 """
@@ -6102,6 +6122,11 @@ type FindingsIndex {
   Absent on a review, where the work under review is meant.
   """
   about: FindingsAbout
+  """
+  The PR heads a TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR (task 3b97ccfd).
+  A passing round of a task with linked PRs names every one of them.
+  """
+  tested: [TestedHead]
 }
 
 """
