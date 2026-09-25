@@ -24,6 +24,7 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	target defaultTaskLevel defaultInputResolution
 	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
 	blockingPriority completionPriority humanQueueAgeMinutes
+	coordinatorStopRelease effectiveCoordinatorStopRelease
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
 } }
@@ -40,6 +41,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	target defaultTaskLevel defaultInputResolution
 	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
 	blockingPriority completionPriority humanQueueAgeMinutes
+	coordinatorStopRelease effectiveCoordinatorStopRelease
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
 } }
@@ -104,7 +106,7 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 	agentTaskRegisterProgrammatic(input: $input) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -119,7 +121,7 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 	task {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -136,7 +138,7 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 	task {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -152,7 +154,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -167,7 +169,7 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 	agentTaskReturnProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason, description: $description, outputs: $outputs) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -189,7 +191,7 @@ mutation AgentTaskAuthorizeProgrammatic (
 	uuid org board externalRef title sourceUrl status role orderIndex requiredStrength
 	budgetMicros budgetSetBy { ...ActorFields } budgetSetAt
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -203,7 +205,7 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 	agentTaskHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -213,11 +215,25 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
-mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String) {
-	agentTaskReleaseHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role) {
+mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
+	agentTaskEscalateHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String, $note: String) {
+	agentTaskReleaseHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, note: $note) {
+	uuid org board externalRef title sourceUrl status role orderIndex
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -231,7 +247,7 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 	agentTaskRequireHumanReviewProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -245,7 +261,7 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 	agentTaskOrderProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, orderIndex: $orderIndex) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -259,7 +275,7 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 	agentTaskSplitProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, children: $children) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -273,7 +289,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 	agentTaskCompleteProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, note: $note) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -288,7 +304,7 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 	agentTaskCancelProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, note: $note) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -302,7 +318,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 	agentTaskReopenProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, reason: $reason) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -318,7 +334,7 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 	agentTaskBindExternalRefProgrammatic(taskUuid: $taskUuid, externalRef: $externalRef, sourceUrl: $sourceUrl) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -332,7 +348,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 	agentTaskLinkPrProgrammatic(taskUuid: $taskUuid, prUrl: $prUrl) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -346,7 +362,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $taskUuid) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
@@ -367,7 +383,7 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus) {
 	agentTasksProgrammatic(boardUuid: $boardUuid, status: $status) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
