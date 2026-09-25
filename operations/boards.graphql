@@ -8,6 +8,10 @@
 # instead of eleven copies that share no type. That is the whole reason it is here.
 fragment ActorFields on AgentActor { kind uuid name }
 
+# What a hop cost against its role's allowance, frozen when the hop ended. With overAllowanceMicros
+# beside it on a sign-off or return, a CLI reader sees an overrun without the user lane.
+fragment HopUsageFields on HopUsage { derivedCostMicros costComplete allowanceMicros }
+
 query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths
@@ -86,8 +90,8 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -101,8 +105,8 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -118,8 +122,8 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -134,8 +138,8 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -148,8 +152,8 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -167,8 +171,8 @@ mutation AgentTaskAuthorizeProgrammatic (
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -181,8 +185,8 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -195,8 +199,8 @@ mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -209,8 +213,8 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -223,8 +227,8 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -237,8 +241,8 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -251,8 +255,8 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -265,8 +269,8 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -279,8 +283,8 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -293,8 +297,8 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -306,8 +310,8 @@ query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -325,8 +329,8 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus) {
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } }
-	returns { role agent session reason description returnedAt }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
