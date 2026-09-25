@@ -95,6 +95,7 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsP
 	kind necessity humanGate
 	requiredStrength strengthHeadroom strengthCategory modelStrengths { model strength }
 	hopBudgetMicros
+	blindReview
 	requiredInputs { kind specification scope minLifecycle resolution }
 	producesOutputs { specification scope required }
 } }
