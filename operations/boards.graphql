@@ -26,16 +26,18 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	blockingPriority completionPriority humanQueueAgeMinutes
 	coordinatorStopRelease effectiveCoordinatorStopRelease
 	deliveryPolicy { mode attest } effectiveDeliveryPolicy { mode attest }
+	eventRetentionDays effectiveEventRetentionDays
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
 } }
 
 # A board's event log since a point, oldest first (task 1c5442d2): follow the feed by passing the
-# page's nextAfter as the next $after.
+# page's nextAfter as the next $after. gap says the board's retention deleted events this read
+# asked for (task 04dedcc5); truncatedBefore is where its window starts.
 query AgentBoardEventsProgrammatic ($boardUuid: ID!, $after: Long, $since: DateTime, $limit: Int) {
 	agentBoardEventsProgrammatic(boardUuid: $boardUuid, after: $after, since: $since, limit: $limit) {
 	events { seq uuid kind message actor { ...ActorFields } eventAt }
-	nextAfter hasMore
+	nextAfter hasMore truncatedBefore gap
 } }
 
 query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUuid: $boardUuid) {
@@ -52,6 +54,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	blockingPriority completionPriority humanQueueAgeMinutes
 	coordinatorStopRelease effectiveCoordinatorStopRelease
 	deliveryPolicy { mode attest } effectiveDeliveryPolicy { mode attest }
+	eventRetentionDays effectiveEventRetentionDays
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
 } }
@@ -386,6 +389,31 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 } }
 
 query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $taskUuid) {
+	uuid org board externalRef title sourceUrl status role orderIndex
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	pullRequests { url state targetBranch mergedDate registered head
+		attestation { unit commit outcome by { ...ActorFields } at note } }
+	testedHeads { pr head }
+	deliveries { unit commit outcome by { ...ActorFields } at note }
+	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+	documents { uuid version lifecycle document { specification path round task
+		findings { kind round verdict counts { passed failed skipped } tested { pr head }
+			findings { id priority status title location { path line ref element } resolvedBy resolution } } } }
+	openFindings { id priority status title location { path line ref element } resolvedBy resolution }
+	openQuestions { id priority status title location { path line ref element } resolvedBy resolution }
+} }
+
+# A named set of tasks in one read, in the order given (task cc14f4cb): at most 100; unknown uuids,
+# and another organization's tasks, are absent. For a board's tasks by status, AgentTasksProgrammatic.
+query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgrammatic(taskUuids: $taskUuids) {
 	uuid org board externalRef title sourceUrl status role orderIndex
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }

@@ -14,3 +14,29 @@ func TestTheEventLogRead(t *testing.T) {
 		}
 	}
 }
+
+// Retention (task 04dedcc5): the page says where the board's window starts and whether this read
+// lost events to it; the boards and the export carry the setting.
+func TestTheEventLogRetention(t *testing.T) {
+	op := strings.Join(strings.Fields(AgentBoardEventsProgrammatic_Operation), " ")
+	for _, want := range []string{"truncatedBefore", "gap"} {
+		if !strings.Contains(op, want) {
+			t.Errorf("the event log read lacks %q", want)
+		}
+	}
+	for name, doc := range map[string]string{
+		"AgentBoardsProgrammatic": AgentBoardsProgrammatic_Operation,
+		"AgentBoardProgrammatic":  AgentBoardProgrammatic_Operation,
+	} {
+		d := strings.Join(strings.Fields(doc), " ")
+		if !strings.Contains(d, "eventRetentionDays effectiveEventRetentionDays") {
+			t.Errorf("%s lacks the retention setting", name)
+		}
+	}
+	if !strings.Contains(ExportBoard_Operation, "eventRetentionDays") {
+		t.Error("the board export lacks the retention setting")
+	}
+	var page AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPage
+	_ = page.GetTruncatedBefore()
+	_ = page.GetGap()
+}
