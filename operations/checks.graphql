@@ -27,3 +27,9 @@ query AgentTaskCheckTargetsProgrammatic ($taskUuid: ID!) {
 		documents { uuid lifecycle document { specification round task elements { digest } } }
 	}
 }
+
+# The check catalogue (elements.md §7): every fixed check, what it means and when it skips, and the
+# coverage.<gate> pattern a board's own gates are named by.
+query CheckCatalogue {
+	checkCatalogue { name description skipsWhen }
+}
