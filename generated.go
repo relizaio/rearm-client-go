@@ -4195,7 +4195,9 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -4280,7 +4282,7 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -4423,7 +4425,9 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -4648,6 +4652,11 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	OrderIndex *int `json:"orderIndex"`
 	// Model strength this task requires, overriding the role's when set.
 	RequiredStrength *float64 `json:"requiredStrength"`
+	// What this task may spend, in USD micros; null means only the board's limit applies.
+	BudgetMicros *int64 `json:"budgetMicros"`
+	// Who last set or cleared budgetMicros, and when.
+	BudgetSetBy *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor `json:"budgetSetBy"`
+	BudgetSetAt *string                                                                                     `json:"budgetSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -4724,6 +4733,21 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) 
 // GetRequiredStrength returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetRequiredStrength() *float64 {
 	return v.RequiredStrength
+}
+
+// GetBudgetMicros returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetBudgetMicros() *int64 {
+	return v.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetBudgetSetBy() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor {
+	return v.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetBudgetSetAt() *string {
+	return v.BudgetSetAt
 }
 
 // GetDependsOn returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -4851,6 +4875,85 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskAs
 // GetPromptVersion returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor, error) {
+	var retval __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -5157,7 +5260,9 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRe
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -5242,7 +5347,7 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOf
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -5385,7 +5490,9 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSi
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -6114,7 +6221,9 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -6199,7 +6308,7 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -6342,7 +6451,9 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -7067,7 +7178,9 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsA
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -7152,7 +7265,7 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgen
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -7295,7 +7408,9 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffs
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -8067,7 +8182,9 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRetu
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -8152,7 +8269,7 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffs
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -8295,7 +8412,9 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSign
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -9049,7 +9168,9 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgent
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -9134,7 +9255,7 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTas
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -9277,7 +9398,9 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgen
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -10049,7 +10172,9 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsA
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -10134,7 +10259,7 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgen
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -10277,7 +10402,9 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffs
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -11042,7 +11169,9 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -11127,7 +11256,7 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -11270,7 +11399,9 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -12006,7 +12137,9 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAge
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -12091,7 +12224,7 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentT
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -12234,7 +12367,9 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAg
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -13532,7 +13667,9 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskRetu
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -13617,7 +13754,7 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -13760,7 +13897,9 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSig
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -14528,7 +14667,9 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRetu
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -14613,7 +14754,7 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffs
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -14756,7 +14897,9 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSign
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -15481,7 +15624,9 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -15566,7 +15711,7 @@ type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSi
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -15709,7 +15854,9 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -16618,7 +16765,9 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskReturnsA
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -16703,7 +16852,7 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSignOffsAgen
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -16846,7 +16995,9 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSignOffs
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -17575,7 +17726,9 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -17660,7 +17813,7 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -17803,7 +17956,9 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -18529,7 +18684,9 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsA
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -18614,7 +18771,7 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgen
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -18757,7 +18914,9 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffs
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -19980,7 +20139,9 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturn
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -20065,7 +20226,7 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAg
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -20208,7 +20369,9 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOf
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -20964,7 +21127,9 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAge
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -21049,7 +21214,7 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentT
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -21192,7 +21357,9 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAg
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -22071,7 +22238,9 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskRe
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -22156,7 +22325,7 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignO
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
-	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
@@ -22299,7 +22468,9 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskS
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
 // The GraphQL type's documentation follows.
 //
-// One hop's consumption, frozen when the hop ended.
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
 	HopUsageFields `json:"-"`
 }
@@ -32008,6 +32179,7 @@ type __AgentTaskAuthorizeProgrammaticInput struct {
 	OrderIndex       *int     `json:"orderIndex"`
 	DependsOn        []string `json:"dependsOn"`
 	RequiredStrength *float64 `json:"requiredStrength,omitempty"`
+	BudgetMicros     *int64   `json:"budgetMicros,omitempty"`
 }
 
 // GetTaskUuid returns __AgentTaskAuthorizeProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -32029,6 +32201,9 @@ func (v *__AgentTaskAuthorizeProgrammaticInput) GetDependsOn() []string { return
 func (v *__AgentTaskAuthorizeProgrammaticInput) GetRequiredStrength() *float64 {
 	return v.RequiredStrength
 }
+
+// GetBudgetMicros returns __AgentTaskAuthorizeProgrammaticInput.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *__AgentTaskAuthorizeProgrammaticInput) GetBudgetMicros() *int64 { return v.BudgetMicros }
 
 // __AgentTaskBindExternalRefProgrammaticInput is used internally by genqlient
 type __AgentTaskBindExternalRefProgrammaticInput struct {
@@ -33815,8 +33990,8 @@ func AgentTaskAssignProgrammatic(
 
 // The mutation executed by AgentTaskAuthorizeProgrammatic.
 const AgentTaskAuthorizeProgrammatic_Operation = `
-mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!], $requiredStrength: Float) {
-	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength) {
+mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!], $requiredStrength: Float, $budgetMicros: Long) {
+	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength, budgetMicros: $budgetMicros) {
 		uuid
 		org
 		board
@@ -33827,6 +34002,11 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 		role
 		orderIndex
 		requiredStrength
+		budgetMicros
+		budgetSetBy {
+			... ActorFields
+		}
+		budgetSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -33928,6 +34108,7 @@ func AgentTaskAuthorizeProgrammatic(
 	orderIndex *int,
 	dependsOn []string,
 	requiredStrength *float64,
+	budgetMicros *int64,
 ) (data_ *AgentTaskAuthorizeProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskAuthorizeProgrammatic",
@@ -33939,6 +34120,7 @@ func AgentTaskAuthorizeProgrammatic(
 			OrderIndex:       orderIndex,
 			DependsOn:        dependsOn,
 			RequiredStrength: requiredStrength,
+			BudgetMicros:     budgetMicros,
 		},
 	}
 
