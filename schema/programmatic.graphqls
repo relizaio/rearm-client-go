@@ -148,6 +148,27 @@ roles: the roles this agent can take, each a role name on the board
   skips, and the coverage.<gate> pattern the board's gates are named by. Served on both endpoints.
   """
   checkCatalogue: [CheckCatalogueEntry]
+  """
+  A person's read: the org's boards.
+  """
+  agentBoardsOfOrg(
+  orgUuid: ID!): [AgentBoard]
+  """
+  A person's read: one board.
+  """
+  agentBoard(
+  uuid: ID!): AgentBoard
+  """
+  A person's read: tasks of a board, optionally by status.
+  """
+  agentTasksOfBoard(
+  boardUuid: ID!
+  status: AgentTaskStatus): [AgentTask]
+  """
+  A person's read: a board's role configuration in order.
+  """
+  agentTaskRoleConfigsOfBoard(
+  boardUuid: ID!): [AgentTaskRoleConfig]
 }
 
 type Mutation {
@@ -375,6 +396,136 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentCheckRunProgrammatic(
   sessionUuid: ID!
   releaseUuid: ID!): Release
+  agentBoardOperatorLock(boardUuid: ID!, lock: Boolean!, reason: String): AgentBoard
+  """
+  Require a model of at least this strength for one task, overriding what its role asks for.
+  Recorded with who set it and when, on the task rather than in the status history: the status
+  did not change, and a same-status row would split one queue wait into two in the cycle-time view.
+  """
+  agentTaskSetStrength(
+  taskUuid: ID!
+  requiredStrength: Float): AgentTask
+  """
+  Operator verdict on a HUMAN_GATE hold: records a human sign-off for the gated role and lets the
+  board route what follows. Approval hands the gated hop's documents over (DRAFT to ASSEMBLED). A
+  rejection may carry findings decisions: they are cut as a round first and become the verdict's
+  output, so the rejection routes like a reviewer's would.
+  """
+  agentTaskHumanReview(
+  taskUuid: ID!
+  approve: Boolean!
+  note: String
+  findings: [FindingDecisionInput!]
+  about: FindingsAboutInput): AgentTask
+  """
+  Operator sign-off on a task queued in a HUMAN-kind role (no claim step; humans have no sessions).
+  """
+  agentTaskHumanSignOff(
+  taskUuid: ID!
+  outcome: AgentSignOffOutcome!
+  note: String): AgentTask
+  """
+  Operator manual hold (OPERATOR level; the coordinator cannot lift it) or release. HUMAN_GATE holds resolve via
+  agentTaskHumanReview, not here. On a release, role optionally names an active role to route to instead of the one
+  routing would pick; a release of a no-progress or cycle-cap stop routes past that stop once (task 4c566d0d).
+  """
+  agentTaskOperatorHold(
+  taskUuid: ID!
+  hold: Boolean!
+  reason: String
+  role: String): AgentTask
+  """
+  Operator set/clear of the per-task add-only human-review flag.
+  """
+  agentTaskRequireHumanReview(
+  taskUuid: ID!
+  value: Boolean!): AgentTask
+  """
+  Answer the open questions a task is waiting on, as a round of its QUESTIONS index, and let the
+  board route the answer back to whoever asked. The answer is a round rather than a note so the
+  asking agent reads it as a pinned input instead of prose it would have to go and find. Either
+  per-id answers or one text applied to every open id; releaseHold also lifts a QUESTION hold.
+  """
+  agentTaskAnswer(
+  taskUuid: ID!
+  answers: [FindingAnswerInput!]
+  answerAll: String
+  releaseHold: Boolean = true): AgentTask
+  """
+  Register a task by hand, as PENDING_INTAKE. On a board with sources the tracker reference is
+  required and must belong to one of them, so the coordinator's later intake of the same issue
+  finds this task; on a board without sources it is optional.
+  """
+  agentTaskRegister(
+  boardUuid: ID!
+  input: AgentTaskUserRegisterInput!): AgentTask
+  """
+  Authorize a task for a role, as the coordinator does, from PENDING_INTAKE or
+  AWAITING_COORDINATOR. Strength is set separately, with agentTaskSetStrength.
+  """
+  agentTaskAuthorize(
+  taskUuid: ID!
+  role: String!
+  orderIndex: Int
+  dependsOn: [ID!]
+  producesComponent: ID
+  level: Int
+  requiredInputs: [AgentRequiredInputInput]): AgentTask
+  """
+  Set a task's order. Recorded as orderSetBy; the coordinator may reorder after you.
+  """
+  agentTaskOrder(
+  taskUuid: ID!
+  orderIndex: Int!): AgentTask
+  """
+  Set or clear (null) what a task may spend, in USD micros. Org admin. A raise does not release a budget hold.
+  """
+  agentTaskSetBudget(
+  taskUuid: ID!
+  budgetMicros: Long): AgentTask
+  """
+  Complete a task. Refused while a finding that blocks completion is open -- accept or dismiss it
+  first -- and while a required role has not passed. A required role whose rejection you have
+  decided over counts as passed. skipRequiredRoles completes without the others, and needs a note
+  saying why; findings are never skipped.
+  """
+  agentTaskComplete(
+  taskUuid: ID!
+  note: String
+  skipRequiredRoles: Boolean): AgentTask
+  """
+  Cancel a task from any state but COMPLETED. An agent working it finds it gone at its next call.
+  """
+  agentTaskCancel(
+  taskUuid: ID!
+  note: String): AgentTask
+  """
+  Decide findings on a task, as one round of its REVIEW_FINDINGS or TEST_REPORT index. A round that
+  leaves something new blocking sends the task back to the role that produces what it is about;
+  name that in about when the index does not say yet. Refused while an agent is working the task.
+  """
+  agentTaskDecideFindings(
+  taskUuid: ID!
+  specification: SpecificationType!
+  decisions: [FindingDecisionInput!]!
+  about: FindingsAboutInput): AgentTask
+  """
+  Apply a board file: the organization's admin, or a user holding CONFIGURATION_WRITE. One
+  transaction; any problem refuses the whole file and the result lists every one. dryRun returns
+  the change set without writing.
+  """
+  agentBoardApplySpec(
+  orgUuid: ID!
+  spec: BoardSpecInput!
+  dryRun: Boolean
+  source: DeclarativeSourceInput): DeclarativeApplyResult
+  """
+  Apply the organization's presets file, with the same gate.
+  """
+  agentRolePresetsApplySpec(
+  orgUuid: ID!
+  spec: RolePresetsSpecInput!
+  dryRun: Boolean): DeclarativeApplyResult
 }
 
 type CatalogSpec {
@@ -2620,6 +2771,105 @@ input AgentDocumentPublishInput {
 }
 
 """
+One decision about one finding.
+"""
+input FindingDecisionInput {
+  action: FindingDecisionAction!
+  """
+  The finding decided. Every action but FILE.
+  """
+  findingId: String
+  """
+  SET_PRIORITY and FILE: 1 highest, at most the organization's level count.
+  """
+  priority: Int
+  """
+  FILE: one line.
+  """
+  title: String
+  """
+  FILE, optional.
+  """
+  location: FindingLocationInput
+  """
+  Required for ACCEPT (why the risk is acceptable) and DISMISS (why it does not apply).
+  """
+  resolution: String
+}
+
+"""
+What an index's findings are about. Sets it when the index does not say yet; may not contradict it.
+"""
+input FindingsAboutInput {
+  specification: SpecificationType!
+  release: ID
+}
+
+"""
+One answered question: the id, what it becomes, and the words that close it.
+"""
+input FindingAnswerInput {
+  id: String!
+  """
+  RESOLVED when the question is answered, WITHDRAWN when it does not apply after all.
+  """
+  status: FindingStatus = RESOLVED
+  resolution: String!
+}
+
+"""
+A person's registration of a task. externalRef is required on a board with sources.
+"""
+input AgentTaskUserRegisterInput {
+  title: String!
+  externalRef: String
+  sourceUrl: String
+  parentTask: ID
+  producesComponent: ID
+  level: Int
+  requiredInputs: [AgentRequiredInputInput]
+}
+
+"""
+Well-known specification documents. When an identifier's idType is SPECIFICATION its idValue is
+one of these values -- the design-stage counterpart of TEA's compliance-document-type, so a
+document set is discoverable by identifier rather than by naming convention.
+"""
+enum SpecificationType {
+  CONOPS
+  USE_CASES
+  REQUIREMENTS
+  FUNCTIONS
+  PRODUCT_BREAKDOWN
+  INTERFACES
+  DATA_MODEL
+  ARCHITECTURE
+  DETAILED_DESIGN
+  UX_CONCEPT
+  TEST_PLAN
+  GLOSSARY
+  DECISION_RECORD
+  """
+  One review round of one task. Task-scoped: one component per board target holds every task's rounds.
+  """
+  REVIEW_FINDINGS
+  """
+  One test run of one task. Task-scoped, like REVIEW_FINDINGS.
+  """
+  TEST_REPORT
+  """
+  What one hop could not proceed without knowing. Task-scoped, like REVIEW_FINDINGS, and
+  usually published with no file at all -- the items are the document.
+  """
+  QUESTIONS
+  """
+  What the element checks found on one document of one task (gaps §2.A). Task-scoped and always
+  index-only: the board cuts it, no agent publishes it, and it has no path.
+  """
+  CHECK_REPORT
+}
+
+"""
 Ownership slice a declarative spec describes. One kind per file; the apply / export operations are per kind.
 """
 enum DeclarativeKind {
@@ -3477,45 +3727,6 @@ type SessionOrigin {
 enum AgentBoardStatus {
   ACTIVE
   ARCHIVED
-}
-
-"""
-Well-known specification documents. When an identifier's idType is SPECIFICATION its idValue is
-one of these values -- the design-stage counterpart of TEA's compliance-document-type, so a
-document set is discoverable by identifier rather than by naming convention.
-"""
-enum SpecificationType {
-  CONOPS
-  USE_CASES
-  REQUIREMENTS
-  FUNCTIONS
-  PRODUCT_BREAKDOWN
-  INTERFACES
-  DATA_MODEL
-  ARCHITECTURE
-  DETAILED_DESIGN
-  UX_CONCEPT
-  TEST_PLAN
-  GLOSSARY
-  DECISION_RECORD
-  """
-  One review round of one task. Task-scoped: one component per board target holds every task's rounds.
-  """
-  REVIEW_FINDINGS
-  """
-  One test run of one task. Task-scoped, like REVIEW_FINDINGS.
-  """
-  TEST_REPORT
-  """
-  What one hop could not proceed without knowing. Task-scoped, like REVIEW_FINDINGS, and
-  usually published with no file at all -- the items are the document.
-  """
-  QUESTIONS
-  """
-  What the element checks found on one document of one task (gaps §2.A). Task-scoped and always
-  index-only: the board cuts it, no agent publishes it, and it has no path.
-  """
-  CHECK_REPORT
 }
 
 type AgentBoardEvent {
@@ -5205,6 +5416,53 @@ enum AgentInputScope {
   TASK
 }
 
+"""
+What a person does to one finding.
+"""
+enum FindingDecisionAction {
+  """
+  The risk is taken knowingly: ACCEPTED, with a resolution saying why.
+  """
+  ACCEPT
+  """
+  The finding does not apply: WITHDRAWN, with a reason.
+  """
+  DISMISS
+  """
+  A new priority for the finding; its status is unchanged.
+  """
+  SET_PRIORITY
+  """
+  A new finding, OPEN, numbered P-1, P-2... by the board.
+  """
+  FILE
+}
+
+input FindingLocationInput {
+  path: String
+  line: Int
+  ref: String
+  """
+  The element the finding is about; path and line are filled in from the index when left out.
+  """
+  element: String
+}
+
+"""
+Where a finding stands. The closed statuses are not interchangeable: RESOLVED says the work was
+done, ACCEPTED says an operator took the risk knowingly, POLICY_ACCEPTED says nobody looked --
+the loop ran out under a cycle cap, a no-progress stop or a budget, and the board completed the
+task with the item still open -- and WITHDRAWN says the reviewer was wrong. Only OPEN must be
+carried into the next round.
+"""
+enum FindingStatus {
+  OPEN
+  RESOLVED
+  ACCEPTED
+  POLICY_ACCEPTED
+  WITHDRAWN
+}
+
 type DependencySpec {
   component: String!
   branch: String
@@ -6145,21 +6403,6 @@ enum AgentStatusTrigger {
   A linked PR closed without merging: to the coordinator.
   """
   PR_CLOSED
-}
-
-"""
-Where a finding stands. The closed statuses are not interchangeable: RESOLVED says the work was
-done, ACCEPTED says an operator took the risk knowingly, POLICY_ACCEPTED says nobody looked --
-the loop ran out under a cycle cap, a no-progress stop or a budget, and the board completed the
-task with the item still open -- and WITHDRAWN says the reviewer was wrong. Only OPEN must be
-carried into the next round.
-"""
-enum FindingStatus {
-  OPEN
-  RESOLVED
-  ACCEPTED
-  POLICY_ACCEPTED
-  WITHDRAWN
 }
 
 """

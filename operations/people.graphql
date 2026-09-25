@@ -1,0 +1,86 @@
+# A person's board verbs -- the operations `rearm boards` sends. The same root fields the UI
+# calls, served on the programmatic endpoint to a personal key or a CLI login, which act as
+# their owner with the organization's admin permission. No session: people have none. An
+# organization key is refused on every one of these; agents use the *Programmatic twins in
+# boards.graphql.
+
+fragment PersonTaskFields on AgentTask {
+	uuid board externalRef title status role orderIndex requireHumanReview requiredStrength
+	budgetMicros budgetSetBy { ...ActorFields } budgetSetAt
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	assignment { session agent role assignedAt }
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	openFindings { id priority status title location { path line ref } resolvedBy resolution }
+	openQuestions { id priority status title location { path line ref } resolvedBy resolution }
+	createdDate completedAt
+}
+
+query AgentBoardsOfOrg ($orgUuid: ID!) { agentBoardsOfOrg(orgUuid: $orgUuid) {
+	uuid org name description status
+	lock { level reason lockedBy { ...ActorFields } lockedAt }
+	coordinatorSeat { session agent claimedAt }
+	createdDate
+} }
+
+query AgentTasksOfBoard ($boardUuid: ID!, $status: AgentTaskStatus) {
+	agentTasksOfBoard(boardUuid: $boardUuid, status: $status) { ...PersonTaskFields }
+}
+
+mutation AgentTaskRegister ($boardUuid: ID!, $input: AgentTaskUserRegisterInput!) {
+	agentTaskRegister(boardUuid: $boardUuid, input: $input) { ...PersonTaskFields }
+}
+
+mutation AgentTaskAuthorize ($taskUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!], $producesComponent: ID, $level: Int) {
+	agentTaskAuthorize(taskUuid: $taskUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn,
+		producesComponent: $producesComponent, level: $level) { ...PersonTaskFields }
+}
+
+mutation AgentTaskOrder ($taskUuid: ID!, $orderIndex: Int!) {
+	agentTaskOrder(taskUuid: $taskUuid, orderIndex: $orderIndex) { ...PersonTaskFields }
+}
+
+mutation AgentTaskComplete ($taskUuid: ID!, $note: String, $skipRequiredRoles: Boolean) {
+	agentTaskComplete(taskUuid: $taskUuid, note: $note, skipRequiredRoles: $skipRequiredRoles) { ...PersonTaskFields }
+}
+
+mutation AgentTaskCancel ($taskUuid: ID!, $note: String) {
+	agentTaskCancel(taskUuid: $taskUuid, note: $note) { ...PersonTaskFields }
+}
+
+mutation AgentTaskDecideFindings ($taskUuid: ID!, $specification: SpecificationType!, $decisions: [FindingDecisionInput!]!, $about: FindingsAboutInput) {
+	agentTaskDecideFindings(taskUuid: $taskUuid, specification: $specification, decisions: $decisions, about: $about) { ...PersonTaskFields }
+}
+
+mutation AgentTaskAnswer ($taskUuid: ID!, $answers: [FindingAnswerInput!], $answerAll: String, $releaseHold: Boolean) {
+	agentTaskAnswer(taskUuid: $taskUuid, answers: $answers, answerAll: $answerAll, releaseHold: $releaseHold) { ...PersonTaskFields }
+}
+
+mutation AgentTaskHumanReview ($taskUuid: ID!, $approve: Boolean!, $note: String, $findings: [FindingDecisionInput!], $about: FindingsAboutInput) {
+	agentTaskHumanReview(taskUuid: $taskUuid, approve: $approve, note: $note, findings: $findings, about: $about) { ...PersonTaskFields }
+}
+
+mutation AgentTaskHumanSignOff ($taskUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String) {
+	agentTaskHumanSignOff(taskUuid: $taskUuid, outcome: $outcome, note: $note) { ...PersonTaskFields }
+}
+
+mutation AgentTaskOperatorHold ($taskUuid: ID!, $hold: Boolean!, $reason: String, $role: String) {
+	agentTaskOperatorHold(taskUuid: $taskUuid, hold: $hold, reason: $reason, role: $role) { ...PersonTaskFields }
+}
+
+mutation AgentTaskRequireHumanReview ($taskUuid: ID!, $value: Boolean!) {
+	agentTaskRequireHumanReview(taskUuid: $taskUuid, value: $value) { ...PersonTaskFields }
+}
+
+mutation AgentTaskSetStrength ($taskUuid: ID!, $requiredStrength: Float) {
+	agentTaskSetStrength(taskUuid: $taskUuid, requiredStrength: $requiredStrength) { ...PersonTaskFields }
+}
+
+mutation AgentTaskSetBudget ($taskUuid: ID!, $budgetMicros: Long) {
+	agentTaskSetBudget(taskUuid: $taskUuid, budgetMicros: $budgetMicros) { ...PersonTaskFields }
+}
+
+mutation AgentBoardOperatorLock ($boardUuid: ID!, $lock: Boolean!, $reason: String) {
+	agentBoardOperatorLock(boardUuid: $boardUuid, lock: $lock, reason: $reason) {
+		uuid name status lock { level reason lockedBy { ...ActorFields } lockedAt }
+	}
+}
