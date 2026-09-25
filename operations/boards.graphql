@@ -29,6 +29,14 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	createdDate
 } }
 
+# A board's event log since a point, oldest first (task 1c5442d2): follow the feed by passing the
+# page's nextAfter as the next $after.
+query AgentBoardEventsProgrammatic ($boardUuid: ID!, $after: Long, $since: DateTime, $limit: Int) {
+	agentBoardEventsProgrammatic(boardUuid: $boardUuid, after: $after, since: $since, limit: $limit) {
+	events { seq uuid kind message actor { ...ActorFields } eventAt }
+	nextAfter hasMore
+} }
+
 query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUuid: $boardUuid) {
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths elementFamilies effectiveElementFamilies

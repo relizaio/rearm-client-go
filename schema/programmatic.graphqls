@@ -100,6 +100,17 @@ type Query {
   agentBoardProgrammatic(
   boardUuid: ID!): AgentBoard
   """
+  Agent-key auth: a board's events since a point, oldest first (task 1c5442d2). The board's events
+  field holds only the newest 50; this is the whole log. after is exclusive (a seq), since is
+  inclusive (an eventAt); both may be given. limit defaults to 200 and is capped at 1000. Follow the
+  feed by passing the page's nextAfter as the next after; never count the board's events list.
+  """
+  agentBoardEventsProgrammatic(
+  boardUuid: ID!
+  after: Long
+  since: DateTime
+  limit: Int = 200): AgentBoardEventPage
+  """
   Worker poll: the lowest-ordered QUEUED task across the org's
   unlocked boards (or one board) whose constraints admit the calling
   session's agent (WIP limits, distinct-agent, seat exclusion).
@@ -158,6 +169,14 @@ roles: the roles this agent can take, each a role name on the board
   """
   agentBoard(
   uuid: ID!): AgentBoard
+  """
+  A person's read: a board's events since a point, as agentBoardEventsProgrammatic (task 1c5442d2).
+  """
+  agentBoardEvents(
+  boardUuid: ID!
+  after: Long
+  since: DateTime
+  limit: Int = 200): AgentBoardEventPage
   """
   A person's read: tasks of a board, optionally by status.
   """
@@ -1143,6 +1162,25 @@ type AgentBoardSnapshot {
   board: AgentBoard
   tasks: [AgentTaskSnapshot]
 }
+
+"""
+A page of a board's event log, oldest first (task 1c5442d2).
+"""
+type AgentBoardEventPage {
+  events: [AgentBoardLoggedEvent]
+  """
+  Pass this as the next page's after: the last seq returned, or the after asked for when the page is empty.
+  """
+  nextAfter: Long
+  """
+  True when more events follow this page.
+  """
+  hasMore: Boolean
+}
+
+scalar Long
+
+scalar DateTime
 
 """
 What a polling/assigned worker receives: the task, the role to assume and its served prompt.
@@ -2691,8 +2729,6 @@ input AgentRequiredInputInput {
   resolution: AgentInputResolution
 }
 
-scalar Long
-
 enum AgentBoardEventKind {
   LOCKED
   UNLOCKED
@@ -3181,8 +3217,6 @@ type SourceCodeEntry {
   """
   attributionReason: String
 }
-
-scalar DateTime
 
 type Artifact {
   uuid: ID
@@ -3813,6 +3847,21 @@ type AgentTaskSnapshot {
   """
   spentMicros: Long
   budgetMicros: Long
+}
+
+"""
+An event as a board's event log holds it: the event with its cursor (task 1c5442d2).
+"""
+type AgentBoardLoggedEvent {
+  """
+  The cursor: strictly increasing in the order events were written.
+  """
+  seq: Long
+  uuid: ID
+  kind: AgentBoardEventKind
+  message: String
+  actor: AgentActor
+  eventAt: DateTime
 }
 
 """
