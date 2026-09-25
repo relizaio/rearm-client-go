@@ -7,7 +7,7 @@
 fragment PersonTaskFields on AgentTask {
 	uuid board externalRef title status role orderIndex requireHumanReview requiredStrength
 	budgetMicros budgetSetBy { ...ActorFields } budgetSetAt
-	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	openFindings { id priority status title location { path line ref } resolvedBy resolution }

@@ -341,12 +341,25 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskHoldProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: String!): AgentTask
   """
   Release a COORDINATOR-level hold. role, optionally: an active role on the board to route to
-  instead of the one routing would pick (task 4c566d0d).
+  instead of the one routing would pick (task 4c566d0d). note, optionally: why, posted to the board
+  feed with the release. A no-progress or cycle-cap stop parks here first when the board allows it
+  (coordinatorStopRelease): its release routes past the stop once, and the next stop of that kind on
+  the task is the operator's (task c0a2134c).
   """
   agentTaskReleaseHoldProgrammatic(
   taskUuid: ID!
   sessionUuid: ID!
-  role: String): AgentTask
+  role: String
+  note: String): AgentTask
+  """
+  Hand a COORDINATOR-level hold to the operator (task c0a2134c): the level becomes OPERATOR, the
+  reason keeps what the hold said with yours after it, and the board ALERTs. For a judgement call
+  -- two roles disagree, an item needs accepting. Refused on any other hold.
+  """
+  agentTaskEscalateHoldProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  reason: String!): AgentTask
   """
   Coordinator sets the per-task human-review flag (add-only: the coordinator can add review, never remove it).
   """
@@ -1086,6 +1099,15 @@ type AgentBoard {
   Priority number at or below which an open item prevents a policy completion. Null is strict.
   """
   completionPriority: Int
+  """
+  Whether a no-progress or cycle-cap stop parks for the coordinator first, which may release it once
+  per stop kind per task or escalate it (task c0a2134c). As set: null is the default, on.
+  """
+  coordinatorStopRelease: Boolean
+  """
+  coordinatorStopRelease with its default resolved.
+  """
+  effectiveCoordinatorStopRelease: Boolean
   """
   Whether coordinator priority is advisory (LAX, default) or enforced at assignment (STRICT).
   """
@@ -2977,6 +2999,10 @@ type BoardSettingsSpec {
   Findings at or above this priority stop completion; null means every open finding does.
   """
   completionPriority: Int
+  """
+  Whether a no-progress or cycle-cap stop parks for the coordinator first; null means the default, on.
+  """
+  coordinatorStopRelease: Boolean
 }
 
 type BoardRoleSpec {
@@ -3963,6 +3989,12 @@ type AgentTaskHold {
   reason: String
   heldBy: AgentActor
   heldAt: DateTime
+  """
+  The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+  COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+  (task c0a2134c).
+  """
+  stop: AgentTaskHoldStop
 }
 
 """
@@ -4299,6 +4331,10 @@ input BoardSettingsSpecInput {
   humanQueueAgeMinutes: Int
   blockingPriority: Int
   completionPriority: Int
+  """
+  Whether a no-progress or cycle-cap stop parks for the coordinator first; null restores the default, on.
+  """
+  coordinatorStopRelease: Boolean
 }
 
 """
@@ -6358,6 +6394,15 @@ enum AgentTaskHoldKind {
   MANUAL
   HUMAN_GATE
   QUESTION
+}
+
+"""
+The routing stop that placed a hold (board-mechanics §6.2).
+"""
+enum AgentTaskHoldStop {
+  CYCLE_CAP
+  NO_PROGRESS
+  BUDGET
 }
 
 """

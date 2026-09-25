@@ -1868,6 +1868,11 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	CompletionPriority *int `json:"completionPriority"`
 	// Minutes a task may wait on a person before AGENT_TASK_QUEUE_AGE is sent; null or 0 is off.
 	HumanQueueAgeMinutes *int `json:"humanQueueAgeMinutes"`
+	// Whether a no-progress or cycle-cap stop parks for the coordinator first, which may release it once
+	// per stop kind per task or escalate it (task c0a2134c). As set: null is the default, on.
+	CoordinatorStopRelease *bool `json:"coordinatorStopRelease"`
+	// coordinatorStopRelease with its default resolved.
+	EffectiveCoordinatorStopRelease *bool `json:"effectiveCoordinatorStopRelease"`
 	// The board file that last applied to this board; null on a board never applied from a file.
 	Declarative *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance `json:"declarative"`
 	CreatedDate *string                                                                                 `json:"createdDate"`
@@ -2013,6 +2018,16 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCompletionPr
 // GetHumanQueueAgeMinutes returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.HumanQueueAgeMinutes, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetHumanQueueAgeMinutes() *int {
 	return v.HumanQueueAgeMinutes
+}
+
+// GetCoordinatorStopRelease returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CoordinatorStopRelease, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCoordinatorStopRelease() *bool {
+	return v.CoordinatorStopRelease
+}
+
+// GetEffectiveCoordinatorStopRelease returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.EffectiveCoordinatorStopRelease, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetEffectiveCoordinatorStopRelease() *bool {
+	return v.EffectiveCoordinatorStopRelease
 }
 
 // GetDeclarative returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Declarative, and is useful for accessing the field via an interface.
@@ -3049,6 +3064,11 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	CompletionPriority *int `json:"completionPriority"`
 	// Minutes a task may wait on a person before AGENT_TASK_QUEUE_AGE is sent; null or 0 is off.
 	HumanQueueAgeMinutes *int `json:"humanQueueAgeMinutes"`
+	// Whether a no-progress or cycle-cap stop parks for the coordinator first, which may release it once
+	// per stop kind per task or escalate it (task c0a2134c). As set: null is the default, on.
+	CoordinatorStopRelease *bool `json:"coordinatorStopRelease"`
+	// coordinatorStopRelease with its default resolved.
+	EffectiveCoordinatorStopRelease *bool `json:"effectiveCoordinatorStopRelease"`
 	// The board file that last applied to this board; null on a board never applied from a file.
 	Declarative *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance `json:"declarative"`
 	CreatedDate *string                                                                                   `json:"createdDate"`
@@ -3196,6 +3216,16 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetCompletion
 // GetHumanQueueAgeMinutes returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.HumanQueueAgeMinutes, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetHumanQueueAgeMinutes() *int {
 	return v.HumanQueueAgeMinutes
+}
+
+// GetCoordinatorStopRelease returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CoordinatorStopRelease, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetCoordinatorStopRelease() *bool {
+	return v.CoordinatorStopRelease
+}
+
+// GetEffectiveCoordinatorStopRelease returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.EffectiveCoordinatorStopRelease, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetEffectiveCoordinatorStopRelease() *bool {
+	return v.EffectiveCoordinatorStopRelease
 }
 
 // GetDeclarative returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Declarative, and is useful for accessing the field via an interface.
@@ -4947,6 +4977,10 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	Reason   *string                                                                                                     `json:"reason"`
 	HeldBy   *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                                                     `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -4977,6 +5011,11 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetHeldAt returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -6210,6 +6249,10 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHold s
 	Reason   *string                                                                                    `json:"reason"`
 	HeldBy   *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                                    `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -6240,6 +6283,11 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHo
 // GetHeldAt returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -7183,6 +7231,10 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	Reason   *string                                                                                                `json:"reason"`
 	HeldBy   *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                                                `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -7213,6 +7265,11 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // GetHeldAt returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -8330,6 +8387,10 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHold struct 
 	Reason   *string                                                                              `json:"reason"`
 	HeldBy   *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                              `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -8360,6 +8421,11 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHold) Ge
 // GetHeldAt returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -9610,6 +9676,10 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHold str
 	Reason   *string                                                                                  `json:"reason"`
 	HeldBy   *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                                  `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -9640,6 +9710,11 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHold
 // GetHeldAt returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -10823,6 +10898,975 @@ func (v *AgentTaskElementProgrammaticResponse) GetAgentTaskProgrammatic() *Agent
 	return v.AgentTaskProgrammatic
 }
 
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask struct {
+	Uuid        *string          `json:"uuid"`
+	Org         *string          `json:"org"`
+	Board       *string          `json:"board"`
+	ExternalRef *string          `json:"externalRef"`
+	Title       *string          `json:"title"`
+	SourceUrl   *string          `json:"sourceUrl"`
+	Status      *AgentTaskStatus `json:"status"`
+	// Role the task is queued for / worked in; retained as last role until re-authorized.
+	Role *string `json:"role"`
+	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
+	OrderIndex *int `json:"orderIndex"`
+	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
+	DependsOn []*string `json:"dependsOn"`
+	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
+	RequireHumanReview *bool `json:"requireHumanReview"`
+	// Hold state while ON_HOLD; null otherwise.
+	Hold       *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold                              `json:"hold"`
+	Assignment *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
+	SignOffs   []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
+	Returns    []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
+	ParentTask *string                                                                                                       `json:"parentTask"`
+	ChildTasks []*string                                                                                                     `json:"childTasks"`
+	// Every session that ever held the assignment.
+	Sessions            []*string `json:"sessions"`
+	PrUrls              []*string `json:"prUrls"`
+	RegisteredBySession *string   `json:"registeredBySession"`
+	CreatedDate         *string   `json:"createdDate"`
+	CompletedAt         *string   `json:"completedAt"`
+	// Append-only status transition log, oldest first.
+	StatusHistory []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
+	// Who last set orderIndex, the coordinator or a person, and when.
+	OrderSetBy *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor `json:"orderSetBy"`
+	OrderSetAt *string                                                                                          `json:"orderSetAt"`
+	// Required roles a person completed the task without, having said why in the completing status change.
+	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
+	QuestionStack []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetOrg returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Org, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetOrg() *string {
+	return v.Org
+}
+
+// GetBoard returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Board, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetBoard() *string {
+	return v.Board
+}
+
+// GetExternalRef returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetExternalRef() *string {
+	return v.ExternalRef
+}
+
+// GetTitle returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetTitle() *string {
+	return v.Title
+}
+
+// GetSourceUrl returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetSourceUrl() *string {
+	return v.SourceUrl
+}
+
+// GetStatus returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetStatus() *AgentTaskStatus {
+	return v.Status
+}
+
+// GetRole returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetRole() *string {
+	return v.Role
+}
+
+// GetOrderIndex returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetOrderIndex() *int {
+	return v.OrderIndex
+}
+
+// GetDependsOn returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetDependsOn() []*string {
+	return v.DependsOn
+}
+
+// GetRequireHumanReview returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetRequireHumanReview() *bool {
+	return v.RequireHumanReview
+}
+
+// GetHold returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Hold, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetHold() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold {
+	return v.Hold
+}
+
+// GetAssignment returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Assignment, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetAssignment() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment {
+	return v.Assignment
+}
+
+// GetSignOffs returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.SignOffs, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetSignOffs() []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff {
+	return v.SignOffs
+}
+
+// GetReturns returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Returns, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetReturns() []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn {
+	return v.Returns
+}
+
+// GetParentTask returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetParentTask() *string {
+	return v.ParentTask
+}
+
+// GetChildTasks returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.ChildTasks, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetChildTasks() []*string {
+	return v.ChildTasks
+}
+
+// GetSessions returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Sessions, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetSessions() []*string {
+	return v.Sessions
+}
+
+// GetPrUrls returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.PrUrls, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetPrUrls() []*string {
+	return v.PrUrls
+}
+
+// GetRegisteredBySession returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.RegisteredBySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetRegisteredBySession() *string {
+	return v.RegisteredBySession
+}
+
+// GetCreatedDate returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetCompletedAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.CompletedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetCompletedAt() *string {
+	return v.CompletedAt
+}
+
+// GetStatusHistory returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.StatusHistory, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetStatusHistory() []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange {
+	return v.StatusHistory
+}
+
+// GetOrderSetBy returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.OrderSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetOrderSetBy() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor {
+	return v.OrderSetBy
+}
+
+// GetOrderSetAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.OrderSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetOrderSetAt() *string {
+	return v.OrderSetAt
+}
+
+// GetRequiredRolesSkipped returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
+	return v.RequiredRolesSkipped
+}
+
+// GetQuestionStack returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetQuestionStack() []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame {
+	return v.QuestionStack
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment includes the requested fields of the GraphQL type AgentTaskWorkAssignment.
+// The GraphQL type's documentation follows.
+//
+// The single live assignment -- bound to session liveness, released on any session close.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment struct {
+	Session       *string `json:"session"`
+	Agent         *string `json:"agent"`
+	Role          *string `json:"role"`
+	AssignedAt    *string `json:"assignedAt"`
+	PromptVersion *string `json:"promptVersion"`
+}
+
+// GetSession returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetAgent() *string {
+	return v.Agent
+}
+
+// GetRole returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetRole() *string {
+	return v.Role
+}
+
+// GetAssignedAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetPromptVersion returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold struct {
+	Level *AgentTaskHoldLevel `json:"level"`
+	Kind  *AgentTaskHoldKind  `json:"kind"`
+	// Role whose sign-off is under review; set when kind = HUMAN_GATE.
+	GateRole *string                                                                                          `json:"gateRole"`
+	Reason   *string                                                                                          `json:"reason"`
+	HeldBy   *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
+	HeldAt   *string                                                                                          `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
+}
+
+// GetLevel returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold) GetLevel() *AgentTaskHoldLevel {
+	return v.Level
+}
+
+// GetKind returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold) GetKind() *AgentTaskHoldKind {
+	return v.Kind
+}
+
+// GetGateRole returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold.GateRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold) GetGateRole() *string {
+	return v.GateRole
+}
+
+// GetReason returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold) GetReason() *string {
+	return v.Reason
+}
+
+// GetHeldBy returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold.HeldBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold) GetHeldBy() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor {
+	return v.HeldBy
+}
+
+// GetHeldAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold) GetHeldAt() *string {
+	return v.HeldAt
+}
+
+// GetStop returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor, error) {
+	var retval __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor, error) {
+	var retval __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
+// The GraphQL type's documentation follows.
+//
+// One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
+	QuestionsRelease *string `json:"questionsRelease"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
+}
+
+// GetAskingRole returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskingRole() *string {
+	return v.AskingRole
+}
+
+// GetAskingSession returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingSession, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskingSession() *string {
+	return v.AskingSession
+}
+
+// GetAskingAgent returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskingAgent() *string {
+	return v.AskingAgent
+}
+
+// GetQuestionsRelease returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame.QuestionsRelease, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetQuestionsRelease() *string {
+	return v.QuestionsRelease
+}
+
+// GetAnsweringRole returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AnsweringRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAnsweringRole() *string {
+	return v.AnsweringRole
+}
+
+// GetAskedAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskedAt() *string {
+	return v.AskedAt
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn includes the requested fields of the GraphQL type AgentTaskReturn.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn struct {
+	Role        *string                `json:"role"`
+	Agent       *string                `json:"agent"`
+	Session     *string                `json:"session"`
+	Reason      *AgentTaskReturnReason `json:"reason"`
+	Description *string                `json:"description"`
+	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn) GetSession() *string {
+	return v.Session
+}
+
+// GetReason returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn) GetReason() *AgentTaskReturnReason {
+	return v.Reason
+}
+
+// GetDescription returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn) GetDescription() *string {
+	return v.Description
+}
+
+// GetReturnedAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn.ReturnedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn) GetReturnedAt() *string {
+	return v.ReturnedAt
+}
+
+// GetUsage returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
+// The GraphQL type's documentation follows.
+//
+// Append-only per-hop sign-off stored in ReARM; promptVersion pins the served prompt the agent assumed.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff struct {
+	Role          *string              `json:"role"`
+	Agent         *string              `json:"agent"`
+	Session       *string              `json:"session"`
+	AssignedAt    *string              `json:"assignedAt"`
+	SignedOffAt   *string              `json:"signedOffAt"`
+	Outcome       *AgentSignOffOutcome `json:"outcome"`
+	Note          *string              `json:"note"`
+	PromptVersion *string              `json:"promptVersion"`
+	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
+	ReviewedBy *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
+	Usage *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetSession() *string {
+	return v.Session
+}
+
+// GetAssignedAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetSignedOffAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetOutcome returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.Outcome, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOutcome() *AgentSignOffOutcome {
+	return v.Outcome
+}
+
+// GetNote returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetNote() *string {
+	return v.Note
+}
+
+// GetPromptVersion returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// GetReviewedBy returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
+// The GraphQL type's documentation follows.
+//
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
+	From    *AgentTaskStatus                                                                                                              `json:"from"`
+	To      *AgentTaskStatus                                                                                                              `json:"to"`
+	At      *string                                                                                                                       `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                           `json:"trigger"`
+	Actor   *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	// What the actor said: a completion's or cancellation's note. Null on changes recorded before notes were kept.
+	Note *string `json:"note"`
+}
+
+// GetFrom returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetFrom() *AgentTaskStatus {
+	return v.From
+}
+
+// GetTo returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.To, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetTo() *AgentTaskStatus {
+	return v.To
+}
+
+// GetAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetAt() *string {
+	return v.At
+}
+
+// GetTrigger returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.Trigger, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetTrigger() *AgentStatusTrigger {
+	return v.Trigger
+}
+
+// GetActor returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.Actor, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetActor() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor {
+	return v.Actor
+}
+
+// GetNote returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) __premarshalJSON() (*__premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor, error) {
+	var retval __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskEscalateHoldProgrammaticResponse is returned by AgentTaskEscalateHoldProgrammatic on success.
+type AgentTaskEscalateHoldProgrammaticResponse struct {
+	// Hand a COORDINATOR-level hold to the operator (task c0a2134c): the level becomes OPERATOR, the
+	// reason keeps what the hold said with yours after it, and the board ALERTs. For a judgement call
+	// -- two roles disagree, an item needs accepting. Refused on any other hold.
+	AgentTaskEscalateHoldProgrammatic *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask `json:"agentTaskEscalateHoldProgrammatic"`
+}
+
+// GetAgentTaskEscalateHoldProgrammatic returns AgentTaskEscalateHoldProgrammaticResponse.AgentTaskEscalateHoldProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticResponse) GetAgentTaskEscalateHoldProgrammatic() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask {
+	return v.AgentTaskEscalateHoldProgrammatic
+}
+
 // MANUAL: coordinator/operator parked the task. HUMAN_GATE: a gated role signed off; only a human
 // review verdict (not a plain release) resolves it. QUESTION: the board could not route a question
 // and the coordinator escalated -- releasing THAT hold with words records them as the answer to the
@@ -11074,6 +12118,10 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHold struct {
 	Reason   *string                                                                          `json:"reason"`
 	HeldBy   *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                          `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -11104,6 +12152,11 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHold) GetHel
 // GetHeldAt returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -11809,6 +12862,21 @@ func (v *AgentTaskHoldProgrammaticResponse) GetAgentTaskHoldProgrammatic() *Agen
 	return v.AgentTaskHoldProgrammatic
 }
 
+// The routing stop that placed a hold (board-mechanics §6.2).
+type AgentTaskHoldStop string
+
+const (
+	AgentTaskHoldStopCycleCap   AgentTaskHoldStop = "CYCLE_CAP"
+	AgentTaskHoldStopNoProgress AgentTaskHoldStop = "NO_PROGRESS"
+	AgentTaskHoldStopBudget     AgentTaskHoldStop = "BUDGET"
+)
+
+var AllAgentTaskHoldStop = []AgentTaskHoldStop{
+	AgentTaskHoldStopCycleCap,
+	AgentTaskHoldStopNoProgress,
+	AgentTaskHoldStopBudget,
+}
+
 // AgentTaskHumanReviewAgentTaskHumanReviewAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskHumanReviewAgentTaskHumanReviewAgentTask struct {
 	PersonTaskFields `json:"-"`
@@ -12460,6 +13528,10 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHold struct 
 	Reason   *string                                                                              `json:"reason"`
 	HeldBy   *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                              `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -12490,6 +13562,11 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHold) Ge
 // GetHeldAt returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -13496,6 +14573,10 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	Reason   *string                                                                                                 `json:"reason"`
 	HeldBy   *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                                                 `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -13526,6 +14607,11 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // GetHeldAt returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -14865,6 +15951,10 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHold struct {
 	Reason   *string                                                                            `json:"reason"`
 	HeldBy   *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                            `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -14895,6 +15985,11 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHold) GetH
 // GetHeldAt returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -16101,6 +17196,10 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold struct {
 	Reason   *string                                                                  `json:"reason"`
 	HeldBy   *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                  `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -16131,6 +17230,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold) GetHeldBy() *A
 // GetHeldAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -17628,6 +18732,10 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHold str
 	Reason   *string                                                                                  `json:"reason"`
 	HeldBy   *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                                  `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -17658,6 +18766,11 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHold
 // GetHeldAt returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -18598,6 +19711,10 @@ type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHo
 	Reason   *string                                                                                        `json:"reason"`
 	HeldBy   *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                                        `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -18628,6 +19745,11 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // GetHeldAt returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -19326,7 +20448,10 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // AgentTaskReleaseHoldProgrammaticResponse is returned by AgentTaskReleaseHoldProgrammatic on success.
 type AgentTaskReleaseHoldProgrammaticResponse struct {
 	// Release a COORDINATOR-level hold. role, optionally: an active role on the board to route to
-	// instead of the one routing would pick (task 4c566d0d).
+	// instead of the one routing would pick (task 4c566d0d). note, optionally: why, posted to the board
+	// feed with the release. A no-progress or cycle-cap stop parks here first when the board allows it
+	// (coordinatorStopRelease): its release routes past the stop once, and the next stop of that kind on
+	// the task is the operator's (task c0a2134c).
 	AgentTaskReleaseHoldProgrammatic *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask `json:"agentTaskReleaseHoldProgrammatic"`
 }
 
@@ -19586,6 +20711,10 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHold struct 
 	Reason   *string                                                                              `json:"reason"`
 	HeldBy   *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                              `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -19616,6 +20745,11 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHold) Ge
 // GetHeldAt returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -20900,6 +22034,10 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	Reason   *string                                                                                                      `json:"reason"`
 	HeldBy   *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                                                      `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -20930,6 +22068,11 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // GetHeldAt returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -21869,6 +23012,10 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHold struct 
 	Reason   *string                                                                              `json:"reason"`
 	HeldBy   *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                              `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -21899,6 +23046,11 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHold) Ge
 // GetHeldAt returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -23723,6 +24875,10 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHold struc
 	Reason   *string                                                                                `json:"reason"`
 	HeldBy   *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                                `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -23753,6 +24909,11 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHold) 
 // GetHeldAt returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -24750,6 +25911,10 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHold struct {
 	Reason   *string                                                                            `json:"reason"`
 	HeldBy   *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                            `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -24780,6 +25945,11 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHold) GetH
 // GetHeldAt returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -25988,6 +27158,10 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHold struct {
 	Reason   *string                                                                    `json:"reason"`
 	HeldBy   *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                                                    `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -26018,6 +27192,11 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHold) GetHeldBy() 
 // GetHeldAt returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHold) GetHeldAt() *string {
 	return v.HeldAt
+}
+
+// GetStop returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
 }
 
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -30617,6 +31796,8 @@ type ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec struct
 	// Findings at or above this priority stop completion; null means every open finding does.
 	CompletionPriority   *int `json:"completionPriority"`
 	HumanQueueAgeMinutes *int `json:"humanQueueAgeMinutes"`
+	// Whether a no-progress or cycle-cap stop parks for the coordinator first; null means the default, on.
+	CoordinatorStopRelease *bool `json:"coordinatorStopRelease"`
 }
 
 // GetBudgetMicros returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.BudgetMicros, and is useful for accessing the field via an interface.
@@ -30652,6 +31833,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) G
 // GetHumanQueueAgeMinutes returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.HumanQueueAgeMinutes, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetHumanQueueAgeMinutes() *int {
 	return v.HumanQueueAgeMinutes
+}
+
+// GetCoordinatorStopRelease returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.CoordinatorStopRelease, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetCoordinatorStopRelease() *bool {
+	return v.CoordinatorStopRelease
 }
 
 // ExportBoardResponse is returned by ExportBoard on success.
@@ -33879,6 +35065,10 @@ type PersonTaskFieldsHoldAgentTaskHold struct {
 	Reason   *string                                            `json:"reason"`
 	HeldBy   *PersonTaskFieldsHoldAgentTaskHoldHeldByAgentActor `json:"heldBy"`
 	HeldAt   *string                                            `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
 }
 
 // GetLevel returns PersonTaskFieldsHoldAgentTaskHold.Level, and is useful for accessing the field via an interface.
@@ -33900,6 +35090,9 @@ func (v *PersonTaskFieldsHoldAgentTaskHold) GetHeldBy() *PersonTaskFieldsHoldAge
 
 // GetHeldAt returns PersonTaskFieldsHoldAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
 func (v *PersonTaskFieldsHoldAgentTaskHold) GetHeldAt() *string { return v.HeldAt }
+
+// GetStop returns PersonTaskFieldsHoldAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *PersonTaskFieldsHoldAgentTaskHold) GetStop() *AgentTaskHoldStop { return v.Stop }
 
 // PersonTaskFieldsHoldAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
@@ -37504,6 +38697,22 @@ func (v *__AgentTaskElementProgrammaticInput) GetElement() string { return v.Ele
 // GetDepth returns __AgentTaskElementProgrammaticInput.Depth, and is useful for accessing the field via an interface.
 func (v *__AgentTaskElementProgrammaticInput) GetDepth() *int { return v.Depth }
 
+// __AgentTaskEscalateHoldProgrammaticInput is used internally by genqlient
+type __AgentTaskEscalateHoldProgrammaticInput struct {
+	TaskUuid    string `json:"taskUuid"`
+	SessionUuid string `json:"sessionUuid"`
+	Reason      string `json:"reason"`
+}
+
+// GetTaskUuid returns __AgentTaskEscalateHoldProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskEscalateHoldProgrammaticInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetSessionUuid returns __AgentTaskEscalateHoldProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskEscalateHoldProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetReason returns __AgentTaskEscalateHoldProgrammaticInput.Reason, and is useful for accessing the field via an interface.
+func (v *__AgentTaskEscalateHoldProgrammaticInput) GetReason() string { return v.Reason }
+
 // __AgentTaskHoldProgrammaticInput is used internally by genqlient
 type __AgentTaskHoldProgrammaticInput struct {
 	TaskUuid    string `json:"taskUuid"`
@@ -37669,6 +38878,7 @@ type __AgentTaskReleaseHoldProgrammaticInput struct {
 	TaskUuid    string  `json:"taskUuid"`
 	SessionUuid string  `json:"sessionUuid"`
 	Role        *string `json:"role"`
+	Note        *string `json:"note"`
 }
 
 // GetTaskUuid returns __AgentTaskReleaseHoldProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -37679,6 +38889,9 @@ func (v *__AgentTaskReleaseHoldProgrammaticInput) GetSessionUuid() string { retu
 
 // GetRole returns __AgentTaskReleaseHoldProgrammaticInput.Role, and is useful for accessing the field via an interface.
 func (v *__AgentTaskReleaseHoldProgrammaticInput) GetRole() *string { return v.Role }
+
+// GetNote returns __AgentTaskReleaseHoldProgrammaticInput.Note, and is useful for accessing the field via an interface.
+func (v *__AgentTaskReleaseHoldProgrammaticInput) GetNote() *string { return v.Note }
 
 // __AgentTaskReopenProgrammaticInput is used internally by genqlient
 type __AgentTaskReopenProgrammaticInput struct {
@@ -38954,6 +40167,8 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		blockingPriority
 		completionPriority
 		humanQueueAgeMinutes
+		coordinatorStopRelease
+		effectiveCoordinatorStopRelease
 		declarative {
 			specHash
 			appliedAt
@@ -39207,6 +40422,8 @@ query AgentBoardsProgrammatic {
 		blockingPriority
 		completionPriority
 		humanQueueAgeMinutes
+		coordinatorStopRelease
+		effectiveCoordinatorStopRelease
 		declarative {
 			specHash
 			appliedAt
@@ -39542,6 +40759,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -39651,6 +40869,7 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 					... ActorFields
 				}
 				heldAt
+				stop
 			}
 			assignment {
 				session
@@ -39797,6 +41016,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -39915,6 +41135,7 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -40057,6 +41278,7 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -40198,6 +41420,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -40302,6 +41525,7 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -40490,6 +41714,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -40596,6 +41821,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -40744,6 +41970,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -40898,6 +42125,141 @@ func AgentTaskElementProgrammatic(
 	return data_, err_
 }
 
+// The mutation executed by AgentTaskEscalateHoldProgrammatic.
+const AgentTaskEscalateHoldProgrammatic_Operation = `
+mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
+	agentTaskEscalateHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
+		uuid
+		org
+		board
+		externalRef
+		title
+		sourceUrl
+		status
+		role
+		orderIndex
+		dependsOn
+		requireHumanReview
+		hold {
+			level
+			kind
+			gateRole
+			reason
+			heldBy {
+				... ActorFields
+			}
+			heldAt
+			stop
+		}
+		assignment {
+			session
+			agent
+			role
+			assignedAt
+			promptVersion
+		}
+		signOffs {
+			role
+			agent
+			session
+			assignedAt
+			signedOffAt
+			outcome
+			note
+			promptVersion
+			reviewedBy {
+				... ActorFields
+			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
+		}
+		returns {
+			role
+			agent
+			session
+			reason
+			description
+			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
+		}
+		parentTask
+		childTasks
+		sessions
+		prUrls
+		registeredBySession
+		createdDate
+		completedAt
+		statusHistory {
+			from
+			to
+			at
+			trigger
+			actor {
+				... ActorFields
+			}
+			note
+		}
+		orderSetBy {
+			... ActorFields
+		}
+		orderSetAt
+		requiredRolesSkipped
+		questionStack {
+			askingRole
+			askingSession
+			askingAgent
+			questionsRelease
+			answeringRole
+			askedAt
+		}
+	}
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
+}
+`
+
+func AgentTaskEscalateHoldProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+	sessionUuid string,
+	reason string,
+) (data_ *AgentTaskEscalateHoldProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskEscalateHoldProgrammatic",
+		Query:  AgentTaskEscalateHoldProgrammatic_Operation,
+		Variables: &__AgentTaskEscalateHoldProgrammaticInput{
+			TaskUuid:    taskUuid,
+			SessionUuid: sessionUuid,
+			Reason:      reason,
+		},
+	}
+
+	data_ = &AgentTaskEscalateHoldProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by AgentTaskHoldProgrammatic.
 const AgentTaskHoldProgrammatic_Operation = `
 mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
@@ -40922,6 +42284,7 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -41063,6 +42426,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -41180,6 +42544,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -41286,6 +42651,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -41426,6 +42792,7 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 					... ActorFields
 				}
 				heldAt
+				stop
 			}
 			assignment {
 				session
@@ -41572,6 +42939,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -41687,6 +43055,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -41791,6 +43160,7 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -41925,6 +43295,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -42143,6 +43514,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -42247,6 +43619,7 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -42355,8 +43728,8 @@ func AgentTaskRegisterProgrammatic(
 
 // The mutation executed by AgentTaskReleaseHoldProgrammatic.
 const AgentTaskReleaseHoldProgrammatic_Operation = `
-mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String) {
-	agentTaskReleaseHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role) {
+mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String, $note: String) {
+	agentTaskReleaseHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, note: $note) {
 		uuid
 		org
 		board
@@ -42377,6 +43750,7 @@ mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $r
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -42464,6 +43838,7 @@ func AgentTaskReleaseHoldProgrammatic(
 	taskUuid string,
 	sessionUuid string,
 	role *string,
+	note *string,
 ) (data_ *AgentTaskReleaseHoldProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskReleaseHoldProgrammatic",
@@ -42472,6 +43847,7 @@ func AgentTaskReleaseHoldProgrammatic(
 			TaskUuid:    taskUuid,
 			SessionUuid: sessionUuid,
 			Role:        role,
+			Note:        note,
 		},
 	}
 
@@ -42511,6 +43887,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -42672,6 +44049,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -42776,6 +44154,7 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -42908,6 +44287,7 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -43172,6 +44552,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -43283,6 +44664,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -43387,6 +44769,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -43532,6 +44915,7 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -43673,6 +45057,7 @@ fragment PersonTaskFields on AgentTask {
 			... ActorFields
 		}
 		heldAt
+		stop
 	}
 	assignment {
 		session
@@ -43777,6 +45162,7 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus) {
 				... ActorFields
 			}
 			heldAt
+			stop
 		}
 		assignment {
 			session
@@ -44672,6 +46058,7 @@ query ExportBoard ($board: String!) {
 			blockingPriority
 			completionPriority
 			humanQueueAgeMinutes
+			coordinatorStopRelease
 		}
 		roles {
 			... BoardRoleSpecFields
