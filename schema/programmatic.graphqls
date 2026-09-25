@@ -143,6 +143,11 @@ roles: the roles this agent can take, each a role name on the board
   """
   agentCheckReportProgrammatic(
   releaseUuid: ID!): Release
+  """
+  The element check catalogue (elements.md §7): every fixed check with what it means and when it
+  skips, and the coverage.<gate> pattern the board's gates are named by. Served on both endpoints.
+  """
+  checkCatalogue: [CheckCatalogueEntry]
 }
 
 type Mutation {
@@ -1246,6 +1251,21 @@ type AgentTaskRoleConfig {
   can produce anything.
   """
   producesOutputs: [AgentProducedOutput]
+}
+
+"""
+One check of the catalogue.
+"""
+type CheckCatalogueEntry {
+  """
+  The check's name; coverage.<gate> stands for every board gate.
+  """
+  name: String
+  description: String
+  """
+  When the check reports SKIP instead of a result; null when it always runs.
+  """
+  skipsWhen: String
 }
 
 type DeclarativeApplyResult {
@@ -2650,6 +2670,10 @@ type CheckPolicy {
   Families that must take part in verification: test, requirement.
   """
   orphans: [String]
+  """
+  The board's coverage gates by name, each {select, require, description}: the check coverage.<name> (elements.md §7.5).
+  """
+  coverage: Object
 }
 
 """
@@ -3560,6 +3584,10 @@ type AgentTaskElement {
   line: Int
   release: ID
   specification: String
+  """
+  Glossary terms the element uses (grammar 1.1).
+  """
+  terms: [String]
 }
 
 """
@@ -4017,9 +4045,13 @@ input CheckPolicyInput {
   """
   mandatoryFields: Object
   """
-  test and/or requirement; absent means both.
+  test and/or requirement; absent means test.
   """
   orphans: [String!]
+  """
+  Gate name to {select, require, description}; both expressions are CEL over e and scope, validated on save.
+  """
+  coverage: Object
 }
 
 input BoardSettingsSpecInput {
@@ -6935,6 +6967,10 @@ type Element {
   1-based line of the heading or table row.
   """
   line: Int
+  """
+  Glossary terms the element's content uses, **term** (grammar 1.1); empty under grammar 1.
+  """
+  terms: [String]
 }
 
 """

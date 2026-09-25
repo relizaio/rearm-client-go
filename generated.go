@@ -1888,6 +1888,8 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy struct {
 	MandatoryFields *json.RawMessage `json:"mandatoryFields"`
 	// Families that must take part in verification: test, requirement.
 	Orphans []*string `json:"orphans"`
+	// The board's coverage gates by name, each {select, require, description}: the check coverage.<name> (elements.md §7.5).
+	Coverage *json.RawMessage `json:"coverage"`
 }
 
 // GetBlocking returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy.Blocking, and is useful for accessing the field via an interface.
@@ -1903,6 +1905,11 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy) GetM
 // GetOrphans returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy.Orphans, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy) GetOrphans() []*string {
 	return v.Orphans
+}
+
+// GetCoverage returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy.Coverage, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy) GetCoverage() *json.RawMessage {
+	return v.Coverage
 }
 
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat includes the requested fields of the GraphQL type AgentCoordinatorSeat.
@@ -2002,6 +2009,8 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy 
 	MandatoryFields *json.RawMessage `json:"mandatoryFields"`
 	// Families that must take part in verification: test, requirement.
 	Orphans []*string `json:"orphans"`
+	// The board's coverage gates by name, each {select, require, description}: the check coverage.<name> (elements.md §7.5).
+	Coverage *json.RawMessage `json:"coverage"`
 }
 
 // GetBlocking returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy.Blocking, and is useful for accessing the field via an interface.
@@ -2017,6 +2026,11 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPol
 // GetOrphans returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy.Orphans, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy) GetOrphans() []*string {
 	return v.Orphans
+}
+
+// GetCoverage returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy.Coverage, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEffectiveCheckPolicy) GetCoverage() *json.RawMessage {
+	return v.Coverage
 }
 
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -2871,6 +2885,8 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy struct 
 	MandatoryFields *json.RawMessage `json:"mandatoryFields"`
 	// Families that must take part in verification: test, requirement.
 	Orphans []*string `json:"orphans"`
+	// The board's coverage gates by name, each {select, require, description}: the check coverage.<name> (elements.md §7.5).
+	Coverage *json.RawMessage `json:"coverage"`
 }
 
 // GetBlocking returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy.Blocking, and is useful for accessing the field via an interface.
@@ -2886,6 +2902,11 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy) Ge
 // GetOrphans returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy.Orphans, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy) GetOrphans() []*string {
 	return v.Orphans
+}
+
+// GetCoverage returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy.Coverage, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy) GetCoverage() *json.RawMessage {
+	return v.Coverage
 }
 
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat includes the requested fields of the GraphQL type AgentCoordinatorSeat.
@@ -2985,6 +3006,8 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolic
 	MandatoryFields *json.RawMessage `json:"mandatoryFields"`
 	// Families that must take part in verification: test, requirement.
 	Orphans []*string `json:"orphans"`
+	// The board's coverage gates by name, each {select, require, description}: the check coverage.<name> (elements.md §7.5).
+	Coverage *json.RawMessage `json:"coverage"`
 }
 
 // GetBlocking returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy.Blocking, and is useful for accessing the field via an interface.
@@ -3000,6 +3023,11 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckP
 // GetOrphans returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy.Orphans, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy) GetOrphans() []*string {
 	return v.Orphans
+}
+
+// GetCoverage returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy.Coverage, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEffectiveCheckPolicy) GetCoverage() *json.RawMessage {
+	return v.Coverage
 }
 
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
@@ -25967,6 +25995,41 @@ func (v *ChangeFields) GetMessage() *string { return v.Message }
 // GetWarnings returns ChangeFields.Warnings, and is useful for accessing the field via an interface.
 func (v *ChangeFields) GetWarnings() []string { return v.Warnings }
 
+// CheckCatalogueCheckCatalogueCheckCatalogueEntry includes the requested fields of the GraphQL type CheckCatalogueEntry.
+// The GraphQL type's documentation follows.
+//
+// One check of the catalogue.
+type CheckCatalogueCheckCatalogueCheckCatalogueEntry struct {
+	// The check's name; coverage.<gate> stands for every board gate.
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+	// When the check reports SKIP instead of a result; null when it always runs.
+	SkipsWhen *string `json:"skipsWhen"`
+}
+
+// GetName returns CheckCatalogueCheckCatalogueCheckCatalogueEntry.Name, and is useful for accessing the field via an interface.
+func (v *CheckCatalogueCheckCatalogueCheckCatalogueEntry) GetName() *string { return v.Name }
+
+// GetDescription returns CheckCatalogueCheckCatalogueCheckCatalogueEntry.Description, and is useful for accessing the field via an interface.
+func (v *CheckCatalogueCheckCatalogueCheckCatalogueEntry) GetDescription() *string {
+	return v.Description
+}
+
+// GetSkipsWhen returns CheckCatalogueCheckCatalogueCheckCatalogueEntry.SkipsWhen, and is useful for accessing the field via an interface.
+func (v *CheckCatalogueCheckCatalogueCheckCatalogueEntry) GetSkipsWhen() *string { return v.SkipsWhen }
+
+// CheckCatalogueResponse is returned by CheckCatalogue on success.
+type CheckCatalogueResponse struct {
+	// The element check catalogue (elements.md §7): every fixed check with what it means and when it
+	// skips, and the coverage.<gate> pattern the board's gates are named by. Served on both endpoints.
+	CheckCatalogue []*CheckCatalogueCheckCatalogueCheckCatalogueEntry `json:"checkCatalogue"`
+}
+
+// GetCheckCatalogue returns CheckCatalogueResponse.CheckCatalogue, and is useful for accessing the field via an interface.
+func (v *CheckCatalogueResponse) GetCheckCatalogue() []*CheckCatalogueCheckCatalogueCheckCatalogueEntry {
+	return v.CheckCatalogue
+}
+
 // SKIP is a result, never silence: a check that cannot run says why.
 type CheckOutcome string
 
@@ -26957,6 +27020,8 @@ type ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy struct {
 	MandatoryFields *json.RawMessage `json:"mandatoryFields"`
 	// Families that must take part in verification: test, requirement.
 	Orphans []*string `json:"orphans"`
+	// The board's coverage gates by name, each {select, require, description}: the check coverage.<name> (elements.md §7.5).
+	Coverage *json.RawMessage `json:"coverage"`
 }
 
 // GetBlocking returns ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy.Blocking, and is useful for accessing the field via an interface.
@@ -26972,6 +27037,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy) GetMandat
 // GetOrphans returns ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy.Orphans, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy) GetOrphans() []*string {
 	return v.Orphans
+}
+
+// GetCoverage returns ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy.Coverage, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy) GetCoverage() *json.RawMessage {
+	return v.Coverage
 }
 
 // ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec includes the requested fields of the GraphQL type BoardRoleSpec.
@@ -34466,11 +34536,13 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 			blocking
 			mandatoryFields
 			orphans
+			coverage
 		}
 		effectiveCheckPolicy {
 			blocking
 			mandatoryFields
 			orphans
+			coverage
 		}
 		coordinatorPrompt
 		missingCapabilities
@@ -34659,11 +34731,13 @@ query AgentBoardsProgrammatic {
 			blocking
 			mandatoryFields
 			orphans
+			coverage
 		}
 		effectiveCheckPolicy {
 			blocking
 			mandatoryFields
 			orphans
+			coverage
 		}
 		coordinatorPrompt
 		missingCapabilities
@@ -38325,6 +38399,40 @@ func ArchiveBoard(
 	return data_, err_
 }
 
+// The query executed by CheckCatalogue.
+const CheckCatalogue_Operation = `
+query CheckCatalogue {
+	checkCatalogue {
+		name
+		description
+		skipsWhen
+	}
+}
+`
+
+// The check catalogue (elements.md §7): every fixed check, what it means and when it skips, and the
+// coverage.<gate> pattern a board's own gates are named by.
+func CheckCatalogue(
+	ctx_ context.Context,
+	client_ graphql.Client,
+) (data_ *CheckCatalogueResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "CheckCatalogue",
+		Query:  CheckCatalogue_Operation,
+	}
+
+	data_ = &CheckCatalogueResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by CreateComponentInPerspectiveProgrammatic.
 const CreateComponentInPerspectiveProgrammatic_Operation = `
 mutation CreateComponentInPerspectiveProgrammatic ($CreateComponentInput: CreateComponentInput!, $perspectiveUuid: ID!) {
@@ -38526,6 +38634,7 @@ query ExportBoard ($board: String!) {
 			blocking
 			mandatoryFields
 			orphans
+			coverage
 		}
 		coordinatorPrompt
 		coordinatorCapabilities

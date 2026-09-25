@@ -28,6 +28,12 @@ query AgentTaskCheckTargetsProgrammatic ($taskUuid: ID!) {
 	}
 }
 
+# The check catalogue (elements.md §7): every fixed check, what it means and when it skips, and the
+# coverage.<gate> pattern a board's own gates are named by.
+query CheckCatalogue {
+	checkCatalogue { name description skipsWhen }
+}
+
 # The rework point of an element (elements.md §8): what depends on it across the board, and which
 # of the task's rounds changed it.
 query AgentTaskElementProgrammatic ($taskUuid: ID!, $element: String!, $depth: Int) {
