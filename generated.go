@@ -16923,6 +16923,8 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 
 // AgentTaskReleaseHoldProgrammaticResponse is returned by AgentTaskReleaseHoldProgrammatic on success.
 type AgentTaskReleaseHoldProgrammaticResponse struct {
+	// Release a COORDINATOR-level hold. role, optionally: an active role on the board to route to
+	// instead of the one routing would pick (task 4c566d0d).
 	AgentTaskReleaseHoldProgrammatic *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask `json:"agentTaskReleaseHoldProgrammatic"`
 }
 
@@ -33526,8 +33528,9 @@ func (v *__AgentTaskRegisterProgrammaticInput) GetInput() *AgentTaskRegisterInpu
 
 // __AgentTaskReleaseHoldProgrammaticInput is used internally by genqlient
 type __AgentTaskReleaseHoldProgrammaticInput struct {
-	TaskUuid    string `json:"taskUuid"`
-	SessionUuid string `json:"sessionUuid"`
+	TaskUuid    string  `json:"taskUuid"`
+	SessionUuid string  `json:"sessionUuid"`
+	Role        *string `json:"role"`
 }
 
 // GetTaskUuid returns __AgentTaskReleaseHoldProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -33535,6 +33538,9 @@ func (v *__AgentTaskReleaseHoldProgrammaticInput) GetTaskUuid() string { return 
 
 // GetSessionUuid returns __AgentTaskReleaseHoldProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
 func (v *__AgentTaskReleaseHoldProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetRole returns __AgentTaskReleaseHoldProgrammaticInput.Role, and is useful for accessing the field via an interface.
+func (v *__AgentTaskReleaseHoldProgrammaticInput) GetRole() *string { return v.Role }
 
 // __AgentTaskReopenProgrammaticInput is used internally by genqlient
 type __AgentTaskReopenProgrammaticInput struct {
@@ -36913,8 +36919,8 @@ func AgentTaskRegisterProgrammatic(
 
 // The mutation executed by AgentTaskReleaseHoldProgrammatic.
 const AgentTaskReleaseHoldProgrammatic_Operation = `
-mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
-	agentTaskReleaseHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid) {
+mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String) {
+	agentTaskReleaseHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role) {
 		uuid
 		org
 		board
@@ -37021,6 +37027,7 @@ func AgentTaskReleaseHoldProgrammatic(
 	client_ graphql.Client,
 	taskUuid string,
 	sessionUuid string,
+	role *string,
 ) (data_ *AgentTaskReleaseHoldProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskReleaseHoldProgrammatic",
@@ -37028,6 +37035,7 @@ func AgentTaskReleaseHoldProgrammatic(
 		Variables: &__AgentTaskReleaseHoldProgrammaticInput{
 			TaskUuid:    taskUuid,
 			SessionUuid: sessionUuid,
+			Role:        role,
 		},
 	}
 
