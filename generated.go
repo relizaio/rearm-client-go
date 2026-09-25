@@ -27016,6 +27016,1647 @@ func (v *AgentTaskUserRegisterInput) GetRequiredInputs() []*AgentRequiredInputIn
 	return v.RequiredInputs
 }
 
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
+	Uuid        *string          `json:"uuid"`
+	Org         *string          `json:"org"`
+	Board       *string          `json:"board"`
+	ExternalRef *string          `json:"externalRef"`
+	Title       *string          `json:"title"`
+	SourceUrl   *string          `json:"sourceUrl"`
+	Status      *AgentTaskStatus `json:"status"`
+	// Role the task is queued for / worked in; retained as last role until re-authorized.
+	Role *string `json:"role"`
+	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
+	OrderIndex *int `json:"orderIndex"`
+	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
+	DependsOn []*string `json:"dependsOn"`
+	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
+	RequireHumanReview *bool `json:"requireHumanReview"`
+	// Hold state while ON_HOLD; null otherwise.
+	Hold       *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold                              `json:"hold"`
+	Assignment *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
+	SignOffs   []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
+	Returns    []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
+	ParentTask *string                                                                                             `json:"parentTask"`
+	ChildTasks []*string                                                                                           `json:"childTasks"`
+	// Every session that ever held the assignment.
+	Sessions            []*string `json:"sessions"`
+	PrUrls              []*string `json:"prUrls"`
+	RegisteredBySession *string   `json:"registeredBySession"`
+	CreatedDate         *string   `json:"createdDate"`
+	CompletedAt         *string   `json:"completedAt"`
+	// The linked PRs (prUrls) as ReARM knows them from CI's PR registrations, resolved per read.
+	// A task completes when every one has merged; registered false means CI never reported the URL.
+	PullRequests []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest `json:"pullRequests"`
+	// The PR heads the newest passing TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR
+	// (task 3b97ccfd): merge at these. Empty when no passing round names any.
+	TestedHeads []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTestedHeadsTestedHead `json:"testedHeads"`
+	// When the task was last reopened; null when never.
+	ReopenedAt *string `json:"reopenedAt"`
+	// How many times the task has been reopened. A second reopen is a signal to split or cancel.
+	ReopenCount *int `json:"reopenCount"`
+	// Every reopen, oldest first: the role it went back to, when, by whom and why.
+	Reopens []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen `json:"reopens"`
+	// Append-only status transition log, oldest first.
+	StatusHistory []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
+	// Who last set orderIndex, the coordinator or a person, and when.
+	OrderSetBy *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor `json:"orderSetBy"`
+	OrderSetAt *string                                                                                `json:"orderSetAt"`
+	// Required roles a person completed the task without, having said why in the completing status change.
+	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
+	QuestionStack []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+	// This task's document releases, newest first.
+	Documents []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsRelease `json:"documents"`
+	// Findings still open on this task, from the NEWEST round of each indexed
+	// type, ordered by priority. Newest round only by design: every round
+	// carries forward what the previous one left open, so the newest is the
+	// current state and summing rounds would count one finding several times.
+	OpenFindings []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding `json:"openFindings"`
+	// The open items of the newest QUESTIONS round only, which is what a human answers. Separate
+	// from openFindings, which flattens every indexed type and carries nothing on an item saying
+	// which round it came from.
+	OpenQuestions []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding `json:"openQuestions"`
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetOrg returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Org, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetOrg() *string {
+	return v.Org
+}
+
+// GetBoard returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Board, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetBoard() *string {
+	return v.Board
+}
+
+// GetExternalRef returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetExternalRef() *string {
+	return v.ExternalRef
+}
+
+// GetTitle returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetTitle() *string {
+	return v.Title
+}
+
+// GetSourceUrl returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetSourceUrl() *string {
+	return v.SourceUrl
+}
+
+// GetStatus returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetStatus() *AgentTaskStatus {
+	return v.Status
+}
+
+// GetRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Role, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetRole() *string {
+	return v.Role
+}
+
+// GetOrderIndex returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetOrderIndex() *int {
+	return v.OrderIndex
+}
+
+// GetDependsOn returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetDependsOn() []*string {
+	return v.DependsOn
+}
+
+// GetRequireHumanReview returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetRequireHumanReview() *bool {
+	return v.RequireHumanReview
+}
+
+// GetHold returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Hold, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetHold() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold {
+	return v.Hold
+}
+
+// GetAssignment returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Assignment, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetAssignment() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment {
+	return v.Assignment
+}
+
+// GetSignOffs returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.SignOffs, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetSignOffs() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff {
+	return v.SignOffs
+}
+
+// GetReturns returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Returns, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetReturns() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn {
+	return v.Returns
+}
+
+// GetParentTask returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetParentTask() *string {
+	return v.ParentTask
+}
+
+// GetChildTasks returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.ChildTasks, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetChildTasks() []*string {
+	return v.ChildTasks
+}
+
+// GetSessions returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Sessions, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetSessions() []*string {
+	return v.Sessions
+}
+
+// GetPrUrls returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.PrUrls, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetPrUrls() []*string {
+	return v.PrUrls
+}
+
+// GetRegisteredBySession returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.RegisteredBySession, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetRegisteredBySession() *string {
+	return v.RegisteredBySession
+}
+
+// GetCreatedDate returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetCompletedAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.CompletedAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetCompletedAt() *string {
+	return v.CompletedAt
+}
+
+// GetPullRequests returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.PullRequests, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetPullRequests() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest {
+	return v.PullRequests
+}
+
+// GetTestedHeads returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.TestedHeads, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetTestedHeads() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTestedHeadsTestedHead {
+	return v.TestedHeads
+}
+
+// GetReopenedAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.ReopenedAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetReopenedAt() *string {
+	return v.ReopenedAt
+}
+
+// GetReopenCount returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.ReopenCount, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetReopenCount() *int {
+	return v.ReopenCount
+}
+
+// GetReopens returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Reopens, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetReopens() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen {
+	return v.Reopens
+}
+
+// GetStatusHistory returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.StatusHistory, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetStatusHistory() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange {
+	return v.StatusHistory
+}
+
+// GetOrderSetBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.OrderSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetOrderSetBy() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor {
+	return v.OrderSetBy
+}
+
+// GetOrderSetAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.OrderSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetOrderSetAt() *string {
+	return v.OrderSetAt
+}
+
+// GetRequiredRolesSkipped returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
+	return v.RequiredRolesSkipped
+}
+
+// GetQuestionStack returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetQuestionStack() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame {
+	return v.QuestionStack
+}
+
+// GetDocuments returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Documents, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetDocuments() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsRelease {
+	return v.Documents
+}
+
+// GetOpenFindings returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.OpenFindings, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetOpenFindings() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding {
+	return v.OpenFindings
+}
+
+// GetOpenQuestions returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.OpenQuestions, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetOpenQuestions() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding {
+	return v.OpenQuestions
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment includes the requested fields of the GraphQL type AgentTaskWorkAssignment.
+// The GraphQL type's documentation follows.
+//
+// The single live assignment -- bound to session liveness, released on any session close.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment struct {
+	Session       *string `json:"session"`
+	Agent         *string `json:"agent"`
+	Role          *string `json:"role"`
+	AssignedAt    *string `json:"assignedAt"`
+	PromptVersion *string `json:"promptVersion"`
+}
+
+// GetSession returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.Session, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetAgent() *string {
+	return v.Agent
+}
+
+// GetRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.Role, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetRole() *string {
+	return v.Role
+}
+
+// GetAssignedAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetPromptVersion returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsRelease includes the requested fields of the GraphQL type Release.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsRelease struct {
+	Uuid      *string               `json:"uuid"`
+	Version   *string               `json:"version"`
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+	// Pointer to the document bytes this release publishes. Non-null only on releases of
+	// specification components -- an ordinary software release has no document.
+	Document *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef `json:"document"`
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetVersion returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsRelease.Version, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetDocument returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsRelease.Document, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsRelease) GetDocument() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef {
+	return v.Document
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef includes the requested fields of the GraphQL type DocumentRef.
+// The GraphQL type's documentation follows.
+//
+// Pointer from a release to document bytes in a repository, present only on
+// releases of specification components. The commit and repository are NOT
+// repeated here: they come from the release's source code entry, so the
+// recognised-commit predicate and signature verification apply to a document
+// exactly as they do to code.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef struct {
+	Specification *SpecificationType `json:"specification"`
+	// Repo-relative path at the release's commit.
+	Path *string `json:"path"`
+	// 1-based count of this task's rounds of this type.
+	Round *int `json:"round"`
+	// The task this round belongs to, for TASK-scoped types.
+	Task *string `json:"task"`
+	// The findings index for REVIEW_FINDINGS and TEST_REPORT; absent otherwise.
+	Findings *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex `json:"findings"`
+}
+
+// GetSpecification returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetPath returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Path, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetPath() *string {
+	return v.Path
+}
+
+// GetRound returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Round, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetRound() *int {
+	return v.Round
+}
+
+// GetTask returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Task, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetTask() *string {
+	return v.Task
+}
+
+// GetFindings returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Findings, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetFindings() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex {
+	return v.Findings
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex includes the requested fields of the GraphQL type FindingsIndex.
+// The GraphQL type's documentation follows.
+//
+// The machine-read half of a review or test document: what was found, how badly it
+// matters and whether it is still open. The prose lives in the markdown the release
+// points at, under a heading carrying each finding's id.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex struct {
+	Kind *SpecificationType `json:"kind"`
+	// 1-based round for display; the authoritative value is on the release.
+	Round   *int             `json:"round"`
+	Verdict *FindingsVerdict `json:"verdict"`
+	// Totals on a TEST_REPORT; absent on a review.
+	Counts *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts `json:"counts"`
+	// The PR heads a TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR (task 3b97ccfd).
+	// A passing round of a task with linked PRs names every one of them.
+	Tested   []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead `json:"tested"`
+	Findings []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding  `json:"findings"`
+}
+
+// GetKind returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetKind() *SpecificationType {
+	return v.Kind
+}
+
+// GetRound returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Round, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetRound() *int {
+	return v.Round
+}
+
+// GetVerdict returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Verdict, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetVerdict() *FindingsVerdict {
+	return v.Verdict
+}
+
+// GetCounts returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Counts, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetCounts() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts {
+	return v.Counts
+}
+
+// GetTested returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Tested, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetTested() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead {
+	return v.Tested
+}
+
+// GetFindings returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex.Findings, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex) GetFindings() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding {
+	return v.Findings
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts includes the requested fields of the GraphQL type TestCounts.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts struct {
+	Passed  *int `json:"passed"`
+	Failed  *int `json:"failed"`
+	Skipped *int `json:"skipped"`
+}
+
+// GetPassed returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts.Passed, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts) GetPassed() *int {
+	return v.Passed
+}
+
+// GetFailed returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts.Failed, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts) GetFailed() *int {
+	return v.Failed
+}
+
+// GetSkipped returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts.Skipped, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts) GetSkipped() *int {
+	return v.Skipped
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding includes the requested fields of the GraphQL type Finding.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding struct {
+	// Stable within a task across rounds: an open finding is carried forward under the same id.
+	Id *string `json:"id"`
+	// 1 highest, at most the organization's level count.
+	Priority *int           `json:"priority"`
+	Status   *FindingStatus `json:"status"`
+	// One line; the reasoning is in the markdown under a heading carrying the id.
+	Title    *string                                                                                                                                           `json:"title"`
+	Location *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation `json:"location"`
+	// The uuid of the release whose round closed it -- a pointer, never text. Null while the item is
+	// open. A round that closes an item names itself here, unless another release already answers
+	// for it: when an upstream role answered by republishing its document, this points at that
+	// document rather than at the round recording the closure.
+	ResolvedBy *string `json:"resolvedBy"`
+	// The words that closed it: a fixer's note, a policy stop's reason, or the answer to a question.
+	Resolution *string `json:"resolution"`
+}
+
+// GetId returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Id, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetId() *string {
+	return v.Id
+}
+
+// GetPriority returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Priority, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetPriority() *int {
+	return v.Priority
+}
+
+// GetStatus returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Status, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetStatus() *FindingStatus {
+	return v.Status
+}
+
+// GetTitle returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Title, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetTitle() *string {
+	return v.Title
+}
+
+// GetLocation returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Location, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetLocation() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation {
+	return v.Location
+}
+
+// GetResolvedBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.ResolvedBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetResolvedBy() *string {
+	return v.ResolvedBy
+}
+
+// GetResolution returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding.Resolution, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding) GetResolution() *string {
+	return v.Resolution
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation includes the requested fields of the GraphQL type FindingLocation.
+// The GraphQL type's documentation follows.
+//
+// path and line for code, ref for a requirement or design section. All optional.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation struct {
+	Path *string `json:"path"`
+	Line *int    `json:"line"`
+	Ref  *string `json:"ref"`
+	// The id of the element the finding is about (elements.md §8). With it, path and line are filled
+	// in from the index when the author left them out; the rework point is about.release + element.
+	Element *string `json:"element"`
+}
+
+// GetPath returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Path, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetPath() *string {
+	return v.Path
+}
+
+// GetLine returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Line, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetLine() *int {
+	return v.Line
+}
+
+// GetRef returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Ref, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetRef() *string {
+	return v.Ref
+}
+
+// GetElement returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation.Element, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFindingLocation) GetElement() *string {
+	return v.Element
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead includes the requested fields of the GraphQL type TestedHead.
+// The GraphQL type's documentation follows.
+//
+// A linked PR and the commit a review or test covered.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead struct {
+	Pr *string `json:"pr"`
+	// The commit sha tested, 7 to 40 hex characters.
+	Head *string `json:"head"`
+}
+
+// GetPr returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead.Pr, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead) GetPr() *string {
+	return v.Pr
+}
+
+// GetHead returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead.Head, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead) GetHead() *string {
+	return v.Head
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold struct {
+	Level *AgentTaskHoldLevel `json:"level"`
+	Kind  *AgentTaskHoldKind  `json:"kind"`
+	// Role whose sign-off is under review; set when kind = HUMAN_GATE.
+	GateRole *string                                                                                `json:"gateRole"`
+	Reason   *string                                                                                `json:"reason"`
+	HeldBy   *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
+	HeldAt   *string                                                                                `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
+}
+
+// GetLevel returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold) GetLevel() *AgentTaskHoldLevel {
+	return v.Level
+}
+
+// GetKind returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold) GetKind() *AgentTaskHoldKind {
+	return v.Kind
+}
+
+// GetGateRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold.GateRole, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold) GetGateRole() *string {
+	return v.GateRole
+}
+
+// GetReason returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold) GetReason() *string {
+	return v.Reason
+}
+
+// GetHeldBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold.HeldBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold) GetHeldBy() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor {
+	return v.HeldBy
+}
+
+// GetHeldAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold) GetHeldAt() *string {
+	return v.HeldAt
+}
+
+// GetStop returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor, error) {
+	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding includes the requested fields of the GraphQL type Finding.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding struct {
+	// Stable within a task across rounds: an open finding is carried forward under the same id.
+	Id *string `json:"id"`
+	// 1 highest, at most the organization's level count.
+	Priority *int           `json:"priority"`
+	Status   *FindingStatus `json:"status"`
+	// One line; the reasoning is in the markdown under a heading carrying the id.
+	Title    *string                                                                                       `json:"title"`
+	Location *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFindingLocation `json:"location"`
+	// The uuid of the release whose round closed it -- a pointer, never text. Null while the item is
+	// open. A round that closes an item names itself here, unless another release already answers
+	// for it: when an upstream role answered by republishing its document, this points at that
+	// document rather than at the round recording the closure.
+	ResolvedBy *string `json:"resolvedBy"`
+	// The words that closed it: a fixer's note, a policy stop's reason, or the answer to a question.
+	Resolution *string `json:"resolution"`
+}
+
+// GetId returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding.Id, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding) GetId() *string {
+	return v.Id
+}
+
+// GetPriority returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding.Priority, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding) GetPriority() *int {
+	return v.Priority
+}
+
+// GetStatus returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding.Status, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding) GetStatus() *FindingStatus {
+	return v.Status
+}
+
+// GetTitle returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding.Title, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding) GetTitle() *string {
+	return v.Title
+}
+
+// GetLocation returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding.Location, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding) GetLocation() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFindingLocation {
+	return v.Location
+}
+
+// GetResolvedBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding.ResolvedBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding) GetResolvedBy() *string {
+	return v.ResolvedBy
+}
+
+// GetResolution returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding.Resolution, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFinding) GetResolution() *string {
+	return v.Resolution
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFindingLocation includes the requested fields of the GraphQL type FindingLocation.
+// The GraphQL type's documentation follows.
+//
+// path and line for code, ref for a requirement or design section. All optional.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFindingLocation struct {
+	Path *string `json:"path"`
+	Line *int    `json:"line"`
+	Ref  *string `json:"ref"`
+	// The id of the element the finding is about (elements.md §8). With it, path and line are filled
+	// in from the index when the author left them out; the rework point is about.release + element.
+	Element *string `json:"element"`
+}
+
+// GetPath returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFindingLocation.Path, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFindingLocation) GetPath() *string {
+	return v.Path
+}
+
+// GetLine returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFindingLocation.Line, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFindingLocation) GetLine() *int {
+	return v.Line
+}
+
+// GetRef returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFindingLocation.Ref, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFindingLocation) GetRef() *string {
+	return v.Ref
+}
+
+// GetElement returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFindingLocation.Element, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenFindingsFindingLocation) GetElement() *string {
+	return v.Element
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding includes the requested fields of the GraphQL type Finding.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding struct {
+	// Stable within a task across rounds: an open finding is carried forward under the same id.
+	Id *string `json:"id"`
+	// 1 highest, at most the organization's level count.
+	Priority *int           `json:"priority"`
+	Status   *FindingStatus `json:"status"`
+	// One line; the reasoning is in the markdown under a heading carrying the id.
+	Title    *string                                                                                        `json:"title"`
+	Location *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFindingLocation `json:"location"`
+	// The uuid of the release whose round closed it -- a pointer, never text. Null while the item is
+	// open. A round that closes an item names itself here, unless another release already answers
+	// for it: when an upstream role answered by republishing its document, this points at that
+	// document rather than at the round recording the closure.
+	ResolvedBy *string `json:"resolvedBy"`
+	// The words that closed it: a fixer's note, a policy stop's reason, or the answer to a question.
+	Resolution *string `json:"resolution"`
+}
+
+// GetId returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding.Id, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding) GetId() *string {
+	return v.Id
+}
+
+// GetPriority returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding.Priority, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding) GetPriority() *int {
+	return v.Priority
+}
+
+// GetStatus returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding.Status, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding) GetStatus() *FindingStatus {
+	return v.Status
+}
+
+// GetTitle returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding.Title, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding) GetTitle() *string {
+	return v.Title
+}
+
+// GetLocation returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding.Location, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding) GetLocation() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFindingLocation {
+	return v.Location
+}
+
+// GetResolvedBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding.ResolvedBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding) GetResolvedBy() *string {
+	return v.ResolvedBy
+}
+
+// GetResolution returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding.Resolution, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding) GetResolution() *string {
+	return v.Resolution
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFindingLocation includes the requested fields of the GraphQL type FindingLocation.
+// The GraphQL type's documentation follows.
+//
+// path and line for code, ref for a requirement or design section. All optional.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFindingLocation struct {
+	Path *string `json:"path"`
+	Line *int    `json:"line"`
+	Ref  *string `json:"ref"`
+	// The id of the element the finding is about (elements.md §8). With it, path and line are filled
+	// in from the index when the author left them out; the rework point is about.release + element.
+	Element *string `json:"element"`
+}
+
+// GetPath returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFindingLocation.Path, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFindingLocation) GetPath() *string {
+	return v.Path
+}
+
+// GetLine returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFindingLocation.Line, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFindingLocation) GetLine() *int {
+	return v.Line
+}
+
+// GetRef returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFindingLocation.Ref, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFindingLocation) GetRef() *string {
+	return v.Ref
+}
+
+// GetElement returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFindingLocation.Element, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFindingLocation) GetElement() *string {
+	return v.Element
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor, error) {
+	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest includes the requested fields of the GraphQL type AgentTaskPullRequest.
+// The GraphQL type's documentation follows.
+//
+// A task's linked PR, from the PR rows CI registers.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest struct {
+	Url *string `json:"url"`
+	// OPEN, CLOSED or MERGED; null when unregistered.
+	State        *string `json:"state"`
+	TargetBranch *string `json:"targetBranch"`
+	MergedDate   *string `json:"mergedDate"`
+	// False when no PR row has this URL: the repository's CI is not reporting PRs.
+	Registered *bool `json:"registered"`
+	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
+	Head *string `json:"head"`
+}
+
+// GetUrl returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetUrl() *string {
+	return v.Url
+}
+
+// GetState returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.State, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetState() *string {
+	return v.State
+}
+
+// GetTargetBranch returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.TargetBranch, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetTargetBranch() *string {
+	return v.TargetBranch
+}
+
+// GetMergedDate returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.MergedDate, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetMergedDate() *string {
+	return v.MergedDate
+}
+
+// GetRegistered returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
+	return v.Registered
+}
+
+// GetHead returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Head, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetHead() *string {
+	return v.Head
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
+// The GraphQL type's documentation follows.
+//
+// One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
+	QuestionsRelease *string `json:"questionsRelease"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
+}
+
+// GetAskingRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskingRole() *string {
+	return v.AskingRole
+}
+
+// GetAskingSession returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingSession, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskingSession() *string {
+	return v.AskingSession
+}
+
+// GetAskingAgent returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingAgent, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskingAgent() *string {
+	return v.AskingAgent
+}
+
+// GetQuestionsRelease returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame.QuestionsRelease, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetQuestionsRelease() *string {
+	return v.QuestionsRelease
+}
+
+// GetAnsweringRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AnsweringRole, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAnsweringRole() *string {
+	return v.AnsweringRole
+}
+
+// GetAskedAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskedAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskedAt() *string {
+	return v.AskedAt
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen includes the requested fields of the GraphQL type AgentTaskReopen.
+// The GraphQL type's documentation follows.
+//
+// A completed task sent back to a role.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen struct {
+	Role     *string                                                                                              `json:"role"`
+	RoleUuid *string                                                                                              `json:"roleUuid"`
+	At       *string                                                                                              `json:"at"`
+	By       *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor `json:"by"`
+	Reason   *string                                                                                              `json:"reason"`
+}
+
+// GetRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen.Role, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen) GetRole() *string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen.At, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen) GetAt() *string {
+	return v.At
+}
+
+// GetBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen.By, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen) GetBy() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor {
+	return v.By
+}
+
+// GetReason returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopen) GetReason() *string {
+	return v.Reason
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor, error) {
+	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn includes the requested fields of the GraphQL type AgentTaskReturn.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn struct {
+	Role        *string                `json:"role"`
+	Agent       *string                `json:"agent"`
+	Session     *string                `json:"session"`
+	Reason      *AgentTaskReturnReason `json:"reason"`
+	Description *string                `json:"description"`
+	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn.Session, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn) GetSession() *string {
+	return v.Session
+}
+
+// GetReason returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn) GetReason() *AgentTaskReturnReason {
+	return v.Reason
+}
+
+// GetDescription returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn.Description, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn) GetDescription() *string {
+	return v.Description
+}
+
+// GetReturnedAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn.ReturnedAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn) GetReturnedAt() *string {
+	return v.ReturnedAt
+}
+
+// GetUsage returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
+// The GraphQL type's documentation follows.
+//
+// Append-only per-hop sign-off stored in ReARM; promptVersion pins the served prompt the agent assumed.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff struct {
+	Role          *string              `json:"role"`
+	Agent         *string              `json:"agent"`
+	Session       *string              `json:"session"`
+	AssignedAt    *string              `json:"assignedAt"`
+	SignedOffAt   *string              `json:"signedOffAt"`
+	Outcome       *AgentSignOffOutcome `json:"outcome"`
+	Note          *string              `json:"note"`
+	PromptVersion *string              `json:"promptVersion"`
+	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
+	ReviewedBy *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
+	Usage *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.Session, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetSession() *string {
+	return v.Session
+}
+
+// GetAssignedAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetSignedOffAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetOutcome returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.Outcome, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOutcome() *AgentSignOffOutcome {
+	return v.Outcome
+}
+
+// GetNote returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.Note, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetNote() *string {
+	return v.Note
+}
+
+// GetPromptVersion returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// GetReviewedBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor, error) {
+	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
+// The GraphQL type's documentation follows.
+//
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
+	From    *AgentTaskStatus                                                                                                    `json:"from"`
+	To      *AgentTaskStatus                                                                                                    `json:"to"`
+	At      *string                                                                                                             `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                 `json:"trigger"`
+	Actor   *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	// What the actor said: a completion's or cancellation's note. Null on changes recorded before notes were kept.
+	Note *string `json:"note"`
+}
+
+// GetFrom returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetFrom() *AgentTaskStatus {
+	return v.From
+}
+
+// GetTo returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.To, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetTo() *AgentTaskStatus {
+	return v.To
+}
+
+// GetAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.At, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetAt() *string {
+	return v.At
+}
+
+// GetTrigger returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.Trigger, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetTrigger() *AgentStatusTrigger {
+	return v.Trigger
+}
+
+// GetActor returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.Actor, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetActor() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor {
+	return v.Actor
+}
+
+// GetNote returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.Note, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetNote() *string {
+	return v.Note
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor, error) {
+	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTestedHeadsTestedHead includes the requested fields of the GraphQL type TestedHead.
+// The GraphQL type's documentation follows.
+//
+// A linked PR and the commit a review or test covered.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTestedHeadsTestedHead struct {
+	Pr *string `json:"pr"`
+	// The commit sha tested, 7 to 40 hex characters.
+	Head *string `json:"head"`
+}
+
+// GetPr returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTestedHeadsTestedHead.Pr, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTestedHeadsTestedHead) GetPr() *string {
+	return v.Pr
+}
+
+// GetHead returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTestedHeadsTestedHead.Head, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTestedHeadsTestedHead) GetHead() *string {
+	return v.Head
+}
+
+// AgentTasksByUuidProgrammaticResponse is returned by AgentTasksByUuidProgrammatic on success.
+type AgentTasksByUuidProgrammaticResponse struct {
+	// Agent-key auth: a named set of tasks in one read, in the order given (task cc14f4cb). At most 100;
+	// an unknown uuid, or one of another organization, is absent. For a board's tasks by status, read
+	// agentTasksProgrammatic instead: one request, not one per task.
+	AgentTasksByUuidProgrammatic []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask `json:"agentTasksByUuidProgrammatic"`
+}
+
+// GetAgentTasksByUuidProgrammatic returns AgentTasksByUuidProgrammaticResponse.AgentTasksByUuidProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticResponse) GetAgentTasksByUuidProgrammatic() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask {
+	return v.AgentTasksByUuidProgrammatic
+}
+
 // AgentTasksOfBoardAgentTasksOfBoardAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTasksOfBoardAgentTasksOfBoardAgentTask struct {
 	PersonTaskFields `json:"-"`
@@ -39382,6 +41023,14 @@ func (v *__AgentTaskSplitProgrammaticInput) GetChildren() []*AgentTaskSplitChild
 	return v.Children
 }
 
+// __AgentTasksByUuidProgrammaticInput is used internally by genqlient
+type __AgentTasksByUuidProgrammaticInput struct {
+	TaskUuids []string `json:"taskUuids"`
+}
+
+// GetTaskUuids returns __AgentTasksByUuidProgrammaticInput.TaskUuids, and is useful for accessing the field via an interface.
+func (v *__AgentTasksByUuidProgrammaticInput) GetTaskUuids() []string { return v.TaskUuids }
+
 // __AgentTasksOfBoardInput is used internally by genqlient
 type __AgentTasksOfBoardInput struct {
 	BoardUuid string           `json:"boardUuid"`
@@ -45420,6 +47069,229 @@ func AgentTaskSplitProgrammatic(
 	}
 
 	data_ = &AgentTaskSplitProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentTasksByUuidProgrammatic.
+const AgentTasksByUuidProgrammatic_Operation = `
+query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
+	agentTasksByUuidProgrammatic(taskUuids: $taskUuids) {
+		uuid
+		org
+		board
+		externalRef
+		title
+		sourceUrl
+		status
+		role
+		orderIndex
+		dependsOn
+		requireHumanReview
+		hold {
+			level
+			kind
+			gateRole
+			reason
+			heldBy {
+				... ActorFields
+			}
+			heldAt
+			stop
+		}
+		assignment {
+			session
+			agent
+			role
+			assignedAt
+			promptVersion
+		}
+		signOffs {
+			role
+			agent
+			session
+			assignedAt
+			signedOffAt
+			outcome
+			note
+			promptVersion
+			reviewedBy {
+				... ActorFields
+			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
+		}
+		returns {
+			role
+			agent
+			session
+			reason
+			description
+			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
+		}
+		parentTask
+		childTasks
+		sessions
+		prUrls
+		registeredBySession
+		createdDate
+		completedAt
+		pullRequests {
+			url
+			state
+			targetBranch
+			mergedDate
+			registered
+			head
+		}
+		testedHeads {
+			pr
+			head
+		}
+		reopenedAt
+		reopenCount
+		reopens {
+			role
+			roleUuid
+			at
+			by {
+				... ActorFields
+			}
+			reason
+		}
+		statusHistory {
+			from
+			to
+			at
+			trigger
+			actor {
+				... ActorFields
+			}
+			note
+		}
+		orderSetBy {
+			... ActorFields
+		}
+		orderSetAt
+		requiredRolesSkipped
+		questionStack {
+			askingRole
+			askingSession
+			askingAgent
+			questionsRelease
+			answeringRole
+			askedAt
+		}
+		documents {
+			uuid
+			version
+			lifecycle
+			document {
+				specification
+				path
+				round
+				task
+				findings {
+					kind
+					round
+					verdict
+					counts {
+						passed
+						failed
+						skipped
+					}
+					tested {
+						pr
+						head
+					}
+					findings {
+						id
+						priority
+						status
+						title
+						location {
+							path
+							line
+							ref
+							element
+						}
+						resolvedBy
+						resolution
+					}
+				}
+			}
+		}
+		openFindings {
+			id
+			priority
+			status
+			title
+			location {
+				path
+				line
+				ref
+				element
+			}
+			resolvedBy
+			resolution
+		}
+		openQuestions {
+			id
+			priority
+			status
+			title
+			location {
+				path
+				line
+				ref
+				element
+			}
+			resolvedBy
+			resolution
+		}
+	}
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
+}
+`
+
+// A named set of tasks in one read, in the order given (task cc14f4cb): at most 100; unknown uuids,
+// and another organization's tasks, are absent. For a board's tasks by status, AgentTasksProgrammatic.
+func AgentTasksByUuidProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuids []string,
+) (data_ *AgentTasksByUuidProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTasksByUuidProgrammatic",
+		Query:  AgentTasksByUuidProgrammatic_Operation,
+		Variables: &__AgentTasksByUuidProgrammaticInput{
+			TaskUuids: taskUuids,
+		},
+	}
+
+	data_ = &AgentTasksByUuidProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
