@@ -319,6 +319,17 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskCompleteProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
   agentTaskCancelProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
   """
+  Coordinator: send a COMPLETED task back to an active role, with a reason -- its delivery cannot
+  land, e.g. its PR no longer merges. The role's earlier passes stop counting; whoever read its
+  part re-runs when the redone hop republishes. Refused on a cancelled task (register a new one)
+  and on a locked board; a round the budget does not cover holds for an operator.
+  """
+  agentTaskReopenProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  role: String!
+  reason: String!): AgentTask
+  """
   roles: the roles this agent declared on agentTaskNextProgrammatic, if any. A task for any
   other role is refused, and on a STRICT board priority is enforced among these roles only.
   """
@@ -920,6 +931,18 @@ type AgentTask {
   Coordinator spend apportioned to this task, frozen when computed. An estimate, not a measurement.
   """
   coordinatorEstimateMicros: Long
+  """
+  When the task was last reopened; null when never.
+  """
+  reopenedAt: DateTime
+  """
+  How many times the task has been reopened. A second reopen is a signal to split or cancel.
+  """
+  reopenCount: Int
+  """
+  Every reopen, oldest first: the role it went back to, when, by whom and why.
+  """
+  reopens: [AgentTaskReopen]
   """
   Model strength this task requires, overriding the role's when set.
   """
@@ -3351,6 +3374,17 @@ type AgentResolvedInput {
 }
 
 """
+A completed task sent back to a role.
+"""
+type AgentTaskReopen {
+  role: String
+  roleUuid: ID
+  at: DateTime
+  by: AgentActor
+  reason: String
+}
+
+"""
 Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
 
 These were all String, and every writer invented its own encoding -- a session uuid behind a
@@ -5681,6 +5715,10 @@ enum AgentStatusTrigger {
   finished in one case and the loop stopped in the other.
   """
   POLICY_COMPLETE
+  """
+  A completed task sent back to a role, with a reason. A decision, not a loop.
+  """
+  REOPEN
 }
 
 """
