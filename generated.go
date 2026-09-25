@@ -3607,6 +3607,12 @@ const (
 	AgentStatusTriggerPolicyComplete AgentStatusTrigger = "POLICY_COMPLETE"
 	// A completed task sent back to a role, with a reason. A decision, not a loop.
 	AgentStatusTriggerReopen AgentStatusTrigger = "REOPEN"
+	// The work passed and a linked PR is not merged yet: into DELIVERING.
+	AgentStatusTriggerDeliverWait AgentStatusTrigger = "DELIVER_WAIT"
+	// Every linked PR merged: DELIVERING to COMPLETED.
+	AgentStatusTriggerDelivered AgentStatusTrigger = "DELIVERED"
+	// A linked PR closed without merging: to the coordinator.
+	AgentStatusTriggerPrClosed AgentStatusTrigger = "PR_CLOSED"
 )
 
 var AllAgentStatusTrigger = []AgentStatusTrigger{
@@ -3627,6 +3633,9 @@ var AllAgentStatusTrigger = []AgentStatusTrigger{
 	AgentStatusTriggerSessionClosed,
 	AgentStatusTriggerPolicyComplete,
 	AgentStatusTriggerReopen,
+	AgentStatusTriggerDeliverWait,
+	AgentStatusTriggerDelivered,
+	AgentStatusTriggerPrClosed,
 }
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment includes the requested fields of the GraphQL type AgentTaskAssignment.
@@ -7524,6 +7533,9 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask struct 
 	RegisteredBySession *string   `json:"registeredBySession"`
 	CreatedDate         *string   `json:"createdDate"`
 	CompletedAt         *string   `json:"completedAt"`
+	// The linked PRs (prUrls) as ReARM knows them from CI's PR registrations, resolved per read.
+	// A task completes when every one has merged; registered false means CI never reported the URL.
+	PullRequests []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest `json:"pullRequests"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
 	// Who last set orderIndex, the coordinator or a person, and when.
@@ -7643,6 +7655,11 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) Ge
 // GetCompletedAt returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.CompletedAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetCompletedAt() *string {
 	return v.CompletedAt
+}
+
+// GetPullRequests returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.PullRequests, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetPullRequests() []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest {
+	return v.PullRequests
 }
 
 // GetStatusHistory returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.StatusHistory, and is useful for accessing the field via an interface.
@@ -7904,6 +7921,45 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskOrde
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest includes the requested fields of the GraphQL type AgentTaskPullRequest.
+// The GraphQL type's documentation follows.
+//
+// A task's linked PR, from the PR rows CI registers.
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest struct {
+	Url *string `json:"url"`
+	// OPEN, CLOSED or MERGED; null when unregistered.
+	State        *string `json:"state"`
+	TargetBranch *string `json:"targetBranch"`
+	MergedDate   *string `json:"mergedDate"`
+	// False when no PR row has this URL: the repository's CI is not reporting PRs.
+	Registered *bool `json:"registered"`
+}
+
+// GetUrl returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetUrl() *string {
+	return v.Url
+}
+
+// GetState returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetState() *string {
+	return v.State
+}
+
+// GetTargetBranch returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.TargetBranch, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetTargetBranch() *string {
+	return v.TargetBranch
+}
+
+// GetMergedDate returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.MergedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetMergedDate() *string {
+	return v.MergedDate
+}
+
+// GetRegistered returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
+	return v.Registered
 }
 
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -9459,6 +9515,9 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask struct {
 	RegisteredBySession *string   `json:"registeredBySession"`
 	CreatedDate         *string   `json:"createdDate"`
 	CompletedAt         *string   `json:"completedAt"`
+	// The linked PRs (prUrls) as ReARM knows them from CI's PR registrations, resolved per read.
+	// A task completes when every one has merged; registered false means CI never reported the URL.
+	PullRequests []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest `json:"pullRequests"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
 	// Who last set orderIndex, the coordinator or a person, and when.
@@ -9578,6 +9637,11 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetCre
 // GetCompletedAt returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.CompletedAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetCompletedAt() *string {
 	return v.CompletedAt
+}
+
+// GetPullRequests returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.PullRequests, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetPullRequests() []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest {
+	return v.PullRequests
 }
 
 // GetStatusHistory returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.StatusHistory, and is useful for accessing the field via an interface.
@@ -9839,6 +9903,45 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskOrderSet
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest includes the requested fields of the GraphQL type AgentTaskPullRequest.
+// The GraphQL type's documentation follows.
+//
+// A task's linked PR, from the PR rows CI registers.
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest struct {
+	Url *string `json:"url"`
+	// OPEN, CLOSED or MERGED; null when unregistered.
+	State        *string `json:"state"`
+	TargetBranch *string `json:"targetBranch"`
+	MergedDate   *string `json:"mergedDate"`
+	// False when no PR row has this URL: the repository's CI is not reporting PRs.
+	Registered *bool `json:"registered"`
+}
+
+// GetUrl returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetUrl() *string {
+	return v.Url
+}
+
+// GetState returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetState() *string {
+	return v.State
+}
+
+// GetTargetBranch returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.TargetBranch, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetTargetBranch() *string {
+	return v.TargetBranch
+}
+
+// GetMergedDate returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.MergedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetMergedDate() *string {
+	return v.MergedDate
+}
+
+// GetRegistered returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
+	return v.Registered
 }
 
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -12369,6 +12472,9 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	RegisteredBySession *string   `json:"registeredBySession"`
 	CreatedDate         *string   `json:"createdDate"`
 	CompletedAt         *string   `json:"completedAt"`
+	// The linked PRs (prUrls) as ReARM knows them from CI's PR registrations, resolved per read.
+	// A task completes when every one has merged; registered false means CI never reported the URL.
+	PullRequests []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest `json:"pullRequests"`
 	// When the task was last reopened; null when never.
 	ReopenedAt *string `json:"reopenedAt"`
 	// How many times the task has been reopened. A second reopen is a signal to split or cancel.
@@ -12493,6 +12599,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetCreatedDate() *
 // GetCompletedAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.CompletedAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetCompletedAt() *string {
 	return v.CompletedAt
+}
+
+// GetPullRequests returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.PullRequests, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetPullRequests() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest {
+	return v.PullRequests
 }
 
 // GetReopenedAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.ReopenedAt, and is useful for accessing the field via an interface.
@@ -13159,6 +13270,45 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOrderSetByAgentActor
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest includes the requested fields of the GraphQL type AgentTaskPullRequest.
+// The GraphQL type's documentation follows.
+//
+// A task's linked PR, from the PR rows CI registers.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest struct {
+	Url *string `json:"url"`
+	// OPEN, CLOSED or MERGED; null when unregistered.
+	State        *string `json:"state"`
+	TargetBranch *string `json:"targetBranch"`
+	MergedDate   *string `json:"mergedDate"`
+	// False when no PR row has this URL: the repository's CI is not reporting PRs.
+	Registered *bool `json:"registered"`
+}
+
+// GetUrl returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetUrl() *string {
+	return v.Url
+}
+
+// GetState returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetState() *string {
+	return v.State
+}
+
+// GetTargetBranch returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.TargetBranch, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetTargetBranch() *string {
+	return v.TargetBranch
+}
+
+// GetMergedDate returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.MergedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetMergedDate() *string {
+	return v.MergedDate
+}
+
+// GetRegistered returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
+	return v.Registered
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -15797,6 +15947,9 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask struct {
 	RegisteredBySession *string   `json:"registeredBySession"`
 	CreatedDate         *string   `json:"createdDate"`
 	CompletedAt         *string   `json:"completedAt"`
+	// The linked PRs (prUrls) as ReARM knows them from CI's PR registrations, resolved per read.
+	// A task completes when every one has merged; registered false means CI never reported the URL.
+	PullRequests []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest `json:"pullRequests"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
 	// When the task was last reopened; null when never.
@@ -15922,6 +16075,11 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetCre
 // GetCompletedAt returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.CompletedAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetCompletedAt() *string {
 	return v.CompletedAt
+}
+
+// GetPullRequests returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.PullRequests, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetPullRequests() []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest {
+	return v.PullRequests
 }
 
 // GetStatusHistory returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.StatusHistory, and is useful for accessing the field via an interface.
@@ -16198,6 +16356,45 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskOrderSet
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest includes the requested fields of the GraphQL type AgentTaskPullRequest.
+// The GraphQL type's documentation follows.
+//
+// A task's linked PR, from the PR rows CI registers.
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest struct {
+	Url *string `json:"url"`
+	// OPEN, CLOSED or MERGED; null when unregistered.
+	State        *string `json:"state"`
+	TargetBranch *string `json:"targetBranch"`
+	MergedDate   *string `json:"mergedDate"`
+	// False when no PR row has this URL: the repository's CI is not reporting PRs.
+	Registered *bool `json:"registered"`
+}
+
+// GetUrl returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetUrl() *string {
+	return v.Url
+}
+
+// GetState returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetState() *string {
+	return v.State
+}
+
+// GetTargetBranch returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.TargetBranch, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetTargetBranch() *string {
+	return v.TargetBranch
+}
+
+// GetMergedDate returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.MergedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetMergedDate() *string {
+	return v.MergedDate
+}
+
+// GetRegistered returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
+	return v.Registered
 }
 
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -19249,6 +19446,9 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask struct {
 	RegisteredBySession *string   `json:"registeredBySession"`
 	CreatedDate         *string   `json:"createdDate"`
 	CompletedAt         *string   `json:"completedAt"`
+	// The linked PRs (prUrls) as ReARM knows them from CI's PR registrations, resolved per read.
+	// A task completes when every one has merged; registered false means CI never reported the URL.
+	PullRequests []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest `json:"pullRequests"`
 	// Append-only status transition log, oldest first.
 	StatusHistory []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
 	// Who last set orderIndex, the coordinator or a person, and when.
@@ -19368,6 +19568,11 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetC
 // GetCompletedAt returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.CompletedAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetCompletedAt() *string {
 	return v.CompletedAt
+}
+
+// GetPullRequests returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.PullRequests, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetPullRequests() []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest {
+	return v.PullRequests
 }
 
 // GetStatusHistory returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.StatusHistory, and is useful for accessing the field via an interface.
@@ -19629,6 +19834,45 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskOrderS
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest includes the requested fields of the GraphQL type AgentTaskPullRequest.
+// The GraphQL type's documentation follows.
+//
+// A task's linked PR, from the PR rows CI registers.
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest struct {
+	Url *string `json:"url"`
+	// OPEN, CLOSED or MERGED; null when unregistered.
+	State        *string `json:"state"`
+	TargetBranch *string `json:"targetBranch"`
+	MergedDate   *string `json:"mergedDate"`
+	// False when no PR row has this URL: the repository's CI is not reporting PRs.
+	Registered *bool `json:"registered"`
+}
+
+// GetUrl returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetUrl() *string {
+	return v.Url
+}
+
+// GetState returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetState() *string {
+	return v.State
+}
+
+// GetTargetBranch returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.TargetBranch, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetTargetBranch() *string {
+	return v.TargetBranch
+}
+
+// GetMergedDate returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.MergedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetMergedDate() *string {
+	return v.MergedDate
+}
+
+// GetRegistered returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetRegistered() *bool {
+	return v.Registered
 }
 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -21156,6 +21400,9 @@ func (v *AgentTaskSplitProgrammaticResponse) GetAgentTaskSplitProgrammatic() []*
 	return v.AgentTaskSplitProgrammatic
 }
 
+// DELIVERING: every required role passed and a linked PR is not merged yet. Not terminal -- dependents
+// wait for COMPLETED, which means merged. It completes when the PR merges and goes back to the
+// coordinator when a PR closes without merging.
 type AgentTaskStatus string
 
 const (
@@ -21164,6 +21411,7 @@ const (
 	AgentTaskStatusAssigned            AgentTaskStatus = "ASSIGNED"
 	AgentTaskStatusAwaitingCoordinator AgentTaskStatus = "AWAITING_COORDINATOR"
 	AgentTaskStatusOnHold              AgentTaskStatus = "ON_HOLD"
+	AgentTaskStatusDelivering          AgentTaskStatus = "DELIVERING"
 	AgentTaskStatusCompleted           AgentTaskStatus = "COMPLETED"
 	AgentTaskStatusCancelled           AgentTaskStatus = "CANCELLED"
 )
@@ -21174,6 +21422,7 @@ var AllAgentTaskStatus = []AgentTaskStatus{
 	AgentTaskStatusAssigned,
 	AgentTaskStatusAwaitingCoordinator,
 	AgentTaskStatusOnHold,
+	AgentTaskStatusDelivering,
 	AgentTaskStatusCompleted,
 	AgentTaskStatusCancelled,
 }
@@ -34041,6 +34290,13 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 		registeredBySession
 		createdDate
 		completedAt
+		pullRequests {
+			url
+			state
+			targetBranch
+			mergedDate
+			registered
+		}
 		statusHistory {
 			from
 			to
@@ -34309,6 +34565,13 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 		registeredBySession
 		createdDate
 		completedAt
+		pullRequests {
+			url
+			state
+			targetBranch
+			mergedDate
+			registered
+		}
 		statusHistory {
 			from
 			to
@@ -34715,6 +34978,13 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 		registeredBySession
 		createdDate
 		completedAt
+		pullRequests {
+			url
+			state
+			targetBranch
+			mergedDate
+			registered
+		}
 		reopenedAt
 		reopenCount
 		reopens {
@@ -35178,6 +35448,13 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 		registeredBySession
 		createdDate
 		completedAt
+		pullRequests {
+			url
+			state
+			targetBranch
+			mergedDate
+			registered
+		}
 		statusHistory {
 			from
 			to
@@ -35713,6 +35990,13 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 		registeredBySession
 		createdDate
 		completedAt
+		pullRequests {
+			url
+			state
+			targetBranch
+			mergedDate
+			registered
+		}
 		statusHistory {
 			from
 			to

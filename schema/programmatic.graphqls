@@ -954,6 +954,11 @@ type AgentTask {
   """
   reopens: [AgentTaskReopen]
   """
+  The linked PRs (prUrls) as ReARM knows them from CI's PR registrations, resolved per read.
+  A task completes when every one has merged; registered false means CI never reported the URL.
+  """
+  pullRequests: [AgentTaskPullRequest]
+  """
   Model strength this task requires, overriding the role's when set.
   """
   requiredStrength: Float
@@ -1073,12 +1078,18 @@ type AgentTask {
   openQuestions: [Finding]
 }
 
+"""
+DELIVERING: every required role passed and a linked PR is not merged yet. Not terminal -- dependents
+wait for COMPLETED, which means merged. It completes when the PR merges and goes back to the
+coordinator when a PR closes without merging.
+"""
 enum AgentTaskStatus {
   PENDING_INTAKE
   QUEUED
   ASSIGNED
   AWAITING_COORDINATOR
   ON_HOLD
+  DELIVERING
   COMPLETED
   CANCELLED
 }
@@ -3410,6 +3421,23 @@ type AgentTaskReopen {
 }
 
 """
+A task's linked PR, from the PR rows CI registers.
+"""
+type AgentTaskPullRequest {
+  url: String
+  """
+  OPEN, CLOSED or MERGED; null when unregistered.
+  """
+  state: String
+  targetBranch: String
+  mergedDate: DateTime
+  """
+  False when no PR row has this URL: the repository's CI is not reporting PRs.
+  """
+  registered: Boolean
+}
+
+"""
 Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
 
 These were all String, and every writer invented its own encoding -- a session uuid behind a
@@ -5734,6 +5762,18 @@ enum AgentStatusTrigger {
   A completed task sent back to a role, with a reason. A decision, not a loop.
   """
   REOPEN
+  """
+  The work passed and a linked PR is not merged yet: into DELIVERING.
+  """
+  DELIVER_WAIT
+  """
+  Every linked PR merged: DELIVERING to COMPLETED.
+  """
+  DELIVERED
+  """
+  A linked PR closed without merging: to the coordinator.
+  """
+  PR_CLOSED
 }
 
 """

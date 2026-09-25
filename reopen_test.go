@@ -30,3 +30,17 @@ func TestTaskShowAndListSelectTheReopens(t *testing.T) {
 		}
 	}
 }
+
+// A single task's reads carry its PRs' delivery state, so `task show` and a sign-off say why a
+// task is DELIVERING rather than COMPLETED.
+func TestSingleTaskReadsSelectThePullRequests(t *testing.T) {
+	for name, op := range map[string]string{
+		"show": AgentTaskProgrammatic_Operation, "linkpr": AgentTaskLinkPrProgrammatic_Operation,
+		"signoff": AgentTaskSignOffProgrammatic_Operation, "complete": AgentTaskCompleteProgrammatic_Operation,
+		"reopen": AgentTaskReopenProgrammatic_Operation,
+	} {
+		if !strings.Contains(op, "pullRequests {") || !strings.Contains(op, "registered") {
+			t.Errorf("%s does not select pullRequests", name)
+		}
+	}
+}
