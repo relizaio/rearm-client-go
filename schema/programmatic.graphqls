@@ -883,6 +883,12 @@ type AgentTaskAssignment {
   Versions the agent is to work from, resolved at assignment.
   """
   resolvedInputs: [AgentResolvedInput]
+  """
+  What this hop is expected to cost, in USD micros: the role's allowance. Not a cap -- a hop that
+  will blow it should be returned (reason OTHER, saying so) rather than pressed on. Null when the
+  role sets none.
+  """
+  hopBudgetMicros: Long
 }
 
 type AgentTask {
@@ -1029,7 +1035,7 @@ Board-scoped role definition. The coordinator is implicit and never a row here.
 """
 type AgentTaskRoleConfig {
   """
-  The most one assignment of this role may spend, in USD micros; null means unbounded.
+  Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported. Null sets no allowance.
   """
   hopBudgetMicros: Long
   """
@@ -1890,6 +1896,14 @@ type SessionUsageAck {
   refused: [String!]!
   attribution: SessionUsageAttribution!
   task: ID
+  """
+  The allowance of the hop this session is working, when its role sets one.
+  """
+  hopAllowanceMicros: Long
+  """
+  What that hop has cost so far; compare with hopAllowanceMicros. Null without an allowance.
+  """
+  hopSpentMicros: Long
 }
 
 """
@@ -2480,7 +2494,7 @@ type BoardRoleSpec {
   requiredInputs: [BoardRequiredInputSpec]
   producesOutputs: [BoardProducedOutputSpec]
   """
-  The most one assignment of this role may spend, in USD micros.
+  Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported.
   """
   hopBudgetMicros: Long
   strength: BoardStrengthSpec
@@ -3380,6 +3394,10 @@ type AgentTaskSignOff {
   a document to carry its open findings forward.
   """
   outputs: [ID]
+  """
+  How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+  """
+  overAllowanceMicros: Long
 }
 
 type AgentTaskReturn {
@@ -3401,6 +3419,10 @@ type AgentTaskReturn {
   Document releases published before the hop was handed back; a returned hop can still have produced one.
   """
   outputs: [ID]
+  """
+  How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+  """
+  overAllowanceMicros: Long
 }
 
 """
@@ -3458,6 +3480,10 @@ type HopUsage {
   derivedCostMicros: Long
   priceVersions: [ID]
   costComplete: Boolean
+  """
+  The role's allowance when the hop ended; null when it set none, and on hops recorded before allowances were kept.
+  """
+  allowanceMicros: Long
 }
 
 type Finding {
@@ -3653,6 +3679,9 @@ input BoardRoleSpecInput {
   requiredCapabilities: [AgentCapability!]
   requiredInputs: [BoardRequiredInputSpecInput!]
   producesOutputs: [BoardProducedOutputSpecInput!]
+  """
+  Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported.
+  """
   hopBudgetMicros: Long
   strength: BoardStrengthSpecInput
 }

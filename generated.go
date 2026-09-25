@@ -3356,6 +3356,10 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment s
 	Role          *string                                                                                 `json:"role"`
 	RolePrompt    *string                                                                                 `json:"rolePrompt"`
 	PromptVersion *string                                                                                 `json:"promptVersion"`
+	// What this hop is expected to cost, in USD micros: the role's allowance. Not a cap -- a hop that
+	// will blow it should be returned (reason OTHER, saying so) rather than pressed on. Null when the
+	// role sets none.
+	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
 }
 
 // GetTask returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment.Task, and is useful for accessing the field via an interface.
@@ -3376,6 +3380,11 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// GetHopBudgetMicros returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment.HopBudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment) GetHopBudgetMicros() *int64 {
+	return v.HopBudgetMicros
 }
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask includes the requested fields of the GraphQL type AgentTask.
@@ -3846,6 +3855,10 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -3878,6 +3891,89 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -3893,6 +3989,10 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -3938,6 +4038,16 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetReviewedBy returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -4016,6 +4126,79 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -4634,6 +4817,10 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturn
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -4666,6 +4853,89 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRe
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -4681,6 +4951,10 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOf
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -4726,6 +5000,16 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSi
 // GetReviewedBy returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -4804,6 +5088,79 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSi
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -5417,6 +5774,10 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -5449,6 +5810,89 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -5464,6 +5908,10 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -5509,6 +5957,16 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // GetReviewedBy returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -5587,6 +6045,79 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -6196,6 +6727,10 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgent
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -6228,6 +6763,89 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsA
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -6243,6 +6861,10 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgen
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -6288,6 +6910,16 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffs
 // GetReviewedBy returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -6366,6 +6998,79 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffs
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -6975,6 +7680,10 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsA
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -7007,6 +7716,89 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRetu
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -7022,6 +7814,10 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffs
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -7067,6 +7863,16 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSign
 // GetReviewedBy returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -7145,6 +7951,79 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSign
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -7783,6 +8662,10 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTask
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -7815,6 +8698,89 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgent
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -7830,6 +8796,10 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTas
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -7875,6 +8845,16 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgen
 // GetReviewedBy returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -7953,6 +8933,79 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgen
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -8562,6 +9615,10 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgent
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -8594,6 +9651,89 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsA
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -8609,6 +9749,10 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgen
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -8654,6 +9798,16 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffs
 // GetReviewedBy returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -8732,6 +9886,79 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffs
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -8882,6 +10109,10 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment struc
 	Role          *string                                                                             `json:"role"`
 	RolePrompt    *string                                                                             `json:"rolePrompt"`
 	PromptVersion *string                                                                             `json:"promptVersion"`
+	// What this hop is expected to cost, in USD micros: the role's allowance. Not a cap -- a hop that
+	// will blow it should be returned (reason OTHER, saying so) rather than pressed on. Null when the
+	// role sets none.
+	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
 }
 
 // GetTask returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment.Task, and is useful for accessing the field via an interface.
@@ -8902,6 +10133,11 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment) 
 // GetPromptVersion returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// GetHopBudgetMicros returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment.HopBudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment) GetHopBudgetMicros() *int64 {
+	return v.HopBudgetMicros
 }
 
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask includes the requested fields of the GraphQL type AgentTask.
@@ -9372,6 +10608,10 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -9404,6 +10644,89 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -9419,6 +10742,10 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -9464,6 +10791,16 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // GetReviewedBy returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -9542,6 +10879,79 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -10162,6 +11572,10 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTa
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -10194,6 +11608,89 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAge
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -10209,6 +11706,10 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentT
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -10254,6 +11755,16 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAg
 // GetReviewedBy returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -10332,6 +11843,79 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAg
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -11330,6 +12914,10 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturn s
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -11362,6 +12950,89 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskRetu
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -11377,6 +13048,10 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -11422,6 +13097,16 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSig
 // GetReviewedBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -11500,6 +13185,79 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSig
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -12152,6 +13910,10 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsA
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -12184,6 +13946,89 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRetu
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -12199,6 +14044,10 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffs
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -12244,6 +14093,16 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSign
 // GetReviewedBy returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -12322,6 +14181,79 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSign
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -12931,6 +14863,10 @@ type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskRe
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -12963,6 +14899,89 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -12978,6 +14997,10 @@ type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSi
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -13023,6 +15046,16 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // GetReviewedBy returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -13101,6 +15134,79 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -13710,6 +15816,10 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -13742,6 +15852,89 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -13757,6 +15950,10 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -13802,6 +15999,16 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // GetReviewedBy returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -13880,6 +16087,79 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -14490,6 +16770,10 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgent
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -14522,6 +16806,89 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsA
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -14537,6 +16904,10 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgen
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -14582,6 +16953,16 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffs
 // GetReviewedBy returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -14660,6 +17041,79 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffs
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -15634,6 +18088,10 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAge
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -15666,6 +18124,89 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturn
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -15681,6 +18222,10 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAg
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -15726,6 +18271,16 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOf
 // GetReviewedBy returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -15804,6 +18359,79 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOf
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -16444,6 +19072,10 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTa
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -16476,6 +19108,89 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAge
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -16491,6 +19206,10 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentT
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -16536,6 +19255,16 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAg
 // GetReviewedBy returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -16614,6 +19343,79 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAg
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -17235,6 +20037,10 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturn
 	Reason      *AgentTaskReturnReason `json:"reason"`
 	Description *string                `json:"description"`
 	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
@@ -17267,6 +20073,89 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskRe
 	return v.ReturnedAt
 }
 
+// GetUsage returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -17282,6 +20171,10 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignO
 	PromptVersion *string              `json:"promptVersion"`
 	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
 	ReviewedBy *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed. Null on hops that predate usage reporting or whose session never reported.
+	Usage *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 }
 
 // GetRole returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -17327,6 +20220,16 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskS
 // GetReviewedBy returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
 	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
 }
 
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -17405,6 +20308,79 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskS
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, frozen when the hop ended.
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
 	return &retval, nil
 }
 
@@ -19610,7 +22586,7 @@ type BoardRoleSpecFields struct {
 	RequiredCapabilities []*string                                                    `json:"requiredCapabilities"`
 	RequiredInputs       []*BoardRoleSpecFieldsRequiredInputsBoardRequiredInputSpec   `json:"requiredInputs"`
 	ProducesOutputs      []*BoardRoleSpecFieldsProducesOutputsBoardProducedOutputSpec `json:"producesOutputs"`
-	// The most one assignment of this role may spend, in USD micros.
+	// Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported.
 	HopBudgetMicros *int64                                        `json:"hopBudgetMicros"`
 	Strength        *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
@@ -23213,6 +26189,24 @@ func (v *HardwareMetadataInput) GetExternalRefs() []*ExternalRefInput { return v
 // GetExtensions returns HardwareMetadataInput.Extensions, and is useful for accessing the field via an interface.
 func (v *HardwareMetadataInput) GetExtensions() *json.RawMessage { return v.Extensions }
 
+// What a hop cost against its role's allowance, frozen when the hop ended. With overAllowanceMicros
+// beside it on a sign-off or return, a CLI reader sees an overrun without the user lane.
+type HopUsageFields struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+	CostComplete      *bool  `json:"costComplete"`
+	// The role's allowance when the hop ended; null when it set none, and on hops recorded before allowances were kept.
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+// GetDerivedCostMicros returns HopUsageFields.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *HopUsageFields) GetDerivedCostMicros() *int64 { return v.DerivedCostMicros }
+
+// GetCostComplete returns HopUsageFields.CostComplete, and is useful for accessing the field via an interface.
+func (v *HopUsageFields) GetCostComplete() *bool { return v.CostComplete }
+
+// GetAllowanceMicros returns HopUsageFields.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *HopUsageFields) GetAllowanceMicros() *int64 { return v.AllowanceMicros }
+
 type IdentifierInput struct {
 	IdType  *IdentifierType `json:"idType"`
 	IdValue *string         `json:"idValue"`
@@ -25824,6 +28818,10 @@ type SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck
 	Refused     []string                `json:"refused"`
 	Attribution SessionUsageAttribution `json:"attribution"`
 	Task        *string                 `json:"task"`
+	// The allowance of the hop this session is working, when its role sets one.
+	HopAllowanceMicros *int64 `json:"hopAllowanceMicros"`
+	// What that hop has cost so far; compare with hopAllowanceMicros. Null without an allowance.
+	HopSpentMicros *int64 `json:"hopSpentMicros"`
 }
 
 // GetAccepted returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Accepted, and is useful for accessing the field via an interface.
@@ -25849,6 +28847,16 @@ func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsag
 // GetTask returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.Task, and is useful for accessing the field via an interface.
 func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetTask() *string {
 	return v.Task
+}
+
+// GetHopAllowanceMicros returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.HopAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetHopAllowanceMicros() *int64 {
+	return v.HopAllowanceMicros
+}
+
+// GetHopSpentMicros returns SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck.HopSpentMicros, and is useful for accessing the field via an interface.
+func (v *SessionReportUsageProgrammaticSessionReportUsageProgrammaticSessionUsageAck) GetHopSpentMicros() *int64 {
+	return v.HopSpentMicros
 }
 
 type SessionStatus string
@@ -28597,6 +31605,10 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 				reviewedBy {
 					... ActorFields
 				}
+				usage {
+					... HopUsageFields
+				}
+				overAllowanceMicros
 			}
 			returns {
 				role
@@ -28605,6 +31617,10 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 				reason
 				description
 				returnedAt
+				usage {
+					... HopUsageFields
+				}
+				overAllowanceMicros
 			}
 			parentTask
 			childTasks
@@ -28640,12 +31656,18 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 		role
 		rolePrompt
 		promptVersion
+		hopBudgetMicros
 	}
 }
 fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -28723,6 +31745,10 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -28731,6 +31757,10 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -28768,6 +31798,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -28850,6 +31885,10 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -28858,6 +31897,10 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -28895,6 +31938,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -28971,6 +32019,10 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -28979,6 +32031,10 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -29016,6 +32072,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -29092,6 +32153,10 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -29100,6 +32165,10 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -29137,6 +32206,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -29213,6 +32287,10 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -29221,6 +32299,10 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -29258,6 +32340,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -29334,6 +32421,10 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -29342,6 +32433,10 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -29379,6 +32474,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -29454,6 +32554,10 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 				reviewedBy {
 					... ActorFields
 				}
+				usage {
+					... HopUsageFields
+				}
+				overAllowanceMicros
 			}
 			returns {
 				role
@@ -29462,6 +32566,10 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 				reason
 				description
 				returnedAt
+				usage {
+					... HopUsageFields
+				}
+				overAllowanceMicros
 			}
 			parentTask
 			childTasks
@@ -29497,12 +32605,18 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 		role
 		rolePrompt
 		promptVersion
+		hopBudgetMicros
 	}
 }
 fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -29579,6 +32693,10 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -29587,6 +32705,10 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -29624,6 +32746,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -29700,6 +32827,10 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -29708,6 +32839,10 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -29806,6 +32941,11 @@ fragment ActorFields on AgentActor {
 	uuid
 	name
 }
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
+}
 `
 
 func AgentTaskProgrammatic(
@@ -29877,6 +33017,10 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -29885,6 +33029,10 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -29922,6 +33070,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -29994,6 +33147,10 @@ mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -30002,6 +33159,10 @@ mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -30039,6 +33200,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -30113,6 +33279,10 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -30121,6 +33291,10 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -30158,6 +33332,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -30232,6 +33411,10 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -30240,6 +33423,10 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -30277,6 +33464,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -30462,6 +33654,10 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -30470,6 +33666,10 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -30507,6 +33707,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -30587,6 +33792,10 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -30595,6 +33804,10 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -30632,6 +33845,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -30708,6 +33926,10 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus) {
 			reviewedBy {
 				... ActorFields
 			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		returns {
 			role
@@ -30716,6 +33938,10 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus) {
 			reason
 			description
 			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
 		}
 		parentTask
 		childTasks
@@ -30753,6 +33979,11 @@ fragment ActorFields on AgentActor {
 	kind
 	uuid
 	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
 }
 `
 
@@ -32890,6 +36121,8 @@ mutation SessionReportUsageProgrammatic ($input: SessionUsageReportInput!) {
 		refused
 		attribution
 		task
+		hopAllowanceMicros
+		hopSpentMicros
 	}
 }
 `
