@@ -6,6 +6,7 @@
 
 fragment PersonTaskFields on AgentTask {
 	uuid board externalRef title status role orderIndex requireHumanReview requiredStrength
+	budgetMicros budgetSetBy { ...ActorFields } budgetSetAt
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt }
 	assignment { session agent role assignedAt }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
@@ -72,6 +73,10 @@ mutation AgentTaskRequireHumanReview ($taskUuid: ID!, $value: Boolean!) {
 
 mutation AgentTaskSetStrength ($taskUuid: ID!, $requiredStrength: Float) {
 	agentTaskSetStrength(taskUuid: $taskUuid, requiredStrength: $requiredStrength) { ...PersonTaskFields }
+}
+
+mutation AgentTaskSetBudget ($taskUuid: ID!, $budgetMicros: Long) {
+	agentTaskSetBudget(taskUuid: $taskUuid, budgetMicros: $budgetMicros) { ...PersonTaskFields }
 }
 
 mutation AgentBoardOperatorLock ($boardUuid: ID!, $lock: Boolean!, $reason: String) {

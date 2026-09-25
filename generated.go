@@ -4523,6 +4523,21 @@ func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetRequiredStrength() *float64
 	return v.PersonTaskFields.RequiredStrength
 }
 
+// GetBudgetMicros returns AgentTaskAnswerAgentTaskAnswerAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskAnswerAgentTaskAnswerAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskAnswerAgentTaskAnswerAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
 // GetHold returns AgentTaskAnswerAgentTaskAnswerAgentTask.Hold, and is useful for accessing the field via an interface.
 func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
 	return v.PersonTaskFields.Hold
@@ -4602,6 +4617,12 @@ type __premarshalAgentTaskAnswerAgentTaskAnswerAgentTask struct {
 
 	RequiredStrength *float64 `json:"requiredStrength"`
 
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
 	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
 
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -4637,6 +4658,9 @@ func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) __premarshalJSON() (*__premars
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
 	retval.Hold = v.PersonTaskFields.Hold
 	retval.Assignment = v.PersonTaskFields.Assignment
 	retval.StatusHistory = v.PersonTaskFields.StatusHistory
@@ -5710,6 +5734,21 @@ func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetRequiredStrength() *f
 	return v.PersonTaskFields.RequiredStrength
 }
 
+// GetBudgetMicros returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
 // GetHold returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.Hold, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
 	return v.PersonTaskFields.Hold
@@ -5789,6 +5828,12 @@ type __premarshalAgentTaskAuthorizeAgentTaskAuthorizeAgentTask struct {
 
 	RequiredStrength *float64 `json:"requiredStrength"`
 
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
 	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
 
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -5824,6 +5869,9 @@ func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) __premarshalJSON() (*__p
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
 	retval.Hold = v.PersonTaskFields.Hold
 	retval.Assignment = v.PersonTaskFields.Assignment
 	retval.StatusHistory = v.PersonTaskFields.StatusHistory
@@ -5849,6 +5897,11 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	OrderIndex *int `json:"orderIndex"`
 	// Model strength this task requires, overriding the role's when set.
 	RequiredStrength *float64 `json:"requiredStrength"`
+	// What this task may spend, in USD micros; null means only the board's limit applies.
+	BudgetMicros *int64 `json:"budgetMicros"`
+	// Who last set or cleared budgetMicros, and when.
+	BudgetSetBy *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor `json:"budgetSetBy"`
+	BudgetSetAt *string                                                                                     `json:"budgetSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -5925,6 +5978,21 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) 
 // GetRequiredStrength returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetRequiredStrength() *float64 {
 	return v.RequiredStrength
+}
+
+// GetBudgetMicros returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetBudgetMicros() *int64 {
+	return v.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetBudgetSetBy() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor {
+	return v.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetBudgetSetAt() *string {
+	return v.BudgetSetAt
 }
 
 // GetDependsOn returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -6052,6 +6120,85 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskAs
 // GetPromptVersion returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor, error) {
+	var retval __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -7813,6 +7960,21 @@ func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetRequiredStrength() *float64
 	return v.PersonTaskFields.RequiredStrength
 }
 
+// GetBudgetMicros returns AgentTaskCancelAgentTaskCancelAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskCancelAgentTaskCancelAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskCancelAgentTaskCancelAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
 // GetHold returns AgentTaskCancelAgentTaskCancelAgentTask.Hold, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
 	return v.PersonTaskFields.Hold
@@ -7892,6 +8054,12 @@ type __premarshalAgentTaskCancelAgentTaskCancelAgentTask struct {
 
 	RequiredStrength *float64 `json:"requiredStrength"`
 
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
 	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
 
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -7927,6 +8095,9 @@ func (v *AgentTaskCancelAgentTaskCancelAgentTask) __premarshalJSON() (*__premars
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
 	retval.Hold = v.PersonTaskFields.Hold
 	retval.Assignment = v.PersonTaskFields.Assignment
 	retval.StatusHistory = v.PersonTaskFields.StatusHistory
@@ -9061,6 +9232,21 @@ func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetRequiredStrength() *flo
 	return v.PersonTaskFields.RequiredStrength
 }
 
+// GetBudgetMicros returns AgentTaskCompleteAgentTaskCompleteAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskCompleteAgentTaskCompleteAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskCompleteAgentTaskCompleteAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
 // GetHold returns AgentTaskCompleteAgentTaskCompleteAgentTask.Hold, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
 	return v.PersonTaskFields.Hold
@@ -9140,6 +9326,12 @@ type __premarshalAgentTaskCompleteAgentTaskCompleteAgentTask struct {
 
 	RequiredStrength *float64 `json:"requiredStrength"`
 
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
 	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
 
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -9175,6 +9367,9 @@ func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) __premarshalJSON() (*__pre
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
 	retval.Hold = v.PersonTaskFields.Hold
 	retval.Assignment = v.PersonTaskFields.Assignment
 	retval.StatusHistory = v.PersonTaskFields.StatusHistory
@@ -10253,6 +10448,21 @@ func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetRequiredStr
 	return v.PersonTaskFields.RequiredStrength
 }
 
+// GetBudgetMicros returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
 // GetHold returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.Hold, and is useful for accessing the field via an interface.
 func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
 	return v.PersonTaskFields.Hold
@@ -10332,6 +10542,12 @@ type __premarshalAgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask struct 
 
 	RequiredStrength *float64 `json:"requiredStrength"`
 
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
 	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
 
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -10367,6 +10583,9 @@ func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) __premarshalJS
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
 	retval.Hold = v.PersonTaskFields.Hold
 	retval.Assignment = v.PersonTaskFields.Assignment
 	retval.StatusHistory = v.PersonTaskFields.StatusHistory
@@ -11640,6 +11859,21 @@ func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetRequiredStrength(
 	return v.PersonTaskFields.RequiredStrength
 }
 
+// GetBudgetMicros returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
 // GetHold returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.Hold, and is useful for accessing the field via an interface.
 func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
 	return v.PersonTaskFields.Hold
@@ -11719,6 +11953,12 @@ type __premarshalAgentTaskHumanReviewAgentTaskHumanReviewAgentTask struct {
 
 	RequiredStrength *float64 `json:"requiredStrength"`
 
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
 	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
 
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -11754,6 +11994,9 @@ func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) __premarshalJSON() (
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
 	retval.Hold = v.PersonTaskFields.Hold
 	retval.Assignment = v.PersonTaskFields.Assignment
 	retval.StatusHistory = v.PersonTaskFields.StatusHistory
@@ -11826,6 +12069,21 @@ func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetRequireHumanRev
 // GetRequiredStrength returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
 func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetRequiredStrength() *float64 {
 	return v.PersonTaskFields.RequiredStrength
+}
+
+// GetBudgetMicros returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
 }
 
 // GetHold returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.Hold, and is useful for accessing the field via an interface.
@@ -11907,6 +12165,12 @@ type __premarshalAgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask struct {
 
 	RequiredStrength *float64 `json:"requiredStrength"`
 
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
 	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
 
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -11942,6 +12206,9 @@ func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) __premarshalJSON()
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
 	retval.Hold = v.PersonTaskFields.Hold
 	retval.Assignment = v.PersonTaskFields.Assignment
 	retval.StatusHistory = v.PersonTaskFields.StatusHistory
@@ -14025,6 +14292,21 @@ func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetRequiredStrengt
 	return v.PersonTaskFields.RequiredStrength
 }
 
+// GetBudgetMicros returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
 // GetHold returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.Hold, and is useful for accessing the field via an interface.
 func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
 	return v.PersonTaskFields.Hold
@@ -14104,6 +14386,12 @@ type __premarshalAgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask struct {
 
 	RequiredStrength *float64 `json:"requiredStrength"`
 
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
 	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
 
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -14139,6 +14427,9 @@ func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) __premarshalJSON()
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
 	retval.Hold = v.PersonTaskFields.Hold
 	retval.Assignment = v.PersonTaskFields.Assignment
 	retval.StatusHistory = v.PersonTaskFields.StatusHistory
@@ -14200,6 +14491,21 @@ func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetRequireHumanReview() *bool {
 // GetRequiredStrength returns AgentTaskOrderAgentTaskOrderAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetRequiredStrength() *float64 {
 	return v.PersonTaskFields.RequiredStrength
+}
+
+// GetBudgetMicros returns AgentTaskOrderAgentTaskOrderAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskOrderAgentTaskOrderAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskOrderAgentTaskOrderAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
 }
 
 // GetHold returns AgentTaskOrderAgentTaskOrderAgentTask.Hold, and is useful for accessing the field via an interface.
@@ -14281,6 +14587,12 @@ type __premarshalAgentTaskOrderAgentTaskOrderAgentTask struct {
 
 	RequiredStrength *float64 `json:"requiredStrength"`
 
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
 	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
 
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -14316,6 +14628,9 @@ func (v *AgentTaskOrderAgentTaskOrderAgentTask) __premarshalJSON() (*__premarsha
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
 	retval.Hold = v.PersonTaskFields.Hold
 	retval.Assignment = v.PersonTaskFields.Assignment
 	retval.StatusHistory = v.PersonTaskFields.StatusHistory
@@ -16899,6 +17214,21 @@ func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetRequiredStrength() *flo
 	return v.PersonTaskFields.RequiredStrength
 }
 
+// GetBudgetMicros returns AgentTaskRegisterAgentTaskRegisterAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskRegisterAgentTaskRegisterAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskRegisterAgentTaskRegisterAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
 // GetHold returns AgentTaskRegisterAgentTaskRegisterAgentTask.Hold, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
 	return v.PersonTaskFields.Hold
@@ -16978,6 +17308,12 @@ type __premarshalAgentTaskRegisterAgentTaskRegisterAgentTask struct {
 
 	RequiredStrength *float64 `json:"requiredStrength"`
 
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
 	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
 
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -17013,6 +17349,9 @@ func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) __premarshalJSON() (*__pre
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
 	retval.Hold = v.PersonTaskFields.Hold
 	retval.Assignment = v.PersonTaskFields.Assignment
 	retval.StatusHistory = v.PersonTaskFields.StatusHistory
@@ -20187,6 +20526,21 @@ func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetReq
 	return v.PersonTaskFields.RequiredStrength
 }
 
+// GetBudgetMicros returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
 // GetHold returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.Hold, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
 	return v.PersonTaskFields.Hold
@@ -20266,6 +20620,12 @@ type __premarshalAgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask
 
 	RequiredStrength *float64 `json:"requiredStrength"`
 
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
 	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
 
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -20301,6 +20661,9 @@ func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) __prem
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
 	retval.Hold = v.PersonTaskFields.Hold
 	retval.Assignment = v.PersonTaskFields.Assignment
 	retval.StatusHistory = v.PersonTaskFields.StatusHistory
@@ -22706,6 +23069,215 @@ func (v *AgentTaskRoleConfigsProgrammaticResponse) GetAgentTaskRoleConfigsProgra
 	return v.AgentTaskRoleConfigsProgrammatic
 }
 
+// AgentTaskSetBudgetAgentTaskSetBudgetAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskSetBudgetAgentTaskSetBudgetAgentTask struct {
+	PersonTaskFields `json:"-"`
+}
+
+// GetUuid returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetUuid() *string {
+	return v.PersonTaskFields.Uuid
+}
+
+// GetBoard returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Board, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetBoard() *string {
+	return v.PersonTaskFields.Board
+}
+
+// GetExternalRef returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetExternalRef() *string {
+	return v.PersonTaskFields.ExternalRef
+}
+
+// GetTitle returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetTitle() *string {
+	return v.PersonTaskFields.Title
+}
+
+// GetStatus returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetStatus() *AgentTaskStatus {
+	return v.PersonTaskFields.Status
+}
+
+// GetRole returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetRole() *string {
+	return v.PersonTaskFields.Role
+}
+
+// GetOrderIndex returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.OrderIndex, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetOrderIndex() *int {
+	return v.PersonTaskFields.OrderIndex
+}
+
+// GetRequireHumanReview returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetRequireHumanReview() *bool {
+	return v.PersonTaskFields.RequireHumanReview
+}
+
+// GetRequiredStrength returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetRequiredStrength() *float64 {
+	return v.PersonTaskFields.RequiredStrength
+}
+
+// GetBudgetMicros returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
+// GetHold returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Hold, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
+	return v.PersonTaskFields.Hold
+}
+
+// GetAssignment returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Assignment, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetAssignment() *PersonTaskFieldsAssignmentAgentTaskWorkAssignment {
+	return v.PersonTaskFields.Assignment
+}
+
+// GetStatusHistory returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.StatusHistory, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetStatusHistory() []*PersonTaskFieldsStatusHistoryAgentTaskStatusChange {
+	return v.PersonTaskFields.StatusHistory
+}
+
+// GetOpenFindings returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.OpenFindings, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetOpenFindings() []*PersonTaskFieldsOpenFindingsFinding {
+	return v.PersonTaskFields.OpenFindings
+}
+
+// GetOpenQuestions returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.OpenQuestions, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetOpenQuestions() []*PersonTaskFieldsOpenQuestionsFinding {
+	return v.PersonTaskFields.OpenQuestions
+}
+
+// GetCreatedDate returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetCreatedDate() *string {
+	return v.PersonTaskFields.CreatedDate
+}
+
+// GetCompletedAt returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.CompletedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetCompletedAt() *string {
+	return v.PersonTaskFields.CompletedAt
+}
+
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetBudgetAgentTaskSetBudgetAgentTask
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetBudgetAgentTaskSetBudgetAgentTask = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.PersonTaskFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetBudgetAgentTaskSetBudgetAgentTask struct {
+	Uuid *string `json:"uuid"`
+
+	Board *string `json:"board"`
+
+	ExternalRef *string `json:"externalRef"`
+
+	Title *string `json:"title"`
+
+	Status *AgentTaskStatus `json:"status"`
+
+	Role *string `json:"role"`
+
+	OrderIndex *int `json:"orderIndex"`
+
+	RequireHumanReview *bool `json:"requireHumanReview"`
+
+	RequiredStrength *float64 `json:"requiredStrength"`
+
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
+	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
+
+	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
+
+	StatusHistory []*PersonTaskFieldsStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
+
+	OpenFindings []*PersonTaskFieldsOpenFindingsFinding `json:"openFindings"`
+
+	OpenQuestions []*PersonTaskFieldsOpenQuestionsFinding `json:"openQuestions"`
+
+	CreatedDate *string `json:"createdDate"`
+
+	CompletedAt *string `json:"completedAt"`
+}
+
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) __premarshalJSON() (*__premarshalAgentTaskSetBudgetAgentTaskSetBudgetAgentTask, error) {
+	var retval __premarshalAgentTaskSetBudgetAgentTaskSetBudgetAgentTask
+
+	retval.Uuid = v.PersonTaskFields.Uuid
+	retval.Board = v.PersonTaskFields.Board
+	retval.ExternalRef = v.PersonTaskFields.ExternalRef
+	retval.Title = v.PersonTaskFields.Title
+	retval.Status = v.PersonTaskFields.Status
+	retval.Role = v.PersonTaskFields.Role
+	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
+	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
+	retval.Hold = v.PersonTaskFields.Hold
+	retval.Assignment = v.PersonTaskFields.Assignment
+	retval.StatusHistory = v.PersonTaskFields.StatusHistory
+	retval.OpenFindings = v.PersonTaskFields.OpenFindings
+	retval.OpenQuestions = v.PersonTaskFields.OpenQuestions
+	retval.CreatedDate = v.PersonTaskFields.CreatedDate
+	retval.CompletedAt = v.PersonTaskFields.CompletedAt
+	return &retval, nil
+}
+
+// AgentTaskSetBudgetResponse is returned by AgentTaskSetBudget on success.
+type AgentTaskSetBudgetResponse struct {
+	// Set or clear (null) what a task may spend, in USD micros. Org admin. A raise does not release a budget hold.
+	AgentTaskSetBudget *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask `json:"agentTaskSetBudget"`
+}
+
+// GetAgentTaskSetBudget returns AgentTaskSetBudgetResponse.AgentTaskSetBudget, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetResponse) GetAgentTaskSetBudget() *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask {
+	return v.AgentTaskSetBudget
+}
+
 // AgentTaskSetStrengthAgentTaskSetStrengthAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskSetStrengthAgentTaskSetStrengthAgentTask struct {
 	PersonTaskFields `json:"-"`
@@ -22754,6 +23326,21 @@ func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetRequireHumanRevie
 // GetRequiredStrength returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetRequiredStrength() *float64 {
 	return v.PersonTaskFields.RequiredStrength
+}
+
+// GetBudgetMicros returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
 }
 
 // GetHold returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.Hold, and is useful for accessing the field via an interface.
@@ -22835,6 +23422,12 @@ type __premarshalAgentTaskSetStrengthAgentTaskSetStrengthAgentTask struct {
 
 	RequiredStrength *float64 `json:"requiredStrength"`
 
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
 	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
 
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -22870,6 +23463,9 @@ func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) __premarshalJSON() (
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
 	retval.Hold = v.PersonTaskFields.Hold
 	retval.Assignment = v.PersonTaskFields.Assignment
 	retval.StatusHistory = v.PersonTaskFields.StatusHistory
@@ -24996,6 +25592,21 @@ func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetRequiredStrength() *flo
 	return v.PersonTaskFields.RequiredStrength
 }
 
+// GetBudgetMicros returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
 // GetHold returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.Hold, and is useful for accessing the field via an interface.
 func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
 	return v.PersonTaskFields.Hold
@@ -25075,6 +25686,12 @@ type __premarshalAgentTasksOfBoardAgentTasksOfBoardAgentTask struct {
 
 	RequiredStrength *float64 `json:"requiredStrength"`
 
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
 	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
 
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -25110,6 +25727,9 @@ func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) __premarshalJSON() (*__pre
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
 	retval.Hold = v.PersonTaskFields.Hold
 	retval.Assignment = v.PersonTaskFields.Assignment
 	retval.StatusHistory = v.PersonTaskFields.StatusHistory
@@ -33058,6 +33678,11 @@ type PersonTaskFields struct {
 	RequireHumanReview *bool `json:"requireHumanReview"`
 	// Model strength this task requires, overriding the role's when set.
 	RequiredStrength *float64 `json:"requiredStrength"`
+	// What this task may spend, in USD micros; null means only the board's limit applies.
+	BudgetMicros *int64 `json:"budgetMicros"`
+	// Who last set or cleared budgetMicros, and when.
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+	BudgetSetAt *string                                `json:"budgetSetAt"`
 	// Hold state while ON_HOLD; null otherwise.
 	Hold       *PersonTaskFieldsHoldAgentTaskHold                 `json:"hold"`
 	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
@@ -33102,6 +33727,17 @@ func (v *PersonTaskFields) GetRequireHumanReview() *bool { return v.RequireHuman
 
 // GetRequiredStrength returns PersonTaskFields.RequiredStrength, and is useful for accessing the field via an interface.
 func (v *PersonTaskFields) GetRequiredStrength() *float64 { return v.RequiredStrength }
+
+// GetBudgetMicros returns PersonTaskFields.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *PersonTaskFields) GetBudgetMicros() *int64 { return v.BudgetMicros }
+
+// GetBudgetSetBy returns PersonTaskFields.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *PersonTaskFields) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.BudgetSetBy
+}
+
+// GetBudgetSetAt returns PersonTaskFields.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *PersonTaskFields) GetBudgetSetAt() *string { return v.BudgetSetAt }
 
 // GetHold returns PersonTaskFields.Hold, and is useful for accessing the field via an interface.
 func (v *PersonTaskFields) GetHold() *PersonTaskFieldsHoldAgentTaskHold { return v.Hold }
@@ -33155,6 +33791,79 @@ func (v *PersonTaskFieldsAssignmentAgentTaskWorkAssignment) GetRole() *string { 
 // GetAssignedAt returns PersonTaskFieldsAssignmentAgentTaskWorkAssignment.AssignedAt, and is useful for accessing the field via an interface.
 func (v *PersonTaskFieldsAssignmentAgentTaskWorkAssignment) GetAssignedAt() *string {
 	return v.AssignedAt
+}
+
+// PersonTaskFieldsBudgetSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type PersonTaskFieldsBudgetSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns PersonTaskFieldsBudgetSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *PersonTaskFieldsBudgetSetByAgentActor) GetKind() *AgentActorKind { return v.ActorFields.Kind }
+
+// GetUuid returns PersonTaskFieldsBudgetSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *PersonTaskFieldsBudgetSetByAgentActor) GetUuid() *string { return v.ActorFields.Uuid }
+
+// GetName returns PersonTaskFieldsBudgetSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *PersonTaskFieldsBudgetSetByAgentActor) GetName() *string { return v.ActorFields.Name }
+
+func (v *PersonTaskFieldsBudgetSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*PersonTaskFieldsBudgetSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.PersonTaskFieldsBudgetSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalPersonTaskFieldsBudgetSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *PersonTaskFieldsBudgetSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *PersonTaskFieldsBudgetSetByAgentActor) __premarshalJSON() (*__premarshalPersonTaskFieldsBudgetSetByAgentActor, error) {
+	var retval __premarshalPersonTaskFieldsBudgetSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // PersonTaskFieldsHoldAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -36645,6 +37354,7 @@ type __AgentTaskAuthorizeProgrammaticInput struct {
 	OrderIndex       *int     `json:"orderIndex"`
 	DependsOn        []string `json:"dependsOn"`
 	RequiredStrength *float64 `json:"requiredStrength,omitempty"`
+	BudgetMicros     *int64   `json:"budgetMicros,omitempty"`
 }
 
 // GetTaskUuid returns __AgentTaskAuthorizeProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -36666,6 +37376,9 @@ func (v *__AgentTaskAuthorizeProgrammaticInput) GetDependsOn() []string { return
 func (v *__AgentTaskAuthorizeProgrammaticInput) GetRequiredStrength() *float64 {
 	return v.RequiredStrength
 }
+
+// GetBudgetMicros returns __AgentTaskAuthorizeProgrammaticInput.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *__AgentTaskAuthorizeProgrammaticInput) GetBudgetMicros() *int64 { return v.BudgetMicros }
 
 // __AgentTaskBindExternalRefProgrammaticInput is used internally by genqlient
 type __AgentTaskBindExternalRefProgrammaticInput struct {
@@ -37050,6 +37763,18 @@ type __AgentTaskRoleConfigsProgrammaticInput struct {
 
 // GetBoardUuid returns __AgentTaskRoleConfigsProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
 func (v *__AgentTaskRoleConfigsProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
+
+// __AgentTaskSetBudgetInput is used internally by genqlient
+type __AgentTaskSetBudgetInput struct {
+	TaskUuid     string `json:"taskUuid"`
+	BudgetMicros *int64 `json:"budgetMicros"`
+}
+
+// GetTaskUuid returns __AgentTaskSetBudgetInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetBudgetInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetBudgetMicros returns __AgentTaskSetBudgetInput.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetBudgetInput) GetBudgetMicros() *int64 { return v.BudgetMicros }
 
 // __AgentTaskSetStrengthInput is used internally by genqlient
 type __AgentTaskSetStrengthInput struct {
@@ -38791,6 +39516,11 @@ fragment PersonTaskFields on AgentTask {
 	orderIndex
 	requireHumanReview
 	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
 	hold {
 		level
 		kind
@@ -39041,6 +39771,11 @@ fragment PersonTaskFields on AgentTask {
 	orderIndex
 	requireHumanReview
 	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
 	hold {
 		level
 		kind
@@ -39140,8 +39875,8 @@ func AgentTaskAuthorize(
 
 // The mutation executed by AgentTaskAuthorizeProgrammatic.
 const AgentTaskAuthorizeProgrammatic_Operation = `
-mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!], $requiredStrength: Float) {
-	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength) {
+mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!], $requiredStrength: Float, $budgetMicros: Long) {
+	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength, budgetMicros: $budgetMicros) {
 		uuid
 		org
 		board
@@ -39152,6 +39887,11 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 		role
 		orderIndex
 		requiredStrength
+		budgetMicros
+		budgetSetBy {
+			... ActorFields
+		}
+		budgetSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -39253,6 +39993,7 @@ func AgentTaskAuthorizeProgrammatic(
 	orderIndex *int,
 	dependsOn []string,
 	requiredStrength *float64,
+	budgetMicros *int64,
 ) (data_ *AgentTaskAuthorizeProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskAuthorizeProgrammatic",
@@ -39264,6 +40005,7 @@ func AgentTaskAuthorizeProgrammatic(
 			OrderIndex:       orderIndex,
 			DependsOn:        dependsOn,
 			RequiredStrength: requiredStrength,
+			BudgetMicros:     budgetMicros,
 		},
 	}
 
@@ -39430,6 +40172,11 @@ fragment PersonTaskFields on AgentTask {
 	orderIndex
 	requireHumanReview
 	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
 	hold {
 		level
 		kind
@@ -39717,6 +40464,11 @@ fragment PersonTaskFields on AgentTask {
 	orderIndex
 	requireHumanReview
 	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
 	hold {
 		level
 		kind
@@ -39966,6 +40718,11 @@ fragment PersonTaskFields on AgentTask {
 	orderIndex
 	requireHumanReview
 	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
 	hold {
 		level
 		kind
@@ -40280,6 +41037,11 @@ fragment PersonTaskFields on AgentTask {
 	orderIndex
 	requireHumanReview
 	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
 	hold {
 		level
 		kind
@@ -40392,6 +41154,11 @@ fragment PersonTaskFields on AgentTask {
 	orderIndex
 	requireHumanReview
 	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
 	hold {
 		level
 		kind
@@ -40779,6 +41546,11 @@ fragment PersonTaskFields on AgentTask {
 	orderIndex
 	requireHumanReview
 	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
 	hold {
 		level
 		kind
@@ -40887,6 +41659,11 @@ fragment PersonTaskFields on AgentTask {
 	orderIndex
 	requireHumanReview
 	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
 	hold {
 		level
 		kind
@@ -41338,6 +42115,11 @@ fragment PersonTaskFields on AgentTask {
 	orderIndex
 	requireHumanReview
 	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
 	hold {
 		level
 		kind
@@ -41860,6 +42642,11 @@ fragment PersonTaskFields on AgentTask {
 	orderIndex
 	requireHumanReview
 	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
 	hold {
 		level
 		kind
@@ -42338,6 +43125,117 @@ func AgentTaskRoleConfigsProgrammatic(
 	return data_, err_
 }
 
+// The mutation executed by AgentTaskSetBudget.
+const AgentTaskSetBudget_Operation = `
+mutation AgentTaskSetBudget ($taskUuid: ID!, $budgetMicros: Long) {
+	agentTaskSetBudget(taskUuid: $taskUuid, budgetMicros: $budgetMicros) {
+		... PersonTaskFields
+	}
+}
+fragment PersonTaskFields on AgentTask {
+	uuid
+	board
+	externalRef
+	title
+	status
+	role
+	orderIndex
+	requireHumanReview
+	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
+	hold {
+		level
+		kind
+		gateRole
+		reason
+		heldBy {
+			... ActorFields
+		}
+		heldAt
+	}
+	assignment {
+		session
+		agent
+		role
+		assignedAt
+	}
+	statusHistory {
+		from
+		to
+		at
+		trigger
+		actor {
+			... ActorFields
+		}
+		note
+	}
+	openFindings {
+		id
+		priority
+		status
+		title
+		location {
+			path
+			line
+			ref
+		}
+		resolvedBy
+		resolution
+	}
+	openQuestions {
+		id
+		priority
+		status
+		title
+		location {
+			path
+			line
+			ref
+		}
+		resolvedBy
+		resolution
+	}
+	createdDate
+	completedAt
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+`
+
+func AgentTaskSetBudget(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+	budgetMicros *int64,
+) (data_ *AgentTaskSetBudgetResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskSetBudget",
+		Query:  AgentTaskSetBudget_Operation,
+		Variables: &__AgentTaskSetBudgetInput{
+			TaskUuid:     taskUuid,
+			BudgetMicros: budgetMicros,
+		},
+	}
+
+	data_ = &AgentTaskSetBudgetResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by AgentTaskSetStrength.
 const AgentTaskSetStrength_Operation = `
 mutation AgentTaskSetStrength ($taskUuid: ID!, $requiredStrength: Float) {
@@ -42355,6 +43253,11 @@ fragment PersonTaskFields on AgentTask {
 	orderIndex
 	requireHumanReview
 	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
 	hold {
 		level
 		kind
@@ -42740,6 +43643,11 @@ fragment PersonTaskFields on AgentTask {
 	orderIndex
 	requireHumanReview
 	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
 	hold {
 		level
 		kind

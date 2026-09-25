@@ -336,7 +336,8 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   producesComponent: ID
   level: Int
   requiredInputs: [AgentRequiredInputInput]
-  requiredStrength: Float): AgentTask
+  requiredStrength: Float
+  budgetMicros: Long): AgentTask
   agentTaskHoldProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: String!): AgentTask
   agentTaskReleaseHoldProgrammatic(taskUuid: ID!, sessionUuid: ID!): AgentTask
   """
@@ -466,6 +467,12 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskOrder(
   taskUuid: ID!
   orderIndex: Int!): AgentTask
+  """
+  Set or clear (null) what a task may spend, in USD micros. Org admin. A raise does not release a budget hold.
+  """
+  agentTaskSetBudget(
+  taskUuid: ID!
+  budgetMicros: Long): AgentTask
   """
   Complete a task. Refused while a finding that blocks completion is open -- accept or dismiss it
   first -- and while a required role has not passed. A required role whose rejection you have
@@ -1221,6 +1228,11 @@ type AgentTask {
   Who last set orderIndex, the coordinator or a person, and when.
   """
   orderSetBy: AgentActor
+  """
+  Who last set or cleared budgetMicros, and when.
+  """
+  budgetSetBy: AgentActor
+  budgetSetAt: DateTime
   orderSetAt: DateTime
   """
   Required roles a person completed the task without, having said why in the completing status change.
@@ -2647,6 +2659,8 @@ input AgentRequiredInputInput {
   resolution: AgentInputResolution
 }
 
+scalar Long
+
 enum AgentBoardEventKind {
   LOCKED
   UNLOCKED
@@ -3727,8 +3741,6 @@ type AgentCoordinatorSeat {
   agent: ID
   claimedAt: DateTime
 }
-
-scalar Long
 
 type DeclarativeProvenance {
   """
