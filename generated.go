@@ -1717,6 +1717,8 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	BlockingPriority *int `json:"blockingPriority"`
 	// Priority number at or below which an open item prevents a policy completion. Null is strict.
 	CompletionPriority *int `json:"completionPriority"`
+	// Minutes a task may wait on a person before AGENT_TASK_QUEUE_AGE is sent; null or 0 is off.
+	HumanQueueAgeMinutes *int `json:"humanQueueAgeMinutes"`
 	// The board file that last applied to this board; null on a board never applied from a file.
 	Declarative *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance `json:"declarative"`
 	CreatedDate *string                                                                                 `json:"createdDate"`
@@ -1837,6 +1839,11 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetBlockingPrio
 // GetCompletionPriority returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CompletionPriority, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCompletionPriority() *int {
 	return v.CompletionPriority
+}
+
+// GetHumanQueueAgeMinutes returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.HumanQueueAgeMinutes, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetHumanQueueAgeMinutes() *int {
+	return v.HumanQueueAgeMinutes
 }
 
 // GetDeclarative returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Declarative, and is useful for accessing the field via an interface.
@@ -2614,6 +2621,8 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	BlockingPriority *int `json:"blockingPriority"`
 	// Priority number at or below which an open item prevents a policy completion. Null is strict.
 	CompletionPriority *int `json:"completionPriority"`
+	// Minutes a task may wait on a person before AGENT_TASK_QUEUE_AGE is sent; null or 0 is off.
+	HumanQueueAgeMinutes *int `json:"humanQueueAgeMinutes"`
 	// The board file that last applied to this board; null on a board never applied from a file.
 	Declarative *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance `json:"declarative"`
 	CreatedDate *string                                                                                   `json:"createdDate"`
@@ -2736,6 +2745,11 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetBlockingPr
 // GetCompletionPriority returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CompletionPriority, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetCompletionPriority() *int {
 	return v.CompletionPriority
+}
+
+// GetHumanQueueAgeMinutes returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.HumanQueueAgeMinutes, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetHumanQueueAgeMinutes() *int {
+	return v.HumanQueueAgeMinutes
 }
 
 // GetDeclarative returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Declarative, and is useful for accessing the field via an interface.
@@ -26035,7 +26049,8 @@ type ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec struct
 	// Findings at or above this priority send work back; null means every open finding does.
 	BlockingPriority *int `json:"blockingPriority"`
 	// Findings at or above this priority stop completion; null means every open finding does.
-	CompletionPriority *int `json:"completionPriority"`
+	CompletionPriority   *int `json:"completionPriority"`
+	HumanQueueAgeMinutes *int `json:"humanQueueAgeMinutes"`
 }
 
 // GetBudgetMicros returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.BudgetMicros, and is useful for accessing the field via an interface.
@@ -26066,6 +26081,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) G
 // GetCompletionPriority returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.CompletionPriority, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetCompletionPriority() *int {
 	return v.CompletionPriority
+}
+
+// GetHumanQueueAgeMinutes returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.HumanQueueAgeMinutes, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetHumanQueueAgeMinutes() *int {
+	return v.HumanQueueAgeMinutes
 }
 
 // ExportBoardResponse is returned by ExportBoard on success.
@@ -33324,6 +33344,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		noProgressRepeatsToStop
 		blockingPriority
 		completionPriority
+		humanQueueAgeMinutes
 		declarative {
 			specHash
 			appliedAt
@@ -33505,6 +33526,7 @@ query AgentBoardsProgrammatic {
 		noProgressRepeatsToStop
 		blockingPriority
 		completionPriority
+		humanQueueAgeMinutes
 		declarative {
 			specHash
 			appliedAt
@@ -37078,6 +37100,7 @@ query ExportBoard ($board: String!) {
 			noProgressRepeatsToStop
 			blockingPriority
 			completionPriority
+			humanQueueAgeMinutes
 		}
 		roles {
 			... BoardRoleSpecFields

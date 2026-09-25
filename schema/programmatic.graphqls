@@ -854,6 +854,20 @@ type AgentBoard {
   """
   softAlertPercent: Int
   """
+  The board's average coordinator share per coordinator-caused transition, in
+  micros (board-mechanics §5.3): coordinatorSharesMicros / coordinatorTransitions,
+  0 before any. Added to every projected round, and named in a refusal.
+  """
+  coordinatorOverheadMicros: Long
+  """
+  Coordinator spend apportioned to tasks so far (D16), in micros. The same money as the seat's usage rows, which board spend already counts.
+  """
+  coordinatorSharesMicros: Long
+  """
+  Coordinator-caused transitions the apportioned spend was split over (D16).
+  """
+  coordinatorTransitions: Long
+  """
   Rounds between one pair of roles before a task parks (default 3).
   """
   cycleCap: Int
@@ -861,6 +875,10 @@ type AgentBoard {
   Repeated rounds at which a task parks; 1, the default, parks on the first repeat.
   """
   noProgressRepeatsToStop: Int
+  """
+  Minutes a task may wait on a person before AGENT_TASK_QUEUE_AGE is sent; null or 0 is off.
+  """
+  humanQueueAgeMinutes: Int
   """
   Priority number at or below which an open item blocks routing, 1 being most urgent. Null is strict.
   """
@@ -938,7 +956,12 @@ type AgentTask {
   """
   budgetMicros: Long
   """
-  Coordinator spend apportioned to this task, frozen when computed. An estimate, not a measurement.
+  Coordinator spend apportioned to this task (D16): each coordinator usage delta
+  is split equally among the tasks the seat moved since the previous one, else
+  the board's open tasks, and frozen when computed. An estimate, not a
+  measurement. The task's spend in the budget is its usage rows plus this; the
+  board's spend counts the seat's rows and never these shares, so task spends do
+  not add up to the board's.
   """
   coordinatorEstimateMicros: Long
   """
@@ -1056,7 +1079,8 @@ type AgentTask {
   reflected without a rewrite. Null until the first report lands. Built from
   the hop snapshots, which are frozen when a hop ends: a hop reported after it
   closed reads lower here than in the budget, which reads the usage rows
-  (spentMicros on the board snapshot), until the snapshot is refreshed.
+  (spentMicros on the board snapshot), until the snapshot is refreshed. The
+  coordinator's share is not in it: see coordinatorEstimateMicros.
   """
   usage: HopUsage
   """
@@ -2549,6 +2573,7 @@ type BoardSettingsSpec {
   softAlertPercent: Int
   cycleCap: Int
   noProgressRepeatsToStop: Int
+  humanQueueAgeMinutes: Int
   """
   Findings at or above this priority send work back; null means every open finding does.
   """
@@ -3789,6 +3814,10 @@ input BoardSettingsSpecInput {
   softAlertPercent: Int
   cycleCap: Int
   noProgressRepeatsToStop: Int
+  """
+  Minutes a task may wait on a person before AGENT_TASK_QUEUE_AGE is sent; null or 0 is off.
+  """
+  humanQueueAgeMinutes: Int
   blockingPriority: Int
   completionPriority: Int
 }
