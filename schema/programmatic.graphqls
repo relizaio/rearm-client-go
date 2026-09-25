@@ -383,6 +383,10 @@ type BoardSpec {
   documentPaths: Object
   coordinatorPrompt: String
   """
+  Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
+  """
+  coordinatorCapabilities: [AgentCapability!]
+  """
   The board's budget and stops; a null value is the board default.
   """
   settings: BoardSettingsSpec
@@ -794,13 +798,19 @@ type AgentBoard {
   """
   events: [AgentBoardEvent]
   """
-  Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
+  Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
   """
   missingCapabilities: [String]
   """
   Served prompt of the implicit, non-removable coordinator role.
   """
   coordinatorPrompt: String
+  """
+  Verbs the coordinator seat performs itself on this board, e.g. PR_MERGE when it merges once
+  the last required role has passed. Unverified, like a role's capabilities; the delivery-loop
+  alert (missingCapabilities) counts them as covered.
+  """
+  coordinatorCapabilities: [AgentCapability]
   lock: AgentBoardLock
   coordinatorSeat: AgentCoordinatorSeat
   """
@@ -998,7 +1008,10 @@ type AgentTask {
   """
   Everything attributed to this task, across every hop and session that
   touched it. Computed per read rather than stored, so late attribution is
-  reflected without a rewrite. Null until the first report lands.
+  reflected without a rewrite. Null until the first report lands. Built from
+  the hop snapshots, which are frozen when a hop ends: a hop reported after it
+  closed reads lower here than in the budget, which reads the usage rows
+  (spentMicros on the board snapshot), until the snapshot is refreshed.
   """
   usage: HopUsage
   """
@@ -1187,6 +1200,11 @@ input BoardSpecInput {
   documentsRepo: String
   documentPaths: Object
   coordinatorPrompt: String
+  """
+  Verbs the coordinator seat performs itself: PR_MERGE, CODE_PUSH. The tracker verbs are
+  implicit and refused. Declared null clears, as [] does; absent leaves them.
+  """
+  coordinatorCapabilities: [AgentCapability!]
   settings: BoardSettingsSpecInput
   roles: [BoardRoleSpecInput!]
 }
@@ -2462,6 +2480,16 @@ enum AgentBoardPriorityType {
   STRICT
 }
 
+"""
+The verbs an assignee must be able to perform. Declared on roles; implicit/unverified on agents in v1.
+"""
+enum AgentCapability {
+  TRACKER_READ
+  TRACKER_WRITE
+  CODE_PUSH
+  PR_MERGE
+}
+
 type BoardSettingsSpec {
   """
   What the board may spend, in USD micros; null means no board budget.
@@ -3274,6 +3302,11 @@ type AgentTaskSnapshot {
   Top of the question stack. Null when nothing is outstanding.
   """
   waitingOn: AgentQuestionFrame
+  """
+  What the task has spent, in USD micros, as the budget counts it: the derived
+  cost of every usage row attributed to it, whenever it was reported, plus its
+  apportioned coordinator estimate. Rows without a price count 0.
+  """
   spentMicros: Long
   budgetMicros: Long
 }
@@ -3545,16 +3578,6 @@ A role's strength override for one model.
 type RoleModelStrength {
   model: ID!
   strength: Float!
-}
-
-"""
-The verbs an assignee must be able to perform. Declared on roles; implicit/unverified on agents in v1.
-"""
-enum AgentCapability {
-  TRACKER_READ
-  TRACKER_WRITE
-  CODE_PUSH
-  PR_MERGE
 }
 
 """

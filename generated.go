@@ -513,7 +513,7 @@ type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard 
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
-	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
+	// Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
 	MissingCapabilities []*string `json:"missingCapabilities"`
 	// Append-only board notices, newest last (lock transitions auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
 	Events          []*AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent             `json:"events"`
@@ -889,7 +889,7 @@ type AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticA
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
-	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
+	// Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
 	MissingCapabilities []*string `json:"missingCapabilities"`
 	// Append-only board notices, newest last (lock transitions auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
 	Events          []*AgentBoardCoordinatorLockProgrammaticAgentBoardCoordinatorLockProgrammaticAgentBoardEventsAgentBoardEvent             `json:"events"`
@@ -1296,7 +1296,7 @@ type AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoard st
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
-	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
+	// Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
 	MissingCapabilities []*string `json:"missingCapabilities"`
 	// Append-only board notices, newest last (lock transitions auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
 	Events          []*AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardEventsAgentBoardEvent             `json:"events"`
@@ -1685,8 +1685,12 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
-	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
+	// Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
 	MissingCapabilities []*string `json:"missingCapabilities"`
+	// Verbs the coordinator seat performs itself on this board, e.g. PR_MERGE when it merges once
+	// the last required role has passed. Unverified, like a role's capabilities; the delivery-loop
+	// alert (missingCapabilities) counts them as covered.
+	CoordinatorCapabilities []*AgentCapability `json:"coordinatorCapabilities"`
 	// Append-only board notices, newest last (lock transitions auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
 	Events          []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEventsAgentBoardEvent             `json:"events"`
 	Lock            *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLock                                `json:"lock"`
@@ -1740,6 +1744,11 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCoordinatorP
 // GetMissingCapabilities returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.MissingCapabilities, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetMissingCapabilities() []*string {
 	return v.MissingCapabilities
+}
+
+// GetCoordinatorCapabilities returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CoordinatorCapabilities, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCoordinatorCapabilities() []*AgentCapability {
+	return v.CoordinatorCapabilities
 }
 
 // GetEvents returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Events, and is useful for accessing the field via an interface.
@@ -2094,9 +2103,12 @@ type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnaps
 	// Newest release per specification type, so a reader sees the current document set.
 	LatestDocuments []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotLatestDocumentsRelease `json:"latestDocuments"`
 	// Top of the question stack. Null when nothing is outstanding.
-	WaitingOn    *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame `json:"waitingOn"`
-	SpentMicros  *int64                                                                                                                           `json:"spentMicros"`
-	BudgetMicros *int64                                                                                                                           `json:"budgetMicros"`
+	WaitingOn *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame `json:"waitingOn"`
+	// What the task has spent, in USD micros, as the budget counts it: the derived
+	// cost of every usage row attributed to it, whenever it was reported, plus its
+	// apportioned coordinator estimate. Rows without a price count 0.
+	SpentMicros  *int64 `json:"spentMicros"`
+	BudgetMicros *int64 `json:"budgetMicros"`
 }
 
 // GetTask returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshot.Task, and is useful for accessing the field via an interface.
@@ -2457,8 +2469,12 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	DocumentPaths *json.RawMessage `json:"documentPaths"`
 	// Served prompt of the implicit, non-removable coordinator role.
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
-	// Delivery-minimum alert: capabilities not covered by any active role (role-side minimum is CODE_PUSH + PR_MERGE).
+	// Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
 	MissingCapabilities []*string `json:"missingCapabilities"`
+	// Verbs the coordinator seat performs itself on this board, e.g. PR_MERGE when it merges once
+	// the last required role has passed. Unverified, like a role's capabilities; the delivery-loop
+	// alert (missingCapabilities) counts them as covered.
+	CoordinatorCapabilities []*AgentCapability `json:"coordinatorCapabilities"`
 	// Append-only board notices, newest last (lock transitions auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
 	Events          []*AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEventsAgentBoardEvent             `json:"events"`
 	Lock            *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLock                                `json:"lock"`
@@ -2512,6 +2528,11 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetCoordinato
 // GetMissingCapabilities returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.MissingCapabilities, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetMissingCapabilities() []*string {
 	return v.MissingCapabilities
+}
+
+// GetCoordinatorCapabilities returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CoordinatorCapabilities, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetCoordinatorCapabilities() []*AgentCapability {
+	return v.CoordinatorCapabilities
 }
 
 // GetEvents returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Events, and is useful for accessing the field via an interface.
@@ -23807,6 +23828,8 @@ type ExportBoardExportBoardProgrammaticBoardSpec struct {
 	// Per-type path templates, keyed by SpecificationType. Empty means the defaults.
 	DocumentPaths     *json.RawMessage `json:"documentPaths"`
 	CoordinatorPrompt *string          `json:"coordinatorPrompt"`
+	// Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
+	CoordinatorCapabilities []AgentCapability `json:"coordinatorCapabilities"`
 	// The board's budget and stops; a null value is the board default.
 	Settings *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec `json:"settings"`
 	Roles    []*ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec      `json:"roles"`
@@ -23863,6 +23886,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDocumentPaths() *json.R
 // GetCoordinatorPrompt returns ExportBoardExportBoardProgrammaticBoardSpec.CoordinatorPrompt, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetCoordinatorPrompt() *string {
 	return v.CoordinatorPrompt
+}
+
+// GetCoordinatorCapabilities returns ExportBoardExportBoardProgrammaticBoardSpec.CoordinatorCapabilities, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetCoordinatorCapabilities() []AgentCapability {
+	return v.CoordinatorCapabilities
 }
 
 // GetSettings returns ExportBoardExportBoardProgrammaticBoardSpec.Settings, and is useful for accessing the field via an interface.
@@ -31259,6 +31287,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		documentPaths
 		coordinatorPrompt
 		missingCapabilities
+		coordinatorCapabilities
 		events {
 			kind
 			message
@@ -31421,6 +31450,7 @@ query AgentBoardsProgrammatic {
 		documentPaths
 		coordinatorPrompt
 		missingCapabilities
+		coordinatorCapabilities
 		events {
 			kind
 			message
@@ -34740,6 +34770,7 @@ query ExportBoard ($board: String!) {
 		documentsRepo
 		documentPaths
 		coordinatorPrompt
+		coordinatorCapabilities
 		settings {
 			budgetMicros
 			softAlertPercent
