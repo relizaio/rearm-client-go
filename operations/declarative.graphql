@@ -135,6 +135,7 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
   requiredInputs { kind specification scope component minLifecycle resolution }
   producesOutputs { specification scope required }
   hopBudgetMicros
+  blindReview
   strength {
     requiredStrength
     strengthHeadroom
@@ -157,6 +158,8 @@ query ExportBoard($board: String!) {
     sources
     documentsRepo
     documentPaths
+    elementFamilies
+    checks { blocking mandatoryFields orphans coverage }
     coordinatorPrompt
     coordinatorCapabilities
     settings {
