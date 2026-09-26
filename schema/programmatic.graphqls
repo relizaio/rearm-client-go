@@ -471,9 +471,11 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   requiredStrength: Float): AgentTask
   """
   Operator verdict on a HUMAN_GATE hold: records a human sign-off for the gated role and lets the
-  board route what follows. Approval hands the gated hop's documents over (DRAFT to ASSEMBLED). A
-  rejection may carry findings decisions: they are cut as a round first and become the verdict's
-  output, so the rejection routes like a reviewer's would.
+  board route what follows. Approval hands the gated hop's documents over (DRAFT to ASSEMBLED).
+  Either verdict may carry findings decisions: they are cut as a round first and become the
+  verdict's output, so a rejection routes like a reviewer's would. An approval may carry findings
+  too: they are filed as corrections, open work that does not block the approval. An approval
+  that leaves a blocking item undecided is refused.
   """
   agentTaskHumanReview(
   taskUuid: ID!
@@ -971,6 +973,18 @@ type Session {
   closedAt: DateTime
   lastActivityAt: DateTime
   """
+  Who closed the session (task 6e7fe6fe): the session itself when its agent closed it, the person who force-closed it, or SYSTEM idle-sweep. Null while open.
+  """
+  closedBy: AgentActor
+  """
+  Why it was closed: "closed by the agent", a person's reason, or the idle time and window.
+  """
+  closeReason: String
+  """
+  When the idle sweep warned that the session closes soon; cleared by any call made with its id.
+  """
+  idleWarnedAt: DateTime
+  """
   Rollup of this session's usage rows; null until the first report arrives.
   """
   usageTotals: UsageTotals
@@ -1299,6 +1313,12 @@ type AgentTask {
   not add up to the board's.
   """
   coordinatorEstimateMicros: Long
+  """
+  What the board charges this task, in USD micros: its usage rows plus coordinatorEstimateMicros,
+  the figure the task's budget is held to. 0 for a task that has spent nothing. A row without an
+  applicable price counts 0, so this is a lower bound when usage.costComplete is false.
+  """
+  spentMicros: Long
   """
   When the task last changed: any save, a transition, an assignment, a sign-off, a return, a hold, a
   budget or a PR link. The cursor of agentTasksProgrammatic(changedSince:) (task 9540d3b6).
@@ -3754,6 +3774,27 @@ enum SessionStatus {
 }
 
 """
+Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+
+These were all String, and every writer invented its own encoding -- a session uuid behind a
+"coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+to; name is what a human should read. Rows written before this are decoded on read, so an
+older lock still resolves.
+"""
+type AgentActor {
+  kind: AgentActorKind
+  """
+  The session or user uuid, when the writer knew it. Null on older rows and on SYSTEM.
+  """
+  uuid: ID
+  """
+  Display text: an email for a user, a detail such as "humanGate" for SYSTEM.
+  """
+  name: String
+}
+
+"""
 Rollup of usage rows. Tokens are facts and never change; cost is derived from a
 dated price entry, so every rollup names the entries it used.
 """
@@ -4140,27 +4181,6 @@ type AgentTaskDelivery {
 }
 
 """
-Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
-
-These were all String, and every writer invented its own encoding -- a session uuid behind a
-"coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
-knowing the convention and splitting on a colon. kind says which identity space uuid belongs
-to; name is what a human should read. Rows written before this are decoded on read, so an
-older lock still resolves.
-"""
-type AgentActor {
-  kind: AgentActorKind
-  """
-  The session or user uuid, when the writer knew it. Null on older rows and on SYSTEM.
-  """
-  uuid: ID
-  """
-  Display text: an email for a user, a detail such as "humanGate" for SYSTEM.
-  """
-  name: String
-}
-
-"""
 One unanswered question: who asked, about what, and who is expected to answer.
 
 Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
@@ -4252,6 +4272,17 @@ type AgentTaskSignOff {
   How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
   """
   overAllowanceMicros: Long
+  """
+  The documents this sign-off reviewed, and what its review did to each. For a reviewer's hop:
+  what it had pinned, for either outcome. For a person's approval at a gate: the gated hop's
+  outputs and what a gated reviewer had reviewed. Null when the hop reviewed nothing.
+  """
+  reviewedInputs: [AgentTaskReviewedInput]
+  """
+  The documents this sign-off's review would have promoted and an organization guard kept where
+  they were, with the guard's reason. Empty when nothing was refused.
+  """
+  refusedPromotions: [AgentTaskRefusedPromotion]
 }
 
 type AgentTaskReturn {
@@ -4386,6 +4417,12 @@ type Finding {
   When that decision was made: the creation time of decidedIn's release. Computed per read.
   """
   decidedAt: DateTime
+  """
+  True on an item a person filed while approving a gate: work the task was approved past. Open and
+  carried until its producer closes it, but it never blocks routing or completion. Only a person
+  sets it, and an agent's round carries it from the previous one. Null when not a correction.
+  """
+  correction: Boolean
   """
   The element location.element names, as it was in the index of the release the round is about
   (or, in a task's open items, as the task's documents have it now); null without an element or an index.
@@ -5681,7 +5718,8 @@ enum FindingDecisionAction {
   """
   SET_PRIORITY
   """
-  A new finding, OPEN, numbered P-1, P-2... by the board.
+  A new finding, OPEN, numbered P-1, P-2... by the board. Filed with an approval at a human gate it
+  is a correction, which never blocks; anywhere else it blocks like any finding.
   """
   FILE
 }
@@ -5834,6 +5872,10 @@ type Settings {
   deliveries, read marks). Null means the 90-day default.
   """
   notificationRetentionDays: Int
+  """
+  Hours an agent session may go without a call before it is closed; null means 24. A session holding a task or a coordinator seat gets twice this.
+  """
+  agentSessionIdleCloseHours: Int
   """
   The submission-level justification: what FDA L1021-1022 asks for literally, the reason
   per-component support information cannot be included. At the measured 2.3% upstream
@@ -6393,6 +6435,15 @@ input ConditionOnGetLatestReleaseInput {
   approvalState: ApprovalState
 }
 
+"""
+SESSION is an agent session, USER a human, SYSTEM the application acting on its own.
+"""
+enum AgentActorKind {
+  SESSION
+  USER
+  SYSTEM
+}
+
 type UsageByModel {
   model: ID
   """
@@ -6624,15 +6675,6 @@ type ElementDependent {
 }
 
 """
-SESSION is an agent session, USER a human, SYSTEM the application acting on its own.
-"""
-enum AgentActorKind {
-  SESSION
-  USER
-  SYSTEM
-}
-
-"""
 Two-tier task hold, mirroring board locks: the coordinator cannot lift an OPERATOR hold.
 """
 enum AgentTaskHoldLevel {
@@ -6659,6 +6701,40 @@ enum AgentTaskHoldStop {
   CYCLE_CAP
   NO_PROGRESS
   BUDGET
+}
+
+"""
+One document a sign-off reviewed.
+"""
+type AgentTaskReviewedInput {
+  release: ID
+  """
+  The document's type, when the release is a board document.
+  """
+  specification: SpecificationType
+  """
+  Its round, for a findings index or a question round.
+  """
+  round: Int
+  """
+  The lifecycle this review moved it to: READY_TO_SHIP when the review promoted it. Null when it
+  did not: a rejection, a pass that left something blocking, a gate not yet approved, a document
+  already past ASSEMBLED, or a guard's refusal (see refusedPromotions).
+  """
+  promotedTo: ReleaseLifecycleEnum
+}
+
+"""
+A document a review would have promoted and a guard kept where it was.
+"""
+type AgentTaskRefusedPromotion {
+  release: ID
+  specification: SpecificationType
+  round: Int
+  """
+  The guard's words.
+  """
+  reason: String
 }
 
 """
