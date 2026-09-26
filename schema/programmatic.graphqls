@@ -654,6 +654,10 @@ type BoardSpec {
   How a task proves it was delivered (task 18c5c293); absent means PR_ROWS.
   """
   delivery: AgentDeliveryPolicy
+  """
+  How the board names its documents; absent means after the board (board-documents.md D2).
+  """
+  documents: BoardDocumentsSpec
   coordinatorPrompt: String
   """
   Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
@@ -1096,6 +1100,16 @@ type AgentBoard {
   """
   effectiveDocumentPaths: Object
   """
+  How this board names its documents, as set; null is the default, named after the board (board-documents.md D2).
+  """
+  documents: AgentBoardDocuments
+  """
+  The component holding each of this board's document series, one per specification, as the board
+  records them (board-documents.md D3). A board from before the map lists a series once it has
+  published into it again.
+  """
+  documentComponents: [AgentBoardDocumentComponent!]
+  """
   Element id families as this board declared them over the defaults (prefix to family name); null when it uses the defaults alone.
   """
   elementFamilies: Object
@@ -1363,8 +1377,9 @@ type AgentTask {
   """
   pullRequests: [AgentTaskPullRequest]
   """
-  The PR heads the newest passing TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR
-  (task 3b97ccfd): merge at these. Empty when no passing round names any.
+  The PR heads the newest passing TEST_REPORT round covered, one per linked PR (task 3b97ccfd): merge
+  at these. A review's heads are informative and not read here (task 5ec48b02). Empty when no passing
+  test report names any.
   """
   testedHeads: [TestedHead]
   """
@@ -1701,6 +1716,10 @@ input BoardSpecInput {
   How a task proves it was delivered; declared null restores the default, PR_ROWS.
   """
   delivery: AgentDeliveryPolicyInput
+  """
+  How the board names its documents; declared null restores the default, absent leaves it.
+  """
+  documents: BoardDocumentsSpecInput
   coordinatorPrompt: String
   """
   Verbs the coordinator seat performs itself: PR_MERGE, CODE_PUSH. The tracker verbs are
@@ -3141,6 +3160,16 @@ type AgentDeliveryPolicy {
 }
 
 """
+A board file's documents block.
+"""
+type BoardDocumentsSpec {
+  """
+  Replaces the board name in its document components' names, <prefix>-<specification>, both slugged.
+  """
+  prefix: String
+}
+
+"""
 The verbs an assignee must be able to perform. Declared on roles; implicit/unverified on agents in v1.
 """
 enum AgentCapability {
@@ -3946,6 +3975,24 @@ enum AgentBoardStatus {
   ARCHIVED
 }
 
+"""
+A board's documents block (board-documents.md D2).
+"""
+type AgentBoardDocuments {
+  """
+  Replaces the board name in its document components' names, <prefix>-<specification>, both slugged.
+  """
+  prefix: String
+}
+
+"""
+One of a board's document series: the specification and the component that holds it.
+"""
+type AgentBoardDocumentComponent {
+  specification: SpecificationType!
+  component: ID!
+}
+
 type AgentBoardEvent {
   kind: AgentBoardEventKind
   message: String
@@ -4565,6 +4612,13 @@ input AgentDeliveryPolicyInput {
   merge: AgentMergeProcedureInput
 }
 
+input BoardDocumentsSpecInput {
+  """
+  Replaces the board name in its document components' names; needs a letter or a digit.
+  """
+  prefix: String
+}
+
 input BoardSettingsSpecInput {
   budgetMicros: Long
   softAlertPercent: Int
@@ -4850,6 +4904,10 @@ enum ComponentType {
 enum ComponentKind {
   HELM
   GENERIC
+  """
+  A board's document series. Boards set it; a component update cannot change a kind to or from it.
+  """
+  DOCUMENT
 }
 
 enum VersionType {
@@ -6397,7 +6455,8 @@ type FindingsIndex {
   about: FindingsAbout
   """
   The PR heads a TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR (task 3b97ccfd).
-  A passing round of a task with linked PRs names every one of them.
+  A passing TEST_REPORT of a task with linked PRs names every one of them; on REVIEW_FINDINGS it is
+  optional and informative (task 5ec48b02). Every head named must be of a linked PR.
   """
   tested: [TestedHead]
 }
