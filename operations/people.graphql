@@ -5,7 +5,7 @@
 # boards.graphql.
 
 fragment PersonTaskFields on AgentTask {
-	uuid board externalRef title status role orderIndex requireHumanReview requiredStrength
+	key number uuid board externalRef title status role orderIndex requireHumanReview requiredStrength
 	budgetMicros budgetSetBy { ...ActorFields } budgetSetAt
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt }
@@ -21,6 +21,10 @@ query AgentBoardsOfOrg ($orgUuid: ID!) { agentBoardsOfOrg(orgUuid: $orgUuid) {
 	coordinatorSeat { session agent claimedAt }
 	createdDate
 } }
+
+# A person's read of one task by its key in an organization (task 3d1f9dd7); the CLI's fallback when
+# the login's key carries no AGENT function.
+query AgentTaskByKey ($orgUuid: ID!, $key: String!) { agentTaskByKey(orgUuid: $orgUuid, key: $key) { uuid key board } }
 
 query AgentTasksOfBoard ($boardUuid: ID!, $status: AgentTaskStatus) {
 	agentTasksOfBoard(boardUuid: $boardUuid, status: $status) { ...PersonTaskFields }
