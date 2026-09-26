@@ -466,9 +466,11 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   requiredStrength: Float): AgentTask
   """
   Operator verdict on a HUMAN_GATE hold: records a human sign-off for the gated role and lets the
-  board route what follows. Approval hands the gated hop's documents over (DRAFT to ASSEMBLED). A
-  rejection may carry findings decisions: they are cut as a round first and become the verdict's
-  output, so the rejection routes like a reviewer's would.
+  board route what follows. Approval hands the gated hop's documents over (DRAFT to ASSEMBLED).
+  Either verdict may carry findings decisions: they are cut as a round first and become the
+  verdict's output, so a rejection routes like a reviewer's would. An approval may carry findings
+  too: they are filed as corrections, open work that does not block the approval. An approval
+  that leaves a blocking item undecided is refused.
   """
   agentTaskHumanReview(
   taskUuid: ID!
@@ -4248,6 +4250,17 @@ type AgentTaskSignOff {
   How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
   """
   overAllowanceMicros: Long
+  """
+  The documents this sign-off reviewed, and what its review did to each. For a reviewer's hop:
+  what it had pinned, for either outcome. For a person's approval at a gate: the gated hop's
+  outputs and what a gated reviewer had reviewed. Null when the hop reviewed nothing.
+  """
+  reviewedInputs: [AgentTaskReviewedInput]
+  """
+  The documents this sign-off's review would have promoted and an organization guard kept where
+  they were, with the guard's reason. Empty when nothing was refused.
+  """
+  refusedPromotions: [AgentTaskRefusedPromotion]
 }
 
 type AgentTaskReturn {
@@ -4382,6 +4395,12 @@ type Finding {
   When that decision was made: the creation time of decidedIn's release. Computed per read.
   """
   decidedAt: DateTime
+  """
+  True on an item a person filed while approving a gate: work the task was approved past. Open and
+  carried until its producer closes it, but it never blocks routing or completion. Only a person
+  sets it, and an agent's round carries it from the previous one. Null when not a correction.
+  """
+  correction: Boolean
   """
   The element location.element names, as it was in the index of the release the round is about
   (or, in a task's open items, as the task's documents have it now); null without an element or an index.
@@ -5677,7 +5696,8 @@ enum FindingDecisionAction {
   """
   SET_PRIORITY
   """
-  A new finding, OPEN, numbered P-1, P-2... by the board.
+  A new finding, OPEN, numbered P-1, P-2... by the board. Filed with an approval at a human gate it
+  is a correction, which never blocks; anywhere else it blocks like any finding.
   """
   FILE
 }
@@ -6655,6 +6675,40 @@ enum AgentTaskHoldStop {
   CYCLE_CAP
   NO_PROGRESS
   BUDGET
+}
+
+"""
+One document a sign-off reviewed.
+"""
+type AgentTaskReviewedInput {
+  release: ID
+  """
+  The document's type, when the release is a board document.
+  """
+  specification: SpecificationType
+  """
+  Its round, for a findings index or a question round.
+  """
+  round: Int
+  """
+  The lifecycle this review moved it to: READY_TO_SHIP when the review promoted it. Null when it
+  did not: a rejection, a pass that left something blocking, a gate not yet approved, a document
+  already past ASSEMBLED, or a guard's refusal (see refusedPromotions).
+  """
+  promotedTo: ReleaseLifecycleEnum
+}
+
+"""
+A document a review would have promoted and a guard kept where it was.
+"""
+type AgentTaskRefusedPromotion {
+  release: ID
+  specification: SpecificationType
+  round: Int
+  """
+  The guard's words.
+  """
+  reason: String
 }
 
 """
