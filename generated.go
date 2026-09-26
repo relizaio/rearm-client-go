@@ -18531,6 +18531,9 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	OrderSetAt *string                                                                  `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// When the task last changed: any save, a transition, an assignment, a sign-off, a return, a hold, a
+	// budget or a PR link. The cursor of agentTasksProgrammatic(changedSince:) (task 9540d3b6).
+	UpdatedAt *string `json:"updatedAt"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 	// This task's document releases, newest first.
@@ -18692,6 +18695,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetOrderSetAt() *s
 // GetRequiredRolesSkipped returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetUpdatedAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.UpdatedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetUpdatedAt() *string {
+	return v.UpdatedAt
 }
 
 // GetQuestionStack returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -28880,6 +28888,9 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
 	OrderSetAt *string                                                                                `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// When the task last changed: any save, a transition, an assignment, a sign-off, a return, a hold, a
+	// budget or a PR link. The cursor of agentTasksProgrammatic(changedSince:) (task 9540d3b6).
+	UpdatedAt *string `json:"updatedAt"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 	// This task's document releases, newest first.
@@ -29053,6 +29064,11 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetO
 // GetRequiredRolesSkipped returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetUpdatedAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.UpdatedAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetUpdatedAt() *string {
+	return v.UpdatedAt
 }
 
 // GetQuestionStack returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -30932,7 +30948,7 @@ func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) __premarshalJSON() (*__pre
 
 // AgentTasksOfBoardResponse is returned by AgentTasksOfBoard on success.
 type AgentTasksOfBoardResponse struct {
-	// A person's read: tasks of a board, optionally by status.
+	// A person's read: tasks of a board, optionally by status and changedSince, as agentTasksProgrammatic.
 	AgentTasksOfBoard []*AgentTasksOfBoardAgentTasksOfBoardAgentTask `json:"agentTasksOfBoard"`
 }
 
@@ -30984,6 +31000,9 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTask struct {
 	OrderSetAt *string                                                                    `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// When the task last changed: any save, a transition, an assignment, a sign-off, a return, a hold, a
+	// budget or a PR link. The cursor of agentTasksProgrammatic(changedSince:) (task 9540d3b6).
+	UpdatedAt *string `json:"updatedAt"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -31121,6 +31140,11 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetOrderSetAt() 
 // GetRequiredRolesSkipped returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetUpdatedAt returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.UpdatedAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetUpdatedAt() *string {
+	return v.UpdatedAt
 }
 
 // GetQuestionStack returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -32026,7 +32050,10 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgent
 
 // AgentTasksProgrammaticResponse is returned by AgentTasksProgrammatic on success.
 type AgentTasksProgrammaticResponse struct {
-	// Agent-key auth: tasks of a board, optionally by status.
+	// Agent-key auth: tasks of a board, optionally by status. With changedSince, only the tasks that
+	// changed at or after it (updatedAt), oldest change first: take the last one's updatedAt as the next
+	// changedSince. The board's events carry what needs a person; this is how a follower sees every
+	// other movement -- forward hand-overs, authorizes and assignments post no event (task 9540d3b6).
 	AgentTasksProgrammatic []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTask `json:"agentTasksProgrammatic"`
 }
 
@@ -43247,8 +43274,9 @@ func (v *__AgentTasksOfBoardInput) GetStatus() *AgentTaskStatus { return v.Statu
 
 // __AgentTasksProgrammaticInput is used internally by genqlient
 type __AgentTasksProgrammaticInput struct {
-	BoardUuid string           `json:"boardUuid"`
-	Status    *AgentTaskStatus `json:"status"`
+	BoardUuid    string           `json:"boardUuid"`
+	Status       *AgentTaskStatus `json:"status"`
+	ChangedSince *string          `json:"changedSince"`
 }
 
 // GetBoardUuid returns __AgentTasksProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
@@ -43256,6 +43284,9 @@ func (v *__AgentTasksProgrammaticInput) GetBoardUuid() string { return v.BoardUu
 
 // GetStatus returns __AgentTasksProgrammaticInput.Status, and is useful for accessing the field via an interface.
 func (v *__AgentTasksProgrammaticInput) GetStatus() *AgentTaskStatus { return v.Status }
+
+// GetChangedSince returns __AgentTasksProgrammaticInput.ChangedSince, and is useful for accessing the field via an interface.
+func (v *__AgentTasksProgrammaticInput) GetChangedSince() *string { return v.ChangedSince }
 
 // __AgenticReleaseProgrammaticInput is used internally by genqlient
 type __AgenticReleaseProgrammaticInput struct {
@@ -47950,6 +47981,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 		}
 		orderSetAt
 		requiredRolesSkipped
+		updatedAt
 		questionStack {
 			askingRole
 			askingSession
@@ -49736,6 +49768,7 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 		}
 		orderSetAt
 		requiredRolesSkipped
+		updatedAt
 		questionStack {
 			askingRole
 			askingSession
@@ -49966,8 +49999,8 @@ func AgentTasksOfBoard(
 
 // The query executed by AgentTasksProgrammatic.
 const AgentTasksProgrammatic_Operation = `
-query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus) {
-	agentTasksProgrammatic(boardUuid: $boardUuid, status: $status) {
+query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $changedSince: DateTime) {
+	agentTasksProgrammatic(boardUuid: $boardUuid, status: $status, changedSince: $changedSince) {
 		uuid
 		org
 		board
@@ -50059,6 +50092,7 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus) {
 		}
 		orderSetAt
 		requiredRolesSkipped
+		updatedAt
 		questionStack {
 			askingRole
 			askingSession
@@ -50086,13 +50120,15 @@ func AgentTasksProgrammatic(
 	client_ graphql.Client,
 	boardUuid string,
 	status *AgentTaskStatus,
+	changedSince *string,
 ) (data_ *AgentTasksProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTasksProgrammatic",
 		Query:  AgentTasksProgrammatic_Operation,
 		Variables: &__AgentTasksProgrammaticInput{
-			BoardUuid: boardUuid,
-			Status:    status,
+			BoardUuid:    boardUuid,
+			Status:       status,
+			ChangedSince: changedSince,
 		},
 	}
 
