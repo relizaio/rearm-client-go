@@ -1297,6 +1297,12 @@ type AgentTask {
   """
   coordinatorEstimateMicros: Long
   """
+  What the board charges this task, in USD micros: its usage rows plus coordinatorEstimateMicros,
+  the figure the task's budget is held to. 0 for a task that has spent nothing. A row without an
+  applicable price counts 0, so this is a lower bound when usage.costComplete is false.
+  """
+  spentMicros: Long
+  """
   The elements of the task's documents: the union over its latest release per specification (gaps §2.A).
   """
   elements: [AgentTaskElement]

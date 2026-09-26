@@ -405,6 +405,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	budgetMicros coordinatorEstimateMicros spentMicros
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 	documents { uuid version lifecycle document { specification path round task
 		findings { kind round verdict counts { passed failed skipped } tested { pr head }
@@ -430,6 +431,7 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgra
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	budgetMicros coordinatorEstimateMicros spentMicros
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 	documents { uuid version lifecycle document { specification path round task
 		findings { kind round verdict counts { passed failed skipped } tested { pr head }

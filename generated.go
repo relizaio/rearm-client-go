@@ -18533,6 +18533,19 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	OrderSetAt *string                                                                  `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// What this task may spend, in USD micros; null means only the board's limit applies.
+	BudgetMicros *int64 `json:"budgetMicros"`
+	// Coordinator spend apportioned to this task (D16): each coordinator usage delta
+	// is split equally among the tasks the seat moved since the previous one, else
+	// the board's open tasks, and frozen when computed. An estimate, not a
+	// measurement. The task's spend in the budget is its usage rows plus this; the
+	// board's spend counts the seat's rows and never these shares, so task spends do
+	// not add up to the board's.
+	CoordinatorEstimateMicros *int64 `json:"coordinatorEstimateMicros"`
+	// What the board charges this task, in USD micros: its usage rows plus coordinatorEstimateMicros,
+	// the figure the task's budget is held to. 0 for a task that has spent nothing. A row without an
+	// applicable price counts 0, so this is a lower bound when usage.costComplete is false.
+	SpentMicros *int64 `json:"spentMicros"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 	// This task's document releases, newest first.
@@ -18694,6 +18707,21 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetOrderSetAt() *s
 // GetRequiredRolesSkipped returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetBudgetMicros returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetBudgetMicros() *int64 {
+	return v.BudgetMicros
+}
+
+// GetCoordinatorEstimateMicros returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.CoordinatorEstimateMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetCoordinatorEstimateMicros() *int64 {
+	return v.CoordinatorEstimateMicros
+}
+
+// GetSpentMicros returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.SpentMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetSpentMicros() *int64 {
+	return v.SpentMicros
 }
 
 // GetQuestionStack returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -28985,6 +29013,19 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
 	OrderSetAt *string                                                                                `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// What this task may spend, in USD micros; null means only the board's limit applies.
+	BudgetMicros *int64 `json:"budgetMicros"`
+	// Coordinator spend apportioned to this task (D16): each coordinator usage delta
+	// is split equally among the tasks the seat moved since the previous one, else
+	// the board's open tasks, and frozen when computed. An estimate, not a
+	// measurement. The task's spend in the budget is its usage rows plus this; the
+	// board's spend counts the seat's rows and never these shares, so task spends do
+	// not add up to the board's.
+	CoordinatorEstimateMicros *int64 `json:"coordinatorEstimateMicros"`
+	// What the board charges this task, in USD micros: its usage rows plus coordinatorEstimateMicros,
+	// the figure the task's budget is held to. 0 for a task that has spent nothing. A row without an
+	// applicable price counts 0, so this is a lower bound when usage.costComplete is false.
+	SpentMicros *int64 `json:"spentMicros"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 	// This task's document releases, newest first.
@@ -29158,6 +29199,21 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetO
 // GetRequiredRolesSkipped returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetBudgetMicros returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetBudgetMicros() *int64 {
+	return v.BudgetMicros
+}
+
+// GetCoordinatorEstimateMicros returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.CoordinatorEstimateMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetCoordinatorEstimateMicros() *int64 {
+	return v.CoordinatorEstimateMicros
+}
+
+// GetSpentMicros returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.SpentMicros, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetSpentMicros() *int64 {
+	return v.SpentMicros
 }
 
 // GetQuestionStack returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -48188,6 +48244,9 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 		}
 		orderSetAt
 		requiredRolesSkipped
+		budgetMicros
+		coordinatorEstimateMicros
+		spentMicros
 		questionStack {
 			askingRole
 			askingSession
@@ -49992,6 +50051,9 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 		}
 		orderSetAt
 		requiredRolesSkipped
+		budgetMicros
+		coordinatorEstimateMicros
+		spentMicros
 		questionStack {
 			askingRole
 			askingSession
