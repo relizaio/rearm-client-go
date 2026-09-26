@@ -133,11 +133,15 @@ roles: the roles this agent can take, each a role name on the board
   agentTaskProgrammatic(
   taskUuid: ID!): AgentTask
   """
-  Agent-key auth: tasks of a board, optionally by status.
+  Agent-key auth: tasks of a board, optionally by status. With changedSince, only the tasks that
+  changed at or after it (updatedAt), oldest change first: take the last one's updatedAt as the next
+  changedSince. The board's events carry what needs a person; this is how a follower sees every
+  other movement -- forward hand-overs, authorizes and assignments post no event (task 9540d3b6).
   """
   agentTasksProgrammatic(
   boardUuid: ID!
-  status: AgentTaskStatus): [AgentTask]
+  status: AgentTaskStatus
+  changedSince: DateTime): [AgentTask]
   """
   Agent-key auth: a named set of tasks in one read, in the order given (task cc14f4cb). At most 100;
   an unknown uuid, or one of another organization, is absent. For a board's tasks by status, read
@@ -185,11 +189,12 @@ roles: the roles this agent can take, each a role name on the board
   since: DateTime
   limit: Int = 200): AgentBoardEventPage
   """
-  A person's read: tasks of a board, optionally by status.
+  A person's read: tasks of a board, optionally by status and changedSince, as agentTasksProgrammatic.
   """
   agentTasksOfBoard(
   boardUuid: ID!
-  status: AgentTaskStatus): [AgentTask]
+  status: AgentTaskStatus
+  changedSince: DateTime): [AgentTask]
   """
   A person's read: a named set of tasks in one read, as agentTasksByUuidProgrammatic (task cc14f4cb).
   A task of an organization the person cannot read is absent.
@@ -968,6 +973,18 @@ type Session {
   closedAt: DateTime
   lastActivityAt: DateTime
   """
+  Who closed the session (task 6e7fe6fe): the session itself when its agent closed it, the person who force-closed it, or SYSTEM idle-sweep. Null while open.
+  """
+  closedBy: AgentActor
+  """
+  Why it was closed: "closed by the agent", a person's reason, or the idle time and window.
+  """
+  closeReason: String
+  """
+  When the idle sweep warned that the session closes soon; cleared by any call made with its id.
+  """
+  idleWarnedAt: DateTime
+  """
   Rollup of this session's usage rows; null until the first report arrives.
   """
   usageTotals: UsageTotals
@@ -1302,6 +1319,11 @@ type AgentTask {
   applicable price counts 0, so this is a lower bound when usage.costComplete is false.
   """
   spentMicros: Long
+  """
+  When the task last changed: any save, a transition, an assignment, a sign-off, a return, a hold, a
+  budget or a PR link. The cursor of agentTasksProgrammatic(changedSince:) (task 9540d3b6).
+  """
+  updatedAt: DateTime
   """
   The elements of the task's documents: the union over its latest release per specification (gaps §2.A).
   """
@@ -3752,6 +3774,27 @@ enum SessionStatus {
 }
 
 """
+Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+
+These were all String, and every writer invented its own encoding -- a session uuid behind a
+"coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+to; name is what a human should read. Rows written before this are decoded on read, so an
+older lock still resolves.
+"""
+type AgentActor {
+  kind: AgentActorKind
+  """
+  The session or user uuid, when the writer knew it. Null on older rows and on SYSTEM.
+  """
+  uuid: ID
+  """
+  Display text: an email for a user, a detail such as "humanGate" for SYSTEM.
+  """
+  name: String
+}
+
+"""
 Rollup of usage rows. Tokens are facts and never change; cost is derived from a
 dated price entry, so every rollup names the entries it used.
 """
@@ -4135,27 +4178,6 @@ type AgentTaskDelivery {
   by: AgentActor
   at: DateTime
   note: String
-}
-
-"""
-Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
-
-These were all String, and every writer invented its own encoding -- a session uuid behind a
-"coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
-knowing the convention and splitting on a colon. kind says which identity space uuid belongs
-to; name is what a human should read. Rows written before this are decoded on read, so an
-older lock still resolves.
-"""
-type AgentActor {
-  kind: AgentActorKind
-  """
-  The session or user uuid, when the writer knew it. Null on older rows and on SYSTEM.
-  """
-  uuid: ID
-  """
-  Display text: an email for a user, a detail such as "humanGate" for SYSTEM.
-  """
-  name: String
 }
 
 """
@@ -5851,6 +5873,10 @@ type Settings {
   """
   notificationRetentionDays: Int
   """
+  Hours an agent session may go without a call before it is closed; null means 24. A session holding a task or a coordinator seat gets twice this.
+  """
+  agentSessionIdleCloseHours: Int
+  """
   The submission-level justification: what FDA L1021-1022 asks for literally, the reason
   per-component support information cannot be included. At the measured 2.3% upstream
   coverage this is the centre of a submission rather than a footnote.
@@ -6409,6 +6435,15 @@ input ConditionOnGetLatestReleaseInput {
   approvalState: ApprovalState
 }
 
+"""
+SESSION is an agent session, USER a human, SYSTEM the application acting on its own.
+"""
+enum AgentActorKind {
+  SESSION
+  USER
+  SYSTEM
+}
+
 type UsageByModel {
   model: ID
   """
@@ -6637,15 +6672,6 @@ type ElementDependent {
   1 for a direct dependent.
   """
   distance: Int
-}
-
-"""
-SESSION is an agent session, USER a human, SYSTEM the application acting on its own.
-"""
-enum AgentActorKind {
-  SESSION
-  USER
-  SYSTEM
 }
 
 """
