@@ -2015,6 +2015,12 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	ElementFamilies *json.RawMessage `json:"elementFamilies"`
 	// The defaults with this board's entries over them: what the CLI parses documents against (gaps §2.A).
 	EffectiveElementFamilies *json.RawMessage `json:"effectiveElementFamilies"`
+	// How this board names its documents, as set; null is the default, named after the board (board-documents.md D2).
+	Documents *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments `json:"documents"`
+	// The component holding each of this board's document series, one per specification, as the board
+	// records them (board-documents.md D3). A board from before the map lists a series once it has
+	// published into it again.
+	DocumentComponents []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent `json:"documentComponents"`
 	// The element check policy as this board declared it; null when it uses the defaults (elements.md §7).
 	CheckPolicy *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy `json:"checkPolicy"`
 	// The policy in force: the declared one, or the defaults (report only, test and requirement orphans).
@@ -2116,6 +2122,16 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetElementFamil
 // GetEffectiveElementFamilies returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.EffectiveElementFamilies, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetEffectiveElementFamilies() *json.RawMessage {
 	return v.EffectiveElementFamilies
+}
+
+// GetDocuments returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Documents, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocuments() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments {
+	return v.Documents
+}
+
+// GetDocumentComponents returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DocumentComponents, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentComponents() []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent {
+	return v.DocumentComponents
 }
 
 // GetCheckPolicy returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CheckPolicy, and is useful for accessing the field via an interface.
@@ -2427,6 +2443,39 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAge
 // GetOrder returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.Order, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetOrder() *AgentMergeOrder {
 	return v.Order
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent includes the requested fields of the GraphQL type AgentBoardDocumentComponent.
+// The GraphQL type's documentation follows.
+//
+// One of a board's document series: the specification and the component that holds it.
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent struct {
+	Specification SpecificationType `json:"specification"`
+	Component     string            `json:"component"`
+}
+
+// GetSpecification returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent.Specification, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetComponent returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent.Component, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent) GetComponent() string {
+	return v.Component
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments includes the requested fields of the GraphQL type AgentBoardDocuments.
+// The GraphQL type's documentation follows.
+//
+// A board's documents block (board-documents.md D2).
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments struct {
+	// Replaces the board name in its document components' names, <prefix>-<specification>, both slugged.
+	Prefix *string `json:"prefix"`
+}
+
+// GetPrefix returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments.Prefix, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments) GetPrefix() *string {
+	return v.Prefix
 }
 
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
@@ -3376,6 +3425,12 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	ElementFamilies *json.RawMessage `json:"elementFamilies"`
 	// The defaults with this board's entries over them: what the CLI parses documents against (gaps §2.A).
 	EffectiveElementFamilies *json.RawMessage `json:"effectiveElementFamilies"`
+	// How this board names its documents, as set; null is the default, named after the board (board-documents.md D2).
+	Documents *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments `json:"documents"`
+	// The component holding each of this board's document series, one per specification, as the board
+	// records them (board-documents.md D3). A board from before the map lists a series once it has
+	// published into it again.
+	DocumentComponents []*AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent `json:"documentComponents"`
 	// The element check policy as this board declared it; null when it uses the defaults (elements.md §7).
 	CheckPolicy *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy `json:"checkPolicy"`
 	// The policy in force: the declared one, or the defaults (report only, test and requirement orphans).
@@ -3477,6 +3532,16 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetElementFam
 // GetEffectiveElementFamilies returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.EffectiveElementFamilies, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetEffectiveElementFamilies() *json.RawMessage {
 	return v.EffectiveElementFamilies
+}
+
+// GetDocuments returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Documents, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocuments() *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments {
+	return v.Documents
+}
+
+// GetDocumentComponents returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DocumentComponents, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentComponents() []*AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent {
+	return v.DocumentComponents
 }
 
 // GetCheckPolicy returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CheckPolicy, and is useful for accessing the field via an interface.
@@ -3790,6 +3855,39 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyA
 // GetOrder returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure.Order, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicyMergeAgentMergeProcedure) GetOrder() *AgentMergeOrder {
 	return v.Order
+}
+
+// AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent includes the requested fields of the GraphQL type AgentBoardDocumentComponent.
+// The GraphQL type's documentation follows.
+//
+// One of a board's document series: the specification and the component that holds it.
+type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent struct {
+	Specification SpecificationType `json:"specification"`
+	Component     string            `json:"component"`
+}
+
+// GetSpecification returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent.Specification, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetComponent returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent.Component, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent) GetComponent() string {
+	return v.Component
+}
+
+// AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments includes the requested fields of the GraphQL type AgentBoardDocuments.
+// The GraphQL type's documentation follows.
+//
+// A board's documents block (board-documents.md D2).
+type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments struct {
+	// Replaces the board name in its document components' names, <prefix>-<specification>, both slugged.
+	Prefix *string `json:"prefix"`
+}
+
+// GetPrefix returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments.Prefix, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments) GetPrefix() *string {
+	return v.Prefix
 }
 
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
@@ -18515,8 +18613,9 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	// The linked PRs (prUrls) as ReARM knows them from CI's PR registrations, resolved per read.
 	// A task completes when every one has merged; registered false means CI never reported the URL.
 	PullRequests []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest `json:"pullRequests"`
-	// The PR heads the newest passing TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR
-	// (task 3b97ccfd): merge at these. Empty when no passing round names any.
+	// The PR heads the newest passing TEST_REPORT round covered, one per linked PR (task 3b97ccfd): merge
+	// at these. A review's heads are informative and not read here (task 5ec48b02). Empty when no passing
+	// test report names any.
 	TestedHeads []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead `json:"testedHeads"`
 	// Delivery attestations, oldest first; the newest per unit counts (task 18c5c293).
 	Deliveries []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDeliveriesAgentTaskDelivery `json:"deliveries"`
@@ -19002,7 +19101,8 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocument
 	// Totals on a TEST_REPORT; absent on a review.
 	Counts *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts `json:"counts"`
 	// The PR heads a TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR (task 3b97ccfd).
-	// A passing round of a task with linked PRs names every one of them.
+	// A passing TEST_REPORT of a task with linked PRs names every one of them; on REVIEW_FINDINGS it is
+	// optional and informative (task 5ec48b02). Every head named must be of a linked PR.
 	Tested   []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead `json:"tested"`
 	Findings []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding  `json:"findings"`
 }
@@ -29003,8 +29103,9 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
 	// The linked PRs (prUrls) as ReARM knows them from CI's PR registrations, resolved per read.
 	// A task completes when every one has merged; registered false means CI never reported the URL.
 	PullRequests []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest `json:"pullRequests"`
-	// The PR heads the newest passing TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR
-	// (task 3b97ccfd): merge at these. Empty when no passing round names any.
+	// The PR heads the newest passing TEST_REPORT round covered, one per linked PR (task 3b97ccfd): merge
+	// at these. A review's heads are informative and not read here (task 5ec48b02). Empty when no passing
+	// test report names any.
 	TestedHeads []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTestedHeadsTestedHead `json:"testedHeads"`
 	// Delivery attestations, oldest first; the newest per unit counts (task 18c5c293).
 	Deliveries []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDeliveriesAgentTaskDelivery `json:"deliveries"`
@@ -29502,7 +29603,8 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsR
 	// Totals on a TEST_REPORT; absent on a review.
 	Counts *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexCountsTestCounts `json:"counts"`
 	// The PR heads a TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR (task 3b97ccfd).
-	// A passing round of a task with linked PRs names every one of them.
+	// A passing TEST_REPORT of a task with linked PRs names every one of them; on REVIEW_FINDINGS it is
+	// optional and informative (task 5ec48b02). Every head named must be of a linked PR.
 	Tested   []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead `json:"tested"`
 	Findings []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexFindingsFinding  `json:"findings"`
 }
@@ -35069,11 +35171,14 @@ type ComponentKind string
 const (
 	ComponentKindHelm    ComponentKind = "HELM"
 	ComponentKindGeneric ComponentKind = "GENERIC"
+	// A board's document series. Boards set it; a component update cannot change a kind to or from it.
+	ComponentKindDocument ComponentKind = "DOCUMENT"
 )
 
 var AllComponentKind = []ComponentKind{
 	ComponentKindHelm,
 	ComponentKindGeneric,
+	ComponentKindDocument,
 }
 
 // Physical-ness axis of a component (Distribution module).
@@ -35805,7 +35910,9 @@ type ExportBoardExportBoardProgrammaticBoardSpec struct {
 	// The element checks: which block the hand-over, mandatory fields per level, orphan families.
 	Checks *ExportBoardExportBoardProgrammaticBoardSpecChecksCheckPolicy `json:"checks"`
 	// How a task proves it was delivered (task 18c5c293); absent means PR_ROWS.
-	Delivery          *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicy `json:"delivery"`
+	Delivery *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicy `json:"delivery"`
+	// How the board names its documents; absent means after the board (board-documents.md D2).
+	Documents         *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec `json:"documents"`
 	CoordinatorPrompt *string                                                                 `json:"coordinatorPrompt"`
 	// Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
 	CoordinatorCapabilities []AgentCapability `json:"coordinatorCapabilities"`
@@ -35875,6 +35982,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetChecks() *ExportBoardEx
 // GetDelivery returns ExportBoardExportBoardProgrammaticBoardSpec.Delivery, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDelivery() *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicy {
 	return v.Delivery
+}
+
+// GetDocuments returns ExportBoardExportBoardProgrammaticBoardSpec.Documents, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDocuments() *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec {
+	return v.Documents
 }
 
 // GetCoordinatorPrompt returns ExportBoardExportBoardProgrammaticBoardSpec.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -35998,6 +36110,20 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyM
 // GetOrder returns ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure.Order, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyMergeAgentMergeProcedure) GetOrder() *AgentMergeOrder {
 	return v.Order
+}
+
+// ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec includes the requested fields of the GraphQL type BoardDocumentsSpec.
+// The GraphQL type's documentation follows.
+//
+// A board file's documents block.
+type ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec struct {
+	// Replaces the board name in its document components' names, <prefix>-<specification>, both slugged.
+	Prefix *string `json:"prefix"`
+}
+
+// GetPrefix returns ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec.Prefix, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec) GetPrefix() *string {
+	return v.Prefix
 }
 
 // ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec includes the requested fields of the GraphQL type BoardRoleSpec.
@@ -44662,6 +44788,13 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		documentPaths
 		elementFamilies
 		effectiveElementFamilies
+		documents {
+			prefix
+		}
+		documentComponents {
+			specification
+			component
+		}
 		checkPolicy {
 			blocking
 			mandatoryFields
@@ -44941,6 +45074,13 @@ query AgentBoardsProgrammatic {
 		documentPaths
 		elementFamilies
 		effectiveElementFamilies
+		documents {
+			prefix
+		}
+		documentComponents {
+			specification
+			component
+		}
 		checkPolicy {
 			blocking
 			mandatoryFields
@@ -51241,6 +51381,9 @@ query ExportBoard ($board: String!) {
 				requireAttestation
 				order
 			}
+		}
+		documents {
+			prefix
 		}
 		coordinatorPrompt
 		coordinatorCapabilities
