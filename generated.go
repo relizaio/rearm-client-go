@@ -20019,6 +20019,13 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff
 	Usage *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+	// The documents this sign-off reviewed, and what its review did to each. For a reviewer's hop:
+	// what it had pinned, for either outcome. For a person's approval at a gate: the gated hop's
+	// outputs and what a gated reviewer had reviewed. Null when the hop reviewed nothing.
+	ReviewedInputs []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput `json:"reviewedInputs"`
+	// The documents this sign-off's review would have promoted and an organization guard kept where
+	// they were, with the guard's reason. Empty when nothing was refused.
+	RefusedPromotions []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion `json:"refusedPromotions"`
 }
 
 // GetRole returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -20074,6 +20081,48 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSig
 // GetOverAllowanceMicros returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
 	return v.OverAllowanceMicros
+}
+
+// GetReviewedInputs returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedInputs, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedInputs() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput {
+	return v.ReviewedInputs
+}
+
+// GetRefusedPromotions returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff.RefusedPromotions, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetRefusedPromotions() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion {
+	return v.RefusedPromotions
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion includes the requested fields of the GraphQL type AgentTaskRefusedPromotion.
+// The GraphQL type's documentation follows.
+//
+// A document a review would have promoted and a guard kept where it was.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion struct {
+	Release       *string            `json:"release"`
+	Specification *SpecificationType `json:"specification"`
+	Round         *int               `json:"round"`
+	// The guard's words.
+	Reason *string `json:"reason"`
+}
+
+// GetRelease returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion) GetRelease() *string {
+	return v.Release
+}
+
+// GetSpecification returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetRound returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion) GetRound() *int {
+	return v.Round
+}
+
+// GetReason returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion) GetReason() *string {
+	return v.Reason
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -20153,6 +20202,42 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSig
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput includes the requested fields of the GraphQL type AgentTaskReviewedInput.
+// The GraphQL type's documentation follows.
+//
+// One document a sign-off reviewed.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput struct {
+	Release *string `json:"release"`
+	// The document's type, when the release is a board document.
+	Specification *SpecificationType `json:"specification"`
+	// Its round, for a findings index or a question round.
+	Round *int `json:"round"`
+	// The lifecycle this review moved it to: READY_TO_SHIP when the review promoted it. Null when it
+	// did not: a rejection, a pass that left something blocking, a gate not yet approved, a document
+	// already past ASSEMBLED, or a guard's refusal (see refusedPromotions).
+	PromotedTo *ReleaseLifecycleEnum `json:"promotedTo"`
+}
+
+// GetRelease returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput) GetRelease() *string {
+	return v.Release
+}
+
+// GetSpecification returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetRound returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput) GetRound() *int {
+	return v.Round
+}
+
+// GetPromotedTo returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput.PromotedTo, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput) GetPromotedTo() *ReleaseLifecycleEnum {
+	return v.PromotedTo
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
@@ -30398,6 +30483,13 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAg
 	Usage *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+	// The documents this sign-off reviewed, and what its review did to each. For a reviewer's hop:
+	// what it had pinned, for either outcome. For a person's approval at a gate: the gated hop's
+	// outputs and what a gated reviewer had reviewed. Null when the hop reviewed nothing.
+	ReviewedInputs []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput `json:"reviewedInputs"`
+	// The documents this sign-off's review would have promoted and an organization guard kept where
+	// they were, with the guard's reason. Empty when nothing was refused.
+	RefusedPromotions []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion `json:"refusedPromotions"`
 }
 
 // GetRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -30453,6 +30545,48 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOf
 // GetOverAllowanceMicros returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
 	return v.OverAllowanceMicros
+}
+
+// GetReviewedInputs returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedInputs, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedInputs() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput {
+	return v.ReviewedInputs
+}
+
+// GetRefusedPromotions returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff.RefusedPromotions, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetRefusedPromotions() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion {
+	return v.RefusedPromotions
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion includes the requested fields of the GraphQL type AgentTaskRefusedPromotion.
+// The GraphQL type's documentation follows.
+//
+// A document a review would have promoted and a guard kept where it was.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion struct {
+	Release       *string            `json:"release"`
+	Specification *SpecificationType `json:"specification"`
+	Round         *int               `json:"round"`
+	// The guard's words.
+	Reason *string `json:"reason"`
+}
+
+// GetRelease returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion.Release, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion) GetRelease() *string {
+	return v.Release
+}
+
+// GetSpecification returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetRound returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion.Round, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion) GetRound() *int {
+	return v.Round
+}
+
+// GetReason returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffRefusedPromotionsAgentTaskRefusedPromotion) GetReason() *string {
+	return v.Reason
 }
 
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -30532,6 +30666,42 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOf
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput includes the requested fields of the GraphQL type AgentTaskReviewedInput.
+// The GraphQL type's documentation follows.
+//
+// One document a sign-off reviewed.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput struct {
+	Release *string `json:"release"`
+	// The document's type, when the release is a board document.
+	Specification *SpecificationType `json:"specification"`
+	// Its round, for a findings index or a question round.
+	Round *int `json:"round"`
+	// The lifecycle this review moved it to: READY_TO_SHIP when the review promoted it. Null when it
+	// did not: a rejection, a pass that left something blocking, a gate not yet approved, a document
+	// already past ASSEMBLED, or a guard's refusal (see refusedPromotions).
+	PromotedTo *ReleaseLifecycleEnum `json:"promotedTo"`
+}
+
+// GetRelease returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput.Release, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput) GetRelease() *string {
+	return v.Release
+}
+
+// GetSpecification returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetRound returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput.Round, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput) GetRound() *int {
+	return v.Round
+}
+
+// GetPromotedTo returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput.PromotedTo, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedInputsAgentTaskReviewedInput) GetPromotedTo() *ReleaseLifecycleEnum {
+	return v.PromotedTo
 }
 
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
@@ -47928,6 +48098,18 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 				... HopUsageFields
 			}
 			overAllowanceMicros
+			reviewedInputs {
+				release
+				specification
+				round
+				promotedTo
+			}
+			refusedPromotions {
+				release
+				specification
+				round
+				reason
+			}
 		}
 		returns {
 			role
@@ -49720,6 +49902,18 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 				... HopUsageFields
 			}
 			overAllowanceMicros
+			reviewedInputs {
+				release
+				specification
+				round
+				promotedTo
+			}
+			refusedPromotions {
+				release
+				specification
+				round
+				reason
+			}
 		}
 		returns {
 			role
