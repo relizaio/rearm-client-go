@@ -10,7 +10,7 @@ fragment PersonTaskFields on AgentTask {
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
-	openFindings { id priority status title location { path line ref } resolvedBy resolution }
+	openFindings { id priority status title location { path line ref } resolvedBy resolution correction }
 	openQuestions { id priority status title location { path line ref } resolvedBy resolution }
 	createdDate completedAt
 }
