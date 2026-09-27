@@ -3027,6 +3027,13 @@ input AgentDocumentPublishInput {
   """
   elementsDigest: String
   """
+  Publish on a task another session holds, as an advisory round (task e97fde56): only a prose type
+  a role your agent has signed off on this board produces, on an active task. The round is
+  ASSEMBLED at once and an INFO event tells the board. Ignored when your session holds the task:
+  its round is a normal one. Without it, publishing on a task you do not hold is refused.
+  """
+  advisory: Boolean
+  """
   HEAD of the documents repository when the files were read. Required with a path.
   """
   commit: String
@@ -3739,6 +3746,15 @@ type DocumentRef {
   On a CHECK_REPORT round: what the element checks found (elements.md §7).
   """
   checks: CheckReport
+  """
+  A round a role published on a task it did not hold (task e97fde56): assembled at publish, never
+  a hop's output. False or absent on every other round.
+  """
+  advisory: Boolean
+  """
+  The role the round was published as: the holding role, or for an advisory round the author's. Absent on older rounds.
+  """
+  publishedByRole: String
 }
 
 """
