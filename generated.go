@@ -2017,6 +2017,10 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	EffectiveElementFamilies *json.RawMessage `json:"effectiveElementFamilies"`
 	// How this board names its documents, as set; null is the default, named after the board (board-documents.md D2).
 	Documents *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments `json:"documents"`
+	// Where this board's documents sit in its repository, resolved (board-documents.md D6): the
+	// documents.root it sets, else boards/<board slug>/ when documents.shared, else empty. Every
+	// documentPath starts with it.
+	DocumentsRoot *string `json:"documentsRoot"`
 	// The component holding each of this board's document series, one per specification, as the board
 	// records them (board-documents.md D3). A board from before the map lists a series once it has
 	// published into it again.
@@ -2131,6 +2135,11 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetEffectiveEle
 // GetDocuments returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Documents, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocuments() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments {
 	return v.Documents
+}
+
+// GetDocumentsRoot returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DocumentsRoot, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentsRoot() *string {
+	return v.DocumentsRoot
 }
 
 // GetDocumentComponents returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DocumentComponents, and is useful for accessing the field via an interface.
@@ -2485,11 +2494,25 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponent
 type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments struct {
 	// Replaces the board name in its document components' names, <prefix>-<specification>, both slugged.
 	Prefix *string `json:"prefix"`
+	// The documents repository serves several boards, so the default root is boards/{board}/.
+	Shared *bool `json:"shared"`
+	// The root as set, relative to the repository; documentsRoot on the board is the resolved one.
+	Root *string `json:"root"`
 }
 
 // GetPrefix returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments.Prefix, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments) GetPrefix() *string {
 	return v.Prefix
+}
+
+// GetShared returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments.Shared, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments) GetShared() *bool {
+	return v.Shared
+}
+
+// GetRoot returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments.Root, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocuments) GetRoot() *string {
+	return v.Root
 }
 
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
@@ -3455,6 +3478,10 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	EffectiveElementFamilies *json.RawMessage `json:"effectiveElementFamilies"`
 	// How this board names its documents, as set; null is the default, named after the board (board-documents.md D2).
 	Documents *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments `json:"documents"`
+	// Where this board's documents sit in its repository, resolved (board-documents.md D6): the
+	// documents.root it sets, else boards/<board slug>/ when documents.shared, else empty. Every
+	// documentPath starts with it.
+	DocumentsRoot *string `json:"documentsRoot"`
 	// The component holding each of this board's document series, one per specification, as the board
 	// records them (board-documents.md D3). A board from before the map lists a series once it has
 	// published into it again.
@@ -3569,6 +3596,11 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetEffectiveE
 // GetDocuments returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Documents, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocuments() *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments {
 	return v.Documents
+}
+
+// GetDocumentsRoot returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DocumentsRoot, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentsRoot() *string {
+	return v.DocumentsRoot
 }
 
 // GetDocumentComponents returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DocumentComponents, and is useful for accessing the field via an interface.
@@ -3925,11 +3957,25 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentCompone
 type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments struct {
 	// Replaces the board name in its document components' names, <prefix>-<specification>, both slugged.
 	Prefix *string `json:"prefix"`
+	// The documents repository serves several boards, so the default root is boards/{board}/.
+	Shared *bool `json:"shared"`
+	// The root as set, relative to the repository; documentsRoot on the board is the resolved one.
+	Root *string `json:"root"`
 }
 
 // GetPrefix returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments.Prefix, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments) GetPrefix() *string {
 	return v.Prefix
+}
+
+// GetShared returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments.Shared, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments) GetShared() *bool {
+	return v.Shared
+}
+
+// GetRoot returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments.Root, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocuments) GetRoot() *string {
+	return v.Root
 }
 
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
@@ -4627,11 +4673,12 @@ var AllAgentDeliveryOutcome = []AgentDeliveryOutcome{
 // AgentDocumentPathAgentBoardProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
 type AgentDocumentPathAgentBoardProgrammaticAgentBoard struct {
 	Uuid *string `json:"uuid"`
-	// The repository path a new document of this type would take, with every placeholder filled:
-	// {task} = first eight characters of the task uuid, {round} = the task's next round of this type,
-	// {type} = lower case, {component} = the component's name slugged. task is required for
-	// task-scoped types, component for component-scoped ones. The release records the path actually
-	// used; this is what the CLI uses when no --file is given.
+	// The repository path a new document of this type would take, relative to the repository root,
+	// with every placeholder filled and the board's documentsRoot in front: {key} = the task's key
+	// (RD-42), {round} = the task's next round of this type, {type} = lower case, {component} = the
+	// component's name slugged. task is required for task-scoped types, component for
+	// component-scoped ones. The release records the path actually used; this is what the CLI uses
+	// when no --file is given.
 	DocumentPath *string `json:"documentPath"`
 }
 
@@ -36736,11 +36783,25 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicyM
 type ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec struct {
 	// Replaces the board name in its document components' names, <prefix>-<specification>, both slugged.
 	Prefix *string `json:"prefix"`
+	// The documents repository serves several boards: the default root is boards/{board}/.
+	Shared *bool `json:"shared"`
+	// The root outright, relative to the repository; empty is the repository root.
+	Root *string `json:"root"`
 }
 
 // GetPrefix returns ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec.Prefix, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec) GetPrefix() *string {
 	return v.Prefix
+}
+
+// GetShared returns ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec.Shared, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec) GetShared() *bool {
+	return v.Shared
+}
+
+// GetRoot returns ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec.Root, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec) GetRoot() *string {
+	return v.Root
 }
 
 // ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec includes the requested fields of the GraphQL type BoardRoleSpec.
@@ -45437,7 +45498,10 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		effectiveElementFamilies
 		documents {
 			prefix
+			shared
+			root
 		}
+		documentsRoot
 		documentComponents {
 			specification
 			component
@@ -45727,7 +45791,10 @@ query AgentBoardsProgrammatic {
 		effectiveElementFamilies
 		documents {
 			prefix
+			shared
+			root
 		}
+		documentsRoot
 		documentComponents {
 			specification
 			component
@@ -52187,6 +52254,8 @@ query ExportBoard ($board: String!) {
 		}
 		documents {
 			prefix
+			shared
+			root
 		}
 		taskPrefix
 		coordinatorPrompt
