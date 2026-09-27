@@ -1219,6 +1219,12 @@ type AgentBoard {
   """
   missingCapabilities: [String]
   """
+  What no key of the organization can do on this board (board-permissions.md D13): BOARD_AGENT when
+  an active agent role exists and no key covers it, BOARD_WRITE when the coordinator seat is empty and
+  no key can take it. Each key is judged as it would be on a call. Read for the board panel only.
+  """
+  missingCoverage: [BoardCoverageGap!]
+  """
   Served prompt of the implicit, non-removable coordinator role.
   """
   coordinatorPrompt: String
@@ -4214,6 +4220,14 @@ type AgentBoardEvent {
   message: String
   actor: AgentActor
   eventAt: DateTime
+}
+
+"""
+A board function no key can exercise on a board, and the line the board panel shows for it.
+"""
+type BoardCoverageGap {
+  function: PermissionFunction!
+  message: String!
 }
 
 type AgentBoardLock {

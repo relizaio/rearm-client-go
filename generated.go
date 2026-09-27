@@ -2047,6 +2047,10 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
 	MissingCapabilities []*string `json:"missingCapabilities"`
+	// What no key of the organization can do on this board (board-permissions.md D13): BOARD_AGENT when
+	// an active agent role exists and no key covers it, BOARD_WRITE when the coordinator seat is empty and
+	// no key can take it. Each key is judged as it would be on a call. Read for the board panel only.
+	MissingCoverage []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardMissingCoverageBoardCoverageGap `json:"missingCoverage"`
 	// Verbs the coordinator seat performs itself on this board, e.g. PR_MERGE when it merges once
 	// the last required role has passed. Unverified, like a role's capabilities; the delivery-loop
 	// alert (missingCapabilities) counts them as covered.
@@ -2200,6 +2204,11 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCoordinatorP
 // GetMissingCapabilities returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.MissingCapabilities, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetMissingCapabilities() []*string {
 	return v.MissingCapabilities
+}
+
+// GetMissingCoverage returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.MissingCoverage, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetMissingCoverage() []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardMissingCoverageBoardCoverageGap {
+	return v.MissingCoverage
 }
 
 // GetCoordinatorCapabilities returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CoordinatorCapabilities, and is useful for accessing the field via an interface.
@@ -2871,6 +2880,25 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLockLockedByAgent
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardMissingCoverageBoardCoverageGap includes the requested fields of the GraphQL type BoardCoverageGap.
+// The GraphQL type's documentation follows.
+//
+// A board function no key can exercise on a board, and the line the board panel shows for it.
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardMissingCoverageBoardCoverageGap struct {
+	Function PermissionFunction `json:"function"`
+	Message  string             `json:"message"`
+}
+
+// GetFunction returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardMissingCoverageBoardCoverageGap.Function, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardMissingCoverageBoardCoverageGap) GetFunction() PermissionFunction {
+	return v.Function
+}
+
+// GetMessage returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardMissingCoverageBoardCoverageGap.Message, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardMissingCoverageBoardCoverageGap) GetMessage() string {
+	return v.Message
 }
 
 // AgentBoardProgrammaticResponse is returned by AgentBoardProgrammatic on success.
@@ -46010,6 +46038,10 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		}
 		coordinatorPrompt
 		missingCapabilities
+		missingCoverage {
+			function
+			message
+		}
 		coordinatorCapabilities
 		events {
 			kind

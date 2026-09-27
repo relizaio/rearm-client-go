@@ -51,7 +51,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	perspectives perspectiveNames myPermissions
 	taskPrefix taskPrefixHistory
 	checkPolicy { blocking mandatoryFields orphans coverage } effectiveCheckPolicy { blocking mandatoryFields orphans coverage }
-	coordinatorPrompt missingCapabilities coordinatorCapabilities
+	coordinatorPrompt missingCapabilities missingCoverage { function message } coordinatorCapabilities
 	events { kind message actor { ...ActorFields } eventAt }
 	lock { level reason lockedBy { ...ActorFields } lockedAt }
 	coordinatorSeat { session agent claimedAt }
