@@ -1117,6 +1117,11 @@ type Session {
   """
   boardsWorked: [ID]
   """
+  The tasks this session worked (task RD2-11): the tasks of its boards that list it, with the role it
+  last worked each as. A person sees those on boards they may read.
+  """
+  tasksWorked: [AgentSessionTaskRef]
+  """
   SCE UUIDs attributed to this session via the commit-trailer parser
   (PR 2). Order is append-order; head of list is the earliest commit.
   """
@@ -8491,3 +8496,14 @@ input CoordsInput {
   longitude: Float
 }
 
+"""A task a session worked, as the session page names it (task RD2-11)."""
+type AgentSessionTaskRef {
+  uuid: ID
+  key: String
+  title: String
+  """The role the session last worked the task as."""
+  role: String
+  board: ID
+  """The board's name, so a page names it without reading the boards."""
+  boardName: String
+}

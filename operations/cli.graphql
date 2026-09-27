@@ -144,6 +144,7 @@ query SessionProgrammatic ($sessionUuid: ID!) {
 					}
 					artifacts
 					boardsWorked
+					tasksWorked { uuid key title role board boardName }
 					commits
 					policyEvents {
 						policyName kind state severity message evaluatedAt
