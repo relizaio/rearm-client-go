@@ -481,12 +481,21 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $change
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
+# The board's DELIVERING tasks and their PRs' states, for 'rearm agent wait --coordinator' (task
+# RD2-32): a task waits on the coordinator when the board's merge is its and a PR is not merged.
+# Light on purpose: the loop reads it once per poll only while the snapshot shows a DELIVERING task.
+query AgentWaitDeliveringProgrammatic ($boardUuid: ID!) {
+	agentTasksProgrammatic(boardUuid: $boardUuid, status: DELIVERING) {
+	key uuid status
+	pullRequests { url state }
+} }
+
 # The whole board in one read: what everyone is doing, what waits on what, and which questions
 # are outstanding. An agent that needs N calls to learn this does not make them.
 query AgentBoardSnapshotProgrammatic($boardUuid: ID!) { agentBoardSnapshotProgrammatic(boardUuid: $boardUuid) {
 	board { uuid name status }
 	tasks {
-		task { key number uuid externalRef title description status role roleUuid level effectiveLevel orderIndex group { key } tags { key } waitingOnGroups }
+		task { key number uuid externalRef title description status role roleUuid level effectiveLevel orderIndex hold { level kind } group { key } tags { key } waitingOnGroups }
 		holder { ...ActorFields }
 		heldSince
 		dependsOn { task externalRef title status }
