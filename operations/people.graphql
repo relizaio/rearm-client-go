@@ -5,7 +5,7 @@
 # boards.graphql.
 
 fragment PersonTaskFields on AgentTask {
-	key number uuid board externalRef title status role orderIndex requireHumanReview requiredStrength
+	key number uuid board externalRef title description status role orderIndex requireHumanReview requiredStrength
 	budgetMicros budgetSetBy { ...ActorFields } budgetSetAt
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt }

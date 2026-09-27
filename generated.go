@@ -3155,10 +3155,12 @@ type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnaps
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
 	Role *string `json:"role"`
@@ -3193,6 +3195,11 @@ func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardS
 // GetTitle returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetStatus returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Status, and is useful for accessing the field via an interface.
@@ -5343,6 +5350,11 @@ func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetExternalRef() *string {
 // GetTitle returns AgentTaskAnswerAgentTaskAnswerAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetTitle() *string { return v.PersonTaskFields.Title }
 
+// GetDescription returns AgentTaskAnswerAgentTaskAnswerAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
 // GetStatus returns AgentTaskAnswerAgentTaskAnswerAgentTask.Status, and is useful for accessing the field via an interface.
 func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetStatus() *AgentTaskStatus {
 	return v.PersonTaskFields.Status
@@ -5454,6 +5466,8 @@ type __premarshalAgentTaskAnswerAgentTaskAnswerAgentTask struct {
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -5502,6 +5516,7 @@ func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) __premarshalJSON() (*__premars
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -6598,6 +6613,11 @@ func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetTitle() *string {
 	return v.PersonTaskFields.Title
 }
 
+// GetDescription returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
 // GetStatus returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.Status, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetStatus() *AgentTaskStatus {
 	return v.PersonTaskFields.Status
@@ -6711,6 +6731,8 @@ type __premarshalAgentTaskAuthorizeAgentTaskAuthorizeAgentTask struct {
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -6759,6 +6781,7 @@ func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) __premarshalJSON() (*__p
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -8962,6 +8985,11 @@ func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetExternalRef() *string {
 // GetTitle returns AgentTaskCancelAgentTaskCancelAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetTitle() *string { return v.PersonTaskFields.Title }
 
+// GetDescription returns AgentTaskCancelAgentTaskCancelAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
 // GetStatus returns AgentTaskCancelAgentTaskCancelAgentTask.Status, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetStatus() *AgentTaskStatus {
 	return v.PersonTaskFields.Status
@@ -9073,6 +9101,8 @@ type __premarshalAgentTaskCancelAgentTaskCancelAgentTask struct {
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -9121,6 +9151,7 @@ func (v *AgentTaskCancelAgentTaskCancelAgentTask) __premarshalJSON() (*__premars
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -10276,6 +10307,11 @@ func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetTitle() *string {
 	return v.PersonTaskFields.Title
 }
 
+// GetDescription returns AgentTaskCompleteAgentTaskCompleteAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
 // GetStatus returns AgentTaskCompleteAgentTaskCompleteAgentTask.Status, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetStatus() *AgentTaskStatus {
 	return v.PersonTaskFields.Status
@@ -10389,6 +10425,8 @@ type __premarshalAgentTaskCompleteAgentTaskCompleteAgentTask struct {
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -10437,6 +10475,7 @@ func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) __premarshalJSON() (*__pre
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -11545,6 +11584,11 @@ func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetTitle() *st
 	return v.PersonTaskFields.Title
 }
 
+// GetDescription returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
 // GetStatus returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.Status, and is useful for accessing the field via an interface.
 func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetStatus() *AgentTaskStatus {
 	return v.PersonTaskFields.Status
@@ -11658,6 +11702,8 @@ type __premarshalAgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask struct 
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -11706,6 +11752,7 @@ func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) __premarshalJS
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -11770,6 +11817,11 @@ func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetExternalRef() *string
 // GetTitle returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetTitle() *string {
 	return v.PersonTaskFields.Title
+}
+
+// GetDescription returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
 }
 
 // GetStatus returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.Status, and is useful for accessing the field via an interface.
@@ -11885,6 +11937,8 @@ type __premarshalAgentTaskDeliveredAgentTaskDeliveredAgentTask struct {
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -11933,6 +11987,7 @@ func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) __premarshalJSON() (*__p
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -15222,6 +15277,11 @@ func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetTitle() *string {
 	return v.PersonTaskFields.Title
 }
 
+// GetDescription returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
 // GetStatus returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.Status, and is useful for accessing the field via an interface.
 func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetStatus() *AgentTaskStatus {
 	return v.PersonTaskFields.Status
@@ -15335,6 +15395,8 @@ type __premarshalAgentTaskHumanReviewAgentTaskHumanReviewAgentTask struct {
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -15383,6 +15445,7 @@ func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) __premarshalJSON() (
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -15450,6 +15513,11 @@ func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetExternalRef() *
 // GetTitle returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetTitle() *string {
 	return v.PersonTaskFields.Title
+}
+
+// GetDescription returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
 }
 
 // GetStatus returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.Status, and is useful for accessing the field via an interface.
@@ -15565,6 +15633,8 @@ type __premarshalAgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask struct {
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -15613,6 +15683,7 @@ func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) __premarshalJSON()
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -17756,6 +17827,11 @@ func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetTitle() *string
 	return v.PersonTaskFields.Title
 }
 
+// GetDescription returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
 // GetStatus returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.Status, and is useful for accessing the field via an interface.
 func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetStatus() *AgentTaskStatus {
 	return v.PersonTaskFields.Status
@@ -17869,6 +17945,8 @@ type __premarshalAgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask struct {
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -17917,6 +17995,7 @@ func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) __premarshalJSON()
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -17972,6 +18051,11 @@ func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetExternalRef() *string {
 
 // GetTitle returns AgentTaskOrderAgentTaskOrderAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetTitle() *string { return v.PersonTaskFields.Title }
+
+// GetDescription returns AgentTaskOrderAgentTaskOrderAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
 
 // GetStatus returns AgentTaskOrderAgentTaskOrderAgentTask.Status, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetStatus() *AgentTaskStatus {
@@ -18084,6 +18168,8 @@ type __premarshalAgentTaskOrderAgentTaskOrderAgentTask struct {
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -18132,6 +18218,7 @@ func (v *AgentTaskOrderAgentTaskOrderAgentTask) __premarshalJSON() (*__premarsha
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -21243,6 +21330,11 @@ func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetTitle() *string {
 	return v.PersonTaskFields.Title
 }
 
+// GetDescription returns AgentTaskRegisterAgentTaskRegisterAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
 // GetStatus returns AgentTaskRegisterAgentTaskRegisterAgentTask.Status, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetStatus() *AgentTaskStatus {
 	return v.PersonTaskFields.Status
@@ -21356,6 +21448,8 @@ type __premarshalAgentTaskRegisterAgentTaskRegisterAgentTask struct {
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -21404,6 +21498,7 @@ func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) __premarshalJSON() (*__pre
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -24679,6 +24774,11 @@ func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetTit
 	return v.PersonTaskFields.Title
 }
 
+// GetDescription returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
 // GetStatus returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.Status, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetStatus() *AgentTaskStatus {
 	return v.PersonTaskFields.Status
@@ -24792,6 +24892,8 @@ type __premarshalAgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -24840,6 +24942,7 @@ func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) __prem
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -27348,6 +27451,11 @@ func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetTitle() *string {
 	return v.PersonTaskFields.Title
 }
 
+// GetDescription returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
 // GetStatus returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Status, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetStatus() *AgentTaskStatus {
 	return v.PersonTaskFields.Status
@@ -27461,6 +27569,8 @@ type __premarshalAgentTaskSetBudgetAgentTaskSetBudgetAgentTask struct {
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -27509,6 +27619,7 @@ func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) __premarshalJSON() (*__p
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -27571,6 +27682,11 @@ func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetExternalRef() *st
 // GetTitle returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetTitle() *string {
 	return v.PersonTaskFields.Title
+}
+
+// GetDescription returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
 }
 
 // GetStatus returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.Status, and is useful for accessing the field via an interface.
@@ -27686,6 +27802,8 @@ type __premarshalAgentTaskSetStrengthAgentTaskSetStrengthAgentTask struct {
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -27734,6 +27852,7 @@ func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) __premarshalJSON() (
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -32010,6 +32129,11 @@ func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetTitle() *string {
 	return v.PersonTaskFields.Title
 }
 
+// GetDescription returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
 // GetStatus returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.Status, and is useful for accessing the field via an interface.
 func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetStatus() *AgentTaskStatus {
 	return v.PersonTaskFields.Status
@@ -32123,6 +32247,8 @@ type __premarshalAgentTasksOfBoardAgentTasksOfBoardAgentTask struct {
 
 	Title *string `json:"title"`
 
+	Description *string `json:"description"`
+
 	Status *AgentTaskStatus `json:"status"`
 
 	Role *string `json:"role"`
@@ -32171,6 +32297,7 @@ func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) __premarshalJSON() (*__pre
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
 	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
@@ -40334,11 +40461,13 @@ type PersonTaskFields struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
 	Role *string `json:"role"`
@@ -40388,6 +40517,9 @@ func (v *PersonTaskFields) GetExternalRef() *string { return v.ExternalRef }
 
 // GetTitle returns PersonTaskFields.Title, and is useful for accessing the field via an interface.
 func (v *PersonTaskFields) GetTitle() *string { return v.Title }
+
+// GetDescription returns PersonTaskFields.Description, and is useful for accessing the field via an interface.
+func (v *PersonTaskFields) GetDescription() *string { return v.Description }
 
 // GetStatus returns PersonTaskFields.Status, and is useful for accessing the field via an interface.
 func (v *PersonTaskFields) GetStatus() *AgentTaskStatus { return v.Status }
@@ -45934,6 +46066,7 @@ query AgentBoardSnapshotProgrammatic ($boardUuid: ID!) {
 				uuid
 				externalRef
 				title
+				description
 				status
 				role
 				roleUuid
@@ -46487,6 +46620,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -46750,6 +46884,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -47243,6 +47378,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -47543,6 +47679,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -47806,6 +47943,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -47925,6 +48063,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -48539,6 +48678,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -48660,6 +48800,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -49065,6 +49206,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -49184,6 +49326,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -49701,6 +49844,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -50249,6 +50393,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -50761,6 +50906,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -50876,6 +51022,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
@@ -51543,6 +51690,7 @@ fragment PersonTaskFields on AgentTask {
 	board
 	externalRef
 	title
+	description
 	status
 	role
 	orderIndex
