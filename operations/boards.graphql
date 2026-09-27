@@ -540,3 +540,16 @@ mutation AgentTaskSetTagsProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $tags:
 	agentTaskSetTagsProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, tags: $tags) {
 	key uuid tags { key value removable }
 } }
+
+# The board's spend in a window broken down so the parts add up to the total (task RD2-8): by role
+# (closed and open hops), by session, the coordinator seat's own rows and what no hop owns.
+query AgentBoardSpendBreakdownProgrammatic ($boardUuid: ID!, $from: DateTime, $to: DateTime) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		spendBreakdown(from: $from, to: $to) {
+			totalMicros costComplete coordinatorEstimateMicros unattributedMicros from to
+			byRole { role costMicros closedHops openHops tokens { inputTokens outputTokens cacheReadTokens cacheWriteTokens requests turns reports } }
+			bySession { session agent role costMicros tokens { inputTokens outputTokens cacheReadTokens cacheWriteTokens requests turns reports } }
+		}
+	}
+}
