@@ -5,7 +5,7 @@
 # boards.graphql.
 
 fragment PersonTaskFields on AgentTask {
-	key number uuid board externalRef title description status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt requireHumanReview requiredStrength
+	key number uuid board externalRef title description status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups requireHumanReview requiredStrength
 	budgetMicros budgetSetBy { ...ActorFields } budgetSetAt
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt }
@@ -26,8 +26,8 @@ query AgentBoardsOfOrg ($orgUuid: ID!) { agentBoardsOfOrg(orgUuid: $orgUuid) {
 # the login's key carries no AGENT function.
 query AgentTaskByKey ($orgUuid: ID!, $key: String!) { agentTaskByKey(orgUuid: $orgUuid, key: $key) { uuid key board } }
 
-query AgentTasksOfBoard ($boardUuid: ID!, $status: AgentTaskStatus) {
-	agentTasksOfBoard(boardUuid: $boardUuid, status: $status) { ...PersonTaskFields }
+query AgentTasksOfBoard ($boardUuid: ID!, $status: AgentTaskStatus, $group: String, $tag: [String]) {
+	agentTasksOfBoard(boardUuid: $boardUuid, status: $status, group: $group, tag: $tag) { ...PersonTaskFields }
 }
 
 mutation AgentTaskRegister ($boardUuid: ID!, $input: AgentTaskUserRegisterInput!) {
@@ -97,4 +97,24 @@ mutation AgentBoardOperatorLock ($boardUuid: ID!, $lock: Boolean!, $reason: Stri
 	agentBoardOperatorLock(boardUuid: $boardUuid, lock: $lock, reason: $reason) {
 		uuid name status lock { level reason lockedBy { ...ActorFields } lockedAt }
 	}
+}
+
+# Task groups and tags for people (task RD2-29): board configuration (group set, delete) needs
+# CONFIGURATION_WRITE and BOARD_WRITE; moving a task and its tags need BOARD_WRITE.
+mutation AgentBoardGroupSet ($boardUuid: ID!, $group: TaskGroupInput!) {
+	agentBoardGroupSet(boardUuid: $boardUuid, group: $group) {
+		uuid key name description order dependsOn defaultLevel status createdAt progress { total done open complete }
+	}
+}
+
+mutation AgentBoardGroupDelete ($boardUuid: ID!, $key: String!) {
+	agentBoardGroupDelete(boardUuid: $boardUuid, key: $key)
+}
+
+mutation AgentTaskSetGroup ($taskUuid: ID!, $group: String) {
+	agentTaskSetGroup(taskUuid: $taskUuid, group: $group) { ...PersonTaskFields }
+}
+
+mutation AgentTaskSetTags ($taskUuid: ID!, $tags: [TagRecordInput!]!) {
+	agentTaskSetTags(taskUuid: $taskUuid, tags: $tags) { ...PersonTaskFields }
 }

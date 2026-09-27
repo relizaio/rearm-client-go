@@ -155,7 +155,9 @@ roles: the roles this agent can take, each a role name on the board
   agentTasksProgrammatic(
   boardUuid: ID!
   status: AgentTaskStatus
-  changedSince: DateTime): [AgentTask]
+  changedSince: DateTime
+  group: String
+  tag: [String]): [AgentTask]
   """
   Agent-key auth: a named set of tasks in one read, in the order given (task cc14f4cb). At most 100;
   an unknown uuid, or one of another organization, is absent. For a board's tasks by status, read
@@ -214,7 +216,9 @@ roles: the roles this agent can take, each a role name on the board
   agentTasksOfBoard(
   boardUuid: ID!
   status: AgentTaskStatus
-  changedSince: DateTime): [AgentTask]
+  changedSince: DateTime
+  group: String
+  tag: [String]): [AgentTask]
   """
   A person's read: a named set of tasks in one read, as agentTasksByUuidProgrammatic (task cc14f4cb).
   A task of an organization the person cannot read is absent.
@@ -446,6 +450,27 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   taskUuid: ID!
   sessionUuid: ID!
   level: Int): AgentTask
+  """
+  The coordinator seat creates or edits a group of its board, by key (task RD2-29).
+  """
+  agentBoardGroupSetProgrammatic(
+  boardUuid: ID!
+  sessionUuid: ID!
+  group: TaskGroupInput!): TaskGroup
+  """
+  The coordinator seat moves a task into a group by key, or out of every group with null (task RD2-29).
+  """
+  agentTaskSetGroupProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  group: String): AgentTask
+  """
+  The coordinator seat replaces a task's tags (task RD2-29).
+  """
+  agentTaskSetTagsProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  tags: [TagRecordInput!]!): AgentTask
   agentTaskSplitProgrammatic(taskUuid: ID!, sessionUuid: ID!, children: [AgentTaskSplitChildInput!]!): [AgentTask]
   agentTaskCompleteProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
   agentTaskCancelProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
@@ -583,6 +608,31 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskSetLevel(
   taskUuid: ID!
   level: Int): AgentTask
+  """
+  Create or edit a group of the board, by key (task RD2-29). CONFIGURATION_WRITE and BOARD_WRITE on
+  the board. status CLOSED closes it: no new tasks, nothing else changes.
+  """
+  agentBoardGroupSet(
+  boardUuid: ID!
+  group: TaskGroupInput!): TaskGroup
+  """
+  Delete an empty group; refused while a task names it (task RD2-29).
+  """
+  agentBoardGroupDelete(
+  boardUuid: ID!
+  key: String!): Boolean
+  """
+  Move a task into a group by key, or out of every group with null (task RD2-29). BOARD_WRITE.
+  """
+  agentTaskSetGroup(
+  taskUuid: ID!
+  group: String): AgentTask
+  """
+  Replace a task's tags (task RD2-29). BOARD_WRITE.
+  """
+  agentTaskSetTags(
+  taskUuid: ID!
+  tags: [TagRecordInput!]!): AgentTask
   """
   Complete a task. Refused while a finding that blocks completion is open -- accept or dismiss it
   first -- and while a required role has not passed. A required role whose rejection you have
@@ -1181,6 +1231,12 @@ type AgentBoard {
   """
   taskPrefixHistory: [String]
   """
+  The board's task groups (task-groups-and-tags.md §2, task RD2-29), in display order: each with its
+  progress over its tasks and what they spent. A task belongs to one group or none; a group that
+  depends on another holds its tasks back from offers until that group has nothing open.
+  """
+  groups: [TaskGroup]
+  """
   The perspectives the board hangs off (board-permissions.md §3): real perspectives or PRODUCT
   components used as perspectives. A PERSPECTIVE grant on any of them covers the board.
   """
@@ -1595,6 +1651,18 @@ type AgentTask {
   The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
   """
   effectiveLevel: Int
+  """
+  The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+  """
+  group: TaskGroupRef
+  """
+  Free labels (D8): the key is the label; the value is stored, not shown in v1.
+  """
+  tags: [TagRecord]
+  """
+  The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+  """
+  waitingOnGroups: [String]
   """
   Who last set or cleared the level after registration, and when (RD2-1).
   """
@@ -2999,6 +3067,14 @@ input AgentTaskRegisterInput {
   producesComponent: ID
   level: Int
   requiredInputs: [AgentRequiredInputInput]
+  """
+  A group of the board by key (task RD2-29); refused when unknown or CLOSED. The orderIndex defaults after the group's last task.
+  """
+  group: String
+  """
+  Free labels; each key lower-cased, at most 20.
+  """
+  tags: [TagRecordInput]
 }
 
 input AgentRequiredInputInput {
@@ -3022,6 +3098,59 @@ enum AgentBoardEventKind {
   INFO
 }
 
+"""
+A batch of a board's tasks (task-groups-and-tags.md §2.1, task RD2-29).
+"""
+type TaskGroup {
+  uuid: ID
+  """
+  The handle people type: lower case, 2 to 24 characters, unique on the board; fixed once a task names it.
+  """
+  key: String
+  name: String
+  description: String
+  """
+  Display order among the board's groups; a task registered into the group is ordered after its last.
+  """
+  order: Int
+  """
+  The keys of the groups this one waits on.
+  """
+  dependsOn: [String]
+  """
+  The level its tasks read when they set none (task, then group, then board).
+  """
+  defaultLevel: Int
+  status: AgentTaskGroupStatus
+  createdAt: DateTime
+  progress: TaskGroupProgress
+  """
+  What the group's tasks spent: their usage rows plus their coordinator shares, in USD micros.
+  """
+  spentMicros: Long
+}
+
+"""
+A group to create or edit, by key (task RD2-29). Omitted fields are left as they are on an edit;
+defaultLevel sent as null clears it. uuid names the group when its key is changing, which is refused
+once a task names the group. status CLOSED is the close, OPEN the reopen.
+"""
+input TaskGroupInput {
+  uuid: ID
+  key: String!
+  name: String
+  description: String
+  order: Int
+  dependsOn: [String]
+  defaultLevel: Int
+  status: AgentTaskGroupStatus
+}
+
+input TagRecordInput {
+  key: String
+  value: String
+}
+
 input AgentTaskSplitChildInput {
   externalRef: String
   """
@@ -3042,6 +3171,14 @@ input AgentTaskSplitChildInput {
   Omitted children inherit the parent task's level.
   """
   level: Int
+  """
+  A group by key; omitted children inherit the parent's group (D9).
+  """
+  group: String
+  """
+  Omitted children inherit the parent's tags (D9).
+  """
+  tags: [TagRecordInput]
 }
 
 enum AgentSignOffOutcome {
@@ -3193,6 +3330,14 @@ input AgentTaskUserRegisterInput {
   producesComponent: ID
   level: Int
   requiredInputs: [AgentRequiredInputInput]
+  """
+  A group of the board by key (task RD2-29); refused when unknown or CLOSED.
+  """
+  group: String
+  """
+  Free labels; each key lower-cased, at most 20.
+  """
+  tags: [TagRecordInput]
 }
 
 """
@@ -3888,11 +4033,6 @@ enum SbomProbingStatus {
   ENRICHING
   DONE
   FAILED
-}
-
-input TagRecordInput {
-  key: String
-  value: String
 }
 
 input ConditionGroupOnGetLatestReleaseInput {
@@ -4635,6 +4775,15 @@ type AgentTaskStatusChange {
   What the actor said: a completion's or cancellation's note. Null on changes recorded before notes were kept.
   """
   note: String
+}
+
+"""
+The group a task belongs to.
+"""
+type TaskGroupRef {
+  uuid: ID
+  key: String
+  name: String
 }
 
 type AgentRequiredInput {
@@ -6034,6 +6183,24 @@ Which release a RELEASE requirement is about: any release of the component, or o
 enum AgentInputScope {
   COMPONENT
   TASK
+}
+
+"""
+Whether a group takes new tasks (task-groups-and-tags.md D6); done is derived, never set.
+"""
+enum AgentTaskGroupStatus {
+  OPEN
+  CLOSED
+}
+
+"""
+A group's tasks by state. complete is every task COMPLETED or CANCELLED, and at least one task.
+"""
+type TaskGroupProgress {
+  total: Int
+  done: Int
+  open: Int
+  complete: Boolean
 }
 
 """
