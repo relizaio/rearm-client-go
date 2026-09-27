@@ -3210,6 +3210,8 @@ type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnaps
 	EffectiveLevel *int `json:"effectiveLevel"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Hold state while ON_HOLD; null otherwise.
+	Hold *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskHold `json:"hold"`
 }
 
 // GetKey returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Key, and is useful for accessing the field via an interface.
@@ -3270,6 +3272,27 @@ func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardS
 // GetOrderIndex returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetHold returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Hold, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetHold() *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskHold {
+	return v.Hold
+}
+
+// AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
+type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskHold struct {
+	Level *AgentTaskHoldLevel `json:"level"`
+	Kind  *AgentTaskHoldKind  `json:"kind"`
+}
+
+// GetLevel returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskHold.Level, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskHold) GetLevel() *AgentTaskHoldLevel {
+	return v.Level
+}
+
+// GetKind returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskHold.Kind, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskHold) GetKind() *AgentTaskHoldKind {
+	return v.Kind
 }
 
 // AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -37577,6 +37600,71 @@ func (v *AgentTasksProgrammaticResponse) GetAgentTasksProgrammatic() []*AgentTas
 	return v.AgentTasksProgrammatic
 }
 
+// AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key    *string          `json:"key"`
+	Uuid   *string          `json:"uuid"`
+	Status *AgentTaskStatus `json:"status"`
+	// The linked PRs (prUrls) as ReARM knows them from CI's PR registrations, resolved per read.
+	// A task completes when every one has merged; registered false means CI never reported the URL.
+	PullRequests []*AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTaskPullRequestsAgentTaskPullRequest `json:"pullRequests"`
+}
+
+// GetKey returns AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetUuid returns AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTask) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetStatus returns AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTask) GetStatus() *AgentTaskStatus {
+	return v.Status
+}
+
+// GetPullRequests returns AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTask.PullRequests, and is useful for accessing the field via an interface.
+func (v *AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTask) GetPullRequests() []*AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTaskPullRequestsAgentTaskPullRequest {
+	return v.PullRequests
+}
+
+// AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTaskPullRequestsAgentTaskPullRequest includes the requested fields of the GraphQL type AgentTaskPullRequest.
+// The GraphQL type's documentation follows.
+//
+// A task's linked PR, from the PR rows CI registers.
+type AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTaskPullRequestsAgentTaskPullRequest struct {
+	Url *string `json:"url"`
+	// OPEN, CLOSED or MERGED; null when unregistered.
+	State *string `json:"state"`
+}
+
+// GetUrl returns AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Url, and is useful for accessing the field via an interface.
+func (v *AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetUrl() *string {
+	return v.Url
+}
+
+// GetState returns AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.State, and is useful for accessing the field via an interface.
+func (v *AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetState() *string {
+	return v.State
+}
+
+// AgentWaitDeliveringProgrammaticResponse is returned by AgentWaitDeliveringProgrammatic on success.
+type AgentWaitDeliveringProgrammaticResponse struct {
+	// Agent-key auth: tasks of a board, optionally by status. With changedSince, only the tasks that
+	// changed at or after it (updatedAt), oldest change first: take the last one's updatedAt as the next
+	// changedSince. The board's events carry what needs a person; this is how a follower sees every
+	// other movement -- forward hand-overs, authorizes and assignments post no event (task 9540d3b6).
+	AgentTasksProgrammatic []*AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTask `json:"agentTasksProgrammatic"`
+}
+
+// GetAgentTasksProgrammatic returns AgentWaitDeliveringProgrammaticResponse.AgentTasksProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentWaitDeliveringProgrammaticResponse) GetAgentTasksProgrammatic() []*AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTask {
+	return v.AgentTasksProgrammatic
+}
+
 // AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease includes the requested fields of the GraphQL type Release.
 type AgenticReleaseProgrammaticAgenticReleaseProgrammaticRelease struct {
 	Uuid                   *string                                                                                           `json:"uuid"`
@@ -49111,6 +49199,14 @@ func (v *__AgentTasksProgrammaticInput) GetStatus() *AgentTaskStatus { return v.
 // GetChangedSince returns __AgentTasksProgrammaticInput.ChangedSince, and is useful for accessing the field via an interface.
 func (v *__AgentTasksProgrammaticInput) GetChangedSince() *string { return v.ChangedSince }
 
+// __AgentWaitDeliveringProgrammaticInput is used internally by genqlient
+type __AgentWaitDeliveringProgrammaticInput struct {
+	BoardUuid string `json:"boardUuid"`
+}
+
+// GetBoardUuid returns __AgentWaitDeliveringProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentWaitDeliveringProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
+
 // __AgenticReleaseProgrammaticInput is used internally by genqlient
 type __AgenticReleaseProgrammaticInput struct {
 	ReleaseUuid     string  `json:"releaseUuid"`
@@ -50381,6 +50477,10 @@ query AgentBoardSnapshotProgrammatic ($boardUuid: ID!) {
 				level
 				effectiveLevel
 				orderIndex
+				hold {
+					level
+					kind
+				}
 			}
 			holder {
 				... ActorFields
@@ -56725,6 +56825,49 @@ func AgentTasksProgrammatic(
 	}
 
 	data_ = &AgentTasksProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentWaitDeliveringProgrammatic.
+const AgentWaitDeliveringProgrammatic_Operation = `
+query AgentWaitDeliveringProgrammatic ($boardUuid: ID!) {
+	agentTasksProgrammatic(boardUuid: $boardUuid, status: DELIVERING) {
+		key
+		uuid
+		status
+		pullRequests {
+			url
+			state
+		}
+	}
+}
+`
+
+// The board's DELIVERING tasks and their PRs' states, for 'rearm agent wait --coordinator' (task
+// RD2-32): a task waits on the coordinator when the board's merge is its and a PR is not merged.
+// Light on purpose: the loop reads it once per poll only while the snapshot shows a DELIVERING task.
+func AgentWaitDeliveringProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+) (data_ *AgentWaitDeliveringProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentWaitDeliveringProgrammatic",
+		Query:  AgentWaitDeliveringProgrammatic_Operation,
+		Variables: &__AgentWaitDeliveringProgrammaticInput{
+			BoardUuid: boardUuid,
+		},
+	}
+
+	data_ = &AgentWaitDeliveringProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
