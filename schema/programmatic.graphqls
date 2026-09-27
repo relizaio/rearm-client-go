@@ -133,6 +133,13 @@ roles: the roles this agent can take, each a role name on the board
   agentTaskProgrammatic(
   taskUuid: ID!): AgentTask
   """
+  One task by its key, e.g. RD-42 (board-documents.md §4.3), in the calling key's organization: the
+  prefix names its board through the organization's registry, so a key from before a prefix rename
+  still resolves. Null when no task has the key.
+  """
+  agentTaskByKeyProgrammatic(
+  key: String!): AgentTask
+  """
   Agent-key auth: tasks of a board, optionally by status. With changedSince, only the tasks that
   changed at or after it (updatedAt), oldest change first: take the last one's updatedAt as the next
   changedSince. The board's events carry what needs a person; this is how a follower sees every
@@ -188,6 +195,12 @@ roles: the roles this agent can take, each a role name on the board
   after: Long
   since: DateTime
   limit: Int = 200): AgentBoardEventPage
+  """
+  A person's read: one task by its key, e.g. RD-42, in an organization, as agentTaskByKeyProgrammatic.
+  """
+  agentTaskByKey(
+  orgUuid: ID!
+  key: String!): AgentTask
   """
   A person's read: tasks of a board, optionally by status and changedSince, as agentTasksProgrammatic.
   """
@@ -658,6 +671,10 @@ type BoardSpec {
   How the board names its documents; absent means after the board (board-documents.md D2).
   """
   documents: BoardDocumentsSpec
+  """
+  The task-key prefix (board-documents.md D8).
+  """
+  taskPrefix: String
   coordinatorPrompt: String
   """
   Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
@@ -1104,6 +1121,14 @@ type AgentBoard {
   """
   documents: AgentBoardDocuments
   """
+  The prefix of new task keys (RD in RD-42), claimed in the organization and never reused (board-documents.md D8, D9).
+  """
+  taskPrefix: String
+  """
+  Every prefix the board has held, oldest first; tasks keep the key they were given.
+  """
+  taskPrefixHistory: [String]
+  """
   The component holding each of this board's document series, one per specification, as the board
   records them (board-documents.md D3). A board from before the map lists a series once it has
   published into it again.
@@ -1314,6 +1339,14 @@ type AgentTask {
   uuid: ID
   org: ID
   board: ID
+  """
+  The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+  """
+  number: Int
+  """
+  <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+  """
+  key: String
   """
   What this task may spend, in USD micros; null means only the board's limit applies.
   """
@@ -1720,6 +1753,10 @@ input BoardSpecInput {
   How the board names its documents; declared null restores the default, absent leaves it.
   """
   documents: BoardDocumentsSpecInput
+  """
+  The task-key prefix; declared null derives one from the name, absent leaves it.
+  """
+  taskPrefix: String
   coordinatorPrompt: String
   """
   Verbs the coordinator seat performs itself: PR_MERGE, CODE_PUSH. The tracker verbs are
