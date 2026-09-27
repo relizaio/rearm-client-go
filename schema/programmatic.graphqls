@@ -1394,6 +1394,10 @@ type AgentTask {
   """
   key: String
   """
+  What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+  """
+  description: String
+  """
   What this task may spend, in USD micros; null means only the board's limit applies.
   """
   budgetMicros: Long
@@ -2936,7 +2940,14 @@ input AgentTaskRoleConfigInput {
 input AgentTaskRegisterInput {
   boardUuid: ID!
   externalRef: String
+  """
+  One line of at most 120 characters: what a card shows. The rest goes in description.
+  """
   title: String!
+  """
+  What the task is, beyond its title: free text of at most 4000 characters, kept whole.
+  """
+  description: String
   sourceUrl: String
   """
   Registering agent's session (intake provenance).
@@ -2971,7 +2982,14 @@ enum AgentBoardEventKind {
 
 input AgentTaskSplitChildInput {
   externalRef: String
+  """
+  One line of at most 120 characters, as a registered task's.
+  """
   title: String!
+  """
+  The child's description, as a registered task's.
+  """
+  description: String
   sourceUrl: String
   """
   Sibling-index dependencies (0-based within this split), encoding the architect's proposed ordering.
@@ -3119,7 +3137,14 @@ input FindingAnswerInput {
 A person's registration of a task. externalRef is required on a board with sources.
 """
 input AgentTaskUserRegisterInput {
+  """
+  One line of at most 120 characters: what a card shows. The rest goes in description.
+  """
   title: String!
+  """
+  What the task is, beyond its title: free text of at most 4000 characters, kept whole.
+  """
+  description: String
   externalRef: String
   sourceUrl: String
   parentTask: ID
