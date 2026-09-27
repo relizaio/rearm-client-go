@@ -163,6 +163,7 @@ query ExportBoard($board: String!) {
     delivery { mode attest merge { by method atTestedHead requireAttestation order } }
     documents { prefix }
     perspectives
+    taskPrefix
     coordinatorPrompt
     coordinatorCapabilities
     settings {

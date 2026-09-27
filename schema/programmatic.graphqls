@@ -19,6 +19,13 @@ type Query {
   exportBoardProgrammatic(
   board: String!): BoardSpec
   """
+  One board's perspectives as the server holds them, by name or uuid (CONFIGURATION_READ, as its
+  export): uuid, name and product, in the board's order. The export writes a name several
+  perspectives share as the uuid; a client keeping a configured form maps it through these.
+  """
+  exportBoardPerspectivesProgrammatic(
+  board: String!): [BoardPerspectiveRef!]
+  """
   Export the key's organization's role presets as a presets file (CONFIGURATION_READ).
   """
   agentRolePresetsSpecProgrammatic: RolePresetsSpec
@@ -133,6 +140,13 @@ roles: the roles this agent can take, each a role name on the board
   agentTaskProgrammatic(
   taskUuid: ID!): AgentTask
   """
+  One task by its key, e.g. RD-42 (board-documents.md §4.3), in the calling key's organization: the
+  prefix names its board through the organization's registry, so a key from before a prefix rename
+  still resolves. Null when no task has the key.
+  """
+  agentTaskByKeyProgrammatic(
+  key: String!): AgentTask
+  """
   Agent-key auth: tasks of a board, optionally by status. With changedSince, only the tasks that
   changed at or after it (updatedAt), oldest change first: take the last one's updatedAt as the next
   changedSince. The board's events carry what needs a person; this is how a follower sees every
@@ -188,6 +202,12 @@ roles: the roles this agent can take, each a role name on the board
   after: Long
   since: DateTime
   limit: Int = 200): AgentBoardEventPage
+  """
+  A person's read: one task by its key, e.g. RD-42, in an organization, as agentTaskByKeyProgrammatic.
+  """
+  agentTaskByKey(
+  orgUuid: ID!
+  key: String!): AgentTask
   """
   A person's read: tasks of a board, optionally by status and changedSince, as agentTasksProgrammatic.
   """
@@ -659,9 +679,14 @@ type BoardSpec {
   """
   documents: BoardDocumentsSpec
   """
-  Perspectives by name, product: marking a PRODUCT component (board-permissions.md §3).
+  Perspectives, product: marking a PRODUCT component (board-permissions.md §3): by name when exactly
+  one of the organization carries it, else by uuid.
   """
   perspectives: [String]
+  """
+  The task-key prefix (board-documents.md D8).
+  """
+  taskPrefix: String
   coordinatorPrompt: String
   """
   Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
@@ -672,6 +697,18 @@ type BoardSpec {
   """
   settings: BoardSettingsSpec
   roles: [BoardRoleSpec]
+}
+
+"""
+A perspective a board holds: a real perspective, or a PRODUCT component when product is true.
+"""
+type BoardPerspectiveRef {
+  uuid: ID!
+  name: String!
+  """
+  A PRODUCT component used as a perspective; a board file writes it with the product: marker.
+  """
+  product: Boolean!
 }
 
 """
@@ -1108,12 +1145,21 @@ type AgentBoard {
   """
   documents: AgentBoardDocuments
   """
+  The prefix of new task keys (RD in RD-42), claimed in the organization and never reused (board-documents.md D8, D9).
+  """
+  taskPrefix: String
+  """
+  Every prefix the board has held, oldest first; tasks keep the key they were given.
+  """
+  taskPrefixHistory: [String]
+  """
   The perspectives the board hangs off (board-permissions.md §3): real perspectives or PRODUCT
   components used as perspectives. A PERSPECTIVE grant on any of them covers the board.
   """
   perspectives: [ID]
   """
-  perspectives as a board file writes them: names, product: marking a PRODUCT component.
+  perspectives by name, one for one with perspectives, product: marking a PRODUCT component. Always
+  the name, even one several perspectives share; the board file's export writes those by uuid.
   """
   perspectiveNames: [String]
   """
@@ -1327,6 +1373,14 @@ type AgentTask {
   uuid: ID
   org: ID
   board: ID
+  """
+  The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+  """
+  number: Int
+  """
+  <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+  """
+  key: String
   """
   What this task may spend, in USD micros; null means only the board's limit applies.
   """
@@ -1734,11 +1788,16 @@ input BoardSpecInput {
   """
   documents: BoardDocumentsSpecInput
   """
-  Perspectives by name or uuid, product: marking a PRODUCT component. The target must be a member of
-  each; adding or removing one needs BOARD_WRITE and CONFIGURATION_WRITE covering it. Declared null
-  clears, absent leaves them.
+  Perspectives by name or uuid, product: marking a PRODUCT component. A name several carry resolves
+  to the one already in the board's set, else it is refused; name it by uuid. The target must be a
+  member of each; adding or removing one needs BOARD_WRITE and CONFIGURATION_WRITE covering it.
+  Declared null clears, absent leaves them.
   """
   perspectives: [String]
+  """
+  The task-key prefix; declared null derives one from the name, absent leaves it.
+  """
+  taskPrefix: String
   coordinatorPrompt: String
   """
   Verbs the coordinator seat performs itself: PR_MERGE, CODE_PUSH. The tracker verbs are

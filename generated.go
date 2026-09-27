@@ -2024,8 +2024,13 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	// The perspectives the board hangs off (board-permissions.md §3): real perspectives or PRODUCT
 	// components used as perspectives. A PERSPECTIVE grant on any of them covers the board.
 	Perspectives []*string `json:"perspectives"`
-	// perspectives as a board file writes them: names, product: marking a PRODUCT component.
+	// perspectives by name, one for one with perspectives, product: marking a PRODUCT component. Always
+	// the name, even one several perspectives share; the board file's export writes those by uuid.
 	PerspectiveNames []*string `json:"perspectiveNames"`
+	// The prefix of new task keys (RD in RD-42), claimed in the organization and never reused (board-documents.md D8, D9).
+	TaskPrefix *string `json:"taskPrefix"`
+	// Every prefix the board has held, oldest first; tasks keep the key they were given.
+	TaskPrefixHistory []*string `json:"taskPrefixHistory"`
 	// The element check policy as this board declared it; null when it uses the defaults (elements.md §7).
 	CheckPolicy *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy `json:"checkPolicy"`
 	// The policy in force: the declared one, or the defaults (report only, test and requirement orphans).
@@ -2147,6 +2152,16 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetPerspectives
 // GetPerspectiveNames returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.PerspectiveNames, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetPerspectiveNames() []*string {
 	return v.PerspectiveNames
+}
+
+// GetTaskPrefix returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.TaskPrefix, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetTaskPrefix() *string {
+	return v.TaskPrefix
+}
+
+// GetTaskPrefixHistory returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.TaskPrefixHistory, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetTaskPrefixHistory() []*string {
+	return v.TaskPrefixHistory
 }
 
 // GetCheckPolicy returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CheckPolicy, and is useful for accessing the field via an interface.
@@ -3114,6 +3129,10 @@ func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardS
 
 // AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	ExternalRef *string          `json:"externalRef"`
 	Title       *string          `json:"title"`
@@ -3126,6 +3145,16 @@ type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnaps
 	Level *int `json:"level"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+}
+
+// GetKey returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -3449,8 +3478,13 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	// The perspectives the board hangs off (board-permissions.md §3): real perspectives or PRODUCT
 	// components used as perspectives. A PERSPECTIVE grant on any of them covers the board.
 	Perspectives []*string `json:"perspectives"`
-	// perspectives as a board file writes them: names, product: marking a PRODUCT component.
+	// perspectives by name, one for one with perspectives, product: marking a PRODUCT component. Always
+	// the name, even one several perspectives share; the board file's export writes those by uuid.
 	PerspectiveNames []*string `json:"perspectiveNames"`
+	// The prefix of new task keys (RD in RD-42), claimed in the organization and never reused (board-documents.md D8, D9).
+	TaskPrefix *string `json:"taskPrefix"`
+	// Every prefix the board has held, oldest first; tasks keep the key they were given.
+	TaskPrefixHistory []*string `json:"taskPrefixHistory"`
 	// The element check policy as this board declared it; null when it uses the defaults (elements.md §7).
 	CheckPolicy *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy `json:"checkPolicy"`
 	// The policy in force: the declared one, or the defaults (report only, test and requirement orphans).
@@ -3572,6 +3606,16 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetPerspectiv
 // GetPerspectiveNames returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.PerspectiveNames, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetPerspectiveNames() []*string {
 	return v.PerspectiveNames
+}
+
+// GetTaskPrefix returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.TaskPrefix, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetTaskPrefix() *string {
+	return v.TaskPrefix
+}
+
+// GetTaskPrefixHistory returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.TaskPrefixHistory, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetTaskPrefixHistory() []*string {
+	return v.TaskPrefixHistory
 }
 
 // GetCheckPolicy returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CheckPolicy, and is useful for accessing the field via an interface.
@@ -5224,6 +5268,12 @@ type AgentTaskAnswerAgentTaskAnswerAgentTask struct {
 	PersonTaskFields `json:"-"`
 }
 
+// GetKey returns AgentTaskAnswerAgentTaskAnswerAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetKey() *string { return v.PersonTaskFields.Key }
+
+// GetNumber returns AgentTaskAnswerAgentTaskAnswerAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetNumber() *int { return v.PersonTaskFields.Number }
+
 // GetUuid returns AgentTaskAnswerAgentTaskAnswerAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetUuid() *string { return v.PersonTaskFields.Uuid }
 
@@ -5337,6 +5387,10 @@ func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) UnmarshalJSON(b []byte) error 
 }
 
 type __premarshalAgentTaskAnswerAgentTaskAnswerAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -5387,6 +5441,8 @@ func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) MarshalJSON() ([]byte, error) 
 func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) __premarshalJSON() (*__premarshalAgentTaskAnswerAgentTaskAnswerAgentTask, error) {
 	var retval __premarshalAgentTaskAnswerAgentTaskAnswerAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -5465,6 +5521,10 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -5502,6 +5562,16 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -6436,6 +6506,16 @@ type AgentTaskAuthorizeAgentTaskAuthorizeAgentTask struct {
 	PersonTaskFields `json:"-"`
 }
 
+// GetKey returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetKey() *string {
+	return v.PersonTaskFields.Key
+}
+
+// GetNumber returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
+}
+
 // GetUuid returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetUuid() *string {
 	return v.PersonTaskFields.Uuid
@@ -6557,6 +6637,10 @@ func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) UnmarshalJSON(b []byte) 
 }
 
 type __premarshalAgentTaskAuthorizeAgentTaskAuthorizeAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -6607,6 +6691,8 @@ func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) MarshalJSON() ([]byte, e
 func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) __premarshalJSON() (*__premarshalAgentTaskAuthorizeAgentTaskAuthorizeAgentTask, error) {
 	var retval __premarshalAgentTaskAuthorizeAgentTaskAuthorizeAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -6631,6 +6717,10 @@ func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) __premarshalJSON() (*__p
 
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -6675,6 +6765,16 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -7719,6 +7819,10 @@ func (v *AgentTaskAuthorizeResponse) GetAgentTaskAuthorize() *AgentTaskAuthorize
 
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -7756,6 +7860,16 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -8683,10 +8797,80 @@ func (v *AgentTaskBindExternalRefProgrammaticResponse) GetAgentTaskBindExternalR
 	return v.AgentTaskBindExternalRefProgrammatic
 }
 
+// AgentTaskByKeyAgentTaskByKeyAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskByKeyAgentTaskByKeyAgentTask struct {
+	Uuid *string `json:"uuid"`
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key   *string `json:"key"`
+	Board *string `json:"board"`
+}
+
+// GetUuid returns AgentTaskByKeyAgentTaskByKeyAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskByKeyAgentTaskByKeyAgentTask) GetUuid() *string { return v.Uuid }
+
+// GetKey returns AgentTaskByKeyAgentTaskByKeyAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskByKeyAgentTaskByKeyAgentTask) GetKey() *string { return v.Key }
+
+// GetBoard returns AgentTaskByKeyAgentTaskByKeyAgentTask.Board, and is useful for accessing the field via an interface.
+func (v *AgentTaskByKeyAgentTaskByKeyAgentTask) GetBoard() *string { return v.Board }
+
+// AgentTaskByKeyProgrammaticAgentTaskByKeyProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskByKeyProgrammaticAgentTaskByKeyProgrammaticAgentTask struct {
+	Uuid *string `json:"uuid"`
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key   *string `json:"key"`
+	Board *string `json:"board"`
+}
+
+// GetUuid returns AgentTaskByKeyProgrammaticAgentTaskByKeyProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskByKeyProgrammaticAgentTaskByKeyProgrammaticAgentTask) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskByKeyProgrammaticAgentTaskByKeyProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskByKeyProgrammaticAgentTaskByKeyProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetBoard returns AgentTaskByKeyProgrammaticAgentTaskByKeyProgrammaticAgentTask.Board, and is useful for accessing the field via an interface.
+func (v *AgentTaskByKeyProgrammaticAgentTaskByKeyProgrammaticAgentTask) GetBoard() *string {
+	return v.Board
+}
+
+// AgentTaskByKeyProgrammaticResponse is returned by AgentTaskByKeyProgrammatic on success.
+type AgentTaskByKeyProgrammaticResponse struct {
+	// One task by its key, e.g. RD-42 (board-documents.md §4.3), in the calling key's organization: the
+	// prefix names its board through the organization's registry, so a key from before a prefix rename
+	// still resolves. Null when no task has the key.
+	AgentTaskByKeyProgrammatic *AgentTaskByKeyProgrammaticAgentTaskByKeyProgrammaticAgentTask `json:"agentTaskByKeyProgrammatic"`
+}
+
+// GetAgentTaskByKeyProgrammatic returns AgentTaskByKeyProgrammaticResponse.AgentTaskByKeyProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentTaskByKeyProgrammaticResponse) GetAgentTaskByKeyProgrammatic() *AgentTaskByKeyProgrammaticAgentTaskByKeyProgrammaticAgentTask {
+	return v.AgentTaskByKeyProgrammatic
+}
+
+// AgentTaskByKeyResponse is returned by AgentTaskByKey on success.
+type AgentTaskByKeyResponse struct {
+	// A person's read: one task by its key, e.g. RD-42, in an organization, as agentTaskByKeyProgrammatic.
+	AgentTaskByKey *AgentTaskByKeyAgentTaskByKeyAgentTask `json:"agentTaskByKey"`
+}
+
+// GetAgentTaskByKey returns AgentTaskByKeyResponse.AgentTaskByKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskByKeyResponse) GetAgentTaskByKey() *AgentTaskByKeyAgentTaskByKeyAgentTask {
+	return v.AgentTaskByKey
+}
+
 // AgentTaskCancelAgentTaskCancelAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskCancelAgentTaskCancelAgentTask struct {
 	PersonTaskFields `json:"-"`
 }
+
+// GetKey returns AgentTaskCancelAgentTaskCancelAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetKey() *string { return v.PersonTaskFields.Key }
+
+// GetNumber returns AgentTaskCancelAgentTaskCancelAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetNumber() *int { return v.PersonTaskFields.Number }
 
 // GetUuid returns AgentTaskCancelAgentTaskCancelAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetUuid() *string { return v.PersonTaskFields.Uuid }
@@ -8801,6 +8985,10 @@ func (v *AgentTaskCancelAgentTaskCancelAgentTask) UnmarshalJSON(b []byte) error 
 }
 
 type __premarshalAgentTaskCancelAgentTaskCancelAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -8851,6 +9039,8 @@ func (v *AgentTaskCancelAgentTaskCancelAgentTask) MarshalJSON() ([]byte, error) 
 func (v *AgentTaskCancelAgentTaskCancelAgentTask) __premarshalJSON() (*__premarshalAgentTaskCancelAgentTaskCancelAgentTask, error) {
 	var retval __premarshalAgentTaskCancelAgentTaskCancelAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -8875,6 +9065,10 @@ func (v *AgentTaskCancelAgentTaskCancelAgentTask) __premarshalJSON() (*__premars
 
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -8912,6 +9106,16 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask struct {
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -9961,6 +10165,14 @@ type AgentTaskCompleteAgentTaskCompleteAgentTask struct {
 	PersonTaskFields `json:"-"`
 }
 
+// GetKey returns AgentTaskCompleteAgentTaskCompleteAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetKey() *string { return v.PersonTaskFields.Key }
+
+// GetNumber returns AgentTaskCompleteAgentTaskCompleteAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
+}
+
 // GetUuid returns AgentTaskCompleteAgentTaskCompleteAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetUuid() *string {
 	return v.PersonTaskFields.Uuid
@@ -10082,6 +10294,10 @@ func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) UnmarshalJSON(b []byte) er
 }
 
 type __premarshalAgentTaskCompleteAgentTaskCompleteAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -10132,6 +10348,8 @@ func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) MarshalJSON() ([]byte, err
 func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) __premarshalJSON() (*__premarshalAgentTaskCompleteAgentTaskCompleteAgentTask, error) {
 	var retval __premarshalAgentTaskCompleteAgentTaskCompleteAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -10156,6 +10374,10 @@ func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) __premarshalJSON() (*__pre
 
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -10196,6 +10418,16 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask struct 
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -11193,6 +11425,16 @@ type AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask struct {
 	PersonTaskFields `json:"-"`
 }
 
+// GetKey returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetKey() *string {
+	return v.PersonTaskFields.Key
+}
+
+// GetNumber returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
+}
+
 // GetUuid returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetUuid() *string {
 	return v.PersonTaskFields.Uuid
@@ -11314,6 +11556,10 @@ func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) UnmarshalJSON(
 }
 
 type __premarshalAgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -11364,6 +11610,8 @@ func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) MarshalJSON() 
 func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) __premarshalJSON() (*__premarshalAgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask, error) {
 	var retval __premarshalAgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -11402,6 +11650,16 @@ func (v *AgentTaskDecideFindingsResponse) GetAgentTaskDecideFindings() *AgentTas
 // AgentTaskDeliveredAgentTaskDeliveredAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskDeliveredAgentTaskDeliveredAgentTask struct {
 	PersonTaskFields `json:"-"`
+}
+
+// GetKey returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetKey() *string {
+	return v.PersonTaskFields.Key
+}
+
+// GetNumber returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
 }
 
 // GetUuid returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -11525,6 +11783,10 @@ func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) UnmarshalJSON(b []byte) 
 }
 
 type __premarshalAgentTaskDeliveredAgentTaskDeliveredAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -11575,6 +11837,8 @@ func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) MarshalJSON() ([]byte, e
 func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) __premarshalJSON() (*__premarshalAgentTaskDeliveredAgentTaskDeliveredAgentTask, error) {
 	var retval __premarshalAgentTaskDeliveredAgentTaskDeliveredAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -11599,6 +11863,10 @@ func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) __premarshalJSON() (*__p
 
 // AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -11636,6 +11904,16 @@ type AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask struc
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -12795,6 +13073,10 @@ func (v *AgentTaskElementProgrammaticResponse) GetAgentTaskProgrammatic() *Agent
 
 // AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -12832,6 +13114,16 @@ type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -13795,6 +14087,10 @@ var AllAgentTaskHoldLevel = []AgentTaskHoldLevel{
 
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -13832,6 +14128,14 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask struct {
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetKey() *string { return v.Key }
+
+// GetNumber returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -14777,6 +15081,16 @@ type AgentTaskHumanReviewAgentTaskHumanReviewAgentTask struct {
 	PersonTaskFields `json:"-"`
 }
 
+// GetKey returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetKey() *string {
+	return v.PersonTaskFields.Key
+}
+
+// GetNumber returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
+}
+
 // GetUuid returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetUuid() *string {
 	return v.PersonTaskFields.Uuid
@@ -14898,6 +15212,10 @@ func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) UnmarshalJSON(b []by
 }
 
 type __premarshalAgentTaskHumanReviewAgentTaskHumanReviewAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -14948,6 +15266,8 @@ func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) MarshalJSON() ([]byt
 func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) __premarshalJSON() (*__premarshalAgentTaskHumanReviewAgentTaskHumanReviewAgentTask, error) {
 	var retval __premarshalAgentTaskHumanReviewAgentTaskHumanReviewAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -14989,6 +15309,16 @@ func (v *AgentTaskHumanReviewResponse) GetAgentTaskHumanReview() *AgentTaskHuman
 // AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask struct {
 	PersonTaskFields `json:"-"`
+}
+
+// GetKey returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetKey() *string {
+	return v.PersonTaskFields.Key
+}
+
+// GetNumber returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
 }
 
 // GetUuid returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -15112,6 +15442,10 @@ func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) UnmarshalJSON(b []
 }
 
 type __premarshalAgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -15162,6 +15496,8 @@ func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) MarshalJSON() ([]b
 func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) __premarshalJSON() (*__premarshalAgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask, error) {
 	var retval __premarshalAgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -15197,6 +15533,10 @@ func (v *AgentTaskHumanSignOffResponse) GetAgentTaskHumanSignOff() *AgentTaskHum
 
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -15237,6 +15577,16 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask struct {
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -16257,6 +16607,10 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment) 
 
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -16294,6 +16648,16 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -17237,6 +17601,16 @@ type AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask struct {
 	PersonTaskFields `json:"-"`
 }
 
+// GetKey returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetKey() *string {
+	return v.PersonTaskFields.Key
+}
+
+// GetNumber returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
+}
+
 // GetUuid returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetUuid() *string {
 	return v.PersonTaskFields.Uuid
@@ -17358,6 +17732,10 @@ func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) UnmarshalJSON(b []
 }
 
 type __premarshalAgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -17408,6 +17786,8 @@ func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) MarshalJSON() ([]b
 func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) __premarshalJSON() (*__premarshalAgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask, error) {
 	var retval __premarshalAgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -17447,6 +17827,12 @@ func (v *AgentTaskOperatorHoldResponse) GetAgentTaskOperatorHold() *AgentTaskOpe
 type AgentTaskOrderAgentTaskOrderAgentTask struct {
 	PersonTaskFields `json:"-"`
 }
+
+// GetKey returns AgentTaskOrderAgentTaskOrderAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetKey() *string { return v.PersonTaskFields.Key }
+
+// GetNumber returns AgentTaskOrderAgentTaskOrderAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetNumber() *int { return v.PersonTaskFields.Number }
 
 // GetUuid returns AgentTaskOrderAgentTaskOrderAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetUuid() *string { return v.PersonTaskFields.Uuid }
@@ -17561,6 +17947,10 @@ func (v *AgentTaskOrderAgentTaskOrderAgentTask) UnmarshalJSON(b []byte) error {
 }
 
 type __premarshalAgentTaskOrderAgentTaskOrderAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -17611,6 +18001,8 @@ func (v *AgentTaskOrderAgentTaskOrderAgentTask) MarshalJSON() ([]byte, error) {
 func (v *AgentTaskOrderAgentTaskOrderAgentTask) __premarshalJSON() (*__premarshalAgentTaskOrderAgentTaskOrderAgentTask, error) {
 	var retval __premarshalAgentTaskOrderAgentTaskOrderAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -17635,6 +18027,10 @@ func (v *AgentTaskOrderAgentTaskOrderAgentTask) __premarshalJSON() (*__premarsha
 
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -17672,6 +18068,16 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask struct {
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -18612,6 +19018,10 @@ func (v *AgentTaskOrderResponse) GetAgentTaskOrder() *AgentTaskOrderAgentTaskOrd
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -18692,6 +19102,12 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	// which round it came from.
 	OpenQuestions []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsFinding `json:"openQuestions"`
 }
+
+// GetKey returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetKey() *string { return v.Key }
+
+// GetNumber returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetNumber() *int { return v.Number }
 
 // GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetUuid() *string { return v.Uuid }
@@ -20645,6 +21061,14 @@ type AgentTaskRegisterAgentTaskRegisterAgentTask struct {
 	PersonTaskFields `json:"-"`
 }
 
+// GetKey returns AgentTaskRegisterAgentTaskRegisterAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetKey() *string { return v.PersonTaskFields.Key }
+
+// GetNumber returns AgentTaskRegisterAgentTaskRegisterAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
+}
+
 // GetUuid returns AgentTaskRegisterAgentTaskRegisterAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetUuid() *string {
 	return v.PersonTaskFields.Uuid
@@ -20766,6 +21190,10 @@ func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) UnmarshalJSON(b []byte) er
 }
 
 type __premarshalAgentTaskRegisterAgentTaskRegisterAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -20816,6 +21244,8 @@ func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) MarshalJSON() ([]byte, err
 func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) __premarshalJSON() (*__premarshalAgentTaskRegisterAgentTaskRegisterAgentTask, error) {
 	var retval __premarshalAgentTaskRegisterAgentTaskRegisterAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -20882,6 +21312,10 @@ func (v *AgentTaskRegisterInput) GetRequiredInputs() []*AgentRequiredInputInput 
 
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -20919,6 +21353,16 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask struct 
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -21861,6 +22305,10 @@ func (v *AgentTaskRegisterResponse) GetAgentTaskRegister() *AgentTaskRegisterAge
 
 // AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -21898,6 +22346,16 @@ type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask s
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -22832,6 +23290,10 @@ func (v *AgentTaskReleaseHoldProgrammaticResponse) GetAgentTaskReleaseHoldProgra
 
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -22878,6 +23340,16 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask struct {
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -23996,6 +24468,16 @@ type AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask struct {
 	PersonTaskFields `json:"-"`
 }
 
+// GetKey returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetKey() *string {
+	return v.PersonTaskFields.Key
+}
+
+// GetNumber returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
+}
+
 // GetUuid returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetUuid() *string {
 	return v.PersonTaskFields.Uuid
@@ -24117,6 +24599,10 @@ func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) Unmars
 }
 
 type __premarshalAgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -24167,6 +24653,8 @@ func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) Marsha
 func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) __premarshalJSON() (*__premarshalAgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask, error) {
 	var retval __premarshalAgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -24191,6 +24679,10 @@ func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) __prem
 
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -24228,6 +24720,16 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -25169,6 +25671,10 @@ func (v *AgentTaskRequireHumanReviewResponse) GetAgentTaskRequireHumanReview() *
 
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -25206,6 +25712,16 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask struct {
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -26607,6 +27123,16 @@ type AgentTaskSetBudgetAgentTaskSetBudgetAgentTask struct {
 	PersonTaskFields `json:"-"`
 }
 
+// GetKey returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetKey() *string {
+	return v.PersonTaskFields.Key
+}
+
+// GetNumber returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
+}
+
 // GetUuid returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetUuid() *string {
 	return v.PersonTaskFields.Uuid
@@ -26728,6 +27254,10 @@ func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) UnmarshalJSON(b []byte) 
 }
 
 type __premarshalAgentTaskSetBudgetAgentTaskSetBudgetAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -26778,6 +27308,8 @@ func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) MarshalJSON() ([]byte, e
 func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) __premarshalJSON() (*__premarshalAgentTaskSetBudgetAgentTaskSetBudgetAgentTask, error) {
 	var retval __premarshalAgentTaskSetBudgetAgentTaskSetBudgetAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -26814,6 +27346,16 @@ func (v *AgentTaskSetBudgetResponse) GetAgentTaskSetBudget() *AgentTaskSetBudget
 // AgentTaskSetStrengthAgentTaskSetStrengthAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskSetStrengthAgentTaskSetStrengthAgentTask struct {
 	PersonTaskFields `json:"-"`
+}
+
+// GetKey returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetKey() *string {
+	return v.PersonTaskFields.Key
+}
+
+// GetNumber returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
 }
 
 // GetUuid returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -26937,6 +27479,10 @@ func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) UnmarshalJSON(b []by
 }
 
 type __premarshalAgentTaskSetStrengthAgentTaskSetStrengthAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -26987,6 +27533,8 @@ func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) MarshalJSON() ([]byt
 func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) __premarshalJSON() (*__premarshalAgentTaskSetStrengthAgentTaskSetStrengthAgentTask, error) {
 	var retval __premarshalAgentTaskSetStrengthAgentTaskSetStrengthAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -27024,6 +27572,10 @@ func (v *AgentTaskSetStrengthResponse) GetAgentTaskSetStrength() *AgentTaskSetSt
 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -27064,6 +27616,16 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask struct {
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -28075,6 +28637,10 @@ func (v *AgentTaskSplitChildInput) GetLevel() *int { return v.Level }
 
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -28112,6 +28678,16 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask struct {
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -29102,6 +29678,10 @@ func (v *AgentTaskUserRegisterInput) GetRequiredInputs() []*AgentRequiredInputIn
 
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -29181,6 +29761,16 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
 	// from openFindings, which flattens every indexed type and carries nothing on an item saying
 	// which round it came from.
 	OpenQuestions []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsFinding `json:"openQuestions"`
+}
+
+// GetKey returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
 }
 
 // GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
@@ -31149,6 +31739,14 @@ type AgentTasksOfBoardAgentTasksOfBoardAgentTask struct {
 	PersonTaskFields `json:"-"`
 }
 
+// GetKey returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetKey() *string { return v.PersonTaskFields.Key }
+
+// GetNumber returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
+}
+
 // GetUuid returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetUuid() *string {
 	return v.PersonTaskFields.Uuid
@@ -31270,6 +31868,10 @@ func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) UnmarshalJSON(b []byte) er
 }
 
 type __premarshalAgentTasksOfBoardAgentTasksOfBoardAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
 	Uuid *string `json:"uuid"`
 
 	Board *string `json:"board"`
@@ -31320,6 +31922,8 @@ func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) MarshalJSON() ([]byte, err
 func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) __premarshalJSON() (*__premarshalAgentTasksOfBoardAgentTasksOfBoardAgentTask, error) {
 	var retval __premarshalAgentTasksOfBoardAgentTasksOfBoardAgentTask
 
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
 	retval.Uuid = v.PersonTaskFields.Uuid
 	retval.Board = v.PersonTaskFields.Board
 	retval.ExternalRef = v.PersonTaskFields.ExternalRef
@@ -31355,6 +31959,10 @@ func (v *AgentTasksOfBoardResponse) GetAgentTasksOfBoard() []*AgentTasksOfBoardA
 
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Org         *string          `json:"org"`
 	Board       *string          `json:"board"`
@@ -31402,6 +32010,12 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTask struct {
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
+
+// GetKey returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetKey() *string { return v.Key }
+
+// GetNumber returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetNumber() *int { return v.Number }
 
 // GetUuid returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetUuid() *string { return v.Uuid }
@@ -35943,9 +36557,12 @@ type ExportBoardExportBoardProgrammaticBoardSpec struct {
 	Delivery *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicy `json:"delivery"`
 	// How the board names its documents; absent means after the board (board-documents.md D2).
 	Documents *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec `json:"documents"`
-	// Perspectives by name, product: marking a PRODUCT component (board-permissions.md §3).
-	Perspectives      []*string `json:"perspectives"`
-	CoordinatorPrompt *string   `json:"coordinatorPrompt"`
+	// Perspectives, product: marking a PRODUCT component (board-permissions.md §3): by name when exactly
+	// one of the organization carries it, else by uuid.
+	Perspectives []*string `json:"perspectives"`
+	// The task-key prefix (board-documents.md D8).
+	TaskPrefix        *string `json:"taskPrefix"`
+	CoordinatorPrompt *string `json:"coordinatorPrompt"`
 	// Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
 	CoordinatorCapabilities []AgentCapability `json:"coordinatorCapabilities"`
 	// The board's budget and stops; a null value is the board default.
@@ -36025,6 +36642,9 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDocuments() *ExportBoar
 func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetPerspectives() []*string {
 	return v.Perspectives
 }
+
+// GetTaskPrefix returns ExportBoardExportBoardProgrammaticBoardSpec.TaskPrefix, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetTaskPrefix() *string { return v.TaskPrefix }
 
 // GetCoordinatorPrompt returns ExportBoardExportBoardProgrammaticBoardSpec.CoordinatorPrompt, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetCoordinatorPrompt() *string {
@@ -39408,6 +40028,10 @@ var AllPartyRole = []PartyRole{
 
 // PersonTaskFields includes the GraphQL fields of AgentTask requested by the fragment PersonTaskFields.
 type PersonTaskFields struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int             `json:"number"`
 	Uuid        *string          `json:"uuid"`
 	Board       *string          `json:"board"`
 	ExternalRef *string          `json:"externalRef"`
@@ -39443,6 +40067,12 @@ type PersonTaskFields struct {
 	CreatedDate   *string                                 `json:"createdDate"`
 	CompletedAt   *string                                 `json:"completedAt"`
 }
+
+// GetKey returns PersonTaskFields.Key, and is useful for accessing the field via an interface.
+func (v *PersonTaskFields) GetKey() *string { return v.Key }
+
+// GetNumber returns PersonTaskFields.Number, and is useful for accessing the field via an interface.
+func (v *PersonTaskFields) GetNumber() *int { return v.Number }
 
 // GetUuid returns PersonTaskFields.Uuid, and is useful for accessing the field via an interface.
 func (v *PersonTaskFields) GetUuid() *string { return v.Uuid }
@@ -43173,6 +43803,26 @@ func (v *__AgentTaskBindExternalRefProgrammaticInput) GetExternalRef() string { 
 // GetSourceUrl returns __AgentTaskBindExternalRefProgrammaticInput.SourceUrl, and is useful for accessing the field via an interface.
 func (v *__AgentTaskBindExternalRefProgrammaticInput) GetSourceUrl() *string { return v.SourceUrl }
 
+// __AgentTaskByKeyInput is used internally by genqlient
+type __AgentTaskByKeyInput struct {
+	OrgUuid string `json:"orgUuid"`
+	Key     string `json:"key"`
+}
+
+// GetOrgUuid returns __AgentTaskByKeyInput.OrgUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskByKeyInput) GetOrgUuid() string { return v.OrgUuid }
+
+// GetKey returns __AgentTaskByKeyInput.Key, and is useful for accessing the field via an interface.
+func (v *__AgentTaskByKeyInput) GetKey() string { return v.Key }
+
+// __AgentTaskByKeyProgrammaticInput is used internally by genqlient
+type __AgentTaskByKeyProgrammaticInput struct {
+	Key string `json:"key"`
+}
+
+// GetKey returns __AgentTaskByKeyProgrammaticInput.Key, and is useful for accessing the field via an interface.
+func (v *__AgentTaskByKeyProgrammaticInput) GetKey() string { return v.Key }
+
 // __AgentTaskCancelInput is used internally by genqlient
 type __AgentTaskCancelInput struct {
 	TaskUuid string  `json:"taskUuid"`
@@ -44834,6 +45484,8 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		}
 		perspectives
 		perspectiveNames
+		taskPrefix
+		taskPrefixHistory
 		checkPolicy {
 			blocking
 			mandatoryFields
@@ -44963,6 +45615,8 @@ query AgentBoardSnapshotProgrammatic ($boardUuid: ID!) {
 		}
 		tasks {
 			task {
+				key
+				number
 				uuid
 				externalRef
 				title
@@ -45122,6 +45776,8 @@ query AgentBoardsProgrammatic {
 		}
 		perspectives
 		perspectiveNames
+		taskPrefix
+		taskPrefixHistory
 		checkPolicy {
 			blocking
 			mandatoryFields
@@ -45508,6 +46164,8 @@ mutation AgentTaskAnswer ($taskUuid: ID!, $answers: [FindingAnswerInput!], $answ
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -45622,6 +46280,8 @@ const AgentTaskAssignProgrammatic_Operation = `
 mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles: [String!]) {
 	agentTaskAssignProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, roles: $roles) {
 		task {
+			key
+			number
 			uuid
 			org
 			board
@@ -45766,6 +46426,8 @@ mutation AgentTaskAuthorize ($taskUuid: ID!, $role: String!, $orderIndex: Int, $
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -45883,6 +46545,8 @@ func AgentTaskAuthorize(
 const AgentTaskAuthorizeProgrammatic_Operation = `
 mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!], $requiredStrength: Float, $budgetMicros: Long) {
 	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength, budgetMicros: $budgetMicros) {
+		key
+		number
 		uuid
 		org
 		board
@@ -46032,6 +46696,8 @@ func AgentTaskAuthorizeProgrammatic(
 const AgentTaskBindExternalRefProgrammatic_Operation = `
 mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: String!, $sourceUrl: String) {
 	agentTaskBindExternalRefProgrammatic(taskUuid: $taskUuid, externalRef: $externalRef, sourceUrl: $sourceUrl) {
+		key
+		number
 		uuid
 		org
 		board
@@ -46163,6 +46829,86 @@ func AgentTaskBindExternalRefProgrammatic(
 	return data_, err_
 }
 
+// The query executed by AgentTaskByKey.
+const AgentTaskByKey_Operation = `
+query AgentTaskByKey ($orgUuid: ID!, $key: String!) {
+	agentTaskByKey(orgUuid: $orgUuid, key: $key) {
+		uuid
+		key
+		board
+	}
+}
+`
+
+// A person's read of one task by its key in an organization (task 3d1f9dd7); the CLI's fallback when
+// the login's key carries no AGENT function.
+func AgentTaskByKey(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	orgUuid string,
+	key string,
+) (data_ *AgentTaskByKeyResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskByKey",
+		Query:  AgentTaskByKey_Operation,
+		Variables: &__AgentTaskByKeyInput{
+			OrgUuid: orgUuid,
+			Key:     key,
+		},
+	}
+
+	data_ = &AgentTaskByKeyResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentTaskByKeyProgrammatic.
+const AgentTaskByKeyProgrammatic_Operation = `
+query AgentTaskByKeyProgrammatic ($key: String!) {
+	agentTaskByKeyProgrammatic(key: $key) {
+		uuid
+		key
+		board
+	}
+}
+`
+
+// A named set of tasks in one read, in the order given (task cc14f4cb): at most 100; unknown uuids,
+// and another organization's tasks, are absent. For a board's tasks by status, AgentTasksProgrammatic.
+// One task by its key, e.g. RD-42 (task 3d1f9dd7): the CLI resolves a key argument through this
+// before a call that takes a task uuid. Null when no task has the key.
+func AgentTaskByKeyProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	key string,
+) (data_ *AgentTaskByKeyProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskByKeyProgrammatic",
+		Query:  AgentTaskByKeyProgrammatic_Operation,
+		Variables: &__AgentTaskByKeyProgrammaticInput{
+			Key: key,
+		},
+	}
+
+	data_ = &AgentTaskByKeyProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by AgentTaskCancel.
 const AgentTaskCancel_Operation = `
 mutation AgentTaskCancel ($taskUuid: ID!, $note: String) {
@@ -46171,6 +46917,8 @@ mutation AgentTaskCancel ($taskUuid: ID!, $note: String) {
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -46280,6 +47028,8 @@ func AgentTaskCancel(
 const AgentTaskCancelProgrammatic_Operation = `
 mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: String) {
 	agentTaskCancelProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, note: $note) {
+		key
+		number
 		uuid
 		org
 		board
@@ -46466,6 +47216,8 @@ mutation AgentTaskComplete ($taskUuid: ID!, $note: String, $skipRequiredRoles: B
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -46577,6 +47329,8 @@ func AgentTaskComplete(
 const AgentTaskCompleteProgrammatic_Operation = `
 mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: String) {
 	agentTaskCompleteProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, note: $note) {
+		key
+		number
 		uuid
 		org
 		board
@@ -46724,6 +47478,8 @@ mutation AgentTaskDecideFindings ($taskUuid: ID!, $specification: SpecificationT
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -46841,6 +47597,8 @@ mutation AgentTaskDelivered ($taskUuid: ID!, $unit: String!, $commit: String, $o
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -46957,6 +47715,8 @@ func AgentTaskDelivered(
 const AgentTaskDeliveredProgrammatic_Operation = `
 mutation AgentTaskDeliveredProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $unit: String!, $commit: String, $outcome: AgentDeliveryOutcome, $note: String) {
 	agentTaskDeliveredProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, unit: $unit, commit: $commit, outcome: $outcome, note: $note) {
+		key
+		number
 		uuid
 		org
 		board
@@ -47170,6 +47930,8 @@ func AgentTaskElementProgrammatic(
 const AgentTaskEscalateHoldProgrammatic_Operation = `
 mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
 	agentTaskEscalateHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
+		key
+		number
 		uuid
 		org
 		board
@@ -47305,6 +48067,8 @@ func AgentTaskEscalateHoldProgrammatic(
 const AgentTaskHoldProgrammatic_Operation = `
 mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
 	agentTaskHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
+		key
+		number
 		uuid
 		org
 		board
@@ -47444,6 +48208,8 @@ mutation AgentTaskHumanReview ($taskUuid: ID!, $approve: Boolean!, $note: String
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -47563,6 +48329,8 @@ mutation AgentTaskHumanSignOff ($taskUuid: ID!, $outcome: AgentSignOffOutcome!, 
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -47674,6 +48442,8 @@ func AgentTaskHumanSignOff(
 const AgentTaskLinkPrProgrammatic_Operation = `
 mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 	agentTaskLinkPrProgrammatic(taskUuid: $taskUuid, prUrl: $prUrl) {
+		key
+		number
 		uuid
 		org
 		board
@@ -47816,6 +48586,8 @@ const AgentTaskNextProgrammatic_Operation = `
 query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [String!]) {
 	agentTaskNextProgrammatic(sessionUuid: $sessionUuid, boardUuid: $boardUuid, roles: $roles) {
 		task {
+			key
+			number
 			uuid
 			org
 			board
@@ -47960,6 +48732,8 @@ mutation AgentTaskOperatorHold ($taskUuid: ID!, $hold: Boolean!, $reason: String
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -48077,6 +48851,8 @@ mutation AgentTaskOrder ($taskUuid: ID!, $orderIndex: Int!) {
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -48186,6 +48962,8 @@ func AgentTaskOrder(
 const AgentTaskOrderProgrammatic_Operation = `
 mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIndex: Int!) {
 	agentTaskOrderProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, orderIndex: $orderIndex) {
+		key
+		number
 		uuid
 		org
 		board
@@ -48321,6 +49099,8 @@ func AgentTaskOrderProgrammatic(
 const AgentTaskProgrammatic_Operation = `
 query AgentTaskProgrammatic ($taskUuid: ID!) {
 	agentTaskProgrammatic(taskUuid: $taskUuid) {
+		key
+		number
 		uuid
 		org
 		board
@@ -48584,6 +49364,8 @@ mutation AgentTaskRegister ($boardUuid: ID!, $input: AgentTaskUserRegisterInput!
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -48693,6 +49475,8 @@ func AgentTaskRegister(
 const AgentTaskRegisterProgrammatic_Operation = `
 mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 	agentTaskRegisterProgrammatic(input: $input) {
+		key
+		number
 		uuid
 		org
 		board
@@ -48824,6 +49608,8 @@ func AgentTaskRegisterProgrammatic(
 const AgentTaskReleaseHoldProgrammatic_Operation = `
 mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String, $note: String) {
 	agentTaskReleaseHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, note: $note) {
+		key
+		number
 		uuid
 		org
 		board
@@ -48961,6 +49747,8 @@ func AgentTaskReleaseHoldProgrammatic(
 const AgentTaskReopenProgrammatic_Operation = `
 mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $reason: String!) {
 	agentTaskReopenProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, reason: $reason) {
+		key
+		number
 		uuid
 		org
 		board
@@ -49121,6 +49909,8 @@ mutation AgentTaskRequireHumanReview ($taskUuid: ID!, $value: Boolean!) {
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -49230,6 +50020,8 @@ func AgentTaskRequireHumanReview(
 const AgentTaskRequireHumanReviewProgrammatic_Operation = `
 mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
 	agentTaskRequireHumanReviewProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid) {
+		key
+		number
 		uuid
 		org
 		board
@@ -49363,6 +50155,8 @@ func AgentTaskRequireHumanReviewProgrammatic(
 const AgentTaskReturnProgrammatic_Operation = `
 mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: AgentTaskReturnReason!, $description: String, $outputs: [ID!]) {
 	agentTaskReturnProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason, description: $description, outputs: $outputs) {
+		key
+		number
 		uuid
 		org
 		board
@@ -49625,6 +50419,8 @@ mutation AgentTaskSetBudget ($taskUuid: ID!, $budgetMicros: Long) {
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -49738,6 +50534,8 @@ mutation AgentTaskSetStrength ($taskUuid: ID!, $requiredStrength: Float) {
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -49847,6 +50645,8 @@ func AgentTaskSetStrength(
 const AgentTaskSignOffProgrammatic_Operation = `
 mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!]) {
 	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs) {
+		key
+		number
 		uuid
 		org
 		board
@@ -49994,6 +50794,8 @@ func AgentTaskSignOffProgrammatic(
 const AgentTaskSplitProgrammatic_Operation = `
 mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $children: [AgentTaskSplitChildInput!]!) {
 	agentTaskSplitProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, children: $children) {
+		key
+		number
 		uuid
 		org
 		board
@@ -50129,6 +50931,8 @@ func AgentTaskSplitProgrammatic(
 const AgentTasksByUuidProgrammatic_Operation = `
 query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 	agentTasksByUuidProgrammatic(taskUuids: $taskUuids) {
+		key
+		number
 		uuid
 		org
 		board
@@ -50359,8 +51163,6 @@ fragment HopUsageFields on HopUsage {
 }
 `
 
-// A named set of tasks in one read, in the order given (task cc14f4cb): at most 100; unknown uuids,
-// and another organization's tasks, are absent. For a board's tasks by status, AgentTasksProgrammatic.
 func AgentTasksByUuidProgrammatic(
 	ctx_ context.Context,
 	client_ graphql.Client,
@@ -50394,6 +51196,8 @@ query AgentTasksOfBoard ($boardUuid: ID!, $status: AgentTaskStatus) {
 	}
 }
 fragment PersonTaskFields on AgentTask {
+	key
+	number
 	uuid
 	board
 	externalRef
@@ -50503,6 +51307,8 @@ func AgentTasksOfBoard(
 const AgentTasksProgrammatic_Operation = `
 query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $changedSince: DateTime) {
 	agentTasksProgrammatic(boardUuid: $boardUuid, status: $status, changedSince: $changedSince) {
+		key
+		number
 		uuid
 		org
 		board
@@ -51427,6 +52233,7 @@ query ExportBoard ($board: String!) {
 			prefix
 		}
 		perspectives
+		taskPrefix
 		coordinatorPrompt
 		coordinatorCapabilities
 		settings {
