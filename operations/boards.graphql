@@ -15,7 +15,7 @@ fragment HopUsageFields on HopUsage { derivedCostMicros costComplete allowanceMi
 query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths elementFamilies effectiveElementFamilies
-	documents { prefix shared root } documentsRoot documentComponents { specification component }
+	documents { prefix shared root } documentsRoot documentComponents { specification component } adoptsLegacyDocuments
 	perspectives perspectiveNames myPermissions
 	taskPrefix taskPrefixHistory
 	checkPolicy { blocking mandatoryFields orphans coverage } effectiveCheckPolicy { blocking mandatoryFields orphans coverage }
@@ -48,7 +48,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	uuid org name description status sources
 	groups { uuid key name description order dependsOn defaultLevel status createdAt progress { total done open complete } }
 	documentsRepo { uuid uri } documentPaths elementFamilies effectiveElementFamilies
-	documents { prefix shared root } documentsRoot documentComponents { specification component }
+	documents { prefix shared root } documentsRoot documentComponents { specification component } adoptsLegacyDocuments
 	perspectives perspectiveNames myPermissions
 	taskPrefix taskPrefixHistory
 	checkPolicy { blocking mandatoryFields orphans coverage } effectiveCheckPolicy { blocking mandatoryFields orphans coverage }

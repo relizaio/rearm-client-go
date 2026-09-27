@@ -1263,6 +1263,12 @@ type AgentBoard {
   """
   documentComponents: [AgentBoardDocumentComponent!]
   """
+  Whether a specification with no recorded component may adopt a legacy document component of the
+  target (board-documents.md D3, task RD2-33): true for a board from before the map, false for every
+  board created since, whose first publish of each specification creates its own. Read-only.
+  """
+  adoptsLegacyDocuments: Boolean
+  """
   What the board has produced: one entry per document series in documentComponents, with its latest round.
   """
   documentSeries: [AgentBoardDocumentSeries!]
