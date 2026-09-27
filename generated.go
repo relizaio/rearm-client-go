@@ -3203,8 +3203,11 @@ type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnaps
 	Role *string `json:"role"`
 	// The role config row `role` names, so a reader reaches its prompt, capabilities and gate without a second lookup. Null on tasks authorized before this field existed.
 	RoleUuid *string `json:"roleUuid"`
-	// Declared level of the work; falls back to the board's defaultTaskLevel at registration.
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
 	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
 }
@@ -3257,6 +3260,11 @@ func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardS
 // GetLevel returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Level, and is useful for accessing the field via an interface.
 func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetLevel() *int {
 	return v.Level
+}
+
+// GetEffectiveLevel returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
 }
 
 // GetOrderIndex returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.OrderIndex, and is useful for accessing the field via an interface.
@@ -5414,6 +5422,24 @@ func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetOrderIndex() *int {
 	return v.PersonTaskFields.OrderIndex
 }
 
+// GetLevel returns AgentTaskAnswerAgentTaskAnswerAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetLevel() *int { return v.PersonTaskFields.Level }
+
+// GetEffectiveLevel returns AgentTaskAnswerAgentTaskAnswerAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskAnswerAgentTaskAnswerAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskAnswerAgentTaskAnswerAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
 // GetRequireHumanReview returns AgentTaskAnswerAgentTaskAnswerAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -5520,6 +5546,14 @@ type __premarshalAgentTaskAnswerAgentTaskAnswerAgentTask struct {
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -5566,6 +5600,10 @@ func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) __premarshalJSON() (*__premars
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -5654,6 +5692,14 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                                                     `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -5740,6 +5786,26 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetOrderIndex returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetLevelSetBy() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -5991,6 +6057,85 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -6679,6 +6824,26 @@ func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetOrderIndex() *int {
 	return v.PersonTaskFields.OrderIndex
 }
 
+// GetLevel returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
 // GetRequireHumanReview returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -6785,6 +6950,14 @@ type __premarshalAgentTaskAuthorizeAgentTaskAuthorizeAgentTask struct {
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -6831,6 +7004,10 @@ func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) __premarshalJSON() (*__p
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -6865,6 +7042,14 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                                    `json:"levelSetAt"`
 	// Model strength this task requires, overriding the role's when set.
 	RequiredStrength *float64 `json:"requiredStrength"`
 	// What this task may spend, in USD micros; null means only the board's limit applies.
@@ -6958,6 +7143,26 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) 
 // GetOrderIndex returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetLevelSetBy() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetRequiredStrength returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
@@ -7308,6 +7513,85 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHo
 
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -7974,6 +8258,14 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                                                `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -8060,6 +8352,26 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // GetOrderIndex returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetLevelSetBy() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -8311,6 +8623,85 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -9049,6 +9440,24 @@ func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetOrderIndex() *int {
 	return v.PersonTaskFields.OrderIndex
 }
 
+// GetLevel returns AgentTaskCancelAgentTaskCancelAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetLevel() *int { return v.PersonTaskFields.Level }
+
+// GetEffectiveLevel returns AgentTaskCancelAgentTaskCancelAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskCancelAgentTaskCancelAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskCancelAgentTaskCancelAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
 // GetRequireHumanReview returns AgentTaskCancelAgentTaskCancelAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -9155,6 +9564,14 @@ type __premarshalAgentTaskCancelAgentTaskCancelAgentTask struct {
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -9201,6 +9618,10 @@ func (v *AgentTaskCancelAgentTaskCancelAgentTask) __premarshalJSON() (*__premars
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -9235,6 +9656,14 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask struct {
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                              `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -9321,6 +9750,26 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetRol
 // GetOrderIndex returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetLevelSetBy() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -9572,6 +10021,85 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHoldHeld
 
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -10373,6 +10901,26 @@ func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetOrderIndex() *int {
 	return v.PersonTaskFields.OrderIndex
 }
 
+// GetLevel returns AgentTaskCompleteAgentTaskCompleteAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTaskCompleteAgentTaskCompleteAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskCompleteAgentTaskCompleteAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskCompleteAgentTaskCompleteAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
 // GetRequireHumanReview returns AgentTaskCompleteAgentTaskCompleteAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -10479,6 +11027,14 @@ type __premarshalAgentTaskCompleteAgentTaskCompleteAgentTask struct {
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -10525,6 +11081,10 @@ func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) __premarshalJSON() (*__pre
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -10559,6 +11119,14 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask struct 
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                                  `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -10648,6 +11216,26 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) Ge
 // GetOrderIndex returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetLevelSetBy() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -10904,6 +11492,85 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHold
 
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -11650,6 +12317,26 @@ func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetOrderIndex(
 	return v.PersonTaskFields.OrderIndex
 }
 
+// GetLevel returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
 // GetRequireHumanReview returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -11756,6 +12443,14 @@ type __premarshalAgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask struct 
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -11802,6 +12497,10 @@ func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) __premarshalJS
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -11883,6 +12582,26 @@ func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetRole() *string {
 // GetOrderIndex returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetOrderIndex() *int {
 	return v.PersonTaskFields.OrderIndex
+}
+
+// GetLevel returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
 }
 
 // GetRequireHumanReview returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -11991,6 +12710,14 @@ type __premarshalAgentTaskDeliveredAgentTaskDeliveredAgentTask struct {
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -12037,6 +12764,10 @@ func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) __premarshalJSON() (*__p
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -12071,6 +12802,14 @@ type AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask struc
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                                    `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -12157,6 +12896,26 @@ func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) 
 // GetOrderIndex returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) GetLevelSetBy() *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -12408,6 +13167,85 @@ func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskHo
 
 func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -13288,6 +14126,14 @@ type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                                          `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -13374,6 +14220,26 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // GetOrderIndex returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetLevelSetBy() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -13625,6 +14491,85 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 
 func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -14309,6 +15254,14 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask struct {
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                          `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -14391,6 +15344,24 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetRole() 
 // GetOrderIndex returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetLevel() *int { return v.Level }
+
+// GetEffectiveLevel returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetLevelSetBy() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -14642,6 +15613,85 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHoldHeldByAg
 
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -15343,6 +16393,26 @@ func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetOrderIndex() *int
 	return v.PersonTaskFields.OrderIndex
 }
 
+// GetLevel returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
 // GetRequireHumanReview returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -15449,6 +16519,14 @@ type __premarshalAgentTaskHumanReviewAgentTaskHumanReviewAgentTask struct {
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -15495,6 +16573,10 @@ func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) __premarshalJSON() (
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -15579,6 +16661,26 @@ func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetRole() *string 
 // GetOrderIndex returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetOrderIndex() *int {
 	return v.PersonTaskFields.OrderIndex
+}
+
+// GetLevel returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
 }
 
 // GetRequireHumanReview returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -15687,6 +16789,14 @@ type __premarshalAgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask struct {
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -15733,6 +16843,10 @@ func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) __premarshalJSON()
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -15778,6 +16892,14 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask struct {
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                              `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -15867,6 +16989,26 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetRol
 // GetOrderIndex returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetLevelSetBy() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -16123,6 +17265,85 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHoldHeld
 
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -16859,6 +18080,14 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                                                 `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -16945,6 +18174,26 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // GetOrderIndex returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetLevelSetBy() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -17196,6 +18445,85 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -17893,6 +19221,26 @@ func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetOrderIndex() *i
 	return v.PersonTaskFields.OrderIndex
 }
 
+// GetLevel returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
 // GetRequireHumanReview returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -17999,6 +19347,14 @@ type __premarshalAgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask struct {
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -18045,6 +19401,10 @@ func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) __premarshalJSON()
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -18114,6 +19474,24 @@ func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetRole() *string { return v.Per
 // GetOrderIndex returns AgentTaskOrderAgentTaskOrderAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetOrderIndex() *int {
 	return v.PersonTaskFields.OrderIndex
+}
+
+// GetLevel returns AgentTaskOrderAgentTaskOrderAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetLevel() *int { return v.PersonTaskFields.Level }
+
+// GetEffectiveLevel returns AgentTaskOrderAgentTaskOrderAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskOrderAgentTaskOrderAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskOrderAgentTaskOrderAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
 }
 
 // GetRequireHumanReview returns AgentTaskOrderAgentTaskOrderAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -18222,6 +19600,14 @@ type __premarshalAgentTaskOrderAgentTaskOrderAgentTask struct {
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -18268,6 +19654,10 @@ func (v *AgentTaskOrderAgentTaskOrderAgentTask) __premarshalJSON() (*__premarsha
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -18302,6 +19692,14 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask struct {
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                            `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -18388,6 +19786,26 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetRole(
 // GetOrderIndex returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetLevelSetBy() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -18639,6 +20057,85 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHoldHeldBy
 
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -19300,6 +20797,14 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                  `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -19414,6 +20919,24 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetRole() *string 
 // GetOrderIndex returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetLevel() *int { return v.Level }
+
+// GetEffectiveLevel returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetLevelSetBy() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -20130,6 +21653,85 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHoldHeldByAgentActor
 
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -21396,6 +22998,26 @@ func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetOrderIndex() *int {
 	return v.PersonTaskFields.OrderIndex
 }
 
+// GetLevel returns AgentTaskRegisterAgentTaskRegisterAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTaskRegisterAgentTaskRegisterAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskRegisterAgentTaskRegisterAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskRegisterAgentTaskRegisterAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
 // GetRequireHumanReview returns AgentTaskRegisterAgentTaskRegisterAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -21502,6 +23124,14 @@ type __premarshalAgentTaskRegisterAgentTaskRegisterAgentTask struct {
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -21548,6 +23178,10 @@ func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) __premarshalJSON() (*__pre
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -21630,6 +23264,14 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask struct 
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                                  `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -21716,6 +23358,26 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) Ge
 // GetOrderIndex returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetLevelSetBy() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -21967,6 +23629,85 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHold
 
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -22630,6 +24371,14 @@ type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask s
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                                        `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -22716,6 +24465,26 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // GetOrderIndex returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask) GetLevelSetBy() *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -22967,6 +24736,85 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 
 func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -23622,6 +25470,14 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask struct {
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                              `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -23717,6 +25573,26 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetRol
 // GetOrderIndex returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetLevelSetBy() *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -23988,6 +25864,85 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHoldHeld
 
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -24840,6 +26795,26 @@ func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetOrd
 	return v.PersonTaskFields.OrderIndex
 }
 
+// GetLevel returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
 // GetRequireHumanReview returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -24946,6 +26921,14 @@ type __premarshalAgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -24992,6 +26975,10 @@ func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) __prem
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -25026,6 +27013,14 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                                                      `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -25112,6 +27107,26 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // GetOrderIndex returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetLevelSetBy() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -25363,6 +27378,85 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -26025,6 +28119,14 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask struct {
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                              `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -26111,6 +28213,26 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetRol
 // GetOrderIndex returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetLevelSetBy() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -26362,6 +28484,85 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHoldHeld
 
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -27517,6 +29718,26 @@ func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetOrderIndex() *int {
 	return v.PersonTaskFields.OrderIndex
 }
 
+// GetLevel returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
 // GetRequireHumanReview returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -27623,6 +29844,14 @@ type __premarshalAgentTaskSetBudgetAgentTaskSetBudgetAgentTask struct {
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -27669,6 +29898,10 @@ func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) __premarshalJSON() (*__p
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -27693,6 +29926,1365 @@ type AgentTaskSetBudgetResponse struct {
 // GetAgentTaskSetBudget returns AgentTaskSetBudgetResponse.AgentTaskSetBudget, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetBudgetResponse) GetAgentTaskSetBudget() *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask {
 	return v.AgentTaskSetBudget
+}
+
+// AgentTaskSetLevelAgentTaskSetLevelAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskSetLevelAgentTaskSetLevelAgentTask struct {
+	PersonTaskFields `json:"-"`
+}
+
+// GetKey returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetKey() *string { return v.PersonTaskFields.Key }
+
+// GetNumber returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
+}
+
+// GetUuid returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetUuid() *string {
+	return v.PersonTaskFields.Uuid
+}
+
+// GetBoard returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.Board, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetBoard() *string {
+	return v.PersonTaskFields.Board
+}
+
+// GetExternalRef returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetExternalRef() *string {
+	return v.PersonTaskFields.ExternalRef
+}
+
+// GetTitle returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetTitle() *string {
+	return v.PersonTaskFields.Title
+}
+
+// GetDescription returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
+// GetStatus returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetStatus() *AgentTaskStatus {
+	return v.PersonTaskFields.Status
+}
+
+// GetRole returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetRole() *string {
+	return v.PersonTaskFields.Role
+}
+
+// GetOrderIndex returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.OrderIndex, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetOrderIndex() *int {
+	return v.PersonTaskFields.OrderIndex
+}
+
+// GetLevel returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetRequireHumanReview returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetRequireHumanReview() *bool {
+	return v.PersonTaskFields.RequireHumanReview
+}
+
+// GetRequiredStrength returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetRequiredStrength() *float64 {
+	return v.PersonTaskFields.RequiredStrength
+}
+
+// GetBudgetMicros returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
+// GetHold returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.Hold, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
+	return v.PersonTaskFields.Hold
+}
+
+// GetAssignment returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.Assignment, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetAssignment() *PersonTaskFieldsAssignmentAgentTaskWorkAssignment {
+	return v.PersonTaskFields.Assignment
+}
+
+// GetStatusHistory returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.StatusHistory, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetStatusHistory() []*PersonTaskFieldsStatusHistoryAgentTaskStatusChange {
+	return v.PersonTaskFields.StatusHistory
+}
+
+// GetOpenFindings returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.OpenFindings, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetOpenFindings() []*PersonTaskFieldsOpenFindingsFinding {
+	return v.PersonTaskFields.OpenFindings
+}
+
+// GetOpenQuestions returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.OpenQuestions, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetOpenQuestions() []*PersonTaskFieldsOpenQuestionsFinding {
+	return v.PersonTaskFields.OpenQuestions
+}
+
+// GetCreatedDate returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetCreatedDate() *string {
+	return v.PersonTaskFields.CreatedDate
+}
+
+// GetCompletedAt returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.CompletedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetCompletedAt() *string {
+	return v.PersonTaskFields.CompletedAt
+}
+
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetLevelAgentTaskSetLevelAgentTask
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetLevelAgentTaskSetLevelAgentTask = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.PersonTaskFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetLevelAgentTaskSetLevelAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
+	Uuid *string `json:"uuid"`
+
+	Board *string `json:"board"`
+
+	ExternalRef *string `json:"externalRef"`
+
+	Title *string `json:"title"`
+
+	Description *string `json:"description"`
+
+	Status *AgentTaskStatus `json:"status"`
+
+	Role *string `json:"role"`
+
+	OrderIndex *int `json:"orderIndex"`
+
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
+	RequireHumanReview *bool `json:"requireHumanReview"`
+
+	RequiredStrength *float64 `json:"requiredStrength"`
+
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
+	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
+
+	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
+
+	StatusHistory []*PersonTaskFieldsStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
+
+	OpenFindings []*PersonTaskFieldsOpenFindingsFinding `json:"openFindings"`
+
+	OpenQuestions []*PersonTaskFieldsOpenQuestionsFinding `json:"openQuestions"`
+
+	CreatedDate *string `json:"createdDate"`
+
+	CompletedAt *string `json:"completedAt"`
+}
+
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) __premarshalJSON() (*__premarshalAgentTaskSetLevelAgentTaskSetLevelAgentTask, error) {
+	var retval __premarshalAgentTaskSetLevelAgentTaskSetLevelAgentTask
+
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
+	retval.Uuid = v.PersonTaskFields.Uuid
+	retval.Board = v.PersonTaskFields.Board
+	retval.ExternalRef = v.PersonTaskFields.ExternalRef
+	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
+	retval.Status = v.PersonTaskFields.Status
+	retval.Role = v.PersonTaskFields.Role
+	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
+	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
+	retval.Hold = v.PersonTaskFields.Hold
+	retval.Assignment = v.PersonTaskFields.Assignment
+	retval.StatusHistory = v.PersonTaskFields.StatusHistory
+	retval.OpenFindings = v.PersonTaskFields.OpenFindings
+	retval.OpenQuestions = v.PersonTaskFields.OpenQuestions
+	retval.CreatedDate = v.PersonTaskFields.CreatedDate
+	retval.CompletedAt = v.PersonTaskFields.CompletedAt
+	return &retval, nil
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
+	SourceUrl   *string          `json:"sourceUrl"`
+	Status      *AgentTaskStatus `json:"status"`
+	// Role the task is queued for / worked in; retained as last role until re-authorized.
+	Role *string `json:"role"`
+	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
+	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                                  `json:"levelSetAt"`
+	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
+	DependsOn []*string `json:"dependsOn"`
+	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
+	RequireHumanReview *bool `json:"requireHumanReview"`
+	// Hold state while ON_HOLD; null otherwise.
+	Hold       *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold                              `json:"hold"`
+	Assignment *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
+	SignOffs   []*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
+	Returns    []*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
+	ParentTask *string                                                                                               `json:"parentTask"`
+	ChildTasks []*string                                                                                             `json:"childTasks"`
+	// Every session that ever held the assignment.
+	Sessions            []*string `json:"sessions"`
+	PrUrls              []*string `json:"prUrls"`
+	RegisteredBySession *string   `json:"registeredBySession"`
+	CreatedDate         *string   `json:"createdDate"`
+	CompletedAt         *string   `json:"completedAt"`
+	// Append-only status transition log, oldest first.
+	StatusHistory []*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
+	// Who last set orderIndex, the coordinator or a person, and when.
+	OrderSetBy *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor `json:"orderSetBy"`
+	OrderSetAt *string                                                                                  `json:"orderSetAt"`
+	// Required roles a person completed the task without, having said why in the completing status change.
+	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
+	QuestionStack []*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
+}
+
+// GetUuid returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetOrg returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Org, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetOrg() *string {
+	return v.Org
+}
+
+// GetBoard returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Board, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetBoard() *string {
+	return v.Board
+}
+
+// GetExternalRef returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetExternalRef() *string {
+	return v.ExternalRef
+}
+
+// GetTitle returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetTitle() *string {
+	return v.Title
+}
+
+// GetDescription returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
+}
+
+// GetSourceUrl returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetSourceUrl() *string {
+	return v.SourceUrl
+}
+
+// GetStatus returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetStatus() *AgentTaskStatus {
+	return v.Status
+}
+
+// GetRole returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetRole() *string {
+	return v.Role
+}
+
+// GetOrderIndex returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetOrderIndex() *int {
+	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetLevelSetBy() *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
+}
+
+// GetDependsOn returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetDependsOn() []*string {
+	return v.DependsOn
+}
+
+// GetRequireHumanReview returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetRequireHumanReview() *bool {
+	return v.RequireHumanReview
+}
+
+// GetHold returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Hold, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetHold() *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold {
+	return v.Hold
+}
+
+// GetAssignment returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Assignment, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetAssignment() *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment {
+	return v.Assignment
+}
+
+// GetSignOffs returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.SignOffs, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetSignOffs() []*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff {
+	return v.SignOffs
+}
+
+// GetReturns returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Returns, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetReturns() []*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn {
+	return v.Returns
+}
+
+// GetParentTask returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetParentTask() *string {
+	return v.ParentTask
+}
+
+// GetChildTasks returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.ChildTasks, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetChildTasks() []*string {
+	return v.ChildTasks
+}
+
+// GetSessions returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Sessions, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetSessions() []*string {
+	return v.Sessions
+}
+
+// GetPrUrls returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.PrUrls, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetPrUrls() []*string {
+	return v.PrUrls
+}
+
+// GetRegisteredBySession returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.RegisteredBySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetRegisteredBySession() *string {
+	return v.RegisteredBySession
+}
+
+// GetCreatedDate returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetCompletedAt returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.CompletedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetCompletedAt() *string {
+	return v.CompletedAt
+}
+
+// GetStatusHistory returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.StatusHistory, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetStatusHistory() []*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange {
+	return v.StatusHistory
+}
+
+// GetOrderSetBy returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.OrderSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetOrderSetBy() *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor {
+	return v.OrderSetBy
+}
+
+// GetOrderSetAt returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.OrderSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetOrderSetAt() *string {
+	return v.OrderSetAt
+}
+
+// GetRequiredRolesSkipped returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
+	return v.RequiredRolesSkipped
+}
+
+// GetQuestionStack returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetQuestionStack() []*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame {
+	return v.QuestionStack
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment includes the requested fields of the GraphQL type AgentTaskWorkAssignment.
+// The GraphQL type's documentation follows.
+//
+// The single live assignment -- bound to session liveness, released on any session close.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment struct {
+	Session       *string `json:"session"`
+	Agent         *string `json:"agent"`
+	Role          *string `json:"role"`
+	AssignedAt    *string `json:"assignedAt"`
+	PromptVersion *string `json:"promptVersion"`
+}
+
+// GetSession returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetAgent() *string {
+	return v.Agent
+}
+
+// GetRole returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetRole() *string {
+	return v.Role
+}
+
+// GetAssignedAt returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetPromptVersion returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold struct {
+	Level *AgentTaskHoldLevel `json:"level"`
+	Kind  *AgentTaskHoldKind  `json:"kind"`
+	// Role whose sign-off is under review; set when kind = HUMAN_GATE.
+	GateRole *string                                                                                  `json:"gateRole"`
+	Reason   *string                                                                                  `json:"reason"`
+	HeldBy   *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
+	HeldAt   *string                                                                                  `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
+}
+
+// GetLevel returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold) GetLevel() *AgentTaskHoldLevel {
+	return v.Level
+}
+
+// GetKind returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold) GetKind() *AgentTaskHoldKind {
+	return v.Kind
+}
+
+// GetGateRole returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold.GateRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold) GetGateRole() *string {
+	return v.GateRole
+}
+
+// GetReason returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold) GetReason() *string {
+	return v.Reason
+}
+
+// GetHeldBy returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold.HeldBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold) GetHeldBy() *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor {
+	return v.HeldBy
+}
+
+// GetHeldAt returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold) GetHeldAt() *string {
+	return v.HeldAt
+}
+
+// GetStop returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor, error) {
+	var retval __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor, error) {
+	var retval __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskOrderSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
+// The GraphQL type's documentation follows.
+//
+// One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
+	QuestionsRelease *string `json:"questionsRelease"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
+}
+
+// GetAskingRole returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskingRole() *string {
+	return v.AskingRole
+}
+
+// GetAskingSession returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingSession, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskingSession() *string {
+	return v.AskingSession
+}
+
+// GetAskingAgent returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskingAgent() *string {
+	return v.AskingAgent
+}
+
+// GetQuestionsRelease returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame.QuestionsRelease, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetQuestionsRelease() *string {
+	return v.QuestionsRelease
+}
+
+// GetAnsweringRole returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AnsweringRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAnsweringRole() *string {
+	return v.AnsweringRole
+}
+
+// GetAskedAt returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskedAt() *string {
+	return v.AskedAt
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn includes the requested fields of the GraphQL type AgentTaskReturn.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn struct {
+	Role        *string                `json:"role"`
+	Agent       *string                `json:"agent"`
+	Session     *string                `json:"session"`
+	Reason      *AgentTaskReturnReason `json:"reason"`
+	Description *string                `json:"description"`
+	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn) GetSession() *string {
+	return v.Session
+}
+
+// GetReason returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn) GetReason() *AgentTaskReturnReason {
+	return v.Reason
+}
+
+// GetDescription returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn) GetDescription() *string {
+	return v.Description
+}
+
+// GetReturnedAt returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn.ReturnedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn) GetReturnedAt() *string {
+	return v.ReturnedAt
+}
+
+// GetUsage returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
+// The GraphQL type's documentation follows.
+//
+// Append-only per-hop sign-off stored in ReARM; promptVersion pins the served prompt the agent assumed.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff struct {
+	Role          *string              `json:"role"`
+	Agent         *string              `json:"agent"`
+	Session       *string              `json:"session"`
+	AssignedAt    *string              `json:"assignedAt"`
+	SignedOffAt   *string              `json:"signedOffAt"`
+	Outcome       *AgentSignOffOutcome `json:"outcome"`
+	Note          *string              `json:"note"`
+	PromptVersion *string              `json:"promptVersion"`
+	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
+	ReviewedBy *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
+	Usage *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetSession() *string {
+	return v.Session
+}
+
+// GetAssignedAt returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetSignedOffAt returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetOutcome returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff.Outcome, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOutcome() *AgentSignOffOutcome {
+	return v.Outcome
+}
+
+// GetNote returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetNote() *string {
+	return v.Note
+}
+
+// GetPromptVersion returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// GetReviewedBy returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
+// The GraphQL type's documentation follows.
+//
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
+	From    *AgentTaskStatus                                                                                                      `json:"from"`
+	To      *AgentTaskStatus                                                                                                      `json:"to"`
+	At      *string                                                                                                               `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                   `json:"trigger"`
+	Actor   *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	// What the actor said: a completion's or cancellation's note. Null on changes recorded before notes were kept.
+	Note *string `json:"note"`
+}
+
+// GetFrom returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetFrom() *AgentTaskStatus {
+	return v.From
+}
+
+// GetTo returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.To, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetTo() *AgentTaskStatus {
+	return v.To
+}
+
+// GetAt returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetAt() *string {
+	return v.At
+}
+
+// GetTrigger returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.Trigger, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetTrigger() *AgentStatusTrigger {
+	return v.Trigger
+}
+
+// GetActor returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.Actor, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetActor() *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor {
+	return v.Actor
+}
+
+// GetNote returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) __premarshalJSON() (*__premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor, error) {
+	var retval __premarshalAgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSetLevelProgrammaticResponse is returned by AgentTaskSetLevelProgrammatic on success.
+type AgentTaskSetLevelProgrammaticResponse struct {
+	// The coordinator seat sets a task's level, 0 to 9, or clears it (null) to the board's default (RD2-1).
+	AgentTaskSetLevelProgrammatic *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask `json:"agentTaskSetLevelProgrammatic"`
+}
+
+// GetAgentTaskSetLevelProgrammatic returns AgentTaskSetLevelProgrammaticResponse.AgentTaskSetLevelProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticResponse) GetAgentTaskSetLevelProgrammatic() *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask {
+	return v.AgentTaskSetLevelProgrammatic
+}
+
+// AgentTaskSetLevelResponse is returned by AgentTaskSetLevel on success.
+type AgentTaskSetLevelResponse struct {
+	// Set a task's level, 0 to 9, or clear it (null) so it reads the board's default (RD2-1). BOARD_WRITE
+	// on the board. Refused on a completed or cancelled task. Recorded as levelSetBy and levelSetAt.
+	AgentTaskSetLevel *AgentTaskSetLevelAgentTaskSetLevelAgentTask `json:"agentTaskSetLevel"`
+}
+
+// GetAgentTaskSetLevel returns AgentTaskSetLevelResponse.AgentTaskSetLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelResponse) GetAgentTaskSetLevel() *AgentTaskSetLevelAgentTaskSetLevelAgentTask {
+	return v.AgentTaskSetLevel
 }
 
 // AgentTaskSetStrengthAgentTaskSetStrengthAgentTask includes the requested fields of the GraphQL type AgentTask.
@@ -27748,6 +31340,26 @@ func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetRole() *string {
 // GetOrderIndex returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetOrderIndex() *int {
 	return v.PersonTaskFields.OrderIndex
+}
+
+// GetLevel returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
 }
 
 // GetRequireHumanReview returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -27856,6 +31468,14 @@ type __premarshalAgentTaskSetStrengthAgentTaskSetStrengthAgentTask struct {
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -27902,6 +31522,10 @@ func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) __premarshalJSON() (
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -27949,6 +31573,14 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask struct {
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                                `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -28038,6 +31670,26 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetR
 // GetOrderIndex returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetLevelSetBy() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -28294,6 +31946,85 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHoldHe
 
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -29027,6 +32758,14 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask struct {
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                            `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -29113,6 +32852,26 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetRole(
 // GetOrderIndex returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetLevelSetBy() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -29364,6 +33123,85 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHoldHeldBy
 
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -30081,6 +33919,14 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                                `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -30209,6 +34055,26 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetR
 // GetOrderIndex returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetLevel() *int {
+	return v.Level
+}
+
+// GetEffectiveLevel returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetLevelSetBy() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -30927,6 +34793,85 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHe
 
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -32195,6 +36140,26 @@ func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetOrderIndex() *int {
 	return v.PersonTaskFields.OrderIndex
 }
 
+// GetLevel returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
 // GetRequireHumanReview returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -32301,6 +36266,14 @@ type __premarshalAgentTasksOfBoardAgentTasksOfBoardAgentTask struct {
 
 	OrderIndex *int `json:"orderIndex"`
 
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -32347,6 +36320,10 @@ func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) __premarshalJSON() (*__pre
 	retval.Status = v.PersonTaskFields.Status
 	retval.Role = v.PersonTaskFields.Role
 	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -32392,6 +36369,14 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTask struct {
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                                                                    `json:"levelSetAt"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -32473,6 +36458,24 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetRole() *strin
 // GetOrderIndex returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetLevel returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetLevel() *int { return v.Level }
+
+// GetEffectiveLevel returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetEffectiveLevel() *int {
+	return v.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetLevelSetBy() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor {
+	return v.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetLevelSetAt() *string {
+	return v.LevelSetAt
 }
 
 // GetDependsOn returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -32744,6 +36747,85 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHoldHeldByAgentAct
 
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -40564,6 +44646,14 @@ type PersonTaskFields struct {
 	Role *string `json:"role"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+	// applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+	Level *int `json:"level"`
+	// The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+	EffectiveLevel *int `json:"effectiveLevel"`
+	// Who last set or cleared the level after registration, and when (RD2-1).
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+	LevelSetAt *string                               `json:"levelSetAt"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
 	RequireHumanReview *bool `json:"requireHumanReview"`
 	// Model strength this task requires, overriding the role's when set.
@@ -40620,6 +44710,18 @@ func (v *PersonTaskFields) GetRole() *string { return v.Role }
 
 // GetOrderIndex returns PersonTaskFields.OrderIndex, and is useful for accessing the field via an interface.
 func (v *PersonTaskFields) GetOrderIndex() *int { return v.OrderIndex }
+
+// GetLevel returns PersonTaskFields.Level, and is useful for accessing the field via an interface.
+func (v *PersonTaskFields) GetLevel() *int { return v.Level }
+
+// GetEffectiveLevel returns PersonTaskFields.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *PersonTaskFields) GetEffectiveLevel() *int { return v.EffectiveLevel }
+
+// GetLevelSetBy returns PersonTaskFields.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *PersonTaskFields) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor { return v.LevelSetBy }
+
+// GetLevelSetAt returns PersonTaskFields.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *PersonTaskFields) GetLevelSetAt() *string { return v.LevelSetAt }
 
 // GetRequireHumanReview returns PersonTaskFields.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *PersonTaskFields) GetRequireHumanReview() *bool { return v.RequireHumanReview }
@@ -40875,6 +44977,79 @@ func (v *PersonTaskFieldsHoldAgentTaskHoldHeldByAgentActor) MarshalJSON() ([]byt
 
 func (v *PersonTaskFieldsHoldAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalPersonTaskFieldsHoldAgentTaskHoldHeldByAgentActor, error) {
 	var retval __premarshalPersonTaskFieldsHoldAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// PersonTaskFieldsLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type PersonTaskFieldsLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns PersonTaskFieldsLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *PersonTaskFieldsLevelSetByAgentActor) GetKind() *AgentActorKind { return v.ActorFields.Kind }
+
+// GetUuid returns PersonTaskFieldsLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *PersonTaskFieldsLevelSetByAgentActor) GetUuid() *string { return v.ActorFields.Uuid }
+
+// GetName returns PersonTaskFieldsLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *PersonTaskFieldsLevelSetByAgentActor) GetName() *string { return v.ActorFields.Name }
+
+func (v *PersonTaskFieldsLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*PersonTaskFieldsLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.PersonTaskFieldsLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalPersonTaskFieldsLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *PersonTaskFieldsLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *PersonTaskFieldsLevelSetByAgentActor) __premarshalJSON() (*__premarshalPersonTaskFieldsLevelSetByAgentActor, error) {
+	var retval __premarshalPersonTaskFieldsLevelSetByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -44809,6 +48984,34 @@ func (v *__AgentTaskSetBudgetInput) GetTaskUuid() string { return v.TaskUuid }
 // GetBudgetMicros returns __AgentTaskSetBudgetInput.BudgetMicros, and is useful for accessing the field via an interface.
 func (v *__AgentTaskSetBudgetInput) GetBudgetMicros() *int64 { return v.BudgetMicros }
 
+// __AgentTaskSetLevelInput is used internally by genqlient
+type __AgentTaskSetLevelInput struct {
+	TaskUuid string `json:"taskUuid"`
+	Level    *int   `json:"level"`
+}
+
+// GetTaskUuid returns __AgentTaskSetLevelInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetLevelInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetLevel returns __AgentTaskSetLevelInput.Level, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetLevelInput) GetLevel() *int { return v.Level }
+
+// __AgentTaskSetLevelProgrammaticInput is used internally by genqlient
+type __AgentTaskSetLevelProgrammaticInput struct {
+	TaskUuid    string `json:"taskUuid"`
+	SessionUuid string `json:"sessionUuid"`
+	Level       *int   `json:"level"`
+}
+
+// GetTaskUuid returns __AgentTaskSetLevelProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetLevelProgrammaticInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetSessionUuid returns __AgentTaskSetLevelProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetLevelProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetLevel returns __AgentTaskSetLevelProgrammaticInput.Level, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetLevelProgrammaticInput) GetLevel() *int { return v.Level }
+
 // __AgentTaskSetStrengthInput is used internally by genqlient
 type __AgentTaskSetStrengthInput struct {
 	TaskUuid         string   `json:"taskUuid"`
@@ -46167,6 +50370,7 @@ query AgentBoardSnapshotProgrammatic ($boardUuid: ID!) {
 				role
 				roleUuid
 				level
+				effectiveLevel
 				orderIndex
 			}
 			holder {
@@ -46721,6 +50925,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -46840,6 +51050,12 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 			status
 			role
 			orderIndex
+			level
+			effectiveLevel
+			levelSetBy {
+				... ActorFields
+			}
+			levelSetAt
 			dependsOn
 			requireHumanReview
 			hold {
@@ -46985,6 +51201,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -47107,6 +51329,12 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		requiredStrength
 		budgetMicros
 		budgetSetBy {
@@ -47259,6 +51487,12 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -47479,6 +51713,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -47593,6 +51833,12 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -47780,6 +52026,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -47896,6 +52148,12 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -48044,6 +52302,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -48164,6 +52428,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -48285,6 +52555,12 @@ mutation AgentTaskDeliveredProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $uni
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -48501,6 +52777,12 @@ mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -48639,6 +52921,12 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -48779,6 +53067,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -48901,6 +53195,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -49017,6 +53317,12 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -49162,6 +53468,12 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 			status
 			role
 			orderIndex
+			level
+			effectiveLevel
+			levelSetBy {
+				... ActorFields
+			}
+			levelSetAt
 			dependsOn
 			requireHumanReview
 			hold {
@@ -49307,6 +53619,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -49427,6 +53745,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -49541,6 +53865,12 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -49679,6 +54009,12 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -49945,6 +54281,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -50059,6 +54401,12 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -50193,6 +54541,12 @@ mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $r
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -50333,6 +54687,12 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -50494,6 +54854,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -50608,6 +54974,12 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -50744,6 +55116,12 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -51007,6 +55385,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -51105,6 +55489,274 @@ func AgentTaskSetBudget(
 	return data_, err_
 }
 
+// The mutation executed by AgentTaskSetLevel.
+const AgentTaskSetLevel_Operation = `
+mutation AgentTaskSetLevel ($taskUuid: ID!, $level: Int) {
+	agentTaskSetLevel(taskUuid: $taskUuid, level: $level) {
+		... PersonTaskFields
+	}
+}
+fragment PersonTaskFields on AgentTask {
+	key
+	number
+	uuid
+	board
+	externalRef
+	title
+	description
+	status
+	role
+	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
+	requireHumanReview
+	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
+	hold {
+		level
+		kind
+		gateRole
+		reason
+		heldBy {
+			... ActorFields
+		}
+		heldAt
+		stop
+	}
+	assignment {
+		session
+		agent
+		role
+		assignedAt
+	}
+	statusHistory {
+		from
+		to
+		at
+		trigger
+		actor {
+			... ActorFields
+		}
+		note
+	}
+	openFindings {
+		id
+		priority
+		status
+		title
+		location {
+			path
+			line
+			ref
+		}
+		resolvedBy
+		resolution
+		correction
+	}
+	openQuestions {
+		id
+		priority
+		status
+		title
+		location {
+			path
+			line
+			ref
+		}
+		resolvedBy
+		resolution
+	}
+	createdDate
+	completedAt
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+`
+
+// A person sets a task's level, 0 to 9, or clears it (level omitted is null: the board default; RD2-1).
+func AgentTaskSetLevel(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+	level *int,
+) (data_ *AgentTaskSetLevelResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskSetLevel",
+		Query:  AgentTaskSetLevel_Operation,
+		Variables: &__AgentTaskSetLevelInput{
+			TaskUuid: taskUuid,
+			Level:    level,
+		},
+	}
+
+	data_ = &AgentTaskSetLevelResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AgentTaskSetLevelProgrammatic.
+const AgentTaskSetLevelProgrammatic_Operation = `
+mutation AgentTaskSetLevelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $level: Int) {
+	agentTaskSetLevelProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, level: $level) {
+		key
+		number
+		uuid
+		org
+		board
+		externalRef
+		title
+		description
+		sourceUrl
+		status
+		role
+		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
+		dependsOn
+		requireHumanReview
+		hold {
+			level
+			kind
+			gateRole
+			reason
+			heldBy {
+				... ActorFields
+			}
+			heldAt
+			stop
+		}
+		assignment {
+			session
+			agent
+			role
+			assignedAt
+			promptVersion
+		}
+		signOffs {
+			role
+			agent
+			session
+			assignedAt
+			signedOffAt
+			outcome
+			note
+			promptVersion
+			reviewedBy {
+				... ActorFields
+			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
+		}
+		returns {
+			role
+			agent
+			session
+			reason
+			description
+			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
+		}
+		parentTask
+		childTasks
+		sessions
+		prUrls
+		registeredBySession
+		createdDate
+		completedAt
+		statusHistory {
+			from
+			to
+			at
+			trigger
+			actor {
+				... ActorFields
+			}
+			note
+		}
+		orderSetBy {
+			... ActorFields
+		}
+		orderSetAt
+		requiredRolesSkipped
+		questionStack {
+			askingRole
+			askingSession
+			askingAgent
+			questionsRelease
+			answeringRole
+			askedAt
+		}
+	}
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
+}
+`
+
+// The coordinator seat sets a task's level, 0 to 9, or clears it (level omitted is null: the board default; RD2-1).
+func AgentTaskSetLevelProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+	sessionUuid string,
+	level *int,
+) (data_ *AgentTaskSetLevelProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskSetLevelProgrammatic",
+		Query:  AgentTaskSetLevelProgrammatic_Operation,
+		Variables: &__AgentTaskSetLevelProgrammaticInput{
+			TaskUuid:    taskUuid,
+			SessionUuid: sessionUuid,
+			Level:       level,
+		},
+	}
+
+	data_ = &AgentTaskSetLevelProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by AgentTaskSetStrength.
 const AgentTaskSetStrength_Operation = `
 mutation AgentTaskSetStrength ($taskUuid: ID!, $requiredStrength: Float) {
@@ -51123,6 +55775,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -51237,6 +55895,12 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -51387,6 +56051,12 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -51525,6 +56195,12 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {
@@ -51791,6 +56467,12 @@ fragment PersonTaskFields on AgentTask {
 	status
 	role
 	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -51905,6 +56587,12 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $change
 		status
 		role
 		orderIndex
+		level
+		effectiveLevel
+		levelSetBy {
+			... ActorFields
+		}
+		levelSetAt
 		dependsOn
 		requireHumanReview
 		hold {

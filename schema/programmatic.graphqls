@@ -439,6 +439,13 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   sessionUuid: ID!): AgentTask
   agentBoardPostEventProgrammatic(boardUuid: ID!, sessionUuid: ID!, kind: AgentBoardEventKind!, message: String!): AgentBoard
   agentTaskOrderProgrammatic(taskUuid: ID!, sessionUuid: ID!, orderIndex: Int!): AgentTask
+  """
+  The coordinator seat sets a task's level, 0 to 9, or clears it (null) to the board's default (RD2-1).
+  """
+  agentTaskSetLevelProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  level: Int): AgentTask
   agentTaskSplitProgrammatic(taskUuid: ID!, sessionUuid: ID!, children: [AgentTaskSplitChildInput!]!): [AgentTask]
   agentTaskCompleteProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
   agentTaskCancelProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
@@ -569,6 +576,13 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskSetBudget(
   taskUuid: ID!
   budgetMicros: Long): AgentTask
+  """
+  Set a task's level, 0 to 9, or clear it (null) so it reads the board's default (RD2-1). BOARD_WRITE
+  on the board. Refused on a completed or cancelled task. Recorded as levelSetBy and levelSetAt.
+  """
+  agentTaskSetLevel(
+  taskUuid: ID!
+  level: Int): AgentTask
   """
   Complete a task. Refused while a finding that blocks completion is open -- accept or dismiss it
   first -- and while a required role has not passed. A required role whose rejection you have
@@ -1567,9 +1581,19 @@ type AgentTask {
   """
   releases: [ID]
   """
-  Declared level of the work; falls back to the board's defaultTaskLevel at registration.
+  Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
+  applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
   """
   level: Int
+  """
+  The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+  """
+  effectiveLevel: Int
+  """
+  Who last set or cleared the level after registration, and when (RD2-1).
+  """
+  levelSetBy: AgentActor
+  levelSetAt: DateTime
   """
   Requirements this task adds on top of its role's -- add-only.
   """
