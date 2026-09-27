@@ -19,6 +19,13 @@ type Query {
   exportBoardProgrammatic(
   board: String!): BoardSpec
   """
+  One board's perspectives as the server holds them, by name or uuid (CONFIGURATION_READ, as its
+  export): uuid, name and product, in the board's order. The export writes a name several
+  perspectives share as the uuid; a client keeping a configured form maps it through these.
+  """
+  exportBoardPerspectivesProgrammatic(
+  board: String!): [BoardPerspectiveRef!]
+  """
   Export the key's organization's role presets as a presets file (CONFIGURATION_READ).
   """
   agentRolePresetsSpecProgrammatic: RolePresetsSpec
@@ -672,6 +679,11 @@ type BoardSpec {
   """
   documents: BoardDocumentsSpec
   """
+  Perspectives, product: marking a PRODUCT component (board-permissions.md §3): by name when exactly
+  one of the organization carries it, else by uuid.
+  """
+  perspectives: [String]
+  """
   The task-key prefix (board-documents.md D8).
   """
   taskPrefix: String
@@ -685,6 +697,18 @@ type BoardSpec {
   """
   settings: BoardSettingsSpec
   roles: [BoardRoleSpec]
+}
+
+"""
+A perspective a board holds: a real perspective, or a PRODUCT component when product is true.
+"""
+type BoardPerspectiveRef {
+  uuid: ID!
+  name: String!
+  """
+  A PRODUCT component used as a perspective; a board file writes it with the product: marker.
+  """
+  product: Boolean!
 }
 
 """
@@ -1136,6 +1160,16 @@ type AgentBoard {
   Every prefix the board has held, oldest first; tasks keep the key they were given.
   """
   taskPrefixHistory: [String]
+  """
+  The perspectives the board hangs off (board-permissions.md §3): real perspectives or PRODUCT
+  components used as perspectives. A PERSPECTIVE grant on any of them covers the board.
+  """
+  perspectives: [ID]
+  """
+  perspectives by name, one for one with perspectives, product: marking a PRODUCT component. Always
+  the name, even one several perspectives share; the board file's export writes those by uuid.
+  """
+  perspectiveNames: [String]
   """
   The component holding each of this board's document series, one per specification, as the board
   records them (board-documents.md D3). A board from before the map lists a series once it has
@@ -1761,6 +1795,13 @@ input BoardSpecInput {
   How the board names its documents; declared null restores the default, absent leaves it.
   """
   documents: BoardDocumentsSpecInput
+  """
+  Perspectives by name or uuid, product: marking a PRODUCT component. A name several carry resolves
+  to the one already in the board's set, else it is refused; name it by uuid. The target must be a
+  member of each; adding or removing one needs BOARD_WRITE and CONFIGURATION_WRITE covering it.
+  Declared null clears, absent leaves them.
+  """
+  perspectives: [String]
   """
   The task-key prefix; declared null derives one from the name, absent leaves it.
   """
