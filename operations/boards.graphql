@@ -46,6 +46,7 @@ query AgentBoardEventsProgrammatic ($boardUuid: ID!, $after: Long, $since: DateT
 
 query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUuid: $boardUuid) {
 	uuid org name description status sources
+	groups { uuid key name description order dependsOn defaultLevel status createdAt progress { total done open complete } }
 	documentsRepo { uuid uri } documentPaths elementFamilies effectiveElementFamilies
 	documents { prefix shared root } documentsRoot documentComponents { specification component }
 	perspectives perspectiveNames myPermissions
@@ -125,7 +126,7 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsP
 
 mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 	agentTaskRegisterProgrammatic(input: $input) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -140,7 +141,7 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [String!]) {
 	agentTaskNextProgrammatic(sessionUuid: $sessionUuid, boardUuid: $boardUuid, roles: $roles) {
 	task {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -157,7 +158,7 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles: [String!]) {
 	agentTaskAssignProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, roles: $roles) {
 	task {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -173,7 +174,7 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 
 mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!]) {
 	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -188,7 +189,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 
 mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: AgentTaskReturnReason!, $description: String, $outputs: [ID!]) {
 	agentTaskReturnProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason, description: $description, outputs: $outputs) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -209,7 +210,7 @@ mutation AgentTaskAuthorizeProgrammatic (
 	# @genqlient(omitempty: true)
 	$budgetMicros: Long) {
 	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength, budgetMicros: $budgetMicros) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt requiredStrength
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups requiredStrength
 	budgetMicros budgetSetBy { ...ActorFields } budgetSetAt
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
@@ -224,7 +225,7 @@ mutation AgentTaskAuthorizeProgrammatic (
 
 mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
 	agentTaskHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -240,7 +241,7 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 # board delivering without PRs a push or release; ABANDONED sends the task to the coordinator.
 mutation AgentTaskDeliveredProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $unit: String!, $commit: String, $outcome: AgentDeliveryOutcome, $note: String) {
 	agentTaskDeliveredProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, unit: $unit, commit: $commit, outcome: $outcome, note: $note) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -254,7 +255,7 @@ mutation AgentTaskDeliveredProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $uni
 
 mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
 	agentTaskEscalateHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -268,7 +269,7 @@ mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 
 mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String, $note: String) {
 	agentTaskReleaseHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, note: $note) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -282,7 +283,7 @@ mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $r
 
 mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
 	agentTaskRequireHumanReviewProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -296,7 +297,7 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 
 mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIndex: Int!) {
 	agentTaskOrderProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, orderIndex: $orderIndex) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -311,7 +312,7 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 # The coordinator seat sets a task's level, 0 to 9, or clears it (level omitted is null: the board default; RD2-1).
 mutation AgentTaskSetLevelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $level: Int) {
 	agentTaskSetLevelProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, level: $level) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -325,7 +326,7 @@ mutation AgentTaskSetLevelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $leve
 
 mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $children: [AgentTaskSplitChildInput!]!) {
 	agentTaskSplitProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, children: $children) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -339,7 +340,7 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 
 mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: String) {
 	agentTaskCompleteProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, note: $note) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -354,7 +355,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 
 mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: String) {
 	agentTaskCancelProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, note: $note) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -368,7 +369,7 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 
 mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $reason: String!) {
 	agentTaskReopenProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, reason: $reason) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -384,7 +385,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 
 mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: String!, $sourceUrl: String) {
 	agentTaskBindExternalRefProgrammatic(taskUuid: $taskUuid, externalRef: $externalRef, sourceUrl: $sourceUrl) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -398,7 +399,7 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 
 mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 	agentTaskLinkPrProgrammatic(taskUuid: $taskUuid, prUrl: $prUrl) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -412,7 +413,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 } }
 
 query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $taskUuid) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -442,7 +443,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $
 query AgentTaskByKeyProgrammatic ($key: String!) { agentTaskByKeyProgrammatic(key: $key) { uuid key board } }
 
 query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgrammatic(taskUuids: $taskUuids) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -465,9 +466,9 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgra
 	openQuestions { id priority status title location { path line ref element } resolvedBy resolution }
 } }
 
-query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $changedSince: DateTime) {
-	agentTasksProgrammatic(boardUuid: $boardUuid, status: $status, changedSince: $changedSince) {
-	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt
+query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $changedSince: DateTime, $group: String, $tag: [String]) {
+	agentTasksProgrammatic(boardUuid: $boardUuid, status: $status, changedSince: $changedSince, group: $group, tag: $tag) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
@@ -494,7 +495,7 @@ query AgentWaitDeliveringProgrammatic ($boardUuid: ID!) {
 query AgentBoardSnapshotProgrammatic($boardUuid: ID!) { agentBoardSnapshotProgrammatic(boardUuid: $boardUuid) {
 	board { uuid name status }
 	tasks {
-		task { key number uuid externalRef title description status role roleUuid level effectiveLevel orderIndex hold { level kind } }
+		task { key number uuid externalRef title description status role roleUuid level effectiveLevel orderIndex hold { level kind } group { key } tags { key } waitingOnGroups }
 		holder { ...ActorFields }
 		heldSince
 		dependsOn { task externalRef title status }
@@ -513,3 +514,29 @@ query AgentDocumentPath ($boardUuid: ID!, $specification: SpecificationType!, $t
 		documentPath(specification: $specification, task: $task, component: $component)
 	}
 }
+
+# Task groups and tags (task-groups-and-tags.md §2-§3, task RD2-29).
+
+# A board's groups in display order, with what their tasks spent (a read of the board's usage).
+query AgentBoardGroupsProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUuid: $boardUuid) {
+	uuid
+	groups { uuid key name description order dependsOn defaultLevel status createdAt progress { total done open complete } spentMicros }
+} }
+
+# The coordinator seat creates or edits a group by key; status CLOSED closes it.
+mutation AgentBoardGroupSetProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $group: TaskGroupInput!) {
+	agentBoardGroupSetProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid, group: $group) {
+	uuid key name description order dependsOn defaultLevel status createdAt progress { total done open complete }
+} }
+
+# The coordinator seat moves a task into a group by key, or out of every group (group omitted is null).
+mutation AgentTaskSetGroupProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $group: String) {
+	agentTaskSetGroupProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, group: $group) {
+	key uuid status group { uuid key name } waitingOnGroups
+} }
+
+# The coordinator seat replaces a task's tags.
+mutation AgentTaskSetTagsProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $tags: [TagRecordInput!]!) {
+	agentTaskSetTagsProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, tags: $tags) {
+	key uuid tags { key value removable }
+} }
