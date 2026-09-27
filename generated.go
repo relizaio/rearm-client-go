@@ -5579,12 +5579,14 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -5652,6 +5654,11 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetTitle returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -6775,12 +6782,14 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -6855,6 +6864,11 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) 
 // GetTitle returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -7877,12 +7891,14 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -7950,6 +7966,11 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // GetTitle returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -9123,12 +9144,14 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -9196,6 +9219,11 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetExt
 // GetTitle returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -10432,12 +10460,14 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask struct 
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -10508,6 +10538,11 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) Ge
 // GetTitle returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -11921,12 +11956,14 @@ type AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask struc
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -11994,6 +12031,11 @@ func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) 
 // GetTitle returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -13131,12 +13173,14 @@ type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -13204,6 +13248,11 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // GetTitle returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -14145,12 +14194,14 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -14214,6 +14265,11 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetExterna
 // GetTitle returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -15591,12 +15647,14 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -15667,6 +15725,11 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetExt
 // GetTitle returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -16665,12 +16728,14 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -16738,6 +16803,11 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // GetTitle returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -18085,12 +18155,14 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -18158,6 +18230,11 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetExter
 // GetTitle returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -19076,12 +19153,14 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -19180,6 +19259,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetExternalRef() *
 
 // GetTitle returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetTitle() *string { return v.Title }
+
+// GetDescription returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
+}
 
 // GetSourceUrl returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetSourceUrl() *string {
@@ -21341,7 +21425,10 @@ func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) __premarshalJSON() (*__pre
 type AgentTaskRegisterInput struct {
 	BoardUuid   string  `json:"boardUuid"`
 	ExternalRef *string `json:"externalRef"`
-	Title       string  `json:"title"`
+	// One line of at most 120 characters: what a card shows. The rest goes in description.
+	Title string `json:"title"`
+	// What the task is, beyond its title: free text of at most 4000 characters, kept whole.
+	Description *string `json:"description"`
 	SourceUrl   *string `json:"sourceUrl"`
 	// Registering agent's session (intake provenance).
 	SessionUuid       *string                    `json:"sessionUuid"`
@@ -21359,6 +21446,9 @@ func (v *AgentTaskRegisterInput) GetExternalRef() *string { return v.ExternalRef
 
 // GetTitle returns AgentTaskRegisterInput.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterInput) GetTitle() string { return v.Title }
+
+// GetDescription returns AgentTaskRegisterInput.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterInput) GetDescription() *string { return v.Description }
 
 // GetSourceUrl returns AgentTaskRegisterInput.SourceUrl, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterInput) GetSourceUrl() *string { return v.SourceUrl }
@@ -21385,12 +21475,14 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask struct 
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -21458,6 +21550,11 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) Ge
 // GetTitle returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -22378,12 +22475,14 @@ type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask s
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -22451,6 +22550,11 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // GetTitle returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -23363,12 +23467,14 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -23445,6 +23551,11 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetExt
 // GetTitle returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -24752,12 +24863,14 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -24825,6 +24938,11 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // GetTitle returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -25744,12 +25862,14 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -25817,6 +25937,11 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetExt
 // GetTitle returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -27645,12 +27770,14 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -27721,6 +27848,11 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetE
 // GetTitle returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -28676,7 +28808,10 @@ func (v *AgentTaskSignOffProgrammaticResponse) GetAgentTaskSignOffProgrammatic()
 
 type AgentTaskSplitChildInput struct {
 	ExternalRef *string `json:"externalRef"`
-	Title       string  `json:"title"`
+	// One line of at most 120 characters, as a registered task's.
+	Title string `json:"title"`
+	// The child's description, as a registered task's.
+	Description *string `json:"description"`
 	SourceUrl   *string `json:"sourceUrl"`
 	// Sibling-index dependencies (0-based within this split), encoding the architect's proposed ordering.
 	DependsOnSiblingIndexes []int   `json:"dependsOnSiblingIndexes"`
@@ -28690,6 +28825,9 @@ func (v *AgentTaskSplitChildInput) GetExternalRef() *string { return v.ExternalR
 
 // GetTitle returns AgentTaskSplitChildInput.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitChildInput) GetTitle() string { return v.Title }
+
+// GetDescription returns AgentTaskSplitChildInput.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitChildInput) GetDescription() *string { return v.Description }
 
 // GetSourceUrl returns AgentTaskSplitChildInput.SourceUrl, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitChildInput) GetSourceUrl() *string { return v.SourceUrl }
@@ -28710,12 +28848,14 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -28783,6 +28923,11 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetExter
 // GetTitle returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -29714,7 +29859,10 @@ var AllAgentTaskStatus = []AgentTaskStatus{
 
 // A person's registration of a task. externalRef is required on a board with sources.
 type AgentTaskUserRegisterInput struct {
-	Title             string                     `json:"title"`
+	// One line of at most 120 characters: what a card shows. The rest goes in description.
+	Title string `json:"title"`
+	// What the task is, beyond its title: free text of at most 4000 characters, kept whole.
+	Description       *string                    `json:"description"`
 	ExternalRef       *string                    `json:"externalRef"`
 	SourceUrl         *string                    `json:"sourceUrl"`
 	ParentTask        *string                    `json:"parentTask"`
@@ -29725,6 +29873,9 @@ type AgentTaskUserRegisterInput struct {
 
 // GetTitle returns AgentTaskUserRegisterInput.Title, and is useful for accessing the field via an interface.
 func (v *AgentTaskUserRegisterInput) GetTitle() string { return v.Title }
+
+// GetDescription returns AgentTaskUserRegisterInput.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskUserRegisterInput) GetDescription() *string { return v.Description }
 
 // GetExternalRef returns AgentTaskUserRegisterInput.ExternalRef, and is useful for accessing the field via an interface.
 func (v *AgentTaskUserRegisterInput) GetExternalRef() *string { return v.ExternalRef }
@@ -29751,12 +29902,14 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -29866,6 +30019,11 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetE
 // GetTitle returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetTitle() *string {
 	return v.Title
+}
+
+// GetDescription returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
 }
 
 // GetSourceUrl returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
@@ -32047,12 +32205,14 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTask struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
 	Key *string `json:"key"`
 	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
-	Number      *int             `json:"number"`
-	Uuid        *string          `json:"uuid"`
-	Org         *string          `json:"org"`
-	Board       *string          `json:"board"`
-	ExternalRef *string          `json:"externalRef"`
-	Title       *string          `json:"title"`
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
 	SourceUrl   *string          `json:"sourceUrl"`
 	Status      *AgentTaskStatus `json:"status"`
 	// Role the task is queued for / worked in; retained as last role until re-authorized.
@@ -32118,6 +32278,11 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetExternalRef()
 
 // GetTitle returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetTitle() *string { return v.Title }
+
+// GetDescription returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
+}
 
 // GetSourceUrl returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetSourceUrl() *string {
@@ -46439,6 +46604,7 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 			board
 			externalRef
 			title
+			description
 			sourceUrl
 			status
 			role
@@ -46704,6 +46870,7 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -46855,6 +47022,7 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -47187,6 +47355,7 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -47488,6 +47657,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -47874,6 +48044,7 @@ mutation AgentTaskDeliveredProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $uni
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -48089,6 +48260,7 @@ mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -48226,6 +48398,7 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -48601,6 +48774,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -48745,6 +48919,7 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 			board
 			externalRef
 			title
+			description
 			sourceUrl
 			status
 			role
@@ -49121,6 +49296,7 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -49258,6 +49434,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -49636,6 +49813,7 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -49769,6 +49947,7 @@ mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $r
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -49908,6 +50087,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -50181,6 +50361,7 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -50316,6 +50497,7 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -50806,6 +50988,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -50955,6 +51138,7 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -51092,6 +51276,7 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
@@ -51470,6 +51655,7 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $change
 		board
 		externalRef
 		title
+		description
 		sourceUrl
 		status
 		role
