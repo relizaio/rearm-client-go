@@ -161,7 +161,7 @@ query ExportBoard($board: String!) {
     elementFamilies
     checks { blocking mandatoryFields orphans coverage }
     delivery { mode attest merge { by method atTestedHead requireAttestation order } }
-    documents { prefix }
+    documents { prefix shared root }
     perspectives
     taskPrefix
     coordinatorPrompt
