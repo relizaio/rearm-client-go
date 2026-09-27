@@ -143,6 +143,7 @@ query SessionProgrammatic ($sessionUuid: ID!) {
 						federation { provider repository ref sha workflowRef event environment actor runId }
 					}
 					artifacts
+					boardsWorked
 					commits
 					policyEvents {
 						policyName kind state severity message evaluatedAt
