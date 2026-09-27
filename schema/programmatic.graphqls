@@ -1057,6 +1057,12 @@ type Session {
   """
   artifacts: [ID]
   """
+  The boards this session worked (task RD2-5): recorded when it took a task, derived from the tasks
+  for a session from before. Force-closing it needs BOARD_WRITE on one of them; a session with none
+  needs the org admin.
+  """
+  boardsWorked: [ID]
+  """
   SCE UUIDs attributed to this session via the commit-trailer parser
   (PR 2). Order is append-order; head of list is the earliest commit.
   """
