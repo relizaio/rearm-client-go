@@ -2386,6 +2386,10 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	// records them (board-documents.md D3). A board from before the map lists a series once it has
 	// published into it again.
 	DocumentComponents []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent `json:"documentComponents"`
+	// Whether a specification with no recorded component may adopt a legacy document component of the
+	// target (board-documents.md D3, task RD2-33): true for a board from before the map, false for every
+	// board created since, whose first publish of each specification creates its own. Read-only.
+	AdoptsLegacyDocuments *bool `json:"adoptsLegacyDocuments"`
 	// The perspectives the board hangs off (board-permissions.md §3): real perspectives or PRODUCT
 	// components used as perspectives. A PERSPECTIVE grant on any of them covers the board.
 	Perspectives []*string `json:"perspectives"`
@@ -2525,6 +2529,11 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentsRoo
 // GetDocumentComponents returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DocumentComponents, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentComponents() []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent {
 	return v.DocumentComponents
+}
+
+// GetAdoptsLegacyDocuments returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.AdoptsLegacyDocuments, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetAdoptsLegacyDocuments() *bool {
+	return v.AdoptsLegacyDocuments
 }
 
 // GetPerspectives returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Perspectives, and is useful for accessing the field via an interface.
@@ -4089,6 +4098,10 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	// records them (board-documents.md D3). A board from before the map lists a series once it has
 	// published into it again.
 	DocumentComponents []*AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent `json:"documentComponents"`
+	// Whether a specification with no recorded component may adopt a legacy document component of the
+	// target (board-documents.md D3, task RD2-33): true for a board from before the map, false for every
+	// board created since, whose first publish of each specification creates its own. Read-only.
+	AdoptsLegacyDocuments *bool `json:"adoptsLegacyDocuments"`
 	// The perspectives the board hangs off (board-permissions.md §3): real perspectives or PRODUCT
 	// components used as perspectives. A PERSPECTIVE grant on any of them covers the board.
 	Perspectives []*string `json:"perspectives"`
@@ -4219,6 +4232,11 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentsR
 // GetDocumentComponents returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DocumentComponents, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentComponents() []*AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent {
 	return v.DocumentComponents
+}
+
+// GetAdoptsLegacyDocuments returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.AdoptsLegacyDocuments, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetAdoptsLegacyDocuments() *bool {
+	return v.AdoptsLegacyDocuments
 }
 
 // GetPerspectives returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Perspectives, and is useful for accessing the field via an interface.
@@ -53941,6 +53959,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 			specification
 			component
 		}
+		adoptsLegacyDocuments
 		perspectives
 		perspectiveNames
 		myPermissions
@@ -54254,6 +54273,7 @@ query AgentBoardsProgrammatic {
 			specification
 			component
 		}
+		adoptsLegacyDocuments
 		perspectives
 		perspectiveNames
 		myPermissions
