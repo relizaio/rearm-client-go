@@ -162,6 +162,7 @@ query ExportBoard($board: String!) {
     checks { blocking mandatoryFields orphans coverage }
     delivery { mode attest merge { by method atTestedHead requireAttestation order } }
     documents { prefix }
+    perspectives
     coordinatorPrompt
     coordinatorCapabilities
     settings {

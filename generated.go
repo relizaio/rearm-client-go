@@ -2021,6 +2021,11 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	// records them (board-documents.md D3). A board from before the map lists a series once it has
 	// published into it again.
 	DocumentComponents []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent `json:"documentComponents"`
+	// The perspectives the board hangs off (board-permissions.md §3): real perspectives or PRODUCT
+	// components used as perspectives. A PERSPECTIVE grant on any of them covers the board.
+	Perspectives []*string `json:"perspectives"`
+	// perspectives as a board file writes them: names, product: marking a PRODUCT component.
+	PerspectiveNames []*string `json:"perspectiveNames"`
 	// The element check policy as this board declared it; null when it uses the defaults (elements.md §7).
 	CheckPolicy *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardCheckPolicy `json:"checkPolicy"`
 	// The policy in force: the declared one, or the defaults (report only, test and requirement orphans).
@@ -2132,6 +2137,16 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocuments() 
 // GetDocumentComponents returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DocumentComponents, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentComponents() []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent {
 	return v.DocumentComponents
+}
+
+// GetPerspectives returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Perspectives, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetPerspectives() []*string {
+	return v.Perspectives
+}
+
+// GetPerspectiveNames returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.PerspectiveNames, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetPerspectiveNames() []*string {
+	return v.PerspectiveNames
 }
 
 // GetCheckPolicy returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.CheckPolicy, and is useful for accessing the field via an interface.
@@ -3431,6 +3446,11 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	// records them (board-documents.md D3). A board from before the map lists a series once it has
 	// published into it again.
 	DocumentComponents []*AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent `json:"documentComponents"`
+	// The perspectives the board hangs off (board-permissions.md §3): real perspectives or PRODUCT
+	// components used as perspectives. A PERSPECTIVE grant on any of them covers the board.
+	Perspectives []*string `json:"perspectives"`
+	// perspectives as a board file writes them: names, product: marking a PRODUCT component.
+	PerspectiveNames []*string `json:"perspectiveNames"`
 	// The element check policy as this board declared it; null when it uses the defaults (elements.md §7).
 	CheckPolicy *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardCheckPolicy `json:"checkPolicy"`
 	// The policy in force: the declared one, or the defaults (report only, test and requirement orphans).
@@ -3542,6 +3562,16 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocuments(
 // GetDocumentComponents returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DocumentComponents, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentComponents() []*AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent {
 	return v.DocumentComponents
+}
+
+// GetPerspectives returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Perspectives, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetPerspectives() []*string {
+	return v.Perspectives
+}
+
+// GetPerspectiveNames returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.PerspectiveNames, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetPerspectiveNames() []*string {
+	return v.PerspectiveNames
 }
 
 // GetCheckPolicy returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.CheckPolicy, and is useful for accessing the field via an interface.
@@ -35912,8 +35942,10 @@ type ExportBoardExportBoardProgrammaticBoardSpec struct {
 	// How a task proves it was delivered (task 18c5c293); absent means PR_ROWS.
 	Delivery *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicy `json:"delivery"`
 	// How the board names its documents; absent means after the board (board-documents.md D2).
-	Documents         *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec `json:"documents"`
-	CoordinatorPrompt *string                                                                 `json:"coordinatorPrompt"`
+	Documents *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec `json:"documents"`
+	// Perspectives by name, product: marking a PRODUCT component (board-permissions.md §3).
+	Perspectives      []*string `json:"perspectives"`
+	CoordinatorPrompt *string   `json:"coordinatorPrompt"`
 	// Verbs the coordinator seat performs itself (PR_MERGE, CODE_PUSH); absent means only the tracker verbs.
 	CoordinatorCapabilities []AgentCapability `json:"coordinatorCapabilities"`
 	// The board's budget and stops; a null value is the board default.
@@ -35987,6 +36019,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDelivery() *ExportBoard
 // GetDocuments returns ExportBoardExportBoardProgrammaticBoardSpec.Documents, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDocuments() *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec {
 	return v.Documents
+}
+
+// GetPerspectives returns ExportBoardExportBoardProgrammaticBoardSpec.Perspectives, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetPerspectives() []*string {
+	return v.Perspectives
 }
 
 // GetCoordinatorPrompt returns ExportBoardExportBoardProgrammaticBoardSpec.CoordinatorPrompt, and is useful for accessing the field via an interface.
@@ -44795,6 +44832,8 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 			specification
 			component
 		}
+		perspectives
+		perspectiveNames
 		checkPolicy {
 			blocking
 			mandatoryFields
@@ -45081,6 +45120,8 @@ query AgentBoardsProgrammatic {
 			specification
 			component
 		}
+		perspectives
+		perspectiveNames
 		checkPolicy {
 			blocking
 			mandatoryFields
@@ -51385,6 +51426,7 @@ query ExportBoard ($board: String!) {
 		documents {
 			prefix
 		}
+		perspectives
 		coordinatorPrompt
 		coordinatorCapabilities
 		settings {
