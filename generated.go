@@ -37012,6 +37012,45 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) G
 	return v.EventRetentionDays
 }
 
+// ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef includes the requested fields of the GraphQL type BoardPerspectiveRef.
+// The GraphQL type's documentation follows.
+//
+// A perspective a board holds: a real perspective, or a PRODUCT component when product is true.
+type ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef struct {
+	Uuid string `json:"uuid"`
+	Name string `json:"name"`
+	// A PRODUCT component used as a perspective; a board file writes it with the product: marker.
+	Product bool `json:"product"`
+}
+
+// GetUuid returns ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef.Uuid, and is useful for accessing the field via an interface.
+func (v *ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef) GetUuid() string {
+	return v.Uuid
+}
+
+// GetName returns ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef.Name, and is useful for accessing the field via an interface.
+func (v *ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef) GetName() string {
+	return v.Name
+}
+
+// GetProduct returns ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef.Product, and is useful for accessing the field via an interface.
+func (v *ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef) GetProduct() bool {
+	return v.Product
+}
+
+// ExportBoardPerspectivesResponse is returned by ExportBoardPerspectives on success.
+type ExportBoardPerspectivesResponse struct {
+	// One board's perspectives as the server holds them, by name or uuid (CONFIGURATION_READ, as its
+	// export): uuid, name and product, in the board's order. The export writes a name several
+	// perspectives share as the uuid; a client keeping a configured form maps it through these.
+	ExportBoardPerspectivesProgrammatic []*ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef `json:"exportBoardPerspectivesProgrammatic"`
+}
+
+// GetExportBoardPerspectivesProgrammatic returns ExportBoardPerspectivesResponse.ExportBoardPerspectivesProgrammatic, and is useful for accessing the field via an interface.
+func (v *ExportBoardPerspectivesResponse) GetExportBoardPerspectivesProgrammatic() []*ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef {
+	return v.ExportBoardPerspectivesProgrammatic
+}
+
 // ExportBoardResponse is returned by ExportBoard on success.
 type ExportBoardResponse struct {
 	// Export one board of the key's organization as a board file, by name or uuid (CONFIGURATION_READ).
@@ -44534,6 +44573,14 @@ type __ExportBoardInput struct {
 
 // GetBoard returns __ExportBoardInput.Board, and is useful for accessing the field via an interface.
 func (v *__ExportBoardInput) GetBoard() string { return v.Board }
+
+// __ExportBoardPerspectivesInput is used internally by genqlient
+type __ExportBoardPerspectivesInput struct {
+	Board string `json:"board"`
+}
+
+// GetBoard returns __ExportBoardPerspectivesInput.Board, and is useful for accessing the field via an interface.
+func (v *__ExportBoardPerspectivesInput) GetBoard() string { return v.Board }
 
 // __ExportBranchesInput is used internally by genqlient
 type __ExportBranchesInput struct {
@@ -52304,6 +52351,45 @@ func ExportBoard(
 	}
 
 	data_ = &ExportBoardResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by ExportBoardPerspectives.
+const ExportBoardPerspectives_Operation = `
+query ExportBoardPerspectives ($board: String!) {
+	exportBoardPerspectivesProgrammatic(board: $board) {
+		uuid
+		name
+		product
+	}
+}
+`
+
+// A board's perspectives as the server holds them, behind the export's gate (task b9115d09, round 3):
+// uuid, name and product, in the board's order. The export writes a name several perspectives share
+// as the uuid; a client keeping a configured form maps it through these.
+func ExportBoardPerspectives(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	board string,
+) (data_ *ExportBoardPerspectivesResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ExportBoardPerspectives",
+		Query:  ExportBoardPerspectives_Operation,
+		Variables: &__ExportBoardPerspectivesInput{
+			Board: board,
+		},
+	}
+
+	data_ = &ExportBoardPerspectivesResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

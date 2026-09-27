@@ -181,6 +181,13 @@ query ExportBoard($board: String!) {
   }
 }
 
+# A board's perspectives as the server holds them, behind the export's gate (task b9115d09, round 3):
+# uuid, name and product, in the board's order. The export writes a name several perspectives share
+# as the uuid; a client keeping a configured form maps it through these.
+query ExportBoardPerspectives($board: String!) {
+  exportBoardPerspectivesProgrammatic(board: $board) { uuid name product }
+}
+
 query ExportRolePresets {
   agentRolePresetsSpecProgrammatic {
     kind

@@ -17,3 +17,12 @@ func TestBoardReadsCarryThePerspectives(t *testing.T) {
 		t.Error("the board export does not carry the perspectives")
 	}
 }
+
+// The read the Terraform provider maps configured perspectives by (task b9115d09, round 3): behind
+// the export's gate, each perspective's uuid, name and product.
+func TestTheExportPerspectivesReadCarriesUuidNameAndProduct(t *testing.T) {
+	n := normalised(ExportBoardPerspectives_Operation)
+	if !strings.Contains(n, "exportBoardPerspectivesProgrammatic(board: $board) { uuid name product }") {
+		t.Errorf("the perspectives read selects %q", n)
+	}
+}
