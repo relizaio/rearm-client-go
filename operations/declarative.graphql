@@ -177,6 +177,7 @@ query ExportBoard($board: String!) {
       coordinatorStopRelease
       eventRetentionDays
     }
+    groups { key name description dependsOn defaultLevel status }
     roles { ...BoardRoleSpecFields }
   }
 }

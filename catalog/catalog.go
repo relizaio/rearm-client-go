@@ -486,7 +486,11 @@ func entityOf(ch Change) string {
 	case rearm.DeclarativeKindBranches:
 		return "branch"
 	case rearm.DeclarativeKindBoard:
-		// A board file's only archives are roles it no longer lists; the board is never archived.
+		// Task groups carry "group", or a message about the group when one is closed or deleted.
+		if isGroupChange(ch) {
+			return "group"
+		}
+		// Otherwise a board file's only archives are roles it no longer lists; the board is never archived.
 		if ch.Message == "role" || ch.Action == rearm.DeclarativeActionArchive {
 			return "role"
 		}
@@ -500,10 +504,17 @@ func entityOf(ch Change) string {
 
 // messageOf drops the entity marker a board file's changes carry, since entityOf already shows it.
 func messageOf(ch Change) string {
-	if ch.Kind == rearm.DeclarativeKindBoard && (ch.Message == "role" || ch.Message == "board") {
+	if ch.Kind == rearm.DeclarativeKindBoard && (ch.Message == "role" || ch.Message == "board" || ch.Message == "group") {
 		return ""
 	}
 	return ch.Message
+}
+
+// isGroupChange reports a board file's change to one of its task groups (task RD2-30). A refusal
+// about groups is the board's, named after it, so errors are never a group's own change.
+func isGroupChange(ch Change) bool {
+	return ch.Action != rearm.DeclarativeActionError &&
+		(ch.Message == "group" || strings.HasPrefix(ch.Message, "group "))
 }
 
 func fromResult(r *rearm.ApplyResultFields) *Result {
@@ -557,8 +568,8 @@ func stripNulls(v any) any {
 // Key order for the document envelope and for nested entries; anything else follows alphabetically.
 var (
 	topLevelKeyOrder = []string{"kind", "version", "authoritative", "name", "description", "target", "component",
-		"components", "branches", "sources", "settings", "coordinatorPrompt", "roles", "presets"}
-	entryKeyOrder = []string{"name", "type", "component", "branch", "release", "pattern", "orderIndex", "kind",
+		"components", "branches", "sources", "settings", "coordinatorPrompt", "groups", "roles", "presets"}
+	entryKeyOrder = []string{"key", "name", "type", "component", "branch", "release", "pattern", "orderIndex", "kind",
 		"necessity", "humanGate", "prompt"}
 )
 
