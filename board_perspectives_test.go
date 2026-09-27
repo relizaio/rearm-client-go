@@ -13,7 +13,7 @@ func TestBoardReadsCarryThePerspectives(t *testing.T) {
 			t.Errorf("%s does not read the perspectives", name)
 		}
 	}
-	if !strings.Contains(normalised(ExportBoard_Operation), "documents { prefix } perspectives") {
+	if !strings.Contains(normalised(ExportBoard_Operation), "documents { prefix shared root } perspectives") {
 		t.Error("the board export does not carry the perspectives")
 	}
 }

@@ -1124,22 +1124,30 @@ type AgentBoard {
   """
   documentPaths: Object
   """
-  The repository path a new document of this type would take, with every placeholder filled:
-  {task} = first eight characters of the task uuid, {round} = the task's next round of this type,
-  {type} = lower case, {component} = the component's name slugged. task is required for
-  task-scoped types, component for component-scoped ones. The release records the path actually
-  used; this is what the CLI uses when no --file is given.
+  The repository path a new document of this type would take, relative to the repository root,
+  with every placeholder filled and the board's documentsRoot in front: {key} = the task's key
+  (RD-42), {round} = the task's next round of this type, {type} = lower case, {component} = the
+  component's name slugged. task is required for task-scoped types, component for
+  component-scoped ones. The release records the path actually used; this is what the CLI uses
+  when no --file is given.
   """
   documentPath(
   specification: SpecificationType!
   task: ID
   component: ID): String
   """
-  Every type's template after overrides and scope defaults: the built-in index types per task,
-  a type some active role produces at TASK scope under docs/{type}/{task}/round-{round}.md, any
-  other under docs/{type}/{component}.md.
+  Every type's template after overrides and scope defaults, without the root: the built-in index
+  types per task; at TASK scope ARCHITECTURE under design/{key}/architecture-{round}.md,
+  DETAILED_DESIGN under impl/{key}/notes-{round}.md and any other type under
+  design/{key}/{type}-{round}.md; at COMPONENT scope docs/{type}/{component}.md.
   """
   effectiveDocumentPaths: Object
+  """
+  Where this board's documents sit in its repository, resolved (board-documents.md D6): the
+  documents.root it sets, else boards/<board slug>/ when documents.shared, else empty. Every
+  documentPath starts with it.
+  """
+  documentsRoot: String
   """
   How this board names its documents, as set; null is the default, named after the board (board-documents.md D2).
   """
@@ -3033,6 +3041,13 @@ input AgentDocumentPublishInput {
   """
   elementsDigest: String
   """
+  Publish on a task another session holds, as an advisory round (task e97fde56): only a prose type
+  a role your agent has signed off on this board produces, on an active task. The round is
+  ASSEMBLED at once and an INFO event tells the board. Ignored when your session holds the task:
+  its round is a normal one. Without it, publishing on a task you do not hold is refused.
+  """
+  advisory: Boolean
+  """
   HEAD of the documents repository when the files were read. Required with a path.
   """
   commit: String
@@ -3251,6 +3266,14 @@ type BoardDocumentsSpec {
   Replaces the board name in its document components' names, <prefix>-<specification>, both slugged.
   """
   prefix: String
+  """
+  The documents repository serves several boards: the default root is boards/{board}/.
+  """
+  shared: Boolean
+  """
+  The root outright, relative to the repository; empty is the repository root.
+  """
+  root: String
 }
 
 """
@@ -3745,6 +3768,15 @@ type DocumentRef {
   On a CHECK_REPORT round: what the element checks found (elements.md §7).
   """
   checks: CheckReport
+  """
+  A round a role published on a task it did not hold (task e97fde56): assembled at publish, never
+  a hop's output. False or absent on every other round.
+  """
+  advisory: Boolean
+  """
+  The role the round was published as: the holding role, or for an advisory round the author's. Absent on older rounds.
+  """
+  publishedByRole: String
 }
 
 """
@@ -4067,6 +4099,14 @@ type AgentBoardDocuments {
   Replaces the board name in its document components' names, <prefix>-<specification>, both slugged.
   """
   prefix: String
+  """
+  The documents repository serves several boards, so the default root is boards/{board}/.
+  """
+  shared: Boolean
+  """
+  The root as set, relative to the repository; documentsRoot on the board is the resolved one.
+  """
+  root: String
 }
 
 enum PermissionFunction {
@@ -4735,6 +4775,14 @@ input BoardDocumentsSpecInput {
   Replaces the board name in its document components' names; needs a letter or a digit.
   """
   prefix: String
+  """
+  The documents repository serves several boards: the default root becomes boards/{board}/.
+  """
+  shared: Boolean
+  """
+  The root outright, relative to the repository, with no '..'; empty is the repository root.
+  """
+  root: String
 }
 
 input BoardSettingsSpecInput {
