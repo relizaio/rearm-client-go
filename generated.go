@@ -44205,7 +44205,9 @@ type ExportBoardExportBoardProgrammaticBoardSpec struct {
 	CoordinatorCapabilities []AgentCapability `json:"coordinatorCapabilities"`
 	// The board's budget and stops; a null value is the board default.
 	Settings *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec `json:"settings"`
-	Roles    []*ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec      `json:"roles"`
+	// The task groups in display order, closed ones included (task RD2-30).
+	Groups []*ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec `json:"groups"`
+	Roles  []*ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec   `json:"roles"`
 }
 
 // GetKind returns ExportBoardExportBoardProgrammaticBoardSpec.Kind, and is useful for accessing the field via an interface.
@@ -44297,6 +44299,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetCoordinatorCapabilities
 // GetSettings returns ExportBoardExportBoardProgrammaticBoardSpec.Settings, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetSettings() *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec {
 	return v.Settings
+}
+
+// GetGroups returns ExportBoardExportBoardProgrammaticBoardSpec.Groups, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetGroups() []*ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec {
+	return v.Groups
 }
 
 // GetRoles returns ExportBoardExportBoardProgrammaticBoardSpec.Roles, and is useful for accessing the field via an interface.
@@ -44433,6 +44440,51 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec)
 // GetRoot returns ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec.Root, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec) GetRoot() *string {
 	return v.Root
+}
+
+// ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec includes the requested fields of the GraphQL type BoardGroupSpec.
+// The GraphQL type's documentation follows.
+//
+// A task group as a board file declares it: configuration only, dependencies by key.
+type ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec struct {
+	Key         *string `json:"key"`
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+	// The keys of the groups this one waits on.
+	DependsOn []*string `json:"dependsOn"`
+	// The level its tasks read when they set none (task, then group, then board).
+	DefaultLevel *int                  `json:"defaultLevel"`
+	Status       *AgentTaskGroupStatus `json:"status"`
+}
+
+// GetKey returns ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec.Key, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec.Name, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec) GetName() *string {
+	return v.Name
+}
+
+// GetDescription returns ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec.Description, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec) GetDescription() *string {
+	return v.Description
+}
+
+// GetDependsOn returns ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec.DependsOn, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec) GetDependsOn() []*string {
+	return v.DependsOn
+}
+
+// GetDefaultLevel returns ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec.DefaultLevel, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec) GetDefaultLevel() *int {
+	return v.DefaultLevel
+}
+
+// GetStatus returns ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec.Status, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecGroupsBoardGroupSpec) GetStatus() *AgentTaskGroupStatus {
+	return v.Status
 }
 
 // ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec includes the requested fields of the GraphQL type BoardRoleSpec.
@@ -61885,6 +61937,14 @@ query ExportBoard ($board: String!) {
 			humanQueueAgeMinutes
 			coordinatorStopRelease
 			eventRetentionDays
+		}
+		groups {
+			key
+			name
+			description
+			dependsOn
+			defaultLevel
+			status
 		}
 		roles {
 			... BoardRoleSpecFields

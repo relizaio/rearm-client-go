@@ -760,6 +760,10 @@ type BoardSpec {
   The board's budget and stops; a null value is the board default.
   """
   settings: BoardSettingsSpec
+  """
+  The task groups in display order, closed ones included (task RD2-30).
+  """
+  groups: [BoardGroupSpec]
   roles: [BoardRoleSpec]
 }
 
@@ -1931,6 +1935,12 @@ input BoardSpecInput {
   """
   coordinatorCapabilities: [AgentCapability!]
   settings: BoardSettingsSpecInput
+  """
+  The task groups in display order (task RD2-30). A listed group is created or updated by key, a
+  member declared null cleared and one left out kept; a group the list leaves out is closed, never
+  deleted. Declared null or [] deletes every group, refused while one holds tasks; absent leaves them.
+  """
+  groups: [BoardGroupSpecInput!]
   roles: [BoardRoleSpecInput!]
 }
 
@@ -3528,6 +3538,24 @@ type BoardSettingsSpec {
   eventRetentionDays: Int
 }
 
+"""
+A task group as a board file declares it: configuration only, dependencies by key.
+"""
+type BoardGroupSpec {
+  key: String
+  name: String
+  description: String
+  """
+  The keys of the groups this one waits on.
+  """
+  dependsOn: [String]
+  """
+  The level its tasks read when they set none (task, then group, then board).
+  """
+  defaultLevel: Int
+  status: AgentTaskGroupStatus
+}
+
 type BoardRoleSpec {
   name: String
   prompt: String
@@ -5055,6 +5083,18 @@ input BoardSettingsSpecInput {
   Days the event log keeps an event; null restores the default, 15, 0 keeps everything, and a negative number is refused.
   """
   eventRetentionDays: Int
+}
+
+"""
+A task group in a board file: dependsOn names groups of the board or of the file by key.
+"""
+input BoardGroupSpecInput {
+  key: String!
+  name: String
+  description: String
+  dependsOn: [String]
+  defaultLevel: Int
+  status: AgentTaskGroupStatus
 }
 
 """
