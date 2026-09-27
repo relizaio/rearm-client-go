@@ -1177,6 +1177,10 @@ type AgentBoard {
   """
   documentComponents: [AgentBoardDocumentComponent!]
   """
+  What the board has produced: one entry per document series in documentComponents, with its latest round.
+  """
+  documentSeries: [AgentBoardDocumentSeries!]
+  """
   Element id families as this board declared them over the defaults (prefix to family name); null when it uses the defaults alone.
   """
   elementFamilies: Object
@@ -2285,6 +2289,11 @@ type Component {
   Locks raised on this component, active and recently released.
   """
   locks: [Lock!]
+  """
+  For a DOCUMENT component, the board whose document series it is (board-documents.md §5); null for
+  every other kind and for a document no board owns. The board page checks the board's permissions.
+  """
+  agentBoard: AgentBoardRef
 }
 
 input CreateComponentInput {
@@ -4136,6 +4145,30 @@ type AgentBoardDocumentComponent {
   component: ID!
 }
 
+"""
+One of a board's document series, as the board page lists it (board-documents.md §5).
+"""
+type AgentBoardDocumentSeries {
+  specification: SpecificationType!
+  component: AgentBoardDocumentSeriesComponent!
+  """
+  The newest settled round of the series, of any task; null when none was published.
+  """
+  latestRound: AgentBoardDocumentRound
+  """
+  Settled rounds the series holds, every task's.
+  """
+  roundsCount: Int!
+  """
+  For an index type, the OPEN items across each task's latest round; null for prose.
+  """
+  openFindings: Int
+  """
+  The newest check report on the latest round: FAIL (a blocking check failed), WARN, PASS; null when unchecked.
+  """
+  checkVerdict: String
+}
+
 type AgentBoardEvent {
   kind: AgentBoardEventKind
   message: String
@@ -5353,6 +5386,15 @@ type ActionGuard {
   set it.
   """
   namePattern: String
+}
+
+"""
+The board a document component belongs to, as its page names it.
+"""
+type AgentBoardRef {
+  uuid: ID!
+  name: String
+  taskPrefix: String
 }
 
 input VcsRepositoryInput {
@@ -6805,6 +6847,23 @@ type SessionFederation {
   event: String
   actor: String
   runId: String
+}
+
+type AgentBoardDocumentSeriesComponent {
+  uuid: ID!
+  name: String
+}
+
+type AgentBoardDocumentRound {
+  """
+  The task's round number of this type.
+  """
+  round: Int
+  version: String
+  lifecycle: ReleaseLifecycleEnum
+  path: String
+  task: ID
+  release: ID
 }
 
 """
