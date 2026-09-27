@@ -1450,6 +1450,363 @@ func (v *AgentBoardEventsProgrammaticResponse) GetAgentBoardEventsProgrammatic()
 	return v.AgentBoardEventsProgrammatic
 }
 
+// AgentBoardGroupDeleteResponse is returned by AgentBoardGroupDelete on success.
+type AgentBoardGroupDeleteResponse struct {
+	// Delete an empty group; refused while a task names it (task RD2-29).
+	AgentBoardGroupDelete *bool `json:"agentBoardGroupDelete"`
+}
+
+// GetAgentBoardGroupDelete returns AgentBoardGroupDeleteResponse.AgentBoardGroupDelete, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupDeleteResponse) GetAgentBoardGroupDelete() *bool {
+	return v.AgentBoardGroupDelete
+}
+
+// AgentBoardGroupSetAgentBoardGroupSetTaskGroup includes the requested fields of the GraphQL type TaskGroup.
+// The GraphQL type's documentation follows.
+//
+// A batch of a board's tasks (task-groups-and-tags.md §2.1, task RD2-29).
+type AgentBoardGroupSetAgentBoardGroupSetTaskGroup struct {
+	Uuid *string `json:"uuid"`
+	// The handle people type: lower case, 2 to 24 characters, unique on the board; fixed once a task names it.
+	Key         *string `json:"key"`
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+	// Display order among the board's groups; a task registered into the group is ordered after its last.
+	Order *int `json:"order"`
+	// The keys of the groups this one waits on.
+	DependsOn []*string `json:"dependsOn"`
+	// The level its tasks read when they set none (task, then group, then board).
+	DefaultLevel *int                                                   `json:"defaultLevel"`
+	Status       *AgentTaskGroupStatus                                  `json:"status"`
+	CreatedAt    *string                                                `json:"createdAt"`
+	Progress     *AgentBoardGroupSetAgentBoardGroupSetTaskGroupProgress `json:"progress"`
+}
+
+// GetUuid returns AgentBoardGroupSetAgentBoardGroupSetTaskGroup.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroup) GetUuid() *string { return v.Uuid }
+
+// GetKey returns AgentBoardGroupSetAgentBoardGroupSetTaskGroup.Key, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroup) GetKey() *string { return v.Key }
+
+// GetName returns AgentBoardGroupSetAgentBoardGroupSetTaskGroup.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroup) GetName() *string { return v.Name }
+
+// GetDescription returns AgentBoardGroupSetAgentBoardGroupSetTaskGroup.Description, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroup) GetDescription() *string {
+	return v.Description
+}
+
+// GetOrder returns AgentBoardGroupSetAgentBoardGroupSetTaskGroup.Order, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroup) GetOrder() *int { return v.Order }
+
+// GetDependsOn returns AgentBoardGroupSetAgentBoardGroupSetTaskGroup.DependsOn, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroup) GetDependsOn() []*string { return v.DependsOn }
+
+// GetDefaultLevel returns AgentBoardGroupSetAgentBoardGroupSetTaskGroup.DefaultLevel, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroup) GetDefaultLevel() *int { return v.DefaultLevel }
+
+// GetStatus returns AgentBoardGroupSetAgentBoardGroupSetTaskGroup.Status, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroup) GetStatus() *AgentTaskGroupStatus {
+	return v.Status
+}
+
+// GetCreatedAt returns AgentBoardGroupSetAgentBoardGroupSetTaskGroup.CreatedAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroup) GetCreatedAt() *string { return v.CreatedAt }
+
+// GetProgress returns AgentBoardGroupSetAgentBoardGroupSetTaskGroup.Progress, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroup) GetProgress() *AgentBoardGroupSetAgentBoardGroupSetTaskGroupProgress {
+	return v.Progress
+}
+
+// AgentBoardGroupSetAgentBoardGroupSetTaskGroupProgress includes the requested fields of the GraphQL type TaskGroupProgress.
+// The GraphQL type's documentation follows.
+//
+// A group's tasks by state. complete is every task COMPLETED or CANCELLED, and at least one task.
+type AgentBoardGroupSetAgentBoardGroupSetTaskGroupProgress struct {
+	Total    *int  `json:"total"`
+	Done     *int  `json:"done"`
+	Open     *int  `json:"open"`
+	Complete *bool `json:"complete"`
+}
+
+// GetTotal returns AgentBoardGroupSetAgentBoardGroupSetTaskGroupProgress.Total, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroupProgress) GetTotal() *int { return v.Total }
+
+// GetDone returns AgentBoardGroupSetAgentBoardGroupSetTaskGroupProgress.Done, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroupProgress) GetDone() *int { return v.Done }
+
+// GetOpen returns AgentBoardGroupSetAgentBoardGroupSetTaskGroupProgress.Open, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroupProgress) GetOpen() *int { return v.Open }
+
+// GetComplete returns AgentBoardGroupSetAgentBoardGroupSetTaskGroupProgress.Complete, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetAgentBoardGroupSetTaskGroupProgress) GetComplete() *bool {
+	return v.Complete
+}
+
+// AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup includes the requested fields of the GraphQL type TaskGroup.
+// The GraphQL type's documentation follows.
+//
+// A batch of a board's tasks (task-groups-and-tags.md §2.1, task RD2-29).
+type AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup struct {
+	Uuid *string `json:"uuid"`
+	// The handle people type: lower case, 2 to 24 characters, unique on the board; fixed once a task names it.
+	Key         *string `json:"key"`
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+	// Display order among the board's groups; a task registered into the group is ordered after its last.
+	Order *int `json:"order"`
+	// The keys of the groups this one waits on.
+	DependsOn []*string `json:"dependsOn"`
+	// The level its tasks read when they set none (task, then group, then board).
+	DefaultLevel *int                                                                           `json:"defaultLevel"`
+	Status       *AgentTaskGroupStatus                                                          `json:"status"`
+	CreatedAt    *string                                                                        `json:"createdAt"`
+	Progress     *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroupProgress `json:"progress"`
+}
+
+// GetUuid returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup.Key, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup) GetName() *string {
+	return v.Name
+}
+
+// GetDescription returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup.Description, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup) GetDescription() *string {
+	return v.Description
+}
+
+// GetOrder returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup.Order, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup) GetOrder() *int {
+	return v.Order
+}
+
+// GetDependsOn returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup.DependsOn, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup) GetDependsOn() []*string {
+	return v.DependsOn
+}
+
+// GetDefaultLevel returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup.DefaultLevel, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup) GetDefaultLevel() *int {
+	return v.DefaultLevel
+}
+
+// GetStatus returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup.Status, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup) GetStatus() *AgentTaskGroupStatus {
+	return v.Status
+}
+
+// GetCreatedAt returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup.CreatedAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup) GetCreatedAt() *string {
+	return v.CreatedAt
+}
+
+// GetProgress returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup.Progress, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup) GetProgress() *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroupProgress {
+	return v.Progress
+}
+
+// AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroupProgress includes the requested fields of the GraphQL type TaskGroupProgress.
+// The GraphQL type's documentation follows.
+//
+// A group's tasks by state. complete is every task COMPLETED or CANCELLED, and at least one task.
+type AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroupProgress struct {
+	Total    *int  `json:"total"`
+	Done     *int  `json:"done"`
+	Open     *int  `json:"open"`
+	Complete *bool `json:"complete"`
+}
+
+// GetTotal returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroupProgress.Total, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroupProgress) GetTotal() *int {
+	return v.Total
+}
+
+// GetDone returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroupProgress.Done, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroupProgress) GetDone() *int {
+	return v.Done
+}
+
+// GetOpen returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroupProgress.Open, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroupProgress) GetOpen() *int {
+	return v.Open
+}
+
+// GetComplete returns AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroupProgress.Complete, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroupProgress) GetComplete() *bool {
+	return v.Complete
+}
+
+// AgentBoardGroupSetProgrammaticResponse is returned by AgentBoardGroupSetProgrammatic on success.
+type AgentBoardGroupSetProgrammaticResponse struct {
+	// The coordinator seat creates or edits a group of its board, by key (task RD2-29).
+	AgentBoardGroupSetProgrammatic *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup `json:"agentBoardGroupSetProgrammatic"`
+}
+
+// GetAgentBoardGroupSetProgrammatic returns AgentBoardGroupSetProgrammaticResponse.AgentBoardGroupSetProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetProgrammaticResponse) GetAgentBoardGroupSetProgrammatic() *AgentBoardGroupSetProgrammaticAgentBoardGroupSetProgrammaticTaskGroup {
+	return v.AgentBoardGroupSetProgrammatic
+}
+
+// AgentBoardGroupSetResponse is returned by AgentBoardGroupSet on success.
+type AgentBoardGroupSetResponse struct {
+	// Create or edit a group of the board, by key (task RD2-29). CONFIGURATION_WRITE and BOARD_WRITE on
+	// the board. status CLOSED closes it: no new tasks, nothing else changes.
+	AgentBoardGroupSet *AgentBoardGroupSetAgentBoardGroupSetTaskGroup `json:"agentBoardGroupSet"`
+}
+
+// GetAgentBoardGroupSet returns AgentBoardGroupSetResponse.AgentBoardGroupSet, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupSetResponse) GetAgentBoardGroupSet() *AgentBoardGroupSetAgentBoardGroupSetTaskGroup {
+	return v.AgentBoardGroupSet
+}
+
+// AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
+type AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoard struct {
+	Uuid *string `json:"uuid"`
+	// The board's task groups (task-groups-and-tags.md §2, task RD2-29), in display order: each with its
+	// progress over its tasks and what they spent. A task belongs to one group or none; a group that
+	// depends on another holds its tasks back from offers until that group has nothing open.
+	Groups []*AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup `json:"groups"`
+}
+
+// GetUuid returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoard.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoard) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetGroups returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoard.Groups, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoard) GetGroups() []*AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup {
+	return v.Groups
+}
+
+// AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup includes the requested fields of the GraphQL type TaskGroup.
+// The GraphQL type's documentation follows.
+//
+// A batch of a board's tasks (task-groups-and-tags.md §2.1, task RD2-29).
+type AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup struct {
+	Uuid *string `json:"uuid"`
+	// The handle people type: lower case, 2 to 24 characters, unique on the board; fixed once a task names it.
+	Key         *string `json:"key"`
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+	// Display order among the board's groups; a task registered into the group is ordered after its last.
+	Order *int `json:"order"`
+	// The keys of the groups this one waits on.
+	DependsOn []*string `json:"dependsOn"`
+	// The level its tasks read when they set none (task, then group, then board).
+	DefaultLevel *int                                                                                 `json:"defaultLevel"`
+	Status       *AgentTaskGroupStatus                                                                `json:"status"`
+	CreatedAt    *string                                                                              `json:"createdAt"`
+	Progress     *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress `json:"progress"`
+	// What the group's tasks spent: their usage rows plus their coordinator shares, in USD micros.
+	SpentMicros *int64 `json:"spentMicros"`
+}
+
+// GetUuid returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Key, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetName() *string {
+	return v.Name
+}
+
+// GetDescription returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Description, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetDescription() *string {
+	return v.Description
+}
+
+// GetOrder returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Order, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetOrder() *int {
+	return v.Order
+}
+
+// GetDependsOn returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.DependsOn, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetDependsOn() []*string {
+	return v.DependsOn
+}
+
+// GetDefaultLevel returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.DefaultLevel, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetDefaultLevel() *int {
+	return v.DefaultLevel
+}
+
+// GetStatus returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Status, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetStatus() *AgentTaskGroupStatus {
+	return v.Status
+}
+
+// GetCreatedAt returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.CreatedAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetCreatedAt() *string {
+	return v.CreatedAt
+}
+
+// GetProgress returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Progress, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetProgress() *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress {
+	return v.Progress
+}
+
+// GetSpentMicros returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.SpentMicros, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetSpentMicros() *int64 {
+	return v.SpentMicros
+}
+
+// AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress includes the requested fields of the GraphQL type TaskGroupProgress.
+// The GraphQL type's documentation follows.
+//
+// A group's tasks by state. complete is every task COMPLETED or CANCELLED, and at least one task.
+type AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress struct {
+	Total    *int  `json:"total"`
+	Done     *int  `json:"done"`
+	Open     *int  `json:"open"`
+	Complete *bool `json:"complete"`
+}
+
+// GetTotal returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress.Total, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress) GetTotal() *int {
+	return v.Total
+}
+
+// GetDone returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress.Done, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress) GetDone() *int {
+	return v.Done
+}
+
+// GetOpen returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress.Open, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress) GetOpen() *int {
+	return v.Open
+}
+
+// GetComplete returns AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress.Complete, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress) GetComplete() *bool {
+	return v.Complete
+}
+
+// AgentBoardGroupsProgrammaticResponse is returned by AgentBoardGroupsProgrammatic on success.
+type AgentBoardGroupsProgrammaticResponse struct {
+	// Agent-key auth: one board (includes coordinatorPrompt and lock state).
+	AgentBoardProgrammatic *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoard `json:"agentBoardProgrammatic"`
+}
+
+// GetAgentBoardProgrammatic returns AgentBoardGroupsProgrammaticResponse.AgentBoardProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentBoardGroupsProgrammaticResponse) GetAgentBoardProgrammatic() *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoard {
+	return v.AgentBoardProgrammatic
+}
+
 // Locks stop NEW assignments only; the coordinator cannot lift or override an OPERATOR lock.
 type AgentBoardLockLevel string
 
@@ -2004,6 +2361,10 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	Status      *AgentBoardStatus `json:"status"`
 	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
 	Sources []*string `json:"sources"`
+	// The board's task groups (task-groups-and-tags.md §2, task RD2-29), in display order: each with its
+	// progress over its tasks and what they spent. A task belongs to one group or none; a group that
+	// depends on another holds its tasks back from offers until that group has nothing open.
+	Groups []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup `json:"groups"`
 	// Where this board's documents are written, as the repository row it resolves
 	// to. Set by passing a URI to agentBoardUpdate; the row is the identity, so a
 	// remote written as ssh on one machine and https on another is the same
@@ -2124,6 +2485,11 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetStatus() *Ag
 // GetSources returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Sources, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetSources() []*string {
 	return v.Sources
+}
+
+// GetGroups returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Groups, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetGroups() []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup {
+	return v.Groups
 }
 
 // GetDocumentsRepo returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
@@ -2775,6 +3141,108 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEventsAgentBoardE
 	return &retval, nil
 }
 
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup includes the requested fields of the GraphQL type TaskGroup.
+// The GraphQL type's documentation follows.
+//
+// A batch of a board's tasks (task-groups-and-tags.md §2.1, task RD2-29).
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup struct {
+	Uuid *string `json:"uuid"`
+	// The handle people type: lower case, 2 to 24 characters, unique on the board; fixed once a task names it.
+	Key         *string `json:"key"`
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+	// Display order among the board's groups; a task registered into the group is ordered after its last.
+	Order *int `json:"order"`
+	// The keys of the groups this one waits on.
+	DependsOn []*string `json:"dependsOn"`
+	// The level its tasks read when they set none (task, then group, then board).
+	DefaultLevel *int                                                                           `json:"defaultLevel"`
+	Status       *AgentTaskGroupStatus                                                          `json:"status"`
+	CreatedAt    *string                                                                        `json:"createdAt"`
+	Progress     *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress `json:"progress"`
+}
+
+// GetUuid returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Key, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetName() *string {
+	return v.Name
+}
+
+// GetDescription returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Description, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetDescription() *string {
+	return v.Description
+}
+
+// GetOrder returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Order, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetOrder() *int {
+	return v.Order
+}
+
+// GetDependsOn returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.DependsOn, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetDependsOn() []*string {
+	return v.DependsOn
+}
+
+// GetDefaultLevel returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.DefaultLevel, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetDefaultLevel() *int {
+	return v.DefaultLevel
+}
+
+// GetStatus returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Status, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetStatus() *AgentTaskGroupStatus {
+	return v.Status
+}
+
+// GetCreatedAt returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.CreatedAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetCreatedAt() *string {
+	return v.CreatedAt
+}
+
+// GetProgress returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup.Progress, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroup) GetProgress() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress {
+	return v.Progress
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress includes the requested fields of the GraphQL type TaskGroupProgress.
+// The GraphQL type's documentation follows.
+//
+// A group's tasks by state. complete is every task COMPLETED or CANCELLED, and at least one task.
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress struct {
+	Total    *int  `json:"total"`
+	Done     *int  `json:"done"`
+	Open     *int  `json:"open"`
+	Complete *bool `json:"complete"`
+}
+
+// GetTotal returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress.Total, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress) GetTotal() *int {
+	return v.Total
+}
+
+// GetDone returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress.Done, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress) GetDone() *int {
+	return v.Done
+}
+
+// GetOpen returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress.Open, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress) GetOpen() *int {
+	return v.Open
+}
+
+// GetComplete returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress.Complete, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress) GetComplete() *bool {
+	return v.Complete
+}
+
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLock includes the requested fields of the GraphQL type AgentBoardLock.
 type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLock struct {
 	Level    *AgentBoardLockLevel                                                          `json:"level"`
@@ -3210,6 +3678,12 @@ type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnaps
 	EffectiveLevel *int `json:"effectiveLevel"`
 	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
 	OrderIndex *int `json:"orderIndex"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 }
 
 // GetKey returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Key, and is useful for accessing the field via an interface.
@@ -3270,6 +3744,44 @@ func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardS
 // GetOrderIndex returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.OrderIndex, and is useful for accessing the field via an interface.
 func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetOrderIndex() *int {
 	return v.OrderIndex
+}
+
+// GetGroup returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetGroup() *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetTags() []*AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
+}
+
+// AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskGroupTaskGroupRef struct {
+	Key *string `json:"key"`
+}
+
+// GetKey returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskTagsTagRecord struct {
+	Key *string `json:"key"`
+}
+
+// GetKey returns AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotTaskAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
 }
 
 // AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotWaitingOnAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
@@ -5440,6 +5952,21 @@ func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
 }
 
+// GetGroup returns AgentTaskAnswerAgentTaskAnswerAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskAnswerAgentTaskAnswerAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskAnswerAgentTaskAnswerAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
+}
+
 // GetRequireHumanReview returns AgentTaskAnswerAgentTaskAnswerAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -5554,6 +6081,12 @@ type __premarshalAgentTaskAnswerAgentTaskAnswerAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -5604,6 +6137,9 @@ func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) __premarshalJSON() (*__premars
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -5700,6 +6236,12 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                                                     `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -5806,6 +6348,21 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetLevelSetAt returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetGroup() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetTags() []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -5933,6 +6490,31 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -6757,6 +7339,28 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 	return &retval, nil
 }
 
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskAssignProgrammaticResponse is returned by AgentTaskAssignProgrammatic on success.
 type AgentTaskAssignProgrammaticResponse struct {
 	// roles: the roles this agent declared on agentTaskNextProgrammatic, if any. A task for any
@@ -6842,6 +7446,21 @@ func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetLevelSetBy() *PersonT
 // GetLevelSetAt returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
 }
 
 // GetRequireHumanReview returns AgentTaskAuthorizeAgentTaskAuthorizeAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -6958,6 +7577,12 @@ type __premarshalAgentTaskAuthorizeAgentTaskAuthorizeAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -7008,6 +7633,9 @@ func (v *AgentTaskAuthorizeAgentTaskAuthorizeAgentTask) __premarshalJSON() (*__p
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -7050,6 +7678,12 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                                    `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Model strength this task requires, overriding the role's when set.
 	RequiredStrength *float64 `json:"requiredStrength"`
 	// What this task may spend, in USD micros; null means only the board's limit applies.
@@ -7163,6 +7797,21 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) 
 // GetLevelSetAt returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetGroup() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetTags() []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetRequiredStrength returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
@@ -7389,6 +8038,31 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBu
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -8213,6 +8887,28 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSt
 	return &retval, nil
 }
 
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskAuthorizeProgrammaticResponse is returned by AgentTaskAuthorizeProgrammatic on success.
 type AgentTaskAuthorizeProgrammaticResponse struct {
 	// requiredStrength: raise the model strength this task needs above what its role usually asks,
@@ -8266,6 +8962,12 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                                                `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -8372,6 +9074,21 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // GetLevelSetAt returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetGroup() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetTags() []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -8499,6 +9216,31 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // GetPromptVersion returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -9323,6 +10065,28 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 	return &retval, nil
 }
 
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskBindExternalRefProgrammaticResponse is returned by AgentTaskBindExternalRefProgrammatic on success.
 type AgentTaskBindExternalRefProgrammaticResponse struct {
 	AgentTaskBindExternalRefProgrammatic *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask `json:"agentTaskBindExternalRefProgrammatic"`
@@ -9458,6 +10222,21 @@ func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
 }
 
+// GetGroup returns AgentTaskCancelAgentTaskCancelAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskCancelAgentTaskCancelAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskCancelAgentTaskCancelAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
+}
+
 // GetRequireHumanReview returns AgentTaskCancelAgentTaskCancelAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelAgentTaskCancelAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -9572,6 +10351,12 @@ type __premarshalAgentTaskCancelAgentTaskCancelAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -9622,6 +10407,9 @@ func (v *AgentTaskCancelAgentTaskCancelAgentTask) __premarshalJSON() (*__premars
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -9664,6 +10452,12 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask struct {
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                              `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -9770,6 +10564,21 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetLev
 // GetLevelSetAt returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetGroup() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetTags() []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -9897,6 +10706,31 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -10721,6 +11555,28 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskStatusHi
 	return &retval, nil
 }
 
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskCancelProgrammaticResponse is returned by AgentTaskCancelProgrammatic on success.
 type AgentTaskCancelProgrammaticResponse struct {
 	AgentTaskCancelProgrammatic *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask `json:"agentTaskCancelProgrammatic"`
@@ -10921,6 +11777,21 @@ func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
 }
 
+// GetGroup returns AgentTaskCompleteAgentTaskCompleteAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskCompleteAgentTaskCompleteAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskCompleteAgentTaskCompleteAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
+}
+
 // GetRequireHumanReview returns AgentTaskCompleteAgentTaskCompleteAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -11035,6 +11906,12 @@ type __premarshalAgentTaskCompleteAgentTaskCompleteAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -11085,6 +11962,9 @@ func (v *AgentTaskCompleteAgentTaskCompleteAgentTask) __premarshalJSON() (*__pre
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -11127,6 +12007,12 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask struct 
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                                  `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -11236,6 +12122,21 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) Ge
 // GetLevelSetAt returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetGroup() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetTags() []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -11368,6 +12269,31 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskAssi
 // GetPromptVersion returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -12238,6 +13164,28 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStat
 	return &retval, nil
 }
 
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskCompleteProgrammaticResponse is returned by AgentTaskCompleteProgrammatic on success.
 type AgentTaskCompleteProgrammaticResponse struct {
 	AgentTaskCompleteProgrammatic *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask `json:"agentTaskCompleteProgrammatic"`
@@ -12335,6 +13283,21 @@ func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetLevelSetBy(
 // GetLevelSetAt returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
 }
 
 // GetRequireHumanReview returns AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -12451,6 +13414,12 @@ type __premarshalAgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask struct 
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -12501,6 +13470,9 @@ func (v *AgentTaskDecideFindingsAgentTaskDecideFindingsAgentTask) __premarshalJS
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -12602,6 +13574,21 @@ func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetLevelSetBy() *PersonT
 // GetLevelSetAt returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
 }
 
 // GetRequireHumanReview returns AgentTaskDeliveredAgentTaskDeliveredAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -12718,6 +13705,12 @@ type __premarshalAgentTaskDeliveredAgentTaskDeliveredAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -12768,6 +13761,9 @@ func (v *AgentTaskDeliveredAgentTaskDeliveredAgentTask) __premarshalJSON() (*__p
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -12810,6 +13806,12 @@ type AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask struc
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                                    `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -12916,6 +13918,21 @@ func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) 
 // GetLevelSetAt returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) GetGroup() *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) GetTags() []*AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -13043,6 +14060,31 @@ func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskAs
 // GetPromptVersion returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -13867,6 +14909,28 @@ func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskSt
 	return &retval, nil
 }
 
+// AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeliveredProgrammaticAgentTaskDeliveredProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskDeliveredProgrammaticResponse is returned by AgentTaskDeliveredProgrammatic on success.
 type AgentTaskDeliveredProgrammaticResponse struct {
 	// Attest that a delivery unit of a task landed, or never will (task 18c5c293): unit is a linked PR's
@@ -14134,6 +15198,12 @@ type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                                          `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -14240,6 +15310,21 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // GetLevelSetAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetGroup() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetTags() []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -14367,6 +15452,31 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // GetPromptVersion returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -15191,6 +16301,28 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 	return &retval, nil
 }
 
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskEscalateHoldProgrammaticResponse is returned by AgentTaskEscalateHoldProgrammatic on success.
 type AgentTaskEscalateHoldProgrammaticResponse struct {
 	// Hand a COORDINATOR-level hold to the operator (task c0a2134c): the level becomes OPERATOR, the
@@ -15202,6 +16334,19 @@ type AgentTaskEscalateHoldProgrammaticResponse struct {
 // GetAgentTaskEscalateHoldProgrammatic returns AgentTaskEscalateHoldProgrammaticResponse.AgentTaskEscalateHoldProgrammatic, and is useful for accessing the field via an interface.
 func (v *AgentTaskEscalateHoldProgrammaticResponse) GetAgentTaskEscalateHoldProgrammatic() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask {
 	return v.AgentTaskEscalateHoldProgrammatic
+}
+
+// Whether a group takes new tasks (task-groups-and-tags.md D6); done is derived, never set.
+type AgentTaskGroupStatus string
+
+const (
+	AgentTaskGroupStatusOpen   AgentTaskGroupStatus = "OPEN"
+	AgentTaskGroupStatusClosed AgentTaskGroupStatus = "CLOSED"
+)
+
+var AllAgentTaskGroupStatus = []AgentTaskGroupStatus{
+	AgentTaskGroupStatusOpen,
+	AgentTaskGroupStatusClosed,
 }
 
 // MANUAL: coordinator/operator parked the task. HUMAN_GATE: a gated role signed off; only a human
@@ -15262,6 +16407,12 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask struct {
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                          `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -15362,6 +16513,21 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetLevelSe
 // GetLevelSetAt returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetGroup() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetTags() []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -15489,6 +16655,31 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskAssignmentAg
 // GetPromptVersion returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -16313,6 +17504,28 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskStatusHistor
 	return &retval, nil
 }
 
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskHoldProgrammaticResponse is returned by AgentTaskHoldProgrammatic on success.
 type AgentTaskHoldProgrammaticResponse struct {
 	AgentTaskHoldProgrammatic *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask `json:"agentTaskHoldProgrammatic"`
@@ -16411,6 +17624,21 @@ func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetLevelSetBy() *Per
 // GetLevelSetAt returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
 }
 
 // GetRequireHumanReview returns AgentTaskHumanReviewAgentTaskHumanReviewAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -16527,6 +17755,12 @@ type __premarshalAgentTaskHumanReviewAgentTaskHumanReviewAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -16577,6 +17811,9 @@ func (v *AgentTaskHumanReviewAgentTaskHumanReviewAgentTask) __premarshalJSON() (
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -16681,6 +17918,21 @@ func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetLevelSetBy() *P
 // GetLevelSetAt returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
 }
 
 // GetRequireHumanReview returns AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -16797,6 +18049,12 @@ type __premarshalAgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -16847,6 +18105,9 @@ func (v *AgentTaskHumanSignOffAgentTaskHumanSignOffAgentTask) __premarshalJSON()
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -16900,6 +18161,12 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask struct {
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                              `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -17009,6 +18276,21 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetLev
 // GetLevelSetAt returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetGroup() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetTags() []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -17141,6 +18423,31 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -18011,6 +19318,28 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHi
 	return &retval, nil
 }
 
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskLinkPrProgrammaticResponse is returned by AgentTaskLinkPrProgrammatic on success.
 type AgentTaskLinkPrProgrammaticResponse struct {
 	AgentTaskLinkPrProgrammatic *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask `json:"agentTaskLinkPrProgrammatic"`
@@ -18088,6 +19417,12 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                                                 `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -18194,6 +19529,21 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // GetLevelSetAt returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetGroup() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetTags() []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -18321,6 +19671,31 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // GetPromptVersion returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -19145,6 +20520,28 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 	return &retval, nil
 }
 
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskNextProgrammaticResponse is returned by AgentTaskNextProgrammatic on success.
 type AgentTaskNextProgrammaticResponse struct {
 	// Worker poll: the lowest-ordered QUEUED task across the org's
@@ -19239,6 +20636,21 @@ func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetLevelSetBy() *P
 // GetLevelSetAt returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
 }
 
 // GetRequireHumanReview returns AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -19355,6 +20767,12 @@ type __premarshalAgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -19405,6 +20823,9 @@ func (v *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask) __premarshalJSON()
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -19492,6 +20913,21 @@ func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetLevelSetBy() *PersonTaskField
 // GetLevelSetAt returns AgentTaskOrderAgentTaskOrderAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTaskOrderAgentTaskOrderAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskOrderAgentTaskOrderAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskOrderAgentTaskOrderAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderAgentTaskOrderAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
 }
 
 // GetRequireHumanReview returns AgentTaskOrderAgentTaskOrderAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -19608,6 +21044,12 @@ type __premarshalAgentTaskOrderAgentTaskOrderAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -19658,6 +21100,9 @@ func (v *AgentTaskOrderAgentTaskOrderAgentTask) __premarshalJSON() (*__premarsha
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -19700,6 +21145,12 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask struct {
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                            `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -19806,6 +21257,21 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetLevel
 // GetLevelSetAt returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetGroup() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetTags() []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -19933,6 +21399,31 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskAssignment
 // GetPromptVersion returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -20757,6 +22248,28 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskStatusHist
 	return &retval, nil
 }
 
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskOrderProgrammaticResponse is returned by AgentTaskOrderProgrammatic on success.
 type AgentTaskOrderProgrammaticResponse struct {
 	AgentTaskOrderProgrammatic *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask `json:"agentTaskOrderProgrammatic"`
@@ -20805,6 +22318,12 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                  `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -20937,6 +22456,21 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetLevelSetBy() *A
 // GetLevelSetAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetGroup() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetTags() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -21529,6 +23063,31 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocu
 // GetHead returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead.Head, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead) GetHead() *string {
 	return v.Head
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -22914,6 +24473,28 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTa
 	return &retval, nil
 }
 
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskTestedHeadsTestedHead includes the requested fields of the GraphQL type TestedHead.
 // The GraphQL type's documentation follows.
 //
@@ -23016,6 +24597,21 @@ func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetLevelSetBy() *PersonTas
 // GetLevelSetAt returns AgentTaskRegisterAgentTaskRegisterAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTaskRegisterAgentTaskRegisterAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskRegisterAgentTaskRegisterAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskRegisterAgentTaskRegisterAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
 }
 
 // GetRequireHumanReview returns AgentTaskRegisterAgentTaskRegisterAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -23132,6 +24728,12 @@ type __premarshalAgentTaskRegisterAgentTaskRegisterAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -23182,6 +24784,9 @@ func (v *AgentTaskRegisterAgentTaskRegisterAgentTask) __premarshalJSON() (*__pre
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -23211,6 +24816,10 @@ type AgentTaskRegisterInput struct {
 	ProducesComponent *string                    `json:"producesComponent"`
 	Level             *int                       `json:"level"`
 	RequiredInputs    []*AgentRequiredInputInput `json:"requiredInputs,omitempty"`
+	// A group of the board by key (task RD2-29); refused when unknown or CLOSED. The orderIndex defaults after the group's last task.
+	Group *string `json:"group"`
+	// Free labels; each key lower-cased, at most 20.
+	Tags []*TagRecordInput `json:"tags,omitempty"`
 }
 
 // GetBoardUuid returns AgentTaskRegisterInput.BoardUuid, and is useful for accessing the field via an interface.
@@ -23245,6 +24854,12 @@ func (v *AgentTaskRegisterInput) GetRequiredInputs() []*AgentRequiredInputInput 
 	return v.RequiredInputs
 }
 
+// GetGroup returns AgentTaskRegisterInput.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterInput) GetGroup() *string { return v.Group }
+
+// GetTags returns AgentTaskRegisterInput.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterInput) GetTags() []*TagRecordInput { return v.Tags }
+
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
@@ -23272,6 +24887,12 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask struct 
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                                  `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -23378,6 +24999,21 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) Ge
 // GetLevelSetAt returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetGroup() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetTags() []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -23505,6 +25141,31 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskAssi
 // GetPromptVersion returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -24329,6 +25990,28 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskStat
 	return &retval, nil
 }
 
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskRegisterProgrammaticResponse is returned by AgentTaskRegisterProgrammatic on success.
 type AgentTaskRegisterProgrammaticResponse struct {
 	AgentTaskRegisterProgrammatic *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask `json:"agentTaskRegisterProgrammatic"`
@@ -24379,6 +26062,12 @@ type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask s
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                                        `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -24485,6 +26174,21 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // GetLevelSetAt returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask) GetGroup() *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask) GetTags() []*AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -24612,6 +26316,31 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 // GetPromptVersion returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -25436,6 +27165,28 @@ func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTa
 	return &retval, nil
 }
 
+// AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskReleaseHoldProgrammaticAgentTaskReleaseHoldProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskReleaseHoldProgrammaticResponse is returned by AgentTaskReleaseHoldProgrammatic on success.
 type AgentTaskReleaseHoldProgrammaticResponse struct {
 	// Release a COORDINATOR-level hold. role, optionally: an active role on the board to route to
@@ -25478,6 +27229,12 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask struct {
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                              `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -25593,6 +27350,21 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetLev
 // GetLevelSetAt returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetGroup() *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetTags() []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -25740,6 +27512,31 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -26726,6 +28523,28 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskStatusHi
 	return &retval, nil
 }
 
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskReopenProgrammaticResponse is returned by AgentTaskReopenProgrammatic on success.
 type AgentTaskReopenProgrammaticResponse struct {
 	// Coordinator: send a COMPLETED task back to an active role, with a reason -- its delivery cannot
@@ -26813,6 +28632,21 @@ func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetLev
 // GetLevelSetAt returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
 }
 
 // GetRequireHumanReview returns AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -26929,6 +28763,12 @@ type __premarshalAgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -26979,6 +28819,9 @@ func (v *AgentTaskRequireHumanReviewAgentTaskRequireHumanReviewAgentTask) __prem
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -27021,6 +28864,12 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                                                      `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -27127,6 +28976,21 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // GetLevelSetAt returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetGroup() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetTags() []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -27254,6 +29118,31 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // GetPromptVersion returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -28078,6 +29967,28 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 	return &retval, nil
 }
 
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskRequireHumanReviewProgrammaticResponse is returned by AgentTaskRequireHumanReviewProgrammatic on success.
 type AgentTaskRequireHumanReviewProgrammaticResponse struct {
 	// Coordinator sets the per-task human-review flag (add-only: the coordinator can add review, never remove it).
@@ -28127,6 +30038,12 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask struct {
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                              `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -28233,6 +30150,21 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetLev
 // GetLevelSetAt returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetGroup() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetTags() []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -28360,6 +30292,31 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -29184,6 +31141,28 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHi
 	return &retval, nil
 }
 
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskReturnProgrammaticResponse is returned by AgentTaskReturnProgrammatic on success.
 type AgentTaskReturnProgrammaticResponse struct {
 	AgentTaskReturnProgrammatic *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask `json:"agentTaskReturnProgrammatic"`
@@ -29738,6 +31717,21 @@ func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetLevelSetAt() *string 
 	return v.PersonTaskFields.LevelSetAt
 }
 
+// GetGroup returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
+}
+
 // GetRequireHumanReview returns AgentTaskSetBudgetAgentTaskSetBudgetAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) GetRequireHumanReview() *bool {
 	return v.PersonTaskFields.RequireHumanReview
@@ -29852,6 +31846,12 @@ type __premarshalAgentTaskSetBudgetAgentTaskSetBudgetAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -29902,6 +31902,9 @@ func (v *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask) __premarshalJSON() (*__p
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -29926,6 +31929,366 @@ type AgentTaskSetBudgetResponse struct {
 // GetAgentTaskSetBudget returns AgentTaskSetBudgetResponse.AgentTaskSetBudget, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetBudgetResponse) GetAgentTaskSetBudget() *AgentTaskSetBudgetAgentTaskSetBudgetAgentTask {
 	return v.AgentTaskSetBudget
+}
+
+// AgentTaskSetGroupAgentTaskSetGroupAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskSetGroupAgentTaskSetGroupAgentTask struct {
+	PersonTaskFields `json:"-"`
+}
+
+// GetKey returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetKey() *string { return v.PersonTaskFields.Key }
+
+// GetNumber returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
+}
+
+// GetUuid returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetUuid() *string {
+	return v.PersonTaskFields.Uuid
+}
+
+// GetBoard returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.Board, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetBoard() *string {
+	return v.PersonTaskFields.Board
+}
+
+// GetExternalRef returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetExternalRef() *string {
+	return v.PersonTaskFields.ExternalRef
+}
+
+// GetTitle returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetTitle() *string {
+	return v.PersonTaskFields.Title
+}
+
+// GetDescription returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
+// GetStatus returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetStatus() *AgentTaskStatus {
+	return v.PersonTaskFields.Status
+}
+
+// GetRole returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetRole() *string {
+	return v.PersonTaskFields.Role
+}
+
+// GetOrderIndex returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.OrderIndex, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetOrderIndex() *int {
+	return v.PersonTaskFields.OrderIndex
+}
+
+// GetLevel returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetLevel() *int {
+	return v.PersonTaskFields.Level
+}
+
+// GetEffectiveLevel returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
+}
+
+// GetRequireHumanReview returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetRequireHumanReview() *bool {
+	return v.PersonTaskFields.RequireHumanReview
+}
+
+// GetRequiredStrength returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetRequiredStrength() *float64 {
+	return v.PersonTaskFields.RequiredStrength
+}
+
+// GetBudgetMicros returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
+// GetHold returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.Hold, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
+	return v.PersonTaskFields.Hold
+}
+
+// GetAssignment returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.Assignment, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetAssignment() *PersonTaskFieldsAssignmentAgentTaskWorkAssignment {
+	return v.PersonTaskFields.Assignment
+}
+
+// GetStatusHistory returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.StatusHistory, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetStatusHistory() []*PersonTaskFieldsStatusHistoryAgentTaskStatusChange {
+	return v.PersonTaskFields.StatusHistory
+}
+
+// GetOpenFindings returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.OpenFindings, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetOpenFindings() []*PersonTaskFieldsOpenFindingsFinding {
+	return v.PersonTaskFields.OpenFindings
+}
+
+// GetOpenQuestions returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.OpenQuestions, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetOpenQuestions() []*PersonTaskFieldsOpenQuestionsFinding {
+	return v.PersonTaskFields.OpenQuestions
+}
+
+// GetCreatedDate returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetCreatedDate() *string {
+	return v.PersonTaskFields.CreatedDate
+}
+
+// GetCompletedAt returns AgentTaskSetGroupAgentTaskSetGroupAgentTask.CompletedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) GetCompletedAt() *string {
+	return v.PersonTaskFields.CompletedAt
+}
+
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetGroupAgentTaskSetGroupAgentTask
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetGroupAgentTaskSetGroupAgentTask = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.PersonTaskFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetGroupAgentTaskSetGroupAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
+	Uuid *string `json:"uuid"`
+
+	Board *string `json:"board"`
+
+	ExternalRef *string `json:"externalRef"`
+
+	Title *string `json:"title"`
+
+	Description *string `json:"description"`
+
+	Status *AgentTaskStatus `json:"status"`
+
+	Role *string `json:"role"`
+
+	OrderIndex *int `json:"orderIndex"`
+
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
+	RequireHumanReview *bool `json:"requireHumanReview"`
+
+	RequiredStrength *float64 `json:"requiredStrength"`
+
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
+	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
+
+	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
+
+	StatusHistory []*PersonTaskFieldsStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
+
+	OpenFindings []*PersonTaskFieldsOpenFindingsFinding `json:"openFindings"`
+
+	OpenQuestions []*PersonTaskFieldsOpenQuestionsFinding `json:"openQuestions"`
+
+	CreatedDate *string `json:"createdDate"`
+
+	CompletedAt *string `json:"completedAt"`
+}
+
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetGroupAgentTaskSetGroupAgentTask) __premarshalJSON() (*__premarshalAgentTaskSetGroupAgentTaskSetGroupAgentTask, error) {
+	var retval __premarshalAgentTaskSetGroupAgentTaskSetGroupAgentTask
+
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
+	retval.Uuid = v.PersonTaskFields.Uuid
+	retval.Board = v.PersonTaskFields.Board
+	retval.ExternalRef = v.PersonTaskFields.ExternalRef
+	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
+	retval.Status = v.PersonTaskFields.Status
+	retval.Role = v.PersonTaskFields.Role
+	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
+	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
+	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
+	retval.Hold = v.PersonTaskFields.Hold
+	retval.Assignment = v.PersonTaskFields.Assignment
+	retval.StatusHistory = v.PersonTaskFields.StatusHistory
+	retval.OpenFindings = v.PersonTaskFields.OpenFindings
+	retval.OpenQuestions = v.PersonTaskFields.OpenQuestions
+	retval.CreatedDate = v.PersonTaskFields.CreatedDate
+	retval.CompletedAt = v.PersonTaskFields.CompletedAt
+	return &retval, nil
+}
+
+// AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key    *string          `json:"key"`
+	Uuid   *string          `json:"uuid"`
+	Status *AgentTaskStatus `json:"status"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+}
+
+// GetKey returns AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetUuid returns AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetStatus returns AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask) GetStatus() *AgentTaskStatus {
+	return v.Status
+}
+
+// GetGroup returns AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask) GetGroup() *AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetWaitingOnGroups returns AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
+}
+
+// AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
+}
+
+// AgentTaskSetGroupProgrammaticResponse is returned by AgentTaskSetGroupProgrammatic on success.
+type AgentTaskSetGroupProgrammaticResponse struct {
+	// The coordinator seat moves a task into a group by key, or out of every group with null (task RD2-29).
+	AgentTaskSetGroupProgrammatic *AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask `json:"agentTaskSetGroupProgrammatic"`
+}
+
+// GetAgentTaskSetGroupProgrammatic returns AgentTaskSetGroupProgrammaticResponse.AgentTaskSetGroupProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupProgrammaticResponse) GetAgentTaskSetGroupProgrammatic() *AgentTaskSetGroupProgrammaticAgentTaskSetGroupProgrammaticAgentTask {
+	return v.AgentTaskSetGroupProgrammatic
+}
+
+// AgentTaskSetGroupResponse is returned by AgentTaskSetGroup on success.
+type AgentTaskSetGroupResponse struct {
+	// Move a task into a group by key, or out of every group with null (task RD2-29). BOARD_WRITE.
+	AgentTaskSetGroup *AgentTaskSetGroupAgentTaskSetGroupAgentTask `json:"agentTaskSetGroup"`
+}
+
+// GetAgentTaskSetGroup returns AgentTaskSetGroupResponse.AgentTaskSetGroup, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetGroupResponse) GetAgentTaskSetGroup() *AgentTaskSetGroupAgentTaskSetGroupAgentTask {
+	return v.AgentTaskSetGroup
 }
 
 // AgentTaskSetLevelAgentTaskSetLevelAgentTask includes the requested fields of the GraphQL type AgentTask.
@@ -29999,6 +32362,21 @@ func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetLevelSetBy() *PersonTas
 // GetLevelSetAt returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
 }
 
 // GetRequireHumanReview returns AgentTaskSetLevelAgentTaskSetLevelAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -30115,6 +32493,12 @@ type __premarshalAgentTaskSetLevelAgentTaskSetLevelAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -30165,6 +32549,9 @@ func (v *AgentTaskSetLevelAgentTaskSetLevelAgentTask) __premarshalJSON() (*__pre
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -30207,6 +32594,12 @@ type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask struct 
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                                  `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -30313,6 +32706,21 @@ func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) Ge
 // GetLevelSetAt returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetGroup() *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetTags() []*AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -30440,6 +32848,31 @@ func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssi
 // GetPromptVersion returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -31264,6 +33697,28 @@ func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskStat
 	return &retval, nil
 }
 
+// AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetLevelProgrammaticAgentTaskSetLevelProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskSetLevelProgrammaticResponse is returned by AgentTaskSetLevelProgrammatic on success.
 type AgentTaskSetLevelProgrammaticResponse struct {
 	// The coordinator seat sets a task's level, 0 to 9, or clears it (null) to the board's default (RD2-1).
@@ -31360,6 +33815,21 @@ func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetLevelSetBy() *Per
 // GetLevelSetAt returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
 }
 
 // GetRequireHumanReview returns AgentTaskSetStrengthAgentTaskSetStrengthAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -31476,6 +33946,12 @@ type __premarshalAgentTaskSetStrengthAgentTaskSetStrengthAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -31526,6 +34002,9 @@ func (v *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask) __premarshalJSON() (
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -31552,6 +34031,344 @@ type AgentTaskSetStrengthResponse struct {
 // GetAgentTaskSetStrength returns AgentTaskSetStrengthResponse.AgentTaskSetStrength, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetStrengthResponse) GetAgentTaskSetStrength() *AgentTaskSetStrengthAgentTaskSetStrengthAgentTask {
 	return v.AgentTaskSetStrength
+}
+
+// AgentTaskSetTagsAgentTaskSetTagsAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskSetTagsAgentTaskSetTagsAgentTask struct {
+	PersonTaskFields `json:"-"`
+}
+
+// GetKey returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetKey() *string { return v.PersonTaskFields.Key }
+
+// GetNumber returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetNumber() *int {
+	return v.PersonTaskFields.Number
+}
+
+// GetUuid returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetUuid() *string { return v.PersonTaskFields.Uuid }
+
+// GetBoard returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.Board, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetBoard() *string {
+	return v.PersonTaskFields.Board
+}
+
+// GetExternalRef returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetExternalRef() *string {
+	return v.PersonTaskFields.ExternalRef
+}
+
+// GetTitle returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetTitle() *string {
+	return v.PersonTaskFields.Title
+}
+
+// GetDescription returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetDescription() *string {
+	return v.PersonTaskFields.Description
+}
+
+// GetStatus returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetStatus() *AgentTaskStatus {
+	return v.PersonTaskFields.Status
+}
+
+// GetRole returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetRole() *string { return v.PersonTaskFields.Role }
+
+// GetOrderIndex returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.OrderIndex, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetOrderIndex() *int {
+	return v.PersonTaskFields.OrderIndex
+}
+
+// GetLevel returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetLevel() *int { return v.PersonTaskFields.Level }
+
+// GetEffectiveLevel returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.EffectiveLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetEffectiveLevel() *int {
+	return v.PersonTaskFields.EffectiveLevel
+}
+
+// GetLevelSetBy returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.LevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor {
+	return v.PersonTaskFields.LevelSetBy
+}
+
+// GetLevelSetAt returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetLevelSetAt() *string {
+	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
+}
+
+// GetRequireHumanReview returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetRequireHumanReview() *bool {
+	return v.PersonTaskFields.RequireHumanReview
+}
+
+// GetRequiredStrength returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.RequiredStrength, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetRequiredStrength() *float64 {
+	return v.PersonTaskFields.RequiredStrength
+}
+
+// GetBudgetMicros returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetBudgetMicros() *int64 {
+	return v.PersonTaskFields.BudgetMicros
+}
+
+// GetBudgetSetBy returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.BudgetSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetBudgetSetBy() *PersonTaskFieldsBudgetSetByAgentActor {
+	return v.PersonTaskFields.BudgetSetBy
+}
+
+// GetBudgetSetAt returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.BudgetSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetBudgetSetAt() *string {
+	return v.PersonTaskFields.BudgetSetAt
+}
+
+// GetHold returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.Hold, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetHold() *PersonTaskFieldsHoldAgentTaskHold {
+	return v.PersonTaskFields.Hold
+}
+
+// GetAssignment returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.Assignment, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetAssignment() *PersonTaskFieldsAssignmentAgentTaskWorkAssignment {
+	return v.PersonTaskFields.Assignment
+}
+
+// GetStatusHistory returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.StatusHistory, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetStatusHistory() []*PersonTaskFieldsStatusHistoryAgentTaskStatusChange {
+	return v.PersonTaskFields.StatusHistory
+}
+
+// GetOpenFindings returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.OpenFindings, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetOpenFindings() []*PersonTaskFieldsOpenFindingsFinding {
+	return v.PersonTaskFields.OpenFindings
+}
+
+// GetOpenQuestions returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.OpenQuestions, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetOpenQuestions() []*PersonTaskFieldsOpenQuestionsFinding {
+	return v.PersonTaskFields.OpenQuestions
+}
+
+// GetCreatedDate returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetCreatedDate() *string {
+	return v.PersonTaskFields.CreatedDate
+}
+
+// GetCompletedAt returns AgentTaskSetTagsAgentTaskSetTagsAgentTask.CompletedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) GetCompletedAt() *string {
+	return v.PersonTaskFields.CompletedAt
+}
+
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetTagsAgentTaskSetTagsAgentTask
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetTagsAgentTaskSetTagsAgentTask = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.PersonTaskFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetTagsAgentTaskSetTagsAgentTask struct {
+	Key *string `json:"key"`
+
+	Number *int `json:"number"`
+
+	Uuid *string `json:"uuid"`
+
+	Board *string `json:"board"`
+
+	ExternalRef *string `json:"externalRef"`
+
+	Title *string `json:"title"`
+
+	Description *string `json:"description"`
+
+	Status *AgentTaskStatus `json:"status"`
+
+	Role *string `json:"role"`
+
+	OrderIndex *int `json:"orderIndex"`
+
+	Level *int `json:"level"`
+
+	EffectiveLevel *int `json:"effectiveLevel"`
+
+	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
+
+	LevelSetAt *string `json:"levelSetAt"`
+
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
+	RequireHumanReview *bool `json:"requireHumanReview"`
+
+	RequiredStrength *float64 `json:"requiredStrength"`
+
+	BudgetMicros *int64 `json:"budgetMicros"`
+
+	BudgetSetBy *PersonTaskFieldsBudgetSetByAgentActor `json:"budgetSetBy"`
+
+	BudgetSetAt *string `json:"budgetSetAt"`
+
+	Hold *PersonTaskFieldsHoldAgentTaskHold `json:"hold"`
+
+	Assignment *PersonTaskFieldsAssignmentAgentTaskWorkAssignment `json:"assignment"`
+
+	StatusHistory []*PersonTaskFieldsStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
+
+	OpenFindings []*PersonTaskFieldsOpenFindingsFinding `json:"openFindings"`
+
+	OpenQuestions []*PersonTaskFieldsOpenQuestionsFinding `json:"openQuestions"`
+
+	CreatedDate *string `json:"createdDate"`
+
+	CompletedAt *string `json:"completedAt"`
+}
+
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetTagsAgentTaskSetTagsAgentTask) __premarshalJSON() (*__premarshalAgentTaskSetTagsAgentTaskSetTagsAgentTask, error) {
+	var retval __premarshalAgentTaskSetTagsAgentTaskSetTagsAgentTask
+
+	retval.Key = v.PersonTaskFields.Key
+	retval.Number = v.PersonTaskFields.Number
+	retval.Uuid = v.PersonTaskFields.Uuid
+	retval.Board = v.PersonTaskFields.Board
+	retval.ExternalRef = v.PersonTaskFields.ExternalRef
+	retval.Title = v.PersonTaskFields.Title
+	retval.Description = v.PersonTaskFields.Description
+	retval.Status = v.PersonTaskFields.Status
+	retval.Role = v.PersonTaskFields.Role
+	retval.OrderIndex = v.PersonTaskFields.OrderIndex
+	retval.Level = v.PersonTaskFields.Level
+	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
+	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
+	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
+	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
+	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
+	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
+	retval.BudgetSetBy = v.PersonTaskFields.BudgetSetBy
+	retval.BudgetSetAt = v.PersonTaskFields.BudgetSetAt
+	retval.Hold = v.PersonTaskFields.Hold
+	retval.Assignment = v.PersonTaskFields.Assignment
+	retval.StatusHistory = v.PersonTaskFields.StatusHistory
+	retval.OpenFindings = v.PersonTaskFields.OpenFindings
+	retval.OpenQuestions = v.PersonTaskFields.OpenQuestions
+	retval.CreatedDate = v.PersonTaskFields.CreatedDate
+	retval.CompletedAt = v.PersonTaskFields.CompletedAt
+	return &retval, nil
+}
+
+// AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key  *string `json:"key"`
+	Uuid *string `json:"uuid"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+}
+
+// GetKey returns AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetUuid returns AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTask) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetTags returns AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTask) GetTags() []*AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
+// AgentTaskSetTagsProgrammaticResponse is returned by AgentTaskSetTagsProgrammatic on success.
+type AgentTaskSetTagsProgrammaticResponse struct {
+	// The coordinator seat replaces a task's tags (task RD2-29).
+	AgentTaskSetTagsProgrammatic *AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTask `json:"agentTaskSetTagsProgrammatic"`
+}
+
+// GetAgentTaskSetTagsProgrammatic returns AgentTaskSetTagsProgrammaticResponse.AgentTaskSetTagsProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsProgrammaticResponse) GetAgentTaskSetTagsProgrammatic() *AgentTaskSetTagsProgrammaticAgentTaskSetTagsProgrammaticAgentTask {
+	return v.AgentTaskSetTagsProgrammatic
+}
+
+// AgentTaskSetTagsResponse is returned by AgentTaskSetTags on success.
+type AgentTaskSetTagsResponse struct {
+	// Replace a task's tags (task RD2-29). BOARD_WRITE.
+	AgentTaskSetTags *AgentTaskSetTagsAgentTaskSetTagsAgentTask `json:"agentTaskSetTags"`
+}
+
+// GetAgentTaskSetTags returns AgentTaskSetTagsResponse.AgentTaskSetTags, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetTagsResponse) GetAgentTaskSetTags() *AgentTaskSetTagsAgentTaskSetTagsAgentTask {
+	return v.AgentTaskSetTags
 }
 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
@@ -31581,6 +34398,12 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask struct {
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                                `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -31690,6 +34513,21 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetL
 // GetLevelSetAt returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetGroup() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetTags() []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -31822,6 +34660,31 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskAssign
 // GetPromptVersion returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -32692,6 +35555,28 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatus
 	return &retval, nil
 }
 
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskSignOffProgrammaticResponse is returned by AgentTaskSignOffProgrammatic on success.
 type AgentTaskSignOffProgrammaticResponse struct {
 	AgentTaskSignOffProgrammatic *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask `json:"agentTaskSignOffProgrammatic"`
@@ -32714,6 +35599,10 @@ type AgentTaskSplitChildInput struct {
 	ProducesComponent       *string `json:"producesComponent"`
 	// Omitted children inherit the parent task's level.
 	Level *int `json:"level"`
+	// A group by key; omitted children inherit the parent's group (D9).
+	Group *string `json:"group"`
+	// Omitted children inherit the parent's tags (D9).
+	Tags []*TagRecordInput `json:"tags,omitempty"`
 }
 
 // GetExternalRef returns AgentTaskSplitChildInput.ExternalRef, and is useful for accessing the field via an interface.
@@ -32738,6 +35627,12 @@ func (v *AgentTaskSplitChildInput) GetProducesComponent() *string { return v.Pro
 
 // GetLevel returns AgentTaskSplitChildInput.Level, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitChildInput) GetLevel() *int { return v.Level }
+
+// GetGroup returns AgentTaskSplitChildInput.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitChildInput) GetGroup() *string { return v.Group }
+
+// GetTags returns AgentTaskSplitChildInput.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitChildInput) GetTags() []*TagRecordInput { return v.Tags }
 
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask struct {
@@ -32766,6 +35661,12 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask struct {
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                            `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -32872,6 +35773,21 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetLevel
 // GetLevelSetAt returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetGroup() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetTags() []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -32999,6 +35915,31 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskAssignment
 // GetPromptVersion returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -33823,6 +36764,28 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskStatusHist
 	return &retval, nil
 }
 
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTaskSplitProgrammaticResponse is returned by AgentTaskSplitProgrammatic on success.
 type AgentTaskSplitProgrammaticResponse struct {
 	AgentTaskSplitProgrammatic []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask `json:"agentTaskSplitProgrammatic"`
@@ -33872,6 +36835,10 @@ type AgentTaskUserRegisterInput struct {
 	ProducesComponent *string                    `json:"producesComponent"`
 	Level             *int                       `json:"level"`
 	RequiredInputs    []*AgentRequiredInputInput `json:"requiredInputs,omitempty"`
+	// A group of the board by key (task RD2-29); refused when unknown or CLOSED.
+	Group *string `json:"group"`
+	// Free labels; each key lower-cased, at most 20.
+	Tags []*TagRecordInput `json:"tags,omitempty"`
 }
 
 // GetTitle returns AgentTaskUserRegisterInput.Title, and is useful for accessing the field via an interface.
@@ -33900,6 +36867,12 @@ func (v *AgentTaskUserRegisterInput) GetRequiredInputs() []*AgentRequiredInputIn
 	return v.RequiredInputs
 }
 
+// GetGroup returns AgentTaskUserRegisterInput.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskUserRegisterInput) GetGroup() *string { return v.Group }
+
+// GetTags returns AgentTaskUserRegisterInput.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskUserRegisterInput) GetTags() []*TagRecordInput { return v.Tags }
+
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
@@ -33927,6 +36900,12 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                                `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -34075,6 +37054,21 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetL
 // GetLevelSetAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetGroup() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetTags() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -34669,6 +37663,31 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocume
 // GetHead returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead.Head, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndexTestedTestedHead) GetHead() *string {
 	return v.Head
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -36054,6 +39073,28 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatus
 	return &retval, nil
 }
 
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskTestedHeadsTestedHead includes the requested fields of the GraphQL type TestedHead.
 // The GraphQL type's documentation follows.
 //
@@ -36158,6 +39199,21 @@ func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetLevelSetBy() *PersonTas
 // GetLevelSetAt returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetLevelSetAt() *string {
 	return v.PersonTaskFields.LevelSetAt
+}
+
+// GetGroup returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetGroup() *PersonTaskFieldsGroupTaskGroupRef {
+	return v.PersonTaskFields.Group
+}
+
+// GetTags returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetTags() []*PersonTaskFieldsTagsTagRecord {
+	return v.PersonTaskFields.Tags
+}
+
+// GetWaitingOnGroups returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) GetWaitingOnGroups() []*string {
+	return v.PersonTaskFields.WaitingOnGroups
 }
 
 // GetRequireHumanReview returns AgentTasksOfBoardAgentTasksOfBoardAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
@@ -36274,6 +39330,12 @@ type __premarshalAgentTasksOfBoardAgentTasksOfBoardAgentTask struct {
 
 	LevelSetAt *string `json:"levelSetAt"`
 
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+
 	RequireHumanReview *bool `json:"requireHumanReview"`
 
 	RequiredStrength *float64 `json:"requiredStrength"`
@@ -36324,6 +39386,9 @@ func (v *AgentTasksOfBoardAgentTasksOfBoardAgentTask) __premarshalJSON() (*__pre
 	retval.EffectiveLevel = v.PersonTaskFields.EffectiveLevel
 	retval.LevelSetBy = v.PersonTaskFields.LevelSetBy
 	retval.LevelSetAt = v.PersonTaskFields.LevelSetAt
+	retval.Group = v.PersonTaskFields.Group
+	retval.Tags = v.PersonTaskFields.Tags
+	retval.WaitingOnGroups = v.PersonTaskFields.WaitingOnGroups
 	retval.RequireHumanReview = v.PersonTaskFields.RequireHumanReview
 	retval.RequiredStrength = v.PersonTaskFields.RequiredStrength
 	retval.BudgetMicros = v.PersonTaskFields.BudgetMicros
@@ -36377,6 +39442,12 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTask struct {
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                                                                    `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
 	DependsOn []*string `json:"dependsOn"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
@@ -36476,6 +39547,21 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetLevelSetBy() 
 // GetLevelSetAt returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetLevelSetAt() *string {
 	return v.LevelSetAt
+}
+
+// GetGroup returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetGroup() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetTags() []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
 }
 
 // GetDependsOn returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
@@ -36623,6 +39709,31 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskAssignmentAgentTas
 // GetPromptVersion returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
 }
 
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
@@ -37561,6 +40672,28 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgent
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
 }
 
 // AgentTasksProgrammaticResponse is returned by AgentTasksProgrammatic on success.
@@ -44654,6 +47787,12 @@ type PersonTaskFields struct {
 	// Who last set or cleared the level after registration, and when (RD2-1).
 	LevelSetBy *PersonTaskFieldsLevelSetByAgentActor `json:"levelSetBy"`
 	LevelSetAt *string                               `json:"levelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *PersonTaskFieldsGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*PersonTaskFieldsTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
 	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
 	RequireHumanReview *bool `json:"requireHumanReview"`
 	// Model strength this task requires, overriding the role's when set.
@@ -44722,6 +47861,15 @@ func (v *PersonTaskFields) GetLevelSetBy() *PersonTaskFieldsLevelSetByAgentActor
 
 // GetLevelSetAt returns PersonTaskFields.LevelSetAt, and is useful for accessing the field via an interface.
 func (v *PersonTaskFields) GetLevelSetAt() *string { return v.LevelSetAt }
+
+// GetGroup returns PersonTaskFields.Group, and is useful for accessing the field via an interface.
+func (v *PersonTaskFields) GetGroup() *PersonTaskFieldsGroupTaskGroupRef { return v.Group }
+
+// GetTags returns PersonTaskFields.Tags, and is useful for accessing the field via an interface.
+func (v *PersonTaskFields) GetTags() []*PersonTaskFieldsTagsTagRecord { return v.Tags }
+
+// GetWaitingOnGroups returns PersonTaskFields.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *PersonTaskFields) GetWaitingOnGroups() []*string { return v.WaitingOnGroups }
 
 // GetRequireHumanReview returns PersonTaskFields.RequireHumanReview, and is useful for accessing the field via an interface.
 func (v *PersonTaskFields) GetRequireHumanReview() *bool { return v.RequireHumanReview }
@@ -44866,6 +48014,25 @@ func (v *PersonTaskFieldsBudgetSetByAgentActor) __premarshalJSON() (*__premarsha
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
+
+// PersonTaskFieldsGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type PersonTaskFieldsGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns PersonTaskFieldsGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *PersonTaskFieldsGroupTaskGroupRef) GetUuid() *string { return v.Uuid }
+
+// GetKey returns PersonTaskFieldsGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *PersonTaskFieldsGroupTaskGroupRef) GetKey() *string { return v.Key }
+
+// GetName returns PersonTaskFieldsGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *PersonTaskFieldsGroupTaskGroupRef) GetName() *string { return v.Name }
 
 // PersonTaskFieldsHoldAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
 type PersonTaskFieldsHoldAgentTaskHold struct {
@@ -45307,6 +48474,22 @@ func (v *PersonTaskFieldsStatusHistoryAgentTaskStatusChangeActorAgentActor) __pr
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
+
+// PersonTaskFieldsTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type PersonTaskFieldsTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns PersonTaskFieldsTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *PersonTaskFieldsTagsTagRecord) GetKey() *string { return v.Key }
+
+// GetValue returns PersonTaskFieldsTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *PersonTaskFieldsTagsTagRecord) GetValue() *string { return v.Value }
+
+// GetRemovable returns PersonTaskFieldsTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *PersonTaskFieldsTagsTagRecord) GetRemovable() *RemvovableType { return v.Removable }
 
 type PolicyKind string
 
@@ -45830,6 +49013,18 @@ type ReleasecompletionfinalizerProgrammaticResponse struct {
 // GetReleasecompletionfinalizerProgrammatic returns ReleasecompletionfinalizerProgrammaticResponse.ReleasecompletionfinalizerProgrammatic, and is useful for accessing the field via an interface.
 func (v *ReleasecompletionfinalizerProgrammaticResponse) GetReleasecompletionfinalizerProgrammatic() *bool {
 	return v.ReleasecompletionfinalizerProgrammatic
+}
+
+type RemvovableType string
+
+const (
+	RemvovableTypeYes RemvovableType = "YES"
+	RemvovableTypeNo  RemvovableType = "NO"
+)
+
+var AllRemvovableType = []RemvovableType{
+	RemvovableTypeYes,
+	RemvovableTypeNo,
 }
 
 // One model's strength for one role, overriding what the catalogue says about the model.
@@ -47914,6 +51109,44 @@ func (v *TagRecordInput) GetKey() *string { return v.Key }
 // GetValue returns TagRecordInput.Value, and is useful for accessing the field via an interface.
 func (v *TagRecordInput) GetValue() *string { return v.Value }
 
+// A group to create or edit, by key (task RD2-29). Omitted fields are left as they are on an edit;
+// defaultLevel sent as null clears it. uuid names the group when its key is changing, which is refused
+// once a task names the group. status CLOSED is the close, OPEN the reopen.
+type TaskGroupInput struct {
+	Uuid         *string               `json:"uuid"`
+	Key          string                `json:"key"`
+	Name         *string               `json:"name"`
+	Description  *string               `json:"description"`
+	Order        *int                  `json:"order"`
+	DependsOn    []*string             `json:"dependsOn"`
+	DefaultLevel *int                  `json:"defaultLevel"`
+	Status       *AgentTaskGroupStatus `json:"status"`
+}
+
+// GetUuid returns TaskGroupInput.Uuid, and is useful for accessing the field via an interface.
+func (v *TaskGroupInput) GetUuid() *string { return v.Uuid }
+
+// GetKey returns TaskGroupInput.Key, and is useful for accessing the field via an interface.
+func (v *TaskGroupInput) GetKey() string { return v.Key }
+
+// GetName returns TaskGroupInput.Name, and is useful for accessing the field via an interface.
+func (v *TaskGroupInput) GetName() *string { return v.Name }
+
+// GetDescription returns TaskGroupInput.Description, and is useful for accessing the field via an interface.
+func (v *TaskGroupInput) GetDescription() *string { return v.Description }
+
+// GetOrder returns TaskGroupInput.Order, and is useful for accessing the field via an interface.
+func (v *TaskGroupInput) GetOrder() *int { return v.Order }
+
+// GetDependsOn returns TaskGroupInput.DependsOn, and is useful for accessing the field via an interface.
+func (v *TaskGroupInput) GetDependsOn() []*string { return v.DependsOn }
+
+// GetDefaultLevel returns TaskGroupInput.DefaultLevel, and is useful for accessing the field via an interface.
+func (v *TaskGroupInput) GetDefaultLevel() *int { return v.DefaultLevel }
+
+// GetStatus returns TaskGroupInput.Status, and is useful for accessing the field via an interface.
+func (v *TaskGroupInput) GetStatus() *AgentTaskGroupStatus { return v.Status }
+
 type TeaArtifactChecksumType string
 
 const (
@@ -48278,6 +51511,54 @@ func (v *__AgentBoardEventsProgrammaticInput) GetSince() *string { return v.Sinc
 
 // GetLimit returns __AgentBoardEventsProgrammaticInput.Limit, and is useful for accessing the field via an interface.
 func (v *__AgentBoardEventsProgrammaticInput) GetLimit() *int { return v.Limit }
+
+// __AgentBoardGroupDeleteInput is used internally by genqlient
+type __AgentBoardGroupDeleteInput struct {
+	BoardUuid string `json:"boardUuid"`
+	Key       string `json:"key"`
+}
+
+// GetBoardUuid returns __AgentBoardGroupDeleteInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentBoardGroupDeleteInput) GetBoardUuid() string { return v.BoardUuid }
+
+// GetKey returns __AgentBoardGroupDeleteInput.Key, and is useful for accessing the field via an interface.
+func (v *__AgentBoardGroupDeleteInput) GetKey() string { return v.Key }
+
+// __AgentBoardGroupSetInput is used internally by genqlient
+type __AgentBoardGroupSetInput struct {
+	BoardUuid string          `json:"boardUuid"`
+	Group     *TaskGroupInput `json:"group,omitempty"`
+}
+
+// GetBoardUuid returns __AgentBoardGroupSetInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentBoardGroupSetInput) GetBoardUuid() string { return v.BoardUuid }
+
+// GetGroup returns __AgentBoardGroupSetInput.Group, and is useful for accessing the field via an interface.
+func (v *__AgentBoardGroupSetInput) GetGroup() *TaskGroupInput { return v.Group }
+
+// __AgentBoardGroupSetProgrammaticInput is used internally by genqlient
+type __AgentBoardGroupSetProgrammaticInput struct {
+	BoardUuid   string          `json:"boardUuid"`
+	SessionUuid string          `json:"sessionUuid"`
+	Group       *TaskGroupInput `json:"group,omitempty"`
+}
+
+// GetBoardUuid returns __AgentBoardGroupSetProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentBoardGroupSetProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
+
+// GetSessionUuid returns __AgentBoardGroupSetProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__AgentBoardGroupSetProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetGroup returns __AgentBoardGroupSetProgrammaticInput.Group, and is useful for accessing the field via an interface.
+func (v *__AgentBoardGroupSetProgrammaticInput) GetGroup() *TaskGroupInput { return v.Group }
+
+// __AgentBoardGroupsProgrammaticInput is used internally by genqlient
+type __AgentBoardGroupsProgrammaticInput struct {
+	BoardUuid string `json:"boardUuid"`
+}
+
+// GetBoardUuid returns __AgentBoardGroupsProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentBoardGroupsProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
 
 // __AgentBoardOperatorLockInput is used internally by genqlient
 type __AgentBoardOperatorLockInput struct {
@@ -48993,6 +52274,34 @@ func (v *__AgentTaskSetBudgetInput) GetTaskUuid() string { return v.TaskUuid }
 // GetBudgetMicros returns __AgentTaskSetBudgetInput.BudgetMicros, and is useful for accessing the field via an interface.
 func (v *__AgentTaskSetBudgetInput) GetBudgetMicros() *int64 { return v.BudgetMicros }
 
+// __AgentTaskSetGroupInput is used internally by genqlient
+type __AgentTaskSetGroupInput struct {
+	TaskUuid string  `json:"taskUuid"`
+	Group    *string `json:"group"`
+}
+
+// GetTaskUuid returns __AgentTaskSetGroupInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetGroupInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetGroup returns __AgentTaskSetGroupInput.Group, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetGroupInput) GetGroup() *string { return v.Group }
+
+// __AgentTaskSetGroupProgrammaticInput is used internally by genqlient
+type __AgentTaskSetGroupProgrammaticInput struct {
+	TaskUuid    string  `json:"taskUuid"`
+	SessionUuid string  `json:"sessionUuid"`
+	Group       *string `json:"group"`
+}
+
+// GetTaskUuid returns __AgentTaskSetGroupProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetGroupProgrammaticInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetSessionUuid returns __AgentTaskSetGroupProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetGroupProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetGroup returns __AgentTaskSetGroupProgrammaticInput.Group, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetGroupProgrammaticInput) GetGroup() *string { return v.Group }
+
 // __AgentTaskSetLevelInput is used internally by genqlient
 type __AgentTaskSetLevelInput struct {
 	TaskUuid string `json:"taskUuid"`
@@ -49032,6 +52341,34 @@ func (v *__AgentTaskSetStrengthInput) GetTaskUuid() string { return v.TaskUuid }
 
 // GetRequiredStrength returns __AgentTaskSetStrengthInput.RequiredStrength, and is useful for accessing the field via an interface.
 func (v *__AgentTaskSetStrengthInput) GetRequiredStrength() *float64 { return v.RequiredStrength }
+
+// __AgentTaskSetTagsInput is used internally by genqlient
+type __AgentTaskSetTagsInput struct {
+	TaskUuid string            `json:"taskUuid"`
+	Tags     []*TagRecordInput `json:"tags,omitempty"`
+}
+
+// GetTaskUuid returns __AgentTaskSetTagsInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetTagsInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetTags returns __AgentTaskSetTagsInput.Tags, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetTagsInput) GetTags() []*TagRecordInput { return v.Tags }
+
+// __AgentTaskSetTagsProgrammaticInput is used internally by genqlient
+type __AgentTaskSetTagsProgrammaticInput struct {
+	TaskUuid    string            `json:"taskUuid"`
+	SessionUuid string            `json:"sessionUuid"`
+	Tags        []*TagRecordInput `json:"tags,omitempty"`
+}
+
+// GetTaskUuid returns __AgentTaskSetTagsProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetTagsProgrammaticInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetSessionUuid returns __AgentTaskSetTagsProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetTagsProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetTags returns __AgentTaskSetTagsProgrammaticInput.Tags, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSetTagsProgrammaticInput) GetTags() []*TagRecordInput { return v.Tags }
 
 // __AgentTaskSignOffProgrammaticInput is used internally by genqlient
 type __AgentTaskSignOffProgrammaticInput struct {
@@ -49087,6 +52424,8 @@ func (v *__AgentTasksByUuidProgrammaticInput) GetTaskUuids() []string { return v
 type __AgentTasksOfBoardInput struct {
 	BoardUuid string           `json:"boardUuid"`
 	Status    *AgentTaskStatus `json:"status"`
+	Group     *string          `json:"group"`
+	Tag       []*string        `json:"tag"`
 }
 
 // GetBoardUuid returns __AgentTasksOfBoardInput.BoardUuid, and is useful for accessing the field via an interface.
@@ -49095,11 +52434,19 @@ func (v *__AgentTasksOfBoardInput) GetBoardUuid() string { return v.BoardUuid }
 // GetStatus returns __AgentTasksOfBoardInput.Status, and is useful for accessing the field via an interface.
 func (v *__AgentTasksOfBoardInput) GetStatus() *AgentTaskStatus { return v.Status }
 
+// GetGroup returns __AgentTasksOfBoardInput.Group, and is useful for accessing the field via an interface.
+func (v *__AgentTasksOfBoardInput) GetGroup() *string { return v.Group }
+
+// GetTag returns __AgentTasksOfBoardInput.Tag, and is useful for accessing the field via an interface.
+func (v *__AgentTasksOfBoardInput) GetTag() []*string { return v.Tag }
+
 // __AgentTasksProgrammaticInput is used internally by genqlient
 type __AgentTasksProgrammaticInput struct {
 	BoardUuid    string           `json:"boardUuid"`
 	Status       *AgentTaskStatus `json:"status"`
 	ChangedSince *string          `json:"changedSince"`
+	Group        *string          `json:"group"`
+	Tag          []*string        `json:"tag"`
 }
 
 // GetBoardUuid returns __AgentTasksProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
@@ -49110,6 +52457,12 @@ func (v *__AgentTasksProgrammaticInput) GetStatus() *AgentTaskStatus { return v.
 
 // GetChangedSince returns __AgentTasksProgrammaticInput.ChangedSince, and is useful for accessing the field via an interface.
 func (v *__AgentTasksProgrammaticInput) GetChangedSince() *string { return v.ChangedSince }
+
+// GetGroup returns __AgentTasksProgrammaticInput.Group, and is useful for accessing the field via an interface.
+func (v *__AgentTasksProgrammaticInput) GetGroup() *string { return v.Group }
+
+// GetTag returns __AgentTasksProgrammaticInput.Tag, and is useful for accessing the field via an interface.
+func (v *__AgentTasksProgrammaticInput) GetTag() []*string { return v.Tag }
 
 // __AgenticReleaseProgrammaticInput is used internally by genqlient
 type __AgenticReleaseProgrammaticInput struct {
@@ -50070,6 +53423,198 @@ func AgentBoardEventsProgrammatic(
 	return data_, err_
 }
 
+// The mutation executed by AgentBoardGroupDelete.
+const AgentBoardGroupDelete_Operation = `
+mutation AgentBoardGroupDelete ($boardUuid: ID!, $key: String!) {
+	agentBoardGroupDelete(boardUuid: $boardUuid, key: $key)
+}
+`
+
+func AgentBoardGroupDelete(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+	key string,
+) (data_ *AgentBoardGroupDeleteResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentBoardGroupDelete",
+		Query:  AgentBoardGroupDelete_Operation,
+		Variables: &__AgentBoardGroupDeleteInput{
+			BoardUuid: boardUuid,
+			Key:       key,
+		},
+	}
+
+	data_ = &AgentBoardGroupDeleteResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AgentBoardGroupSet.
+const AgentBoardGroupSet_Operation = `
+mutation AgentBoardGroupSet ($boardUuid: ID!, $group: TaskGroupInput!) {
+	agentBoardGroupSet(boardUuid: $boardUuid, group: $group) {
+		uuid
+		key
+		name
+		description
+		order
+		dependsOn
+		defaultLevel
+		status
+		createdAt
+		progress {
+			total
+			done
+			open
+			complete
+		}
+	}
+}
+`
+
+// Task groups and tags for people (task RD2-29): board configuration (group set, delete) needs
+// CONFIGURATION_WRITE and BOARD_WRITE; moving a task and its tags need BOARD_WRITE.
+func AgentBoardGroupSet(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+	group *TaskGroupInput,
+) (data_ *AgentBoardGroupSetResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentBoardGroupSet",
+		Query:  AgentBoardGroupSet_Operation,
+		Variables: &__AgentBoardGroupSetInput{
+			BoardUuid: boardUuid,
+			Group:     group,
+		},
+	}
+
+	data_ = &AgentBoardGroupSetResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AgentBoardGroupSetProgrammatic.
+const AgentBoardGroupSetProgrammatic_Operation = `
+mutation AgentBoardGroupSetProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $group: TaskGroupInput!) {
+	agentBoardGroupSetProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid, group: $group) {
+		uuid
+		key
+		name
+		description
+		order
+		dependsOn
+		defaultLevel
+		status
+		createdAt
+		progress {
+			total
+			done
+			open
+			complete
+		}
+	}
+}
+`
+
+// The coordinator seat creates or edits a group by key; status CLOSED closes it.
+func AgentBoardGroupSetProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+	sessionUuid string,
+	group *TaskGroupInput,
+) (data_ *AgentBoardGroupSetProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentBoardGroupSetProgrammatic",
+		Query:  AgentBoardGroupSetProgrammatic_Operation,
+		Variables: &__AgentBoardGroupSetProgrammaticInput{
+			BoardUuid:   boardUuid,
+			SessionUuid: sessionUuid,
+			Group:       group,
+		},
+	}
+
+	data_ = &AgentBoardGroupSetProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentBoardGroupsProgrammatic.
+const AgentBoardGroupsProgrammatic_Operation = `
+query AgentBoardGroupsProgrammatic ($boardUuid: ID!) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		groups {
+			uuid
+			key
+			name
+			description
+			order
+			dependsOn
+			defaultLevel
+			status
+			createdAt
+			progress {
+				total
+				done
+				open
+				complete
+			}
+			spentMicros
+		}
+	}
+}
+`
+
+// A board's groups in display order, with what their tasks spent (a read of the board's usage).
+func AgentBoardGroupsProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+) (data_ *AgentBoardGroupsProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentBoardGroupsProgrammatic",
+		Query:  AgentBoardGroupsProgrammatic_Operation,
+		Variables: &__AgentBoardGroupsProgrammaticInput{
+			BoardUuid: boardUuid,
+		},
+	}
+
+	data_ = &AgentBoardGroupsProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by AgentBoardOperatorLock.
 const AgentBoardOperatorLock_Operation = `
 mutation AgentBoardOperatorLock ($boardUuid: ID!, $lock: Boolean!, $reason: String) {
@@ -50214,6 +53759,23 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		description
 		status
 		sources
+		groups {
+			uuid
+			key
+			name
+			description
+			order
+			dependsOn
+			defaultLevel
+			status
+			createdAt
+			progress {
+				total
+				done
+				open
+				complete
+			}
+		}
 		documentsRepo {
 			uuid
 			uri
@@ -50381,6 +53943,13 @@ query AgentBoardSnapshotProgrammatic ($boardUuid: ID!) {
 				level
 				effectiveLevel
 				orderIndex
+				group {
+					key
+				}
+				tags {
+					key
+				}
+				waitingOnGroups
 			}
 			holder {
 				... ActorFields
@@ -50940,6 +54509,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -51065,6 +54645,17 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 				... ActorFields
 			}
 			levelSetAt
+			group {
+				uuid
+				key
+				name
+			}
+			tags {
+				key
+				value
+				removable
+			}
+			waitingOnGroups
 			dependsOn
 			requireHumanReview
 			hold {
@@ -51216,6 +54807,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -51344,6 +54946,17 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		requiredStrength
 		budgetMicros
 		budgetSetBy {
@@ -51502,6 +55115,17 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -51728,6 +55352,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -51848,6 +55483,17 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -52041,6 +55687,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -52163,6 +55820,17 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -52317,6 +55985,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -52443,6 +56122,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -52570,6 +56260,17 @@ mutation AgentTaskDeliveredProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $uni
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -52792,6 +56493,17 @@ mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -52936,6 +56648,17 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -53082,6 +56805,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -53210,6 +56944,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -53332,6 +57077,17 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -53483,6 +57239,17 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 				... ActorFields
 			}
 			levelSetAt
+			group {
+				uuid
+				key
+				name
+			}
+			tags {
+				key
+				value
+				removable
+			}
+			waitingOnGroups
 			dependsOn
 			requireHumanReview
 			hold {
@@ -53634,6 +57401,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -53760,6 +57538,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -53880,6 +57669,17 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -54024,6 +57824,17 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -54296,6 +58107,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -54416,6 +58238,17 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -54556,6 +58389,17 @@ mutation AgentTaskReleaseHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $r
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -54702,6 +58546,17 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -54869,6 +58724,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -54989,6 +58855,17 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -55131,6 +59008,17 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -55400,6 +59288,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -55498,6 +59397,186 @@ func AgentTaskSetBudget(
 	return data_, err_
 }
 
+// The mutation executed by AgentTaskSetGroup.
+const AgentTaskSetGroup_Operation = `
+mutation AgentTaskSetGroup ($taskUuid: ID!, $group: String) {
+	agentTaskSetGroup(taskUuid: $taskUuid, group: $group) {
+		... PersonTaskFields
+	}
+}
+fragment PersonTaskFields on AgentTask {
+	key
+	number
+	uuid
+	board
+	externalRef
+	title
+	description
+	status
+	role
+	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
+	requireHumanReview
+	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
+	hold {
+		level
+		kind
+		gateRole
+		reason
+		heldBy {
+			... ActorFields
+		}
+		heldAt
+		stop
+	}
+	assignment {
+		session
+		agent
+		role
+		assignedAt
+	}
+	statusHistory {
+		from
+		to
+		at
+		trigger
+		actor {
+			... ActorFields
+		}
+		note
+	}
+	openFindings {
+		id
+		priority
+		status
+		title
+		location {
+			path
+			line
+			ref
+		}
+		resolvedBy
+		resolution
+		correction
+	}
+	openQuestions {
+		id
+		priority
+		status
+		title
+		location {
+			path
+			line
+			ref
+		}
+		resolvedBy
+		resolution
+	}
+	createdDate
+	completedAt
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+`
+
+func AgentTaskSetGroup(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+	group *string,
+) (data_ *AgentTaskSetGroupResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskSetGroup",
+		Query:  AgentTaskSetGroup_Operation,
+		Variables: &__AgentTaskSetGroupInput{
+			TaskUuid: taskUuid,
+			Group:    group,
+		},
+	}
+
+	data_ = &AgentTaskSetGroupResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AgentTaskSetGroupProgrammatic.
+const AgentTaskSetGroupProgrammatic_Operation = `
+mutation AgentTaskSetGroupProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $group: String) {
+	agentTaskSetGroupProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, group: $group) {
+		key
+		uuid
+		status
+		group {
+			uuid
+			key
+			name
+		}
+		waitingOnGroups
+	}
+}
+`
+
+// The coordinator seat moves a task into a group by key, or out of every group (group omitted is null).
+func AgentTaskSetGroupProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+	sessionUuid string,
+	group *string,
+) (data_ *AgentTaskSetGroupProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskSetGroupProgrammatic",
+		Query:  AgentTaskSetGroupProgrammatic_Operation,
+		Variables: &__AgentTaskSetGroupProgrammaticInput{
+			TaskUuid:    taskUuid,
+			SessionUuid: sessionUuid,
+			Group:       group,
+		},
+	}
+
+	data_ = &AgentTaskSetGroupProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by AgentTaskSetLevel.
 const AgentTaskSetLevel_Operation = `
 mutation AgentTaskSetLevel ($taskUuid: ID!, $level: Int) {
@@ -55522,6 +59601,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -55643,6 +59733,17 @@ mutation AgentTaskSetLevelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $leve
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -55790,6 +59891,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -55888,6 +60000,184 @@ func AgentTaskSetStrength(
 	return data_, err_
 }
 
+// The mutation executed by AgentTaskSetTags.
+const AgentTaskSetTags_Operation = `
+mutation AgentTaskSetTags ($taskUuid: ID!, $tags: [TagRecordInput!]!) {
+	agentTaskSetTags(taskUuid: $taskUuid, tags: $tags) {
+		... PersonTaskFields
+	}
+}
+fragment PersonTaskFields on AgentTask {
+	key
+	number
+	uuid
+	board
+	externalRef
+	title
+	description
+	status
+	role
+	orderIndex
+	level
+	effectiveLevel
+	levelSetBy {
+		... ActorFields
+	}
+	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
+	requireHumanReview
+	requiredStrength
+	budgetMicros
+	budgetSetBy {
+		... ActorFields
+	}
+	budgetSetAt
+	hold {
+		level
+		kind
+		gateRole
+		reason
+		heldBy {
+			... ActorFields
+		}
+		heldAt
+		stop
+	}
+	assignment {
+		session
+		agent
+		role
+		assignedAt
+	}
+	statusHistory {
+		from
+		to
+		at
+		trigger
+		actor {
+			... ActorFields
+		}
+		note
+	}
+	openFindings {
+		id
+		priority
+		status
+		title
+		location {
+			path
+			line
+			ref
+		}
+		resolvedBy
+		resolution
+		correction
+	}
+	openQuestions {
+		id
+		priority
+		status
+		title
+		location {
+			path
+			line
+			ref
+		}
+		resolvedBy
+		resolution
+	}
+	createdDate
+	completedAt
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+`
+
+func AgentTaskSetTags(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+	tags []*TagRecordInput,
+) (data_ *AgentTaskSetTagsResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskSetTags",
+		Query:  AgentTaskSetTags_Operation,
+		Variables: &__AgentTaskSetTagsInput{
+			TaskUuid: taskUuid,
+			Tags:     tags,
+		},
+	}
+
+	data_ = &AgentTaskSetTagsResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AgentTaskSetTagsProgrammatic.
+const AgentTaskSetTagsProgrammatic_Operation = `
+mutation AgentTaskSetTagsProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $tags: [TagRecordInput!]!) {
+	agentTaskSetTagsProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, tags: $tags) {
+		key
+		uuid
+		tags {
+			key
+			value
+			removable
+		}
+	}
+}
+`
+
+// The coordinator seat replaces a task's tags.
+func AgentTaskSetTagsProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+	sessionUuid string,
+	tags []*TagRecordInput,
+) (data_ *AgentTaskSetTagsProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskSetTagsProgrammatic",
+		Query:  AgentTaskSetTagsProgrammatic_Operation,
+		Variables: &__AgentTaskSetTagsProgrammaticInput{
+			TaskUuid:    taskUuid,
+			SessionUuid: sessionUuid,
+			Tags:        tags,
+		},
+	}
+
+	data_ = &AgentTaskSetTagsProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by AgentTaskSignOffProgrammatic.
 const AgentTaskSignOffProgrammatic_Operation = `
 mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!]) {
@@ -55910,6 +60200,17 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -56066,6 +60367,17 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -56210,6 +60522,17 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -56460,8 +60783,8 @@ func AgentTasksByUuidProgrammatic(
 
 // The query executed by AgentTasksOfBoard.
 const AgentTasksOfBoard_Operation = `
-query AgentTasksOfBoard ($boardUuid: ID!, $status: AgentTaskStatus) {
-	agentTasksOfBoard(boardUuid: $boardUuid, status: $status) {
+query AgentTasksOfBoard ($boardUuid: ID!, $status: AgentTaskStatus, $group: String, $tag: [String]) {
+	agentTasksOfBoard(boardUuid: $boardUuid, status: $status, group: $group, tag: $tag) {
 		... PersonTaskFields
 	}
 }
@@ -56482,6 +60805,17 @@ fragment PersonTaskFields on AgentTask {
 		... ActorFields
 	}
 	levelSetAt
+	group {
+		uuid
+		key
+		name
+	}
+	tags {
+		key
+		value
+		removable
+	}
+	waitingOnGroups
 	requireHumanReview
 	requiredStrength
 	budgetMicros
@@ -56558,6 +60892,8 @@ func AgentTasksOfBoard(
 	client_ graphql.Client,
 	boardUuid string,
 	status *AgentTaskStatus,
+	group *string,
+	tag []*string,
 ) (data_ *AgentTasksOfBoardResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTasksOfBoard",
@@ -56565,6 +60901,8 @@ func AgentTasksOfBoard(
 		Variables: &__AgentTasksOfBoardInput{
 			BoardUuid: boardUuid,
 			Status:    status,
+			Group:     group,
+			Tag:       tag,
 		},
 	}
 
@@ -56582,8 +60920,8 @@ func AgentTasksOfBoard(
 
 // The query executed by AgentTasksProgrammatic.
 const AgentTasksProgrammatic_Operation = `
-query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $changedSince: DateTime) {
-	agentTasksProgrammatic(boardUuid: $boardUuid, status: $status, changedSince: $changedSince) {
+query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $changedSince: DateTime, $group: String, $tag: [String]) {
+	agentTasksProgrammatic(boardUuid: $boardUuid, status: $status, changedSince: $changedSince, group: $group, tag: $tag) {
 		key
 		number
 		uuid
@@ -56602,6 +60940,17 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $change
 			... ActorFields
 		}
 		levelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
 		dependsOn
 		requireHumanReview
 		hold {
@@ -56713,6 +61062,8 @@ func AgentTasksProgrammatic(
 	boardUuid string,
 	status *AgentTaskStatus,
 	changedSince *string,
+	group *string,
+	tag []*string,
 ) (data_ *AgentTasksProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTasksProgrammatic",
@@ -56721,6 +61072,8 @@ func AgentTasksProgrammatic(
 			BoardUuid:    boardUuid,
 			Status:       status,
 			ChangedSince: changedSince,
+			Group:        group,
+			Tag:          tag,
 		},
 	}
 
