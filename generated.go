@@ -4758,6 +4758,11 @@ type AgentDocumentPublishInput struct {
 	Elements *string `json:"elements"`
 	// sha256 (hex) of elements. Required with elements.
 	ElementsDigest *string `json:"elementsDigest"`
+	// Publish on a task another session holds, as an advisory round (task e97fde56): only a prose type
+	// a role your agent has signed off on this board produces, on an active task. The round is
+	// ASSEMBLED at once and an INFO event tells the board. Ignored when your session holds the task:
+	// its round is a normal one. Without it, publishing on a task you do not hold is refused.
+	Advisory *bool `json:"advisory"`
 	// HEAD of the documents repository when the files were read. Required with a path.
 	Commit *string `json:"commit"`
 	// Must equal the board's documentsRepo. Required with a path; an index-only round writes no file, so it names no repository.
@@ -4805,6 +4810,9 @@ func (v *AgentDocumentPublishInput) GetElements() *string { return v.Elements }
 
 // GetElementsDigest returns AgentDocumentPublishInput.ElementsDigest, and is useful for accessing the field via an interface.
 func (v *AgentDocumentPublishInput) GetElementsDigest() *string { return v.ElementsDigest }
+
+// GetAdvisory returns AgentDocumentPublishInput.Advisory, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPublishInput) GetAdvisory() *bool { return v.Advisory }
 
 // GetCommit returns AgentDocumentPublishInput.Commit, and is useful for accessing the field via an interface.
 func (v *AgentDocumentPublishInput) GetCommit() *string { return v.Commit }
@@ -19551,6 +19559,11 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocument
 	Round *int `json:"round"`
 	// The task this round belongs to, for TASK-scoped types.
 	Task *string `json:"task"`
+	// A round a role published on a task it did not hold (task e97fde56): assembled at publish, never
+	// a hop's output. False or absent on every other round.
+	Advisory *bool `json:"advisory"`
+	// The role the round was published as: the holding role, or for an advisory round the author's. Absent on older rounds.
+	PublishedByRole *string `json:"publishedByRole"`
 	// The findings index for REVIEW_FINDINGS and TEST_REPORT; absent otherwise.
 	Findings *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex `json:"findings"`
 }
@@ -19573,6 +19586,16 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocu
 // GetTask returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Task, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetTask() *string {
 	return v.Task
+}
+
+// GetAdvisory returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Advisory, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetAdvisory() *bool {
+	return v.Advisory
+}
+
+// GetPublishedByRole returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.PublishedByRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetPublishedByRole() *string {
+	return v.PublishedByRole
 }
 
 // GetFindings returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Findings, and is useful for accessing the field via an interface.
@@ -30227,6 +30250,11 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsR
 	Round *int `json:"round"`
 	// The task this round belongs to, for TASK-scoped types.
 	Task *string `json:"task"`
+	// A round a role published on a task it did not hold (task e97fde56): assembled at publish, never
+	// a hop's output. False or absent on every other round.
+	Advisory *bool `json:"advisory"`
+	// The role the round was published as: the holding role, or for an advisory round the author's. Absent on older rounds.
+	PublishedByRole *string `json:"publishedByRole"`
 	// The findings index for REVIEW_FINDINGS and TEST_REPORT; absent otherwise.
 	Findings *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRefFindingsFindingsIndex `json:"findings"`
 }
@@ -30249,6 +30277,16 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocume
 // GetTask returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Task, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetTask() *string {
 	return v.Task
+}
+
+// GetAdvisory returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Advisory, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetAdvisory() *bool {
+	return v.Advisory
+}
+
+// GetPublishedByRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.PublishedByRole, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef) GetPublishedByRole() *string {
+	return v.PublishedByRole
 }
 
 // GetFindings returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsReleaseDocumentDocumentRef.Findings, and is useful for accessing the field via an interface.
@@ -49371,6 +49409,8 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 				path
 				round
 				task
+				advisory
+				publishedByRole
 				findings {
 					kind
 					round
@@ -51203,6 +51243,8 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 				path
 				round
 				task
+				advisory
+				publishedByRole
 				findings {
 					kind
 					round
