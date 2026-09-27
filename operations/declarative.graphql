@@ -162,6 +162,7 @@ query ExportBoard($board: String!) {
     checks { blocking mandatoryFields orphans coverage }
     delivery { mode attest merge { by method atTestedHead requireAttestation order } }
     documents { prefix }
+    perspectives
     taskPrefix
     coordinatorPrompt
     coordinatorCapabilities
@@ -178,6 +179,13 @@ query ExportBoard($board: String!) {
     }
     roles { ...BoardRoleSpecFields }
   }
+}
+
+# A board's perspectives as the server holds them, behind the export's gate (task b9115d09, round 3):
+# uuid, name and product, in the board's order. The export writes a name several perspectives share
+# as the uuid; a client keeping a configured form maps it through these.
+query ExportBoardPerspectives($board: String!) {
+  exportBoardPerspectivesProgrammatic(board: $board) { uuid name product }
 }
 
 query ExportRolePresets {

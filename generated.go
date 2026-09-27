@@ -2021,6 +2021,12 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	// records them (board-documents.md D3). A board from before the map lists a series once it has
 	// published into it again.
 	DocumentComponents []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent `json:"documentComponents"`
+	// The perspectives the board hangs off (board-permissions.md §3): real perspectives or PRODUCT
+	// components used as perspectives. A PERSPECTIVE grant on any of them covers the board.
+	Perspectives []*string `json:"perspectives"`
+	// perspectives by name, one for one with perspectives, product: marking a PRODUCT component. Always
+	// the name, even one several perspectives share; the board file's export writes those by uuid.
+	PerspectiveNames []*string `json:"perspectiveNames"`
 	// The prefix of new task keys (RD in RD-42), claimed in the organization and never reused (board-documents.md D8, D9).
 	TaskPrefix *string `json:"taskPrefix"`
 	// Every prefix the board has held, oldest first; tasks keep the key they were given.
@@ -2136,6 +2142,16 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocuments() 
 // GetDocumentComponents returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DocumentComponents, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetDocumentComponents() []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent {
 	return v.DocumentComponents
+}
+
+// GetPerspectives returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Perspectives, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetPerspectives() []*string {
+	return v.Perspectives
+}
+
+// GetPerspectiveNames returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.PerspectiveNames, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetPerspectiveNames() []*string {
+	return v.PerspectiveNames
 }
 
 // GetTaskPrefix returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.TaskPrefix, and is useful for accessing the field via an interface.
@@ -3459,6 +3475,12 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	// records them (board-documents.md D3). A board from before the map lists a series once it has
 	// published into it again.
 	DocumentComponents []*AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent `json:"documentComponents"`
+	// The perspectives the board hangs off (board-permissions.md §3): real perspectives or PRODUCT
+	// components used as perspectives. A PERSPECTIVE grant on any of them covers the board.
+	Perspectives []*string `json:"perspectives"`
+	// perspectives by name, one for one with perspectives, product: marking a PRODUCT component. Always
+	// the name, even one several perspectives share; the board file's export writes those by uuid.
+	PerspectiveNames []*string `json:"perspectiveNames"`
 	// The prefix of new task keys (RD in RD-42), claimed in the organization and never reused (board-documents.md D8, D9).
 	TaskPrefix *string `json:"taskPrefix"`
 	// Every prefix the board has held, oldest first; tasks keep the key they were given.
@@ -3574,6 +3596,16 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocuments(
 // GetDocumentComponents returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DocumentComponents, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetDocumentComponents() []*AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDocumentComponentsAgentBoardDocumentComponent {
 	return v.DocumentComponents
+}
+
+// GetPerspectives returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Perspectives, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetPerspectives() []*string {
+	return v.Perspectives
+}
+
+// GetPerspectiveNames returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.PerspectiveNames, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetPerspectiveNames() []*string {
+	return v.PerspectiveNames
 }
 
 // GetTaskPrefix returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.TaskPrefix, and is useful for accessing the field via an interface.
@@ -36525,6 +36557,9 @@ type ExportBoardExportBoardProgrammaticBoardSpec struct {
 	Delivery *ExportBoardExportBoardProgrammaticBoardSpecDeliveryAgentDeliveryPolicy `json:"delivery"`
 	// How the board names its documents; absent means after the board (board-documents.md D2).
 	Documents *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec `json:"documents"`
+	// Perspectives, product: marking a PRODUCT component (board-permissions.md §3): by name when exactly
+	// one of the organization carries it, else by uuid.
+	Perspectives []*string `json:"perspectives"`
 	// The task-key prefix (board-documents.md D8).
 	TaskPrefix        *string `json:"taskPrefix"`
 	CoordinatorPrompt *string `json:"coordinatorPrompt"`
@@ -36601,6 +36636,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDelivery() *ExportBoard
 // GetDocuments returns ExportBoardExportBoardProgrammaticBoardSpec.Documents, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetDocuments() *ExportBoardExportBoardProgrammaticBoardSpecDocumentsBoardDocumentsSpec {
 	return v.Documents
+}
+
+// GetPerspectives returns ExportBoardExportBoardProgrammaticBoardSpec.Perspectives, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpec) GetPerspectives() []*string {
+	return v.Perspectives
 }
 
 // GetTaskPrefix returns ExportBoardExportBoardProgrammaticBoardSpec.TaskPrefix, and is useful for accessing the field via an interface.
@@ -36970,6 +37010,45 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) G
 // GetEventRetentionDays returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.EventRetentionDays, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetEventRetentionDays() *int {
 	return v.EventRetentionDays
+}
+
+// ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef includes the requested fields of the GraphQL type BoardPerspectiveRef.
+// The GraphQL type's documentation follows.
+//
+// A perspective a board holds: a real perspective, or a PRODUCT component when product is true.
+type ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef struct {
+	Uuid string `json:"uuid"`
+	Name string `json:"name"`
+	// A PRODUCT component used as a perspective; a board file writes it with the product: marker.
+	Product bool `json:"product"`
+}
+
+// GetUuid returns ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef.Uuid, and is useful for accessing the field via an interface.
+func (v *ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef) GetUuid() string {
+	return v.Uuid
+}
+
+// GetName returns ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef.Name, and is useful for accessing the field via an interface.
+func (v *ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef) GetName() string {
+	return v.Name
+}
+
+// GetProduct returns ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef.Product, and is useful for accessing the field via an interface.
+func (v *ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef) GetProduct() bool {
+	return v.Product
+}
+
+// ExportBoardPerspectivesResponse is returned by ExportBoardPerspectives on success.
+type ExportBoardPerspectivesResponse struct {
+	// One board's perspectives as the server holds them, by name or uuid (CONFIGURATION_READ, as its
+	// export): uuid, name and product, in the board's order. The export writes a name several
+	// perspectives share as the uuid; a client keeping a configured form maps it through these.
+	ExportBoardPerspectivesProgrammatic []*ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef `json:"exportBoardPerspectivesProgrammatic"`
+}
+
+// GetExportBoardPerspectivesProgrammatic returns ExportBoardPerspectivesResponse.ExportBoardPerspectivesProgrammatic, and is useful for accessing the field via an interface.
+func (v *ExportBoardPerspectivesResponse) GetExportBoardPerspectivesProgrammatic() []*ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef {
+	return v.ExportBoardPerspectivesProgrammatic
 }
 
 // ExportBoardResponse is returned by ExportBoard on success.
@@ -44495,6 +44574,14 @@ type __ExportBoardInput struct {
 // GetBoard returns __ExportBoardInput.Board, and is useful for accessing the field via an interface.
 func (v *__ExportBoardInput) GetBoard() string { return v.Board }
 
+// __ExportBoardPerspectivesInput is used internally by genqlient
+type __ExportBoardPerspectivesInput struct {
+	Board string `json:"board"`
+}
+
+// GetBoard returns __ExportBoardPerspectivesInput.Board, and is useful for accessing the field via an interface.
+func (v *__ExportBoardPerspectivesInput) GetBoard() string { return v.Board }
+
 // __ExportBranchesInput is used internally by genqlient
 type __ExportBranchesInput struct {
 	Component string `json:"component"`
@@ -45442,6 +45529,8 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 			specification
 			component
 		}
+		perspectives
+		perspectiveNames
 		taskPrefix
 		taskPrefixHistory
 		checkPolicy {
@@ -45732,6 +45821,8 @@ query AgentBoardsProgrammatic {
 			specification
 			component
 		}
+		perspectives
+		perspectiveNames
 		taskPrefix
 		taskPrefixHistory
 		checkPolicy {
@@ -52188,6 +52279,7 @@ query ExportBoard ($board: String!) {
 		documents {
 			prefix
 		}
+		perspectives
 		taskPrefix
 		coordinatorPrompt
 		coordinatorCapabilities
@@ -52259,6 +52351,45 @@ func ExportBoard(
 	}
 
 	data_ = &ExportBoardResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by ExportBoardPerspectives.
+const ExportBoardPerspectives_Operation = `
+query ExportBoardPerspectives ($board: String!) {
+	exportBoardPerspectivesProgrammatic(board: $board) {
+		uuid
+		name
+		product
+	}
+}
+`
+
+// A board's perspectives as the server holds them, behind the export's gate (task b9115d09, round 3):
+// uuid, name and product, in the board's order. The export writes a name several perspectives share
+// as the uuid; a client keeping a configured form maps it through these.
+func ExportBoardPerspectives(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	board string,
+) (data_ *ExportBoardPerspectivesResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ExportBoardPerspectives",
+		Query:  ExportBoardPerspectives_Operation,
+		Variables: &__ExportBoardPerspectivesInput{
+			Board: board,
+		},
+	}
+
+	data_ = &ExportBoardPerspectivesResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
