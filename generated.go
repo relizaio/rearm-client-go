@@ -42460,6 +42460,10 @@ type SessionProgrammaticSessionProgrammaticSession struct {
 	Origin *SessionProgrammaticSessionProgrammaticSessionOrigin `json:"origin"`
 	// Artifact UUIDs attached to this session (reuses rearm.artifacts).
 	Artifacts []*string `json:"artifacts"`
+	// The boards this session worked (task RD2-5): recorded when it took a task, derived from the tasks
+	// for a session from before. Force-closing it needs BOARD_WRITE on one of them; a session with none
+	// needs the org admin.
+	BoardsWorked []*string `json:"boardsWorked"`
 	// SCE UUIDs attributed to this session via the commit-trailer parser
 	// (PR 2). Order is append-order; head of list is the earliest commit.
 	Commits []*string `json:"commits"`
@@ -42521,6 +42525,11 @@ func (v *SessionProgrammaticSessionProgrammaticSession) GetOrigin() *SessionProg
 
 // GetArtifacts returns SessionProgrammaticSessionProgrammaticSession.Artifacts, and is useful for accessing the field via an interface.
 func (v *SessionProgrammaticSessionProgrammaticSession) GetArtifacts() []*string { return v.Artifacts }
+
+// GetBoardsWorked returns SessionProgrammaticSessionProgrammaticSession.BoardsWorked, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetBoardsWorked() []*string {
+	return v.BoardsWorked
+}
 
 // GetCommits returns SessionProgrammaticSessionProgrammaticSession.Commits, and is useful for accessing the field via an interface.
 func (v *SessionProgrammaticSessionProgrammaticSession) GetCommits() []*string { return v.Commits }
@@ -54182,6 +54191,7 @@ query SessionProgrammatic ($sessionUuid: ID!) {
 			}
 		}
 		artifacts
+		boardsWorked
 		commits
 		policyEvents {
 			policyName
