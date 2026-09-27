@@ -1158,6 +1158,12 @@ type AgentBoard {
   """
   perspectives: [ID]
   """
+  What the caller may do on this board (board-permissions.md §4): the subset of BOARD_READ,
+  BOARD_AGENT, BOARD_WRITE, CONFIGURATION_READ and CONFIGURATION_WRITE held on it, for the person
+  signed in or the key calling. The UI shows only the controls these allow.
+  """
+  myPermissions: [PermissionFunction!]
+  """
   perspectives by name, one for one with perspectives, product: marking a PRODUCT component. Always
   the name, even one several perspectives share; the board file's export writes those by uuid.
   """
@@ -4061,6 +4067,40 @@ type AgentBoardDocuments {
   Replaces the board name in its document components' names, <prefix>-<specification>, both slugged.
   """
   prefix: String
+}
+
+enum PermissionFunction {
+  RESOURCE
+  FINDING_ANALYSIS_READ
+  FINDING_ANALYSIS_WRITE
+  ARTIFACT_DOWNLOAD
+  SBOM_PROBING
+  LIFECYCLE_UPDATE
+  DEVOPS_READ
+  DEVOPS_WRITE
+  VERSION_FEATURESET
+  AGENT
+  DISTRIBUTION
+  """
+  Export declarative configuration (Catalog, Branches) through the programmatic API.
+  """
+  CONFIGURATION_READ
+  """
+  Apply declarative configuration through the programmatic API; implies CONFIGURATION_READ.
+  """
+  CONFIGURATION_WRITE
+  """
+  Read an agent task board and its task records (READ_ONLY floor).
+  """
+  BOARD_READ
+  """
+  Work a board as an agent: poll, assign, sign off, publish (READ_ONLY floor); implies BOARD_READ.
+  """
+  BOARD_AGENT
+  """
+  Run a board: register, authorize, seat, holds, decisions (READ_WRITE floor); implies BOARD_READ.
+  """
+  BOARD_WRITE
 }
 
 """
@@ -8050,40 +8090,6 @@ enum PermissionType {
   READ_WRITE
   ESSENTIAL_READ
   NONE
-}
-
-enum PermissionFunction {
-  RESOURCE
-  FINDING_ANALYSIS_READ
-  FINDING_ANALYSIS_WRITE
-  ARTIFACT_DOWNLOAD
-  SBOM_PROBING
-  LIFECYCLE_UPDATE
-  DEVOPS_READ
-  DEVOPS_WRITE
-  VERSION_FEATURESET
-  AGENT
-  DISTRIBUTION
-  """
-  Export declarative configuration (Catalog, Branches) through the programmatic API.
-  """
-  CONFIGURATION_READ
-  """
-  Apply declarative configuration through the programmatic API; implies CONFIGURATION_READ.
-  """
-  CONFIGURATION_WRITE
-  """
-  Read an agent task board and its task records (READ_ONLY floor).
-  """
-  BOARD_READ
-  """
-  Work a board as an agent: poll, assign, sign off, publish (READ_ONLY floor); implies BOARD_READ.
-  """
-  BOARD_AGENT
-  """
-  Run a board: register, authorize, seat, holds, decisions (READ_WRITE floor); implies BOARD_READ.
-  """
-  BOARD_WRITE
 }
 
 type Coords {

@@ -16,7 +16,7 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths elementFamilies effectiveElementFamilies
 	documents { prefix } documentComponents { specification component }
-	perspectives perspectiveNames
+	perspectives perspectiveNames myPermissions
 	taskPrefix taskPrefixHistory
 	checkPolicy { blocking mandatoryFields orphans coverage } effectiveCheckPolicy { blocking mandatoryFields orphans coverage }
 	coordinatorPrompt missingCapabilities coordinatorCapabilities
@@ -48,7 +48,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	uuid org name description status sources
 	documentsRepo { uuid uri } documentPaths elementFamilies effectiveElementFamilies
 	documents { prefix } documentComponents { specification component }
-	perspectives perspectiveNames
+	perspectives perspectiveNames myPermissions
 	taskPrefix taskPrefixHistory
 	checkPolicy { blocking mandatoryFields orphans coverage } effectiveCheckPolicy { blocking mandatoryFields orphans coverage }
 	coordinatorPrompt missingCapabilities coordinatorCapabilities

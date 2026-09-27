@@ -2027,6 +2027,10 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	// perspectives by name, one for one with perspectives, product: marking a PRODUCT component. Always
 	// the name, even one several perspectives share; the board file's export writes those by uuid.
 	PerspectiveNames []*string `json:"perspectiveNames"`
+	// What the caller may do on this board (board-permissions.md §4): the subset of BOARD_READ,
+	// BOARD_AGENT, BOARD_WRITE, CONFIGURATION_READ and CONFIGURATION_WRITE held on it, for the person
+	// signed in or the key calling. The UI shows only the controls these allow.
+	MyPermissions []PermissionFunction `json:"myPermissions"`
 	// The prefix of new task keys (RD in RD-42), claimed in the organization and never reused (board-documents.md D8, D9).
 	TaskPrefix *string `json:"taskPrefix"`
 	// Every prefix the board has held, oldest first; tasks keep the key they were given.
@@ -2152,6 +2156,11 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetPerspectives
 // GetPerspectiveNames returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.PerspectiveNames, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetPerspectiveNames() []*string {
 	return v.PerspectiveNames
+}
+
+// GetMyPermissions returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.MyPermissions, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetMyPermissions() []PermissionFunction {
+	return v.MyPermissions
 }
 
 // GetTaskPrefix returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.TaskPrefix, and is useful for accessing the field via an interface.
@@ -3481,6 +3490,10 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	// perspectives by name, one for one with perspectives, product: marking a PRODUCT component. Always
 	// the name, even one several perspectives share; the board file's export writes those by uuid.
 	PerspectiveNames []*string `json:"perspectiveNames"`
+	// What the caller may do on this board (board-permissions.md §4): the subset of BOARD_READ,
+	// BOARD_AGENT, BOARD_WRITE, CONFIGURATION_READ and CONFIGURATION_WRITE held on it, for the person
+	// signed in or the key calling. The UI shows only the controls these allow.
+	MyPermissions []PermissionFunction `json:"myPermissions"`
 	// The prefix of new task keys (RD in RD-42), claimed in the organization and never reused (board-documents.md D8, D9).
 	TaskPrefix *string `json:"taskPrefix"`
 	// Every prefix the board has held, oldest first; tasks keep the key they were given.
@@ -3606,6 +3619,11 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetPerspectiv
 // GetPerspectiveNames returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.PerspectiveNames, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetPerspectiveNames() []*string {
 	return v.PerspectiveNames
+}
+
+// GetMyPermissions returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.MyPermissions, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetMyPermissions() []PermissionFunction {
+	return v.MyPermissions
 }
 
 // GetTaskPrefix returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.TaskPrefix, and is useful for accessing the field via an interface.
@@ -40065,6 +40083,51 @@ var AllPartyRole = []PartyRole{
 	PartyRoleOther,
 }
 
+type PermissionFunction string
+
+const (
+	PermissionFunctionResource             PermissionFunction = "RESOURCE"
+	PermissionFunctionFindingAnalysisRead  PermissionFunction = "FINDING_ANALYSIS_READ"
+	PermissionFunctionFindingAnalysisWrite PermissionFunction = "FINDING_ANALYSIS_WRITE"
+	PermissionFunctionArtifactDownload     PermissionFunction = "ARTIFACT_DOWNLOAD"
+	PermissionFunctionSbomProbing          PermissionFunction = "SBOM_PROBING"
+	PermissionFunctionLifecycleUpdate      PermissionFunction = "LIFECYCLE_UPDATE"
+	PermissionFunctionDevopsRead           PermissionFunction = "DEVOPS_READ"
+	PermissionFunctionDevopsWrite          PermissionFunction = "DEVOPS_WRITE"
+	PermissionFunctionVersionFeatureset    PermissionFunction = "VERSION_FEATURESET"
+	PermissionFunctionAgent                PermissionFunction = "AGENT"
+	PermissionFunctionDistribution         PermissionFunction = "DISTRIBUTION"
+	// Export declarative configuration (Catalog, Branches) through the programmatic API.
+	PermissionFunctionConfigurationRead PermissionFunction = "CONFIGURATION_READ"
+	// Apply declarative configuration through the programmatic API; implies CONFIGURATION_READ.
+	PermissionFunctionConfigurationWrite PermissionFunction = "CONFIGURATION_WRITE"
+	// Read an agent task board and its task records (READ_ONLY floor).
+	PermissionFunctionBoardRead PermissionFunction = "BOARD_READ"
+	// Work a board as an agent: poll, assign, sign off, publish (READ_ONLY floor); implies BOARD_READ.
+	PermissionFunctionBoardAgent PermissionFunction = "BOARD_AGENT"
+	// Run a board: register, authorize, seat, holds, decisions (READ_WRITE floor); implies BOARD_READ.
+	PermissionFunctionBoardWrite PermissionFunction = "BOARD_WRITE"
+)
+
+var AllPermissionFunction = []PermissionFunction{
+	PermissionFunctionResource,
+	PermissionFunctionFindingAnalysisRead,
+	PermissionFunctionFindingAnalysisWrite,
+	PermissionFunctionArtifactDownload,
+	PermissionFunctionSbomProbing,
+	PermissionFunctionLifecycleUpdate,
+	PermissionFunctionDevopsRead,
+	PermissionFunctionDevopsWrite,
+	PermissionFunctionVersionFeatureset,
+	PermissionFunctionAgent,
+	PermissionFunctionDistribution,
+	PermissionFunctionConfigurationRead,
+	PermissionFunctionConfigurationWrite,
+	PermissionFunctionBoardRead,
+	PermissionFunctionBoardAgent,
+	PermissionFunctionBoardWrite,
+}
+
 // PersonTaskFields includes the GraphQL fields of AgentTask requested by the fragment PersonTaskFields.
 type PersonTaskFields struct {
 	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
@@ -45531,6 +45594,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		}
 		perspectives
 		perspectiveNames
+		myPermissions
 		taskPrefix
 		taskPrefixHistory
 		checkPolicy {
@@ -45823,6 +45887,7 @@ query AgentBoardsProgrammatic {
 		}
 		perspectives
 		perspectiveNames
+		myPermissions
 		taskPrefix
 		taskPrefixHistory
 		checkPolicy {
