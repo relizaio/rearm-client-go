@@ -1418,6 +1418,15 @@ type AgentBoard {
   The board file that last applied to this board; null on a board never applied from a file.
   """
   declarative: DeclarativeProvenance
+  """
+  The board's spend in a window broken down so the parts add up to the total (task RD2-8): by the
+  role of the hop each usage row fell in, closed or open; the coordinator seat's own rows; and
+  rows no hop owns. Computed from the same rows and prices as agentBoardUsage. A null window is
+  the board's life.
+  """
+  spendBreakdown(
+  from: DateTime
+  to: DateTime): BoardSpendBreakdown
 }
 
 """
@@ -2848,6 +2857,10 @@ type ModelOntology {
   Optional canonical id (e.g. "pkg:huggingface/anthropic/claude-sonnet@4.5").
   """
   purl: String
+  """
+  The version the last declaration resolved onto this row gave: information, never identity (task RD2-26).
+  """
+  declaredVersion: String
   """
   CycloneDX ML-BOM model component (type machine-learning-model)
   stored opaquely. Empty {} on auto-registration; the user attaches
@@ -4464,6 +4477,40 @@ type DeclarativeProvenance {
   source: DeclarativeSource
 }
 
+"""
+A board's spend in a window, whose parts add up: totalMicros = the roles' costMicros +
+coordinatorEstimateMicros + unattributedMicros (task RD2-8).
+"""
+type BoardSpendBreakdown {
+  """
+  Every usage row of the board in the window, priced; the period rollup's total.
+  """
+  totalMicros: Long
+  """
+  False when some row had no price: every figure is then a lower bound.
+  """
+  costComplete: Boolean
+  """
+  By the role of the hop each row fell in, the costliest first.
+  """
+  byRole: [BoardRoleSpend]
+  """
+  By session, the costliest first.
+  """
+  bySession: [BoardSessionSpend]
+  """
+  The coordinator seat's own rows (they name the board and no task): the money each task's
+  coordinator estimate apportions, counted here once.
+  """
+  coordinatorEstimateMicros: Long
+  """
+  Rows naming a task that no hop of their session owns, e.g. reported before its assignment.
+  """
+  unattributedMicros: Long
+  from: DateTime
+  to: DateTime
+}
+
 type AgentTaskSnapshot {
   task: AgentTask
   """
@@ -6077,11 +6124,14 @@ type ModelRoleStrength {
 """
 RESOLVED when the row is linked to a bundled catalogue entry or confirmed by an
 admin; UNRESOLVED when it auto-created from a string nobody mapped. Unresolved
-rows price nothing.
+rows price nothing. SYNTHETIC is the one pseudo-model per organization that placeholder
+declarations (<synthetic>, blank, unknown) report against: priced at zero, not counted as
+unresolved (task RD2-26).
 """
 enum ModelResolution {
   RESOLVED
   UNRESOLVED
+  SYNTHETIC
 }
 
 """
@@ -7181,6 +7231,31 @@ type DeclarativeSource {
   repo: String
   path: String
   commit: String
+}
+
+type BoardRoleSpend {
+  role: String
+  tokens: UsageTotals
+  costMicros: Long
+  """
+  Closed hops (sign-offs and returns) of the role that spent in the window.
+  """
+  closedHops: Int
+  """
+  Hops still open that spent in the window.
+  """
+  openHops: Int
+}
+
+type BoardSessionSpend {
+  session: ID
+  agent: ID
+  """
+  The role the session's spend fell in; coordinator for the seat; null when no hop owns it.
+  """
+  role: String
+  tokens: UsageTotals
+  costMicros: Long
 }
 
 """

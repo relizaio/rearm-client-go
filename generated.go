@@ -3877,6 +3877,273 @@ func (v *AgentBoardSnapshotProgrammaticResponse) GetAgentBoardSnapshotProgrammat
 	return v.AgentBoardSnapshotProgrammatic
 }
 
+// AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
+type AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoard struct {
+	Uuid *string `json:"uuid"`
+	// The board's spend in a window broken down so the parts add up to the total (task RD2-8): by the
+	// role of the hop each usage row fell in, closed or open; the coordinator seat's own rows; and
+	// rows no hop owns. Computed from the same rows and prices as agentBoardUsage. A null window is
+	// the board's life.
+	SpendBreakdown *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown `json:"spendBreakdown"`
+}
+
+// GetUuid returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoard.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoard) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetSpendBreakdown returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoard.SpendBreakdown, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoard) GetSpendBreakdown() *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown {
+	return v.SpendBreakdown
+}
+
+// AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown includes the requested fields of the GraphQL type BoardSpendBreakdown.
+// The GraphQL type's documentation follows.
+//
+// A board's spend in a window, whose parts add up: totalMicros = the roles' costMicros +
+// coordinatorEstimateMicros + unattributedMicros (task RD2-8).
+type AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown struct {
+	// Every usage row of the board in the window, priced; the period rollup's total.
+	TotalMicros *int64 `json:"totalMicros"`
+	// False when some row had no price: every figure is then a lower bound.
+	CostComplete *bool `json:"costComplete"`
+	// The coordinator seat's own rows (they name the board and no task): the money each task's
+	// coordinator estimate apportions, counted here once.
+	CoordinatorEstimateMicros *int64 `json:"coordinatorEstimateMicros"`
+	// Rows naming a task that no hop of their session owns, e.g. reported before its assignment.
+	UnattributedMicros *int64  `json:"unattributedMicros"`
+	From               *string `json:"from"`
+	To                 *string `json:"to"`
+	// By the role of the hop each row fell in, the costliest first.
+	ByRole []*AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend `json:"byRole"`
+	// By session, the costliest first.
+	BySession []*AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend `json:"bySession"`
+}
+
+// GetTotalMicros returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown.TotalMicros, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown) GetTotalMicros() *int64 {
+	return v.TotalMicros
+}
+
+// GetCostComplete returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown) GetCostComplete() *bool {
+	return v.CostComplete
+}
+
+// GetCoordinatorEstimateMicros returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown.CoordinatorEstimateMicros, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown) GetCoordinatorEstimateMicros() *int64 {
+	return v.CoordinatorEstimateMicros
+}
+
+// GetUnattributedMicros returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown.UnattributedMicros, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown) GetUnattributedMicros() *int64 {
+	return v.UnattributedMicros
+}
+
+// GetFrom returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown.From, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown) GetFrom() *string {
+	return v.From
+}
+
+// GetTo returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown.To, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown) GetTo() *string {
+	return v.To
+}
+
+// GetByRole returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown.ByRole, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown) GetByRole() []*AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend {
+	return v.ByRole
+}
+
+// GetBySession returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown.BySession, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdown) GetBySession() []*AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend {
+	return v.BySession
+}
+
+// AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend includes the requested fields of the GraphQL type BoardRoleSpend.
+type AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend struct {
+	Role       *string `json:"role"`
+	CostMicros *int64  `json:"costMicros"`
+	// Closed hops (sign-offs and returns) of the role that spent in the window.
+	ClosedHops *int `json:"closedHops"`
+	// Hops still open that spent in the window.
+	OpenHops *int                                                                                                                     `json:"openHops"`
+	Tokens   *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals `json:"tokens"`
+}
+
+// GetRole returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend.Role, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend) GetRole() *string {
+	return v.Role
+}
+
+// GetCostMicros returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend.CostMicros, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend) GetCostMicros() *int64 {
+	return v.CostMicros
+}
+
+// GetClosedHops returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend.ClosedHops, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend) GetClosedHops() *int {
+	return v.ClosedHops
+}
+
+// GetOpenHops returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend.OpenHops, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend) GetOpenHops() *int {
+	return v.OpenHops
+}
+
+// GetTokens returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend.Tokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpend) GetTokens() *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals {
+	return v.Tokens
+}
+
+// AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals includes the requested fields of the GraphQL type UsageTotals.
+// The GraphQL type's documentation follows.
+//
+// Rollup of usage rows. Tokens are facts and never change; cost is derived from a
+// dated price entry, so every rollup names the entries it used.
+type AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals struct {
+	InputTokens      *int64 `json:"inputTokens"`
+	OutputTokens     *int64 `json:"outputTokens"`
+	CacheReadTokens  *int64 `json:"cacheReadTokens"`
+	CacheWriteTokens *int64 `json:"cacheWriteTokens"`
+	Requests         *int   `json:"requests"`
+	Turns            *int   `json:"turns"`
+	// Number of report lines rolled up here.
+	Reports *int `json:"reports"`
+}
+
+// GetInputTokens returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals.InputTokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals) GetInputTokens() *int64 {
+	return v.InputTokens
+}
+
+// GetOutputTokens returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals.OutputTokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals) GetOutputTokens() *int64 {
+	return v.OutputTokens
+}
+
+// GetCacheReadTokens returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals.CacheReadTokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals) GetCacheReadTokens() *int64 {
+	return v.CacheReadTokens
+}
+
+// GetCacheWriteTokens returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals.CacheWriteTokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals) GetCacheWriteTokens() *int64 {
+	return v.CacheWriteTokens
+}
+
+// GetRequests returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals.Requests, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals) GetRequests() *int {
+	return v.Requests
+}
+
+// GetTurns returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals.Turns, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals) GetTurns() *int {
+	return v.Turns
+}
+
+// GetReports returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals.Reports, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownByRoleBoardRoleSpendTokensUsageTotals) GetReports() *int {
+	return v.Reports
+}
+
+// AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend includes the requested fields of the GraphQL type BoardSessionSpend.
+type AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend struct {
+	Session *string `json:"session"`
+	Agent   *string `json:"agent"`
+	// The role the session's spend fell in; coordinator for the seat; null when no hop owns it.
+	Role       *string                                                                                                                        `json:"role"`
+	CostMicros *int64                                                                                                                         `json:"costMicros"`
+	Tokens     *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals `json:"tokens"`
+}
+
+// GetSession returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend.Session, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend.Agent, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend) GetAgent() *string {
+	return v.Agent
+}
+
+// GetRole returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend.Role, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend) GetRole() *string {
+	return v.Role
+}
+
+// GetCostMicros returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend.CostMicros, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend) GetCostMicros() *int64 {
+	return v.CostMicros
+}
+
+// GetTokens returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend.Tokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpend) GetTokens() *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals {
+	return v.Tokens
+}
+
+// AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals includes the requested fields of the GraphQL type UsageTotals.
+// The GraphQL type's documentation follows.
+//
+// Rollup of usage rows. Tokens are facts and never change; cost is derived from a
+// dated price entry, so every rollup names the entries it used.
+type AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals struct {
+	InputTokens      *int64 `json:"inputTokens"`
+	OutputTokens     *int64 `json:"outputTokens"`
+	CacheReadTokens  *int64 `json:"cacheReadTokens"`
+	CacheWriteTokens *int64 `json:"cacheWriteTokens"`
+	Requests         *int   `json:"requests"`
+	Turns            *int   `json:"turns"`
+	// Number of report lines rolled up here.
+	Reports *int `json:"reports"`
+}
+
+// GetInputTokens returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals.InputTokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals) GetInputTokens() *int64 {
+	return v.InputTokens
+}
+
+// GetOutputTokens returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals.OutputTokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals) GetOutputTokens() *int64 {
+	return v.OutputTokens
+}
+
+// GetCacheReadTokens returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals.CacheReadTokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals) GetCacheReadTokens() *int64 {
+	return v.CacheReadTokens
+}
+
+// GetCacheWriteTokens returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals.CacheWriteTokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals) GetCacheWriteTokens() *int64 {
+	return v.CacheWriteTokens
+}
+
+// GetRequests returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals.Requests, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals) GetRequests() *int {
+	return v.Requests
+}
+
+// GetTurns returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals.Turns, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals) GetTurns() *int {
+	return v.Turns
+}
+
+// GetReports returns AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals.Reports, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpendBreakdownBySessionBoardSessionSpendTokensUsageTotals) GetReports() *int {
+	return v.Reports
+}
+
+// AgentBoardSpendBreakdownProgrammaticResponse is returned by AgentBoardSpendBreakdownProgrammatic on success.
+type AgentBoardSpendBreakdownProgrammaticResponse struct {
+	// Agent-key auth: one board (includes coordinatorPrompt and lock state).
+	AgentBoardProgrammatic *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoard `json:"agentBoardProgrammatic"`
+}
+
+// GetAgentBoardProgrammatic returns AgentBoardSpendBreakdownProgrammaticResponse.AgentBoardProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentBoardSpendBreakdownProgrammaticResponse) GetAgentBoardProgrammatic() *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoard {
+	return v.AgentBoardProgrammatic
+}
+
 type AgentBoardStatus string
 
 const (
@@ -51823,6 +52090,22 @@ type __AgentBoardSnapshotProgrammaticInput struct {
 // GetBoardUuid returns __AgentBoardSnapshotProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
 func (v *__AgentBoardSnapshotProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
 
+// __AgentBoardSpendBreakdownProgrammaticInput is used internally by genqlient
+type __AgentBoardSpendBreakdownProgrammaticInput struct {
+	BoardUuid string  `json:"boardUuid"`
+	From      *string `json:"from"`
+	To        *string `json:"to"`
+}
+
+// GetBoardUuid returns __AgentBoardSpendBreakdownProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentBoardSpendBreakdownProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
+
+// GetFrom returns __AgentBoardSpendBreakdownProgrammaticInput.From, and is useful for accessing the field via an interface.
+func (v *__AgentBoardSpendBreakdownProgrammaticInput) GetFrom() *string { return v.From }
+
+// GetTo returns __AgentBoardSpendBreakdownProgrammaticInput.To, and is useful for accessing the field via an interface.
+func (v *__AgentBoardSpendBreakdownProgrammaticInput) GetTo() *string { return v.To }
+
 // __AgentBoardsOfOrgInput is used internally by genqlient
 type __AgentBoardsOfOrgInput struct {
 	OrgUuid string `json:"orgUuid"`
@@ -54231,6 +54514,84 @@ func AgentBoardSnapshotProgrammatic(
 	}
 
 	data_ = &AgentBoardSnapshotProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentBoardSpendBreakdownProgrammatic.
+const AgentBoardSpendBreakdownProgrammatic_Operation = `
+query AgentBoardSpendBreakdownProgrammatic ($boardUuid: ID!, $from: DateTime, $to: DateTime) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		spendBreakdown(from: $from, to: $to) {
+			totalMicros
+			costComplete
+			coordinatorEstimateMicros
+			unattributedMicros
+			from
+			to
+			byRole {
+				role
+				costMicros
+				closedHops
+				openHops
+				tokens {
+					inputTokens
+					outputTokens
+					cacheReadTokens
+					cacheWriteTokens
+					requests
+					turns
+					reports
+				}
+			}
+			bySession {
+				session
+				agent
+				role
+				costMicros
+				tokens {
+					inputTokens
+					outputTokens
+					cacheReadTokens
+					cacheWriteTokens
+					requests
+					turns
+					reports
+				}
+			}
+		}
+	}
+}
+`
+
+// The board's spend in a window broken down so the parts add up to the total (task RD2-8): by role
+// (closed and open hops), by session, the coordinator seat's own rows and what no hop owns.
+func AgentBoardSpendBreakdownProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+	from *string,
+	to *string,
+) (data_ *AgentBoardSpendBreakdownProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentBoardSpendBreakdownProgrammatic",
+		Query:  AgentBoardSpendBreakdownProgrammatic_Operation,
+		Variables: &__AgentBoardSpendBreakdownProgrammaticInput{
+			BoardUuid: boardUuid,
+			From:      from,
+			To:        to,
+		},
+	}
+
+	data_ = &AgentBoardSpendBreakdownProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
