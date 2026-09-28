@@ -31,6 +31,7 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	deliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
 	effectiveDeliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
 	eventRetentionDays effectiveEventRetentionDays
+	staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes }
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
 } }
@@ -64,6 +65,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	deliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
 	effectiveDeliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
 	eventRetentionDays effectiveEventRetentionDays
+	staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes }
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
 } }
@@ -189,6 +191,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate registered head }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
@@ -333,6 +336,13 @@ mutation AgentTaskSetLevelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $leve
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
+# The coordinator seat releases a stalled assignment back to the queue, with a reason (task RD3-4).
+mutation AgentTaskReleaseAssignmentProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
+	agentTaskReleaseAssignmentProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
+	key uuid board status role
+	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason }
+} }
+
 mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $children: [AgentTaskSplitChildInput!]!) {
 	agentTaskSplitProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, children: $children) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
@@ -355,6 +365,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate registered head }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
@@ -384,6 +395,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate registered head }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
@@ -414,6 +426,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate registered head }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
@@ -428,6 +441,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros reviewedInputs { release specification round promotedTo } refusedPromotions { release specification round reason } }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate registered head
 		attestation { unit commit outcome by { ...ActorFields } at note } }
@@ -458,6 +472,7 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgra
 	assignment { session agent role assignedAt promptVersion }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros reviewedInputs { release specification round promotedTo } refusedPromotions { release specification round reason } }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate registered head
 		attestation { unit commit outcome by { ...ActorFields } at note } }
