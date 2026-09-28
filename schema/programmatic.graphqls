@@ -471,6 +471,10 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   taskUuid: ID!
   sessionUuid: ID!
   tags: [TagRecordInput!]!): AgentTask
+  """
+  The coordinator seat releases an ASSIGNED task back to QUEUED for the same role, with a reason (task RD3-4).
+  """
+  agentTaskReleaseAssignmentProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: String!): AgentTask
   agentTaskSplitProgrammatic(taskUuid: ID!, sessionUuid: ID!, children: [AgentTaskSplitChildInput!]!): [AgentTask]
   agentTaskCompleteProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
   agentTaskCancelProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
@@ -613,6 +617,11 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskSetLevel(
   taskUuid: ID!
   level: Int): AgentTask
+  """
+  A person releases an ASSIGNED task back to QUEUED for the same role, with a reason (task RD3-4). BOARD_WRITE.
+  The holding session stays open; its later sign-off, publish or question on the task is refused.
+  """
+  agentTaskReleaseAssignment(taskUuid: ID!, reason: String!): AgentTask
   """
   Create or edit a group of the board, by key (task RD2-29). CONFIGURATION_WRITE and BOARD_WRITE on
   the board. status CLOSED closes it: no new tasks, nothing else changes.
@@ -1402,6 +1411,10 @@ type AgentBoard {
   """
   effectiveEventRetentionDays: Int
   """
+  Staleness thresholds that post ALERTs (task RD3-4); null when every rule is off.
+  """
+  staleness: AgentBoardStaleness
+  """
   Whether coordinator priority is advisory (LAX, default) or enforced at assignment (STRICT).
   """
   priorityType: AgentBoardPriorityType
@@ -1648,6 +1661,10 @@ type AgentTask {
   assignment: AgentTaskWorkAssignment
   signOffs: [AgentTaskSignOff]
   returns: [AgentTaskReturn]
+  """
+  Assignments a person released back to the queue, oldest first (task RD3-4).
+  """
+  releasedAssignments: [AgentTaskReleasedAssignment]
   parentTask: ID
   childTasks: [ID]
   """
@@ -3573,6 +3590,22 @@ type BoardSettingsSpec {
   Days the event log keeps an event; null means the default, 15, and 0 keeps everything.
   """
   eventRetentionDays: Int
+  """
+  Staleness thresholds that post ALERTs (task RD3-4); null when every rule is off.
+  """
+  staleness: AgentBoardStaleness
+}
+
+"""
+When a board ALERTs that work has gone stale (task RD3-4), minutes each; null turns a rule off. Only an
+ALERT is posted: no task changes state, and a person releases a stalled assignment by hand.
+"""
+type AgentBoardStaleness {
+  roleUnstaffedMinutes: Int
+  hopNoProgressMinutes: Int
+  deliveryStuckMinutes: Int
+  seatSilentMinutes: Int
+  repeatMinutes: Int
 }
 
 """
@@ -4831,6 +4864,21 @@ type AgentTaskSignOff {
   refusedPromotions: [AgentTaskRefusedPromotion]
 }
 
+"""
+An assignment a person released back to the queue (task RD3-4); the released session's later sign-off, publish or question is refused.
+"""
+type AgentTaskReleasedAssignment {
+  role: String
+  roleUuid: ID
+  agent: ID
+  session: ID
+  assignedAt: DateTime
+  releasedAt: DateTime
+  releasedBy: AgentActor
+  reason: String
+  usage: HopUsage
+}
+
 type AgentTaskReturn {
   role: String
   """
@@ -5154,6 +5202,21 @@ input BoardSettingsSpecInput {
   Days the event log keeps an event; null restores the default, 15, 0 keeps everything, and a negative number is refused.
   """
   eventRetentionDays: Int
+  """
+  The staleness block (task RD3-4): given, it replaces the board's whole block; null turns every rule off.
+  """
+  staleness: AgentBoardStalenessInput
+}
+
+"""
+The staleness block as input: declared, it replaces the board's whole block; each threshold at least 1, null off.
+"""
+input AgentBoardStalenessInput {
+  roleUnstaffedMinutes: Int
+  hopNoProgressMinutes: Int
+  deliveryStuckMinutes: Int
+  seatSilentMinutes: Int
+  repeatMinutes: Int
 }
 
 """
@@ -7417,6 +7480,10 @@ enum AgentStatusTrigger {
   HUMAN_REJECT
   HUMAN_SIGNOFF
   SESSION_CLOSED
+  """
+  A person released the assignment back to the queue, with a reason (task RD3-4).
+  """
+  RELEASE
   """
   The board completed a task whose loop ran out -- a cycle cap, a no-progress stop or a budget --
   with items left open below what the board requires resolved. Distinct from COMPLETE: the work
