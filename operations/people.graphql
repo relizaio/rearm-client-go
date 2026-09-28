@@ -93,6 +93,12 @@ mutation AgentTaskSetLevel ($taskUuid: ID!, $level: Int) {
 	agentTaskSetLevel(taskUuid: $taskUuid, level: $level) { ...PersonTaskFields }
 }
 
+# A person with BOARD_WRITE releases a stalled assignment back to the queue, with a reason (task RD3-4).
+mutation AgentTaskReleaseAssignment ($taskUuid: ID!, $reason: String!) {
+	agentTaskReleaseAssignment(taskUuid: $taskUuid, reason: $reason) { ...PersonTaskFields
+		releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason } }
+}
+
 mutation AgentBoardOperatorLock ($boardUuid: ID!, $lock: Boolean!, $reason: String) {
 	agentBoardOperatorLock(boardUuid: $boardUuid, lock: $lock, reason: $reason) {
 		uuid name status lock { level reason lockedBy { ...ActorFields } lockedAt }

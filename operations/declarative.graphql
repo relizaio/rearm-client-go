@@ -176,6 +176,7 @@ query ExportBoard($board: String!) {
       humanQueueAgeMinutes
       coordinatorStopRelease
       eventRetentionDays
+      staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes }
     }
     groups { key name description dependsOn defaultLevel status }
     roles { ...BoardRoleSpecFields }
