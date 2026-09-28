@@ -5925,6 +5925,8 @@ type AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConf
 	ServedPrompt *string `json:"servedPrompt"`
 	// The version the served prompt is pinned by on a sign-off: a hash of the prompt alone.
 	PromptVersion *string `json:"promptVersion"`
+	// Capabilities an assignee of this role must hold (declared, unverified in v1).
+	RequiredCapabilities []*AgentCapability `json:"requiredCapabilities"`
 	// What every task in this role must be able to read before it starts.
 	RequiredInputs []*AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput `json:"requiredInputs"`
 	// What a hop in this role must leave behind: the mirror of requiredInputs.
@@ -5951,6 +5953,11 @@ func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRole
 // GetPromptVersion returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// GetRequiredCapabilities returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.RequiredCapabilities, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetRequiredCapabilities() []*AgentCapability {
+	return v.RequiredCapabilities
 }
 
 // GetRequiredInputs returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.RequiredInputs, and is useful for accessing the field via an interface.
@@ -55261,6 +55268,7 @@ query AgentRoleBriefProgrammatic ($boardUuid: ID!) {
 		name
 		servedPrompt
 		promptVersion
+		requiredCapabilities
 		requiredInputs {
 			kind
 			specification

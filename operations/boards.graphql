@@ -127,7 +127,7 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsP
 # The role part of a brief (task RD3-9): each role's served prompt and version, and what it reads and
 # leaves behind, so the brief can name a role's inputs and print them.
 query AgentRoleBriefProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsProgrammatic(boardUuid: $boardUuid) {
-	uuid name servedPrompt promptVersion
+	uuid name servedPrompt promptVersion requiredCapabilities
 	requiredInputs { kind specification scope minLifecycle resolution }
 	producesOutputs { specification scope required }
 } }
