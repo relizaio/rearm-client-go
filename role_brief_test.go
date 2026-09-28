@@ -19,3 +19,11 @@ func TestTheRoleBriefReadsTheServedPromptAndTheRolesInputs(t *testing.T) {
 	_ = r.GetServedPrompt()
 	_ = r.GetPromptVersion()
 }
+
+// RD3-10: the brief reads the role's capabilities, to include the commit-trailers section of the
+// orientation for a role that pushes code.
+func TestRoleBriefReadsCapabilities(t *testing.T) {
+	if !strings.Contains(normalised(AgentRoleBriefProgrammatic_Operation), "servedPrompt promptVersion requiredCapabilities") {
+		t.Error("the role brief does not read requiredCapabilities")
+	}
+}
