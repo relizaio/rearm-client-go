@@ -1784,6 +1784,14 @@ type AgentTaskRoleConfig {
   name: String
   prompt: String
   """
+  The prompt as a worker in this role is served it (task RD3-9): the prompt, then the board's
+  routing rules composed from its settings and merge procedure -- what assign and task next hand over,
+  readable without taking a task, so a fresh context can brief itself.
+  """
+  servedPrompt: String
+  """The version the served prompt is pinned by on a sign-off: a hash of the prompt alone."""
+  promptVersion: String
+  """
   Advisory routing order for the coordinator; routing is a per-hop decision, not a pipeline.
   """
   orderIndex: Int
