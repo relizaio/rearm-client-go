@@ -124,6 +124,14 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsP
 	producesOutputs { specification scope required }
 } }
 
+# The role part of a brief (task RD3-9): each role's served prompt and version, and what it reads and
+# leaves behind, so the brief can name a role's inputs and print them.
+query AgentRoleBriefProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsProgrammatic(boardUuid: $boardUuid) {
+	uuid name servedPrompt promptVersion
+	requiredInputs { kind specification scope minLifecycle resolution }
+	producesOutputs { specification scope required }
+} }
+
 mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 	agentTaskRegisterProgrammatic(input: $input) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups

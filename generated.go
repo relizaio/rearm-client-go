@@ -5912,6 +5912,131 @@ func (v *AgentRequiredInputInput) GetMinLifecycle() ReleaseLifecycleEnum { retur
 // GetResolution returns AgentRequiredInputInput.Resolution, and is useful for accessing the field via an interface.
 func (v *AgentRequiredInputInput) GetResolution() *AgentInputResolution { return v.Resolution }
 
+// AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig includes the requested fields of the GraphQL type AgentTaskRoleConfig.
+// The GraphQL type's documentation follows.
+//
+// Board-scoped role definition. The coordinator is implicit and never a row here.
+type AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig struct {
+	Uuid *string `json:"uuid"`
+	Name *string `json:"name"`
+	// The prompt as a worker in this role is served it (task RD3-9): the prompt, then the board's
+	// routing rules composed from its settings and merge procedure -- what assign and task next hand over,
+	// readable without taking a task, so a fresh context can brief itself.
+	ServedPrompt *string `json:"servedPrompt"`
+	// The version the served prompt is pinned by on a sign-off: a hash of the prompt alone.
+	PromptVersion *string `json:"promptVersion"`
+	// What every task in this role must be able to read before it starts.
+	RequiredInputs []*AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput `json:"requiredInputs"`
+	// What a hop in this role must leave behind: the mirror of requiredInputs.
+	// Enforced at sign-off, not at assignment -- the hop has to run before it
+	// can produce anything.
+	ProducesOutputs []*AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput `json:"producesOutputs"`
+}
+
+// GetUuid returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetName returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.Name, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetName() *string {
+	return v.Name
+}
+
+// GetServedPrompt returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.ServedPrompt, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetServedPrompt() *string {
+	return v.ServedPrompt
+}
+
+// GetPromptVersion returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// GetRequiredInputs returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.RequiredInputs, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetRequiredInputs() []*AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput {
+	return v.RequiredInputs
+}
+
+// GetProducesOutputs returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.ProducesOutputs, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetProducesOutputs() []*AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput {
+	return v.ProducesOutputs
+}
+
+// AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput includes the requested fields of the GraphQL type AgentProducedOutput.
+// The GraphQL type's documentation follows.
+//
+// A document a role is expected to publish during its hop.
+type AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput struct {
+	Specification *SpecificationType `json:"specification"`
+	Scope         *AgentInputScope   `json:"scope"`
+	// False makes it advisory, for roles that sometimes have nothing to write.
+	Required *bool `json:"required"`
+}
+
+// GetSpecification returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput.Specification, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetScope returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput.Scope, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput) GetScope() *AgentInputScope {
+	return v.Scope
+}
+
+// GetRequired returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput.Required, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput) GetRequired() *bool {
+	return v.Required
+}
+
+// AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput includes the requested fields of the GraphQL type AgentRequiredInput.
+type AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput struct {
+	Kind *AgentInputKind `json:"kind"`
+	// DOCUMENT only: which specification document, resolved against the board's target node.
+	Specification *SpecificationType `json:"specification"`
+	// RELEASE only.
+	Scope        *AgentInputScope      `json:"scope"`
+	MinLifecycle *ReleaseLifecycleEnum `json:"minLifecycle"`
+	// Null falls back to the board's defaultInputResolution.
+	Resolution *AgentInputResolution `json:"resolution"`
+}
+
+// GetKind returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput.Kind, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput) GetKind() *AgentInputKind {
+	return v.Kind
+}
+
+// GetSpecification returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput.Specification, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetScope returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput.Scope, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput) GetScope() *AgentInputScope {
+	return v.Scope
+}
+
+// GetMinLifecycle returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput.MinLifecycle, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput) GetMinLifecycle() *ReleaseLifecycleEnum {
+	return v.MinLifecycle
+}
+
+// GetResolution returns AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput.Resolution, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentRequiredInput) GetResolution() *AgentInputResolution {
+	return v.Resolution
+}
+
+// AgentRoleBriefProgrammaticResponse is returned by AgentRoleBriefProgrammatic on success.
+type AgentRoleBriefProgrammaticResponse struct {
+	// Agent-key auth: a board's role configuration in order.
+	AgentTaskRoleConfigsProgrammatic []*AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig `json:"agentTaskRoleConfigsProgrammatic"`
+}
+
+// GetAgentTaskRoleConfigsProgrammatic returns AgentRoleBriefProgrammaticResponse.AgentTaskRoleConfigsProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefProgrammaticResponse) GetAgentTaskRoleConfigsProgrammatic() []*AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig {
+	return v.AgentTaskRoleConfigsProgrammatic
+}
+
 // Who works this role. AGENTIC: agents poll/assume/sign off through sessions. HUMAN: a deliberate human workflow stage -- never offered to agent polls; an org admin signs off directly from the queue.
 type AgentRoleKind string
 
@@ -52257,6 +52382,14 @@ func (v *__AgentDocumentPublishProgrammaticInput) GetInput() *AgentDocumentPubli
 	return v.Input
 }
 
+// __AgentRoleBriefProgrammaticInput is used internally by genqlient
+type __AgentRoleBriefProgrammaticInput struct {
+	BoardUuid string `json:"boardUuid"`
+}
+
+// GetBoardUuid returns __AgentRoleBriefProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentRoleBriefProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
+
 // __AgentSessionInboxProgrammaticInput is used internally by genqlient
 type __AgentSessionInboxProgrammaticInput struct {
 	InboxRequest *AgentSessionInboxInput `json:"inboxRequest,omitempty"`
@@ -55109,6 +55242,57 @@ func AgentDocumentPublishProgrammatic(
 	}
 
 	data_ = &AgentDocumentPublishProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentRoleBriefProgrammatic.
+const AgentRoleBriefProgrammatic_Operation = `
+query AgentRoleBriefProgrammatic ($boardUuid: ID!) {
+	agentTaskRoleConfigsProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		name
+		servedPrompt
+		promptVersion
+		requiredInputs {
+			kind
+			specification
+			scope
+			minLifecycle
+			resolution
+		}
+		producesOutputs {
+			specification
+			scope
+			required
+		}
+	}
+}
+`
+
+// The role part of a brief (task RD3-9): each role's served prompt and version, and what it reads and
+// leaves behind, so the brief can name a role's inputs and print them.
+func AgentRoleBriefProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+) (data_ *AgentRoleBriefProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentRoleBriefProgrammatic",
+		Query:  AgentRoleBriefProgrammatic_Operation,
+		Variables: &__AgentRoleBriefProgrammaticInput{
+			BoardUuid: boardUuid,
+		},
+	}
+
+	data_ = &AgentRoleBriefProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
