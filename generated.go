@@ -6576,6 +6576,8 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+	// This task's document releases, newest first.
+	Documents []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease `json:"documents"`
 }
 
 // GetKey returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Key, and is useful for accessing the field via an interface.
@@ -6763,6 +6765,11 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 	return v.QuestionStack
 }
 
+// GetDocuments returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Documents, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetDocuments() []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease {
+	return v.Documents
+}
+
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment includes the requested fields of the GraphQL type AgentTaskWorkAssignment.
 // The GraphQL type's documentation follows.
 //
@@ -6798,6 +6805,89 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease includes the requested fields of the GraphQL type Release.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease struct {
+	Uuid      *string               `json:"uuid"`
+	Version   *string               `json:"version"`
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+	// Pointer to the document bytes this release publishes. Non-null only on releases of
+	// specification components -- an ordinary software release has no document.
+	Document *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef `json:"document"`
+}
+
+// GetUuid returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetVersion returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease.Version, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetDocument returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease.Document, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease) GetDocument() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef {
+	return v.Document
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef includes the requested fields of the GraphQL type DocumentRef.
+// The GraphQL type's documentation follows.
+//
+// Pointer from a release to document bytes in a repository, present only on
+// releases of specification components. The commit and repository are NOT
+// repeated here: they come from the release's source code entry, so the
+// recognised-commit predicate and signature verification apply to a document
+// exactly as they do to code.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef struct {
+	Specification *SpecificationType `json:"specification"`
+	// Repo-relative path at the release's commit.
+	Path *string `json:"path"`
+	// 1-based count of this task's rounds of this type.
+	Round *int `json:"round"`
+	// The task this round belongs to, for TASK-scoped types.
+	Task *string `json:"task"`
+	// A round a role published on a task it did not hold (task e97fde56): assembled at publish, never
+	// a hop's output. False or absent on every other round.
+	Advisory *bool `json:"advisory"`
+	// The role the round was published as: the holding role, or for an advisory round the author's. Absent on older rounds.
+	PublishedByRole *string `json:"publishedByRole"`
+}
+
+// GetSpecification returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetPath returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef) GetPath() *string {
+	return v.Path
+}
+
+// GetRound returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef) GetRound() *int {
+	return v.Round
+}
+
+// GetTask returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef.Task, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef) GetTask() *string {
+	return v.Task
+}
+
+// GetAdvisory returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef.Advisory, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef) GetAdvisory() *bool {
+	return v.Advisory
+}
+
+// GetPublishedByRole returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef.PublishedByRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef) GetPublishedByRole() *string {
+	return v.PublishedByRole
 }
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -35887,6 +35977,9 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskTagsTa
 
 // AgentTaskSignOffProgrammaticResponse is returned by AgentTaskSignOffProgrammatic on success.
 type AgentTaskSignOffProgrammaticResponse struct {
+	// seenInputs (task RD2-34): the task's documents the hop read. When given, every document published on the
+	// task since the assignment by anyone but this hop must be in it, or the sign-off is refused naming them; null
+	// skips the check.
 	AgentTaskSignOffProgrammatic *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask `json:"agentTaskSignOffProgrammatic"`
 }
 
@@ -52871,6 +52964,7 @@ type __AgentTaskSignOffProgrammaticInput struct {
 	Outcome     AgentSignOffOutcome `json:"outcome"`
 	Note        *string             `json:"note"`
 	Outputs     []string            `json:"outputs"`
+	SeenInputs  []string            `json:"seenInputs"`
 }
 
 // GetTaskUuid returns __AgentTaskSignOffProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -52887,6 +52981,9 @@ func (v *__AgentTaskSignOffProgrammaticInput) GetNote() *string { return v.Note 
 
 // GetOutputs returns __AgentTaskSignOffProgrammaticInput.Outputs, and is useful for accessing the field via an interface.
 func (v *__AgentTaskSignOffProgrammaticInput) GetOutputs() []string { return v.Outputs }
+
+// GetSeenInputs returns __AgentTaskSignOffProgrammaticInput.SeenInputs, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSignOffProgrammaticInput) GetSeenInputs() []string { return v.SeenInputs }
 
 // __AgentTaskSplitProgrammaticInput is used internally by genqlient
 type __AgentTaskSplitProgrammaticInput struct {
@@ -55320,6 +55417,19 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 				questionsRelease
 				answeringRole
 				askedAt
+			}
+			documents {
+				uuid
+				version
+				lifecycle
+				document {
+					specification
+					path
+					round
+					task
+					advisory
+					publishedByRole
+				}
 			}
 		}
 		role
@@ -60766,8 +60876,8 @@ func AgentTaskSetTagsProgrammatic(
 
 // The mutation executed by AgentTaskSignOffProgrammatic.
 const AgentTaskSignOffProgrammatic_Operation = `
-mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!]) {
-	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs) {
+mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!]) {
+	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs, seenInputs: $seenInputs) {
 		key
 		number
 		uuid
@@ -60906,6 +61016,7 @@ func AgentTaskSignOffProgrammatic(
 	outcome AgentSignOffOutcome,
 	note *string,
 	outputs []string,
+	seenInputs []string,
 ) (data_ *AgentTaskSignOffProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskSignOffProgrammatic",
@@ -60916,6 +61027,7 @@ func AgentTaskSignOffProgrammatic(
 			Outcome:     outcome,
 			Note:        note,
 			Outputs:     outputs,
+			SeenInputs:  seenInputs,
 		},
 	}
 

@@ -168,12 +168,13 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+	documents { uuid version lifecycle document { specification path round task advisory publishedByRole } }
  }
 	role rolePrompt promptVersion hopBudgetMicros
 } }
 
-mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!]) {
-	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs) {
+mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!]) {
+	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs, seenInputs: $seenInputs) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
