@@ -50259,6 +50259,9 @@ type SessionProgrammaticSessionProgrammaticSession struct {
 	// for a session from before. Force-closing it needs BOARD_WRITE on one of them; a session with none
 	// needs the org admin.
 	BoardsWorked []*string `json:"boardsWorked"`
+	// The tasks this session worked (task RD2-11): the tasks of its boards that list it, with the role it
+	// last worked each as. A person sees those on boards they may read.
+	TasksWorked []*SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef `json:"tasksWorked"`
 	// SCE UUIDs attributed to this session via the commit-trailer parser
 	// (PR 2). Order is append-order; head of list is the earliest commit.
 	Commits []*string `json:"commits"`
@@ -50324,6 +50327,11 @@ func (v *SessionProgrammaticSessionProgrammaticSession) GetArtifacts() []*string
 // GetBoardsWorked returns SessionProgrammaticSessionProgrammaticSession.BoardsWorked, and is useful for accessing the field via an interface.
 func (v *SessionProgrammaticSessionProgrammaticSession) GetBoardsWorked() []*string {
 	return v.BoardsWorked
+}
+
+// GetTasksWorked returns SessionProgrammaticSessionProgrammaticSession.TasksWorked, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSession) GetTasksWorked() []*SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef {
+	return v.TasksWorked
 }
 
 // GetCommits returns SessionProgrammaticSessionProgrammaticSession.Commits, and is useful for accessing the field via an interface.
@@ -50757,6 +50765,51 @@ func (v *SessionProgrammaticSessionProgrammaticSessionReleasesRelease) GetVersio
 // GetLifecycle returns SessionProgrammaticSessionProgrammaticSessionReleasesRelease.Lifecycle, and is useful for accessing the field via an interface.
 func (v *SessionProgrammaticSessionProgrammaticSessionReleasesRelease) GetLifecycle() *ReleaseLifecycleEnum {
 	return v.Lifecycle
+}
+
+// SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef includes the requested fields of the GraphQL type AgentSessionTaskRef.
+// The GraphQL type's documentation follows.
+//
+// A task a session worked, as the session page names it (task RD2-11).
+type SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef struct {
+	Uuid  *string `json:"uuid"`
+	Key   *string `json:"key"`
+	Title *string `json:"title"`
+	// The role the session last worked the task as.
+	Role  *string `json:"role"`
+	Board *string `json:"board"`
+	// The board's name, so a page names it without reading the boards.
+	BoardName *string `json:"boardName"`
+}
+
+// GetUuid returns SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef.Uuid, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef.Key, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef) GetKey() *string {
+	return v.Key
+}
+
+// GetTitle returns SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef.Title, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef) GetTitle() *string {
+	return v.Title
+}
+
+// GetRole returns SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef.Role, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef) GetRole() *string {
+	return v.Role
+}
+
+// GetBoard returns SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef.Board, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef) GetBoard() *string {
+	return v.Board
+}
+
+// GetBoardName returns SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef.BoardName, and is useful for accessing the field via an interface.
+func (v *SessionProgrammaticSessionProgrammaticSessionTasksWorkedAgentSessionTaskRef) GetBoardName() *string {
+	return v.BoardName
 }
 
 // SessionReportUsageProgrammaticResponse is returned by SessionReportUsageProgrammatic on success.
@@ -63817,6 +63870,14 @@ query SessionProgrammatic ($sessionUuid: ID!) {
 		}
 		artifacts
 		boardsWorked
+		tasksWorked {
+			uuid
+			key
+			title
+			role
+			board
+			boardName
+		}
 		commits
 		policyEvents {
 			policyName
