@@ -586,6 +586,20 @@ mutation AgentTaskSetTagsProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $tags:
 	key uuid tags { key value removable }
 } }
 
+# Who works the board (task RD3-5): every session that worked or polled it, with its state, last poll and
+# offer, completed tasks, spend and cache share in the window, and the staleness rules that name it.
+query AgentBoardAgentsProgrammatic ($boardUuid: ID!, $from: DateTime, $to: DateTime) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid name
+		agents(from: $from, to: $to) {
+			session agent agentName roles lastPollAt lastOfferAt lastActivityAt tasksCompleted costMicros cacheShare
+			state { kind taskUuid taskKey since closedBy { ...ActorFields } }
+			tokens { inputTokens outputTokens cacheReadTokens cacheWriteTokens requests turns reports }
+			stale { rule message }
+		}
+	}
+}
+
 # The board's spend in a window broken down so the parts add up to the total (task RD2-8): by role
 # (closed and open hops), by session, the coordinator seat's own rows and what no hop owns.
 query AgentBoardSpendBreakdownProgrammatic ($boardUuid: ID!, $from: DateTime, $to: DateTime) {

@@ -495,6 +495,306 @@ var AllAgentActorKind = []AgentActorKind{
 	AgentActorKindSystem,
 }
 
+// AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
+type AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoard struct {
+	Uuid *string `json:"uuid"`
+	Name *string `json:"name"`
+	// Who works the board (task RD3-5): every session that worked or polled it, open ones first, then closed,
+	// each by last activity, newest first. Spend and cache share are for the window.
+	Agents []*AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow `json:"agents"`
+}
+
+// GetUuid returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoard.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoard) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetName returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoard.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoard) GetName() *string {
+	return v.Name
+}
+
+// GetAgents returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoard.Agents, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoard) GetAgents() []*AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow {
+	return v.Agents
+}
+
+// AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow includes the requested fields of the GraphQL type BoardAgentRow.
+// The GraphQL type's documentation follows.
+//
+// One session on a board's Agents tab (task RD3-5).
+type AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow struct {
+	Session        *string                                                                                                    `json:"session"`
+	Agent          *string                                                                                                    `json:"agent"`
+	AgentName      *string                                                                                                    `json:"agentName"`
+	Roles          []*string                                                                                                  `json:"roles"`
+	LastPollAt     *string                                                                                                    `json:"lastPollAt"`
+	LastOfferAt    *string                                                                                                    `json:"lastOfferAt"`
+	LastActivityAt *string                                                                                                    `json:"lastActivityAt"`
+	TasksCompleted *int                                                                                                       `json:"tasksCompleted"`
+	CostMicros     *int64                                                                                                     `json:"costMicros"`
+	CacheShare     *float64                                                                                                   `json:"cacheShare"`
+	State          *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState       `json:"state"`
+	Tokens         *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals          `json:"tokens"`
+	Stale          []*AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStaleBoardAgentStaleMark `json:"stale"`
+}
+
+// GetSession returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow.Session, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow.Agent, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow) GetAgent() *string {
+	return v.Agent
+}
+
+// GetAgentName returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow.AgentName, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow) GetAgentName() *string {
+	return v.AgentName
+}
+
+// GetRoles returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow.Roles, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow) GetRoles() []*string {
+	return v.Roles
+}
+
+// GetLastPollAt returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow.LastPollAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow) GetLastPollAt() *string {
+	return v.LastPollAt
+}
+
+// GetLastOfferAt returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow.LastOfferAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow) GetLastOfferAt() *string {
+	return v.LastOfferAt
+}
+
+// GetLastActivityAt returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow.LastActivityAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow) GetLastActivityAt() *string {
+	return v.LastActivityAt
+}
+
+// GetTasksCompleted returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow.TasksCompleted, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow) GetTasksCompleted() *int {
+	return v.TasksCompleted
+}
+
+// GetCostMicros returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow.CostMicros, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow) GetCostMicros() *int64 {
+	return v.CostMicros
+}
+
+// GetCacheShare returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow.CacheShare, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow) GetCacheShare() *float64 {
+	return v.CacheShare
+}
+
+// GetState returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow.State, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow) GetState() *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState {
+	return v.State
+}
+
+// GetTokens returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow.Tokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow) GetTokens() *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals {
+	return v.Tokens
+}
+
+// GetStale returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow.Stale, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRow) GetStale() []*AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStaleBoardAgentStaleMark {
+	return v.Stale
+}
+
+// AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStaleBoardAgentStaleMark includes the requested fields of the GraphQL type BoardAgentStaleMark.
+type AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStaleBoardAgentStaleMark struct {
+	Rule    *string `json:"rule"`
+	Message *string `json:"message"`
+}
+
+// GetRule returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStaleBoardAgentStaleMark.Rule, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStaleBoardAgentStaleMark) GetRule() *string {
+	return v.Rule
+}
+
+// GetMessage returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStaleBoardAgentStaleMark.Message, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStaleBoardAgentStaleMark) GetMessage() *string {
+	return v.Message
+}
+
+// AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState includes the requested fields of the GraphQL type BoardAgentState.
+type AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState struct {
+	Kind     *BoardAgentStateKind                                                                                                   `json:"kind"`
+	TaskUuid *string                                                                                                                `json:"taskUuid"`
+	TaskKey  *string                                                                                                                `json:"taskKey"`
+	Since    *string                                                                                                                `json:"since"`
+	ClosedBy *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor `json:"closedBy"`
+}
+
+// GetKind returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState.Kind, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState) GetKind() *BoardAgentStateKind {
+	return v.Kind
+}
+
+// GetTaskUuid returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState.TaskUuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState) GetTaskUuid() *string {
+	return v.TaskUuid
+}
+
+// GetTaskKey returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState.TaskKey, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState) GetTaskKey() *string {
+	return v.TaskKey
+}
+
+// GetSince returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState.Since, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState) GetSince() *string {
+	return v.Since
+}
+
+// GetClosedBy returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState.ClosedBy, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentState) GetClosedBy() *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor {
+	return v.ClosedBy
+}
+
+// AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older lock still resolves.
+type AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor) __premarshalJSON() (*__premarshalAgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor, error) {
+	var retval __premarshalAgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals includes the requested fields of the GraphQL type UsageTotals.
+// The GraphQL type's documentation follows.
+//
+// Rollup of usage rows. Tokens are facts and never change; cost is derived from a
+// dated price entry, so every rollup names the entries it used.
+type AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals struct {
+	InputTokens      *int64 `json:"inputTokens"`
+	OutputTokens     *int64 `json:"outputTokens"`
+	CacheReadTokens  *int64 `json:"cacheReadTokens"`
+	CacheWriteTokens *int64 `json:"cacheWriteTokens"`
+	Requests         *int   `json:"requests"`
+	Turns            *int   `json:"turns"`
+	// Number of report lines rolled up here.
+	Reports *int `json:"reports"`
+}
+
+// GetInputTokens returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals.InputTokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals) GetInputTokens() *int64 {
+	return v.InputTokens
+}
+
+// GetOutputTokens returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals.OutputTokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals) GetOutputTokens() *int64 {
+	return v.OutputTokens
+}
+
+// GetCacheReadTokens returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals.CacheReadTokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals) GetCacheReadTokens() *int64 {
+	return v.CacheReadTokens
+}
+
+// GetCacheWriteTokens returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals.CacheWriteTokens, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals) GetCacheWriteTokens() *int64 {
+	return v.CacheWriteTokens
+}
+
+// GetRequests returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals.Requests, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals) GetRequests() *int {
+	return v.Requests
+}
+
+// GetTurns returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals.Turns, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals) GetTurns() *int {
+	return v.Turns
+}
+
+// GetReports returns AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals.Reports, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowTokensUsageTotals) GetReports() *int {
+	return v.Reports
+}
+
+// AgentBoardAgentsProgrammaticResponse is returned by AgentBoardAgentsProgrammatic on success.
+type AgentBoardAgentsProgrammaticResponse struct {
+	// Agent-key auth: one board (includes coordinatorPrompt and lock state).
+	AgentBoardProgrammatic *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoard `json:"agentBoardProgrammatic"`
+}
+
+// GetAgentBoardProgrammatic returns AgentBoardAgentsProgrammaticResponse.AgentBoardProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentBoardAgentsProgrammaticResponse) GetAgentBoardProgrammatic() *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoard {
+	return v.AgentBoardProgrammatic
+}
+
 // AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
 type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard struct {
 	Uuid        *string           `json:"uuid"`
@@ -47195,6 +47495,22 @@ var AllBelongsToOrganization = []BelongsToOrganization{
 	BelongsToOrganizationExternal,
 }
 
+type BoardAgentStateKind string
+
+const (
+	BoardAgentStateKindWorking BoardAgentStateKind = "WORKING"
+	BoardAgentStateKindWaiting BoardAgentStateKind = "WAITING"
+	BoardAgentStateKindIdle    BoardAgentStateKind = "IDLE"
+	BoardAgentStateKindClosed  BoardAgentStateKind = "CLOSED"
+)
+
+var AllBoardAgentStateKind = []BoardAgentStateKind{
+	BoardAgentStateKindWorking,
+	BoardAgentStateKindWaiting,
+	BoardAgentStateKindIdle,
+	BoardAgentStateKindClosed,
+}
+
 // BoardRoleSpecFields includes the GraphQL fields of BoardRoleSpec requested by the fragment BoardRoleSpecFields.
 type BoardRoleSpecFields struct {
 	Name                 *string                                                      `json:"name"`
@@ -56685,6 +57001,22 @@ func (v *__AddReleasesProgrammaticInput) GetReleaseInputsProg() []*ReleaseInputP
 	return v.ReleaseInputsProg
 }
 
+// __AgentBoardAgentsProgrammaticInput is used internally by genqlient
+type __AgentBoardAgentsProgrammaticInput struct {
+	BoardUuid string  `json:"boardUuid"`
+	From      *string `json:"from"`
+	To        *string `json:"to"`
+}
+
+// GetBoardUuid returns __AgentBoardAgentsProgrammaticInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentBoardAgentsProgrammaticInput) GetBoardUuid() string { return v.BoardUuid }
+
+// GetFrom returns __AgentBoardAgentsProgrammaticInput.From, and is useful for accessing the field via an interface.
+func (v *__AgentBoardAgentsProgrammaticInput) GetFrom() *string { return v.From }
+
+// GetTo returns __AgentBoardAgentsProgrammaticInput.To, and is useful for accessing the field via an interface.
+func (v *__AgentBoardAgentsProgrammaticInput) GetTo() *string { return v.To }
+
 // __AgentBoardCoordinateProgrammaticInput is used internally by genqlient
 type __AgentBoardCoordinateProgrammaticInput struct {
 	BoardUuid   string `json:"boardUuid"`
@@ -58567,6 +58899,86 @@ func AddReleasesProgrammatic(
 	}
 
 	data_ = &AddReleasesProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentBoardAgentsProgrammatic.
+const AgentBoardAgentsProgrammatic_Operation = `
+query AgentBoardAgentsProgrammatic ($boardUuid: ID!, $from: DateTime, $to: DateTime) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		name
+		agents(from: $from, to: $to) {
+			session
+			agent
+			agentName
+			roles
+			lastPollAt
+			lastOfferAt
+			lastActivityAt
+			tasksCompleted
+			costMicros
+			cacheShare
+			state {
+				kind
+				taskUuid
+				taskKey
+				since
+				closedBy {
+					... ActorFields
+				}
+			}
+			tokens {
+				inputTokens
+				outputTokens
+				cacheReadTokens
+				cacheWriteTokens
+				requests
+				turns
+				reports
+			}
+			stale {
+				rule
+				message
+			}
+		}
+	}
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+`
+
+// Who works the board (task RD3-5): every session that worked or polled it, with its state, last poll and
+// offer, completed tasks, spend and cache share in the window, and the staleness rules that name it.
+func AgentBoardAgentsProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+	from *string,
+	to *string,
+) (data_ *AgentBoardAgentsProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentBoardAgentsProgrammatic",
+		Query:  AgentBoardAgentsProgrammatic_Operation,
+		Variables: &__AgentBoardAgentsProgrammaticInput{
+			BoardUuid: boardUuid,
+			From:      from,
+			To:        to,
+		},
+	}
+
+	data_ = &AgentBoardAgentsProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
