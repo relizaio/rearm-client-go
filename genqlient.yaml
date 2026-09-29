@@ -26,3 +26,6 @@ bindings:
     type: map[string]interface{}
   RolePresetsSpecInput:
     type: map[string]interface{}
+  # So does an API_KEYS file (task RD3-11): a key setting sent as null clears it.
+  ApiKeysSpecInput:
+    type: map[string]interface{}

@@ -29,6 +29,10 @@ type Query {
   Export the key's organization's role presets as a presets file (CONFIGURATION_READ).
   """
   agentRolePresetsSpecProgrammatic: RolePresetsSpec
+  """Export the organization's declared API keys as an API_KEYS file (CONFIGURATION_WRITE); with keys, only those names."""
+  exportApiKeysProgrammatic(keys: [String!]): ApiKeysSpec
+  """The organization's API keys with their key ids and secrets' metadata, never a value (CONFIGURATION_WRITE)."""
+  apiKeysProgrammatic(keys: [String!]): [DeclaredApiKey!]
   release(releaseUuid: ID!, orgUuid: ID): Release
   getSbomProbingResult(runId: String!): SbomProbingResult
   getReleaseByHashProgrammatic(hash: String!, componentId: ID): String
@@ -271,6 +275,12 @@ type Mutation {
   """
   archiveBoardProgrammatic(
   name: String!): AgentBoard
+  """Apply an API_KEYS file (CONFIGURATION_WRITE): identity and settings by declared name, never a secret."""
+  applyApiKeysProgrammatic(spec: ApiKeysSpecInput!, dryRun: Boolean, source: DeclarativeSourceInput): DeclarativeApplyResult
+  """Deactivate a declared key by name (CONFIGURATION_WRITE): what deleting it from Terraform does."""
+  archiveApiKeyProgrammatic(name: String!): DeclaredApiKey
+  """Mint a secret in slot 1 or 2 of a FREEFORM key, or rotate it (CONFIGURATION_WRITE); the value is returned once."""
+  mintApiKeySecretProgrammatic(key: String!, slot: Int!, rotate: Boolean): MintedApiKeySecret
   """
   Programmatic (API-key) upsert of a PullRequest. CI registers the PR
   row independently of release creation so the registration survives
@@ -3466,6 +3476,8 @@ enum DeclarativeKind {
   BRANCHES
   BOARD
   ROLE_PRESETS
+  """An organization's FREEFORM API keys: identity and settings, never a secret (task RD3-11)."""
+  API_KEYS
 }
 
 type CatalogComponent {
@@ -7971,6 +7983,124 @@ enum ApiKeyStatus {
   REQUESTED
   "A denied request: listed for the requester with the reason in the notes, never usable"
   DENIED
+}
+
+"""
+An API_KEYS file (task RD3-11): an organization's FREEFORM keys by declared name -- identity and settings,
+never a secret.
+"""
+type ApiKeysSpec {
+  kind: DeclarativeKind!
+  version: Int!
+  authoritative: Boolean
+  keys: [ApiKeySpec!]
+}
+
+type ApiKeySpec {
+  name: String!
+  """FREEFORM: the one type a file declares."""
+  type: ApiTypeEnum
+  """Null when the key has none."""
+  permissions: ApiKeyPermissionsSpec
+  notes: String
+  status: ApiKeyStatus
+  secretExpiresDays: Int
+  sessionMaxMinutes: Int
+  provenance: DeclarativeProvenance
+}
+
+"""
+A FREEFORM key's permissions: the organization-wide level, functions and approval roles, and grants on single objects.
+"""
+type ApiKeyPermissionsSpec {
+  type: PermissionType
+  functions: [PermissionFunction!]
+  approvals: [String!]
+  objects: [ApiKeyObjectPermissionSpec!]
+}
+
+type ApiKeyObjectPermissionSpec {
+  scope: PermissionScope!
+  object: ID!
+  type: PermissionType!
+  functions: [PermissionFunction!]
+  approvals: [String!]
+}
+
+input ApiKeysSpecInput {
+  kind: DeclarativeKind!
+  version: Int!
+  """
+  Deactivate declared keys the file leaves out, under the organization's declarativePrune (ARCHIVE); false by default.
+  """
+  authoritative: Boolean
+  keys: [ApiKeySpecInput!]
+}
+
+"""One key. A setting left out is left alone; one sent as null is cleared."""
+input ApiKeySpecInput {
+  """Unique among the organization's live keys: the key's declared identity."""
+  name: String!
+  """FREEFORM, the one type a file declares; left out, FREEFORM."""
+  type: ApiTypeEnum
+  """Replaces the key's permissions whole."""
+  permissions: ApiKeyPermissionsSpecInput
+  notes: String
+  """ACTIVE or INACTIVE."""
+  status: ApiKeyStatus
+  """Days a minted secret lives, 1 to 3650; null mints secrets that do not expire."""
+  secretExpiresDays: Int
+  """Bounds device-login sessions approved on the key, in minutes (task RD3-7)."""
+  sessionMaxMinutes: Int
+}
+
+input ApiKeyPermissionsSpecInput {
+  type: PermissionType
+  functions: [PermissionFunction!]
+  approvals: [String!]
+  objects: [ApiKeyObjectPermissionSpecInput!]
+}
+
+input ApiKeyObjectPermissionSpecInput {
+  scope: PermissionScope!
+  object: ID!
+  type: PermissionType!
+  functions: [PermissionFunction!]
+  approvals: [String!]
+}
+
+"""A key as the provider and `rearm apikey list` read it: its declaration, identity and secrets' metadata."""
+type DeclaredApiKey {
+  uuid: ID!
+  """The id a client presents with a secret (REARM_APIKEYID): stable across rotation, not itself a secret."""
+  keyId: String!
+  """The declared name; null for a key nobody has declared."""
+  name: String
+  type: ApiTypeEnum
+  status: ApiKeyStatus
+  adminDisabled: Boolean
+  notes: String
+  permissions: ApiKeyPermissionsSpec
+  secretExpiresDays: Int
+  sessionMaxMinutes: Int
+  """The key's secrets: slot, state and dates -- never a value or a hash."""
+  secretSlots: [ApiKeySecretInfo!]
+  declarative: DeclarativeProvenance
+}
+
+"""
+A secret minted, or not: minted false and no secret when the slot already held one and no rotation was asked.
+"""
+type MintedApiKeySecret {
+  keyId: String!
+  name: String
+  slot: Int!
+  minted: Boolean!
+  """
+  The value, this once; it is stored hashed and cannot be read again.
+  """
+  secret: String
+  expiresDate: DateTime
 }
 
 """

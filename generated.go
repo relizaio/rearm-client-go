@@ -45648,6 +45648,399 @@ var AllAnalysisState = []AnalysisState{
 	AnalysisStateResolved,
 }
 
+// ApiKeyPermissionsFields includes the GraphQL fields of ApiKeyPermissionsSpec requested by the fragment ApiKeyPermissionsFields.
+// The GraphQL type's documentation follows.
+//
+// A FREEFORM key's permissions: the organization-wide level, functions and approval roles, and grants on single objects.
+type ApiKeyPermissionsFields struct {
+	Type      *PermissionType                                             `json:"type"`
+	Functions []PermissionFunction                                        `json:"functions"`
+	Approvals []string                                                    `json:"approvals"`
+	Objects   []*ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec `json:"objects"`
+}
+
+// GetType returns ApiKeyPermissionsFields.Type, and is useful for accessing the field via an interface.
+func (v *ApiKeyPermissionsFields) GetType() *PermissionType { return v.Type }
+
+// GetFunctions returns ApiKeyPermissionsFields.Functions, and is useful for accessing the field via an interface.
+func (v *ApiKeyPermissionsFields) GetFunctions() []PermissionFunction { return v.Functions }
+
+// GetApprovals returns ApiKeyPermissionsFields.Approvals, and is useful for accessing the field via an interface.
+func (v *ApiKeyPermissionsFields) GetApprovals() []string { return v.Approvals }
+
+// GetObjects returns ApiKeyPermissionsFields.Objects, and is useful for accessing the field via an interface.
+func (v *ApiKeyPermissionsFields) GetObjects() []*ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec {
+	return v.Objects
+}
+
+// ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec includes the requested fields of the GraphQL type ApiKeyObjectPermissionSpec.
+type ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec struct {
+	Scope     PermissionScope      `json:"scope"`
+	Object    string               `json:"object"`
+	Type      PermissionType       `json:"type"`
+	Functions []PermissionFunction `json:"functions"`
+	Approvals []string             `json:"approvals"`
+}
+
+// GetScope returns ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec.Scope, and is useful for accessing the field via an interface.
+func (v *ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec) GetScope() PermissionScope {
+	return v.Scope
+}
+
+// GetObject returns ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec.Object, and is useful for accessing the field via an interface.
+func (v *ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec) GetObject() string {
+	return v.Object
+}
+
+// GetType returns ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec.Type, and is useful for accessing the field via an interface.
+func (v *ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec) GetType() PermissionType {
+	return v.Type
+}
+
+// GetFunctions returns ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec.Functions, and is useful for accessing the field via an interface.
+func (v *ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec) GetFunctions() []PermissionFunction {
+	return v.Functions
+}
+
+// GetApprovals returns ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec.Approvals, and is useful for accessing the field via an interface.
+func (v *ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec) GetApprovals() []string {
+	return v.Approvals
+}
+
+type ApiKeyStatus string
+
+const (
+	ApiKeyStatusActive   ApiKeyStatus = "ACTIVE"
+	ApiKeyStatusInactive ApiKeyStatus = "INACTIVE"
+	// Delete tombstone; never listed, and setApiKeyStatus refuses it (delete the key instead)
+	ApiKeyStatusRevoked ApiKeyStatus = "REVOKED"
+	// A free-form key a write user asked for: listed, never usable, until an admin approves (ACTIVE) or denies it
+	ApiKeyStatusRequested ApiKeyStatus = "REQUESTED"
+	// A denied request: listed for the requester with the reason in the notes, never usable
+	ApiKeyStatusDenied ApiKeyStatus = "DENIED"
+)
+
+var AllApiKeyStatus = []ApiKeyStatus{
+	ApiKeyStatusActive,
+	ApiKeyStatusInactive,
+	ApiKeyStatusRevoked,
+	ApiKeyStatusRequested,
+	ApiKeyStatusDenied,
+}
+
+// ApiKeysApiKeysProgrammaticDeclaredApiKey includes the requested fields of the GraphQL type DeclaredApiKey.
+// The GraphQL type's documentation follows.
+//
+// A key as the provider and `rearm apikey list` read it: its declaration, identity and secrets' metadata.
+type ApiKeysApiKeysProgrammaticDeclaredApiKey struct {
+	DeclaredApiKeyFields `json:"-"`
+}
+
+// GetUuid returns ApiKeysApiKeysProgrammaticDeclaredApiKey.Uuid, and is useful for accessing the field via an interface.
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetUuid() string {
+	return v.DeclaredApiKeyFields.Uuid
+}
+
+// GetKeyId returns ApiKeysApiKeysProgrammaticDeclaredApiKey.KeyId, and is useful for accessing the field via an interface.
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetKeyId() string {
+	return v.DeclaredApiKeyFields.KeyId
+}
+
+// GetName returns ApiKeysApiKeysProgrammaticDeclaredApiKey.Name, and is useful for accessing the field via an interface.
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetName() *string {
+	return v.DeclaredApiKeyFields.Name
+}
+
+// GetType returns ApiKeysApiKeysProgrammaticDeclaredApiKey.Type, and is useful for accessing the field via an interface.
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetType() *ApiTypeEnum {
+	return v.DeclaredApiKeyFields.Type
+}
+
+// GetStatus returns ApiKeysApiKeysProgrammaticDeclaredApiKey.Status, and is useful for accessing the field via an interface.
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetStatus() *ApiKeyStatus {
+	return v.DeclaredApiKeyFields.Status
+}
+
+// GetAdminDisabled returns ApiKeysApiKeysProgrammaticDeclaredApiKey.AdminDisabled, and is useful for accessing the field via an interface.
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetAdminDisabled() *bool {
+	return v.DeclaredApiKeyFields.AdminDisabled
+}
+
+// GetNotes returns ApiKeysApiKeysProgrammaticDeclaredApiKey.Notes, and is useful for accessing the field via an interface.
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetNotes() *string {
+	return v.DeclaredApiKeyFields.Notes
+}
+
+// GetPermissions returns ApiKeysApiKeysProgrammaticDeclaredApiKey.Permissions, and is useful for accessing the field via an interface.
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetPermissions() *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec {
+	return v.DeclaredApiKeyFields.Permissions
+}
+
+// GetSecretExpiresDays returns ApiKeysApiKeysProgrammaticDeclaredApiKey.SecretExpiresDays, and is useful for accessing the field via an interface.
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetSecretExpiresDays() *int {
+	return v.DeclaredApiKeyFields.SecretExpiresDays
+}
+
+// GetSessionMaxMinutes returns ApiKeysApiKeysProgrammaticDeclaredApiKey.SessionMaxMinutes, and is useful for accessing the field via an interface.
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetSessionMaxMinutes() *int {
+	return v.DeclaredApiKeyFields.SessionMaxMinutes
+}
+
+// GetSecretSlots returns ApiKeysApiKeysProgrammaticDeclaredApiKey.SecretSlots, and is useful for accessing the field via an interface.
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetSecretSlots() []*DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo {
+	return v.DeclaredApiKeyFields.SecretSlots
+}
+
+// GetDeclarative returns ApiKeysApiKeysProgrammaticDeclaredApiKey.Declarative, and is useful for accessing the field via an interface.
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetDeclarative() *DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance {
+	return v.DeclaredApiKeyFields.Declarative
+}
+
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*ApiKeysApiKeysProgrammaticDeclaredApiKey
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.ApiKeysApiKeysProgrammaticDeclaredApiKey = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.DeclaredApiKeyFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalApiKeysApiKeysProgrammaticDeclaredApiKey struct {
+	Uuid string `json:"uuid"`
+
+	KeyId string `json:"keyId"`
+
+	Name *string `json:"name"`
+
+	Type *ApiTypeEnum `json:"type"`
+
+	Status *ApiKeyStatus `json:"status"`
+
+	AdminDisabled *bool `json:"adminDisabled"`
+
+	Notes *string `json:"notes"`
+
+	Permissions *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec `json:"permissions"`
+
+	SecretExpiresDays *int `json:"secretExpiresDays"`
+
+	SessionMaxMinutes *int `json:"sessionMaxMinutes"`
+
+	SecretSlots []*DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo `json:"secretSlots"`
+
+	Declarative *DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance `json:"declarative"`
+}
+
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) __premarshalJSON() (*__premarshalApiKeysApiKeysProgrammaticDeclaredApiKey, error) {
+	var retval __premarshalApiKeysApiKeysProgrammaticDeclaredApiKey
+
+	retval.Uuid = v.DeclaredApiKeyFields.Uuid
+	retval.KeyId = v.DeclaredApiKeyFields.KeyId
+	retval.Name = v.DeclaredApiKeyFields.Name
+	retval.Type = v.DeclaredApiKeyFields.Type
+	retval.Status = v.DeclaredApiKeyFields.Status
+	retval.AdminDisabled = v.DeclaredApiKeyFields.AdminDisabled
+	retval.Notes = v.DeclaredApiKeyFields.Notes
+	retval.Permissions = v.DeclaredApiKeyFields.Permissions
+	retval.SecretExpiresDays = v.DeclaredApiKeyFields.SecretExpiresDays
+	retval.SessionMaxMinutes = v.DeclaredApiKeyFields.SessionMaxMinutes
+	retval.SecretSlots = v.DeclaredApiKeyFields.SecretSlots
+	retval.Declarative = v.DeclaredApiKeyFields.Declarative
+	return &retval, nil
+}
+
+// ApiKeysResponse is returned by ApiKeys on success.
+type ApiKeysResponse struct {
+	// The organization's API keys with their key ids and secrets' metadata, never a value (CONFIGURATION_WRITE).
+	ApiKeysProgrammatic []*ApiKeysApiKeysProgrammaticDeclaredApiKey `json:"apiKeysProgrammatic"`
+}
+
+// GetApiKeysProgrammatic returns ApiKeysResponse.ApiKeysProgrammatic, and is useful for accessing the field via an interface.
+func (v *ApiKeysResponse) GetApiKeysProgrammatic() []*ApiKeysApiKeysProgrammaticDeclaredApiKey {
+	return v.ApiKeysProgrammatic
+}
+
+type ApiTypeEnum string
+
+const (
+	ApiTypeEnumApproval       ApiTypeEnum = "APPROVAL"
+	ApiTypeEnumInstance       ApiTypeEnum = "INSTANCE"
+	ApiTypeEnumCluster        ApiTypeEnum = "CLUSTER"
+	ApiTypeEnumComponent      ApiTypeEnum = "COMPONENT"
+	ApiTypeEnumOrganization   ApiTypeEnum = "ORGANIZATION"
+	ApiTypeEnumOrganizationRw ApiTypeEnum = "ORGANIZATION_RW"
+	ApiTypeEnumFreeform       ApiTypeEnum = "FREEFORM"
+	// Personal key owned by a user: its permissions are a ceiling intersected with the owner's current permissions
+	ApiTypeEnumUser ApiTypeEnum = "USER"
+	// Identity row for one external repository trusted by the org's federated trust rules: no secret, permissions computed from the rules on every call
+	ApiTypeEnumFederated ApiTypeEnum = "FEDERATED"
+)
+
+var AllApiTypeEnum = []ApiTypeEnum{
+	ApiTypeEnumApproval,
+	ApiTypeEnumInstance,
+	ApiTypeEnumCluster,
+	ApiTypeEnumComponent,
+	ApiTypeEnumOrganization,
+	ApiTypeEnumOrganizationRw,
+	ApiTypeEnumFreeform,
+	ApiTypeEnumUser,
+	ApiTypeEnumFederated,
+}
+
+// ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult includes the requested fields of the GraphQL type DeclarativeApplyResult.
+type ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult struct {
+	ApplyResultFields `json:"-"`
+}
+
+// GetKind returns ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult.Kind, and is useful for accessing the field via an interface.
+func (v *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult) GetKind() DeclarativeKind {
+	return v.ApplyResultFields.Kind
+}
+
+// GetDryRun returns ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult.DryRun, and is useful for accessing the field via an interface.
+func (v *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult) GetDryRun() bool {
+	return v.ApplyResultFields.DryRun
+}
+
+// GetSpecHash returns ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult.SpecHash, and is useful for accessing the field via an interface.
+func (v *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult) GetSpecHash() string {
+	return v.ApplyResultFields.SpecHash
+}
+
+// GetCreated returns ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult.Created, and is useful for accessing the field via an interface.
+func (v *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult) GetCreated() int {
+	return v.ApplyResultFields.Created
+}
+
+// GetUpdated returns ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult.Updated, and is useful for accessing the field via an interface.
+func (v *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult) GetUpdated() int {
+	return v.ApplyResultFields.Updated
+}
+
+// GetUnchanged returns ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult.Unchanged, and is useful for accessing the field via an interface.
+func (v *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult) GetUnchanged() int {
+	return v.ApplyResultFields.Unchanged
+}
+
+// GetArchived returns ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult.Archived, and is useful for accessing the field via an interface.
+func (v *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult) GetArchived() int {
+	return v.ApplyResultFields.Archived
+}
+
+// GetErrors returns ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult.Errors, and is useful for accessing the field via an interface.
+func (v *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult) GetErrors() int {
+	return v.ApplyResultFields.Errors
+}
+
+// GetChanges returns ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult.Changes, and is useful for accessing the field via an interface.
+func (v *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult) GetChanges() []*ApplyResultFieldsChangesDeclarativeChange {
+	return v.ApplyResultFields.Changes
+}
+
+func (v *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ApplyResultFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult struct {
+	Kind DeclarativeKind `json:"kind"`
+
+	DryRun bool `json:"dryRun"`
+
+	SpecHash string `json:"specHash"`
+
+	Created int `json:"created"`
+
+	Updated int `json:"updated"`
+
+	Unchanged int `json:"unchanged"`
+
+	Archived int `json:"archived"`
+
+	Errors int `json:"errors"`
+
+	Changes []*ApplyResultFieldsChangesDeclarativeChange `json:"changes"`
+}
+
+func (v *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult) __premarshalJSON() (*__premarshalApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult, error) {
+	var retval __premarshalApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult
+
+	retval.Kind = v.ApplyResultFields.Kind
+	retval.DryRun = v.ApplyResultFields.DryRun
+	retval.SpecHash = v.ApplyResultFields.SpecHash
+	retval.Created = v.ApplyResultFields.Created
+	retval.Updated = v.ApplyResultFields.Updated
+	retval.Unchanged = v.ApplyResultFields.Unchanged
+	retval.Archived = v.ApplyResultFields.Archived
+	retval.Errors = v.ApplyResultFields.Errors
+	retval.Changes = v.ApplyResultFields.Changes
+	return &retval, nil
+}
+
+// ApplyApiKeysResponse is returned by ApplyApiKeys on success.
+type ApplyApiKeysResponse struct {
+	// Apply an API_KEYS file (CONFIGURATION_WRITE): identity and settings by declared name, never a secret.
+	ApplyApiKeysProgrammatic *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult `json:"applyApiKeysProgrammatic"`
+}
+
+// GetApplyApiKeysProgrammatic returns ApplyApiKeysResponse.ApplyApiKeysProgrammatic, and is useful for accessing the field via an interface.
+func (v *ApplyApiKeysResponse) GetApplyApiKeysProgrammatic() *ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult {
+	return v.ApplyApiKeysProgrammatic
+}
+
 // ApplyBoardApplyBoardProgrammaticDeclarativeApplyResult includes the requested fields of the GraphQL type DeclarativeApplyResult.
 type ApplyBoardApplyBoardProgrammaticDeclarativeApplyResult struct {
 	ApplyResultFields `json:"-"`
@@ -46426,6 +46819,162 @@ type ApproveReleaseProgrammaticResponse struct {
 // GetApproveReleaseProgrammatic returns ApproveReleaseProgrammaticResponse.ApproveReleaseProgrammatic, and is useful for accessing the field via an interface.
 func (v *ApproveReleaseProgrammaticResponse) GetApproveReleaseProgrammatic() *ApproveReleaseProgrammaticApproveReleaseProgrammaticRelease {
 	return v.ApproveReleaseProgrammatic
+}
+
+// ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey includes the requested fields of the GraphQL type DeclaredApiKey.
+// The GraphQL type's documentation follows.
+//
+// A key as the provider and `rearm apikey list` read it: its declaration, identity and secrets' metadata.
+type ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey struct {
+	DeclaredApiKeyFields `json:"-"`
+}
+
+// GetUuid returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.Uuid, and is useful for accessing the field via an interface.
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetUuid() string {
+	return v.DeclaredApiKeyFields.Uuid
+}
+
+// GetKeyId returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.KeyId, and is useful for accessing the field via an interface.
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetKeyId() string {
+	return v.DeclaredApiKeyFields.KeyId
+}
+
+// GetName returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.Name, and is useful for accessing the field via an interface.
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetName() *string {
+	return v.DeclaredApiKeyFields.Name
+}
+
+// GetType returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.Type, and is useful for accessing the field via an interface.
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetType() *ApiTypeEnum {
+	return v.DeclaredApiKeyFields.Type
+}
+
+// GetStatus returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.Status, and is useful for accessing the field via an interface.
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetStatus() *ApiKeyStatus {
+	return v.DeclaredApiKeyFields.Status
+}
+
+// GetAdminDisabled returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.AdminDisabled, and is useful for accessing the field via an interface.
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetAdminDisabled() *bool {
+	return v.DeclaredApiKeyFields.AdminDisabled
+}
+
+// GetNotes returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.Notes, and is useful for accessing the field via an interface.
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetNotes() *string {
+	return v.DeclaredApiKeyFields.Notes
+}
+
+// GetPermissions returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.Permissions, and is useful for accessing the field via an interface.
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetPermissions() *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec {
+	return v.DeclaredApiKeyFields.Permissions
+}
+
+// GetSecretExpiresDays returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.SecretExpiresDays, and is useful for accessing the field via an interface.
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetSecretExpiresDays() *int {
+	return v.DeclaredApiKeyFields.SecretExpiresDays
+}
+
+// GetSessionMaxMinutes returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.SessionMaxMinutes, and is useful for accessing the field via an interface.
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetSessionMaxMinutes() *int {
+	return v.DeclaredApiKeyFields.SessionMaxMinutes
+}
+
+// GetSecretSlots returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.SecretSlots, and is useful for accessing the field via an interface.
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetSecretSlots() []*DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo {
+	return v.DeclaredApiKeyFields.SecretSlots
+}
+
+// GetDeclarative returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.Declarative, and is useful for accessing the field via an interface.
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetDeclarative() *DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance {
+	return v.DeclaredApiKeyFields.Declarative
+}
+
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.DeclaredApiKeyFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey struct {
+	Uuid string `json:"uuid"`
+
+	KeyId string `json:"keyId"`
+
+	Name *string `json:"name"`
+
+	Type *ApiTypeEnum `json:"type"`
+
+	Status *ApiKeyStatus `json:"status"`
+
+	AdminDisabled *bool `json:"adminDisabled"`
+
+	Notes *string `json:"notes"`
+
+	Permissions *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec `json:"permissions"`
+
+	SecretExpiresDays *int `json:"secretExpiresDays"`
+
+	SessionMaxMinutes *int `json:"sessionMaxMinutes"`
+
+	SecretSlots []*DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo `json:"secretSlots"`
+
+	Declarative *DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance `json:"declarative"`
+}
+
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) __premarshalJSON() (*__premarshalArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey, error) {
+	var retval __premarshalArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey
+
+	retval.Uuid = v.DeclaredApiKeyFields.Uuid
+	retval.KeyId = v.DeclaredApiKeyFields.KeyId
+	retval.Name = v.DeclaredApiKeyFields.Name
+	retval.Type = v.DeclaredApiKeyFields.Type
+	retval.Status = v.DeclaredApiKeyFields.Status
+	retval.AdminDisabled = v.DeclaredApiKeyFields.AdminDisabled
+	retval.Notes = v.DeclaredApiKeyFields.Notes
+	retval.Permissions = v.DeclaredApiKeyFields.Permissions
+	retval.SecretExpiresDays = v.DeclaredApiKeyFields.SecretExpiresDays
+	retval.SessionMaxMinutes = v.DeclaredApiKeyFields.SessionMaxMinutes
+	retval.SecretSlots = v.DeclaredApiKeyFields.SecretSlots
+	retval.Declarative = v.DeclaredApiKeyFields.Declarative
+	return &retval, nil
+}
+
+// ArchiveApiKeyResponse is returned by ArchiveApiKey on success.
+type ArchiveApiKeyResponse struct {
+	// Deactivate a declared key by name (CONFIGURATION_WRITE): what deleting it from Terraform does.
+	ArchiveApiKeyProgrammatic *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey `json:"archiveApiKeyProgrammatic"`
+}
+
+// GetArchiveApiKeyProgrammatic returns ArchiveApiKeyResponse.ArchiveApiKeyProgrammatic, and is useful for accessing the field via an interface.
+func (v *ArchiveApiKeyResponse) GetArchiveApiKeyProgrammatic() *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey {
+	return v.ArchiveApiKeyProgrammatic
 }
 
 // ArchiveBoardArchiveBoardProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
@@ -47718,6 +48267,8 @@ const (
 	DeclarativeKindBranches    DeclarativeKind = "BRANCHES"
 	DeclarativeKindBoard       DeclarativeKind = "BOARD"
 	DeclarativeKindRolePresets DeclarativeKind = "ROLE_PRESETS"
+	// An organization's FREEFORM API keys: identity and settings, never a secret (task RD3-11).
+	DeclarativeKindApiKeys DeclarativeKind = "API_KEYS"
 )
 
 var AllDeclarativeKind = []DeclarativeKind{
@@ -47725,6 +48276,7 @@ var AllDeclarativeKind = []DeclarativeKind{
 	DeclarativeKindBranches,
 	DeclarativeKindBoard,
 	DeclarativeKindRolePresets,
+	DeclarativeKindApiKeys,
 }
 
 // Where an applied spec came from, recorded on every row the apply touched.
@@ -47742,6 +48294,256 @@ func (v *DeclarativeSourceInput) GetPath() *string { return v.Path }
 
 // GetCommit returns DeclarativeSourceInput.Commit, and is useful for accessing the field via an interface.
 func (v *DeclarativeSourceInput) GetCommit() *string { return v.Commit }
+
+// DeclaredApiKeyFields includes the GraphQL fields of DeclaredApiKey requested by the fragment DeclaredApiKeyFields.
+// The GraphQL type's documentation follows.
+//
+// A key as the provider and `rearm apikey list` read it: its declaration, identity and secrets' metadata.
+type DeclaredApiKeyFields struct {
+	Uuid string `json:"uuid"`
+	// The id a client presents with a secret (REARM_APIKEYID): stable across rotation, not itself a secret.
+	KeyId string `json:"keyId"`
+	// The declared name; null for a key nobody has declared.
+	Name              *string                                               `json:"name"`
+	Type              *ApiTypeEnum                                          `json:"type"`
+	Status            *ApiKeyStatus                                         `json:"status"`
+	AdminDisabled     *bool                                                 `json:"adminDisabled"`
+	Notes             *string                                               `json:"notes"`
+	Permissions       *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec `json:"permissions"`
+	SecretExpiresDays *int                                                  `json:"secretExpiresDays"`
+	SessionMaxMinutes *int                                                  `json:"sessionMaxMinutes"`
+	// The key's secrets: slot, state and dates -- never a value or a hash.
+	SecretSlots []*DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo    `json:"secretSlots"`
+	Declarative *DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance `json:"declarative"`
+}
+
+// GetUuid returns DeclaredApiKeyFields.Uuid, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFields) GetUuid() string { return v.Uuid }
+
+// GetKeyId returns DeclaredApiKeyFields.KeyId, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFields) GetKeyId() string { return v.KeyId }
+
+// GetName returns DeclaredApiKeyFields.Name, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFields) GetName() *string { return v.Name }
+
+// GetType returns DeclaredApiKeyFields.Type, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFields) GetType() *ApiTypeEnum { return v.Type }
+
+// GetStatus returns DeclaredApiKeyFields.Status, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFields) GetStatus() *ApiKeyStatus { return v.Status }
+
+// GetAdminDisabled returns DeclaredApiKeyFields.AdminDisabled, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFields) GetAdminDisabled() *bool { return v.AdminDisabled }
+
+// GetNotes returns DeclaredApiKeyFields.Notes, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFields) GetNotes() *string { return v.Notes }
+
+// GetPermissions returns DeclaredApiKeyFields.Permissions, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFields) GetPermissions() *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec {
+	return v.Permissions
+}
+
+// GetSecretExpiresDays returns DeclaredApiKeyFields.SecretExpiresDays, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFields) GetSecretExpiresDays() *int { return v.SecretExpiresDays }
+
+// GetSessionMaxMinutes returns DeclaredApiKeyFields.SessionMaxMinutes, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFields) GetSessionMaxMinutes() *int { return v.SessionMaxMinutes }
+
+// GetSecretSlots returns DeclaredApiKeyFields.SecretSlots, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFields) GetSecretSlots() []*DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo {
+	return v.SecretSlots
+}
+
+// GetDeclarative returns DeclaredApiKeyFields.Declarative, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFields) GetDeclarative() *DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance {
+	return v.Declarative
+}
+
+// DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance includes the requested fields of the GraphQL type DeclarativeProvenance.
+type DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance struct {
+	ProvenanceFields `json:"-"`
+}
+
+// GetSpecHash returns DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance.SpecHash, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance) GetSpecHash() *string {
+	return v.ProvenanceFields.SpecHash
+}
+
+// GetAppliedAt returns DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance.AppliedAt, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance) GetAppliedAt() *string {
+	return v.ProvenanceFields.AppliedAt
+}
+
+// GetSource returns DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance.Source, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance) GetSource() *ProvenanceFieldsSourceDeclarativeSource {
+	return v.ProvenanceFields.Source
+}
+
+func (v *DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ProvenanceFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalDeclaredApiKeyFieldsDeclarativeDeclarativeProvenance struct {
+	SpecHash *string `json:"specHash"`
+
+	AppliedAt *string `json:"appliedAt"`
+
+	Source *ProvenanceFieldsSourceDeclarativeSource `json:"source"`
+}
+
+func (v *DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *DeclaredApiKeyFieldsDeclarativeDeclarativeProvenance) __premarshalJSON() (*__premarshalDeclaredApiKeyFieldsDeclarativeDeclarativeProvenance, error) {
+	var retval __premarshalDeclaredApiKeyFieldsDeclarativeDeclarativeProvenance
+
+	retval.SpecHash = v.ProvenanceFields.SpecHash
+	retval.AppliedAt = v.ProvenanceFields.AppliedAt
+	retval.Source = v.ProvenanceFields.Source
+	return &retval, nil
+}
+
+// DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec includes the requested fields of the GraphQL type ApiKeyPermissionsSpec.
+// The GraphQL type's documentation follows.
+//
+// A FREEFORM key's permissions: the organization-wide level, functions and approval roles, and grants on single objects.
+type DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec struct {
+	ApiKeyPermissionsFields `json:"-"`
+}
+
+// GetType returns DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec.Type, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec) GetType() *PermissionType {
+	return v.ApiKeyPermissionsFields.Type
+}
+
+// GetFunctions returns DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec.Functions, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec) GetFunctions() []PermissionFunction {
+	return v.ApiKeyPermissionsFields.Functions
+}
+
+// GetApprovals returns DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec.Approvals, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec) GetApprovals() []string {
+	return v.ApiKeyPermissionsFields.Approvals
+}
+
+// GetObjects returns DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec.Objects, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec) GetObjects() []*ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec {
+	return v.ApiKeyPermissionsFields.Objects
+}
+
+func (v *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ApiKeyPermissionsFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalDeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec struct {
+	Type *PermissionType `json:"type"`
+
+	Functions []PermissionFunction `json:"functions"`
+
+	Approvals []string `json:"approvals"`
+
+	Objects []*ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec `json:"objects"`
+}
+
+func (v *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec) __premarshalJSON() (*__premarshalDeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec, error) {
+	var retval __premarshalDeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec
+
+	retval.Type = v.ApiKeyPermissionsFields.Type
+	retval.Functions = v.ApiKeyPermissionsFields.Functions
+	retval.Approvals = v.ApiKeyPermissionsFields.Approvals
+	retval.Objects = v.ApiKeyPermissionsFields.Objects
+	return &retval, nil
+}
+
+// DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo includes the requested fields of the GraphQL type ApiKeySecretInfo.
+// The GraphQL type's documentation follows.
+//
+// One of up to two secrets of a key id (rotation: add the second, move clients, retire the first).
+// Only metadata: the secret itself is shown once, when created or regenerated.
+type DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo struct {
+	Slot         int     `json:"slot"`
+	Active       bool    `json:"active"`
+	CreatedDate  *string `json:"createdDate"`
+	LastUsedDate *string `json:"lastUsedDate"`
+	// Optional hard stop; past it the secret is refused like a retired one, and its tokens end here at the latest
+	ExpiresDate *string `json:"expiresDate"`
+}
+
+// GetSlot returns DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo.Slot, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo) GetSlot() int { return v.Slot }
+
+// GetActive returns DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo.Active, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo) GetActive() bool { return v.Active }
+
+// GetCreatedDate returns DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo.CreatedDate, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetLastUsedDate returns DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo.LastUsedDate, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo) GetLastUsedDate() *string {
+	return v.LastUsedDate
+}
+
+// GetExpiresDate returns DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo.ExpiresDate, and is useful for accessing the field via an interface.
+func (v *DeclaredApiKeyFieldsSecretSlotsApiKeySecretInfo) GetExpiresDate() *string {
+	return v.ExpiresDate
+}
 
 type DeliverableArtifactInput struct {
 	Deliverable string           `json:"deliverable"`
@@ -48051,6 +48853,250 @@ type EnrollSigningKeyProgrammaticResponse struct {
 // GetEnrollSigningKeyProgrammatic returns EnrollSigningKeyProgrammaticResponse.EnrollSigningKeyProgrammatic, and is useful for accessing the field via an interface.
 func (v *EnrollSigningKeyProgrammaticResponse) GetEnrollSigningKeyProgrammatic() *EnrollSigningKeyProgrammaticEnrollSigningKeyProgrammaticSigningKey {
 	return v.EnrollSigningKeyProgrammatic
+}
+
+// ExportApiKeysExportApiKeysProgrammaticApiKeysSpec includes the requested fields of the GraphQL type ApiKeysSpec.
+// The GraphQL type's documentation follows.
+//
+// An API_KEYS file (task RD3-11): an organization's FREEFORM keys by declared name -- identity and settings,
+// never a secret.
+type ExportApiKeysExportApiKeysProgrammaticApiKeysSpec struct {
+	Kind          DeclarativeKind                                                    `json:"kind"`
+	Version       int                                                                `json:"version"`
+	Authoritative *bool                                                              `json:"authoritative"`
+	Keys          []*ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec `json:"keys"`
+}
+
+// GetKind returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpec.Kind, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpec) GetKind() DeclarativeKind { return v.Kind }
+
+// GetVersion returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpec.Version, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpec) GetVersion() int { return v.Version }
+
+// GetAuthoritative returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpec.Authoritative, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpec) GetAuthoritative() *bool {
+	return v.Authoritative
+}
+
+// GetKeys returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpec.Keys, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpec) GetKeys() []*ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec {
+	return v.Keys
+}
+
+// ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec includes the requested fields of the GraphQL type ApiKeySpec.
+type ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec struct {
+	Name string `json:"name"`
+	// FREEFORM: the one type a file declares.
+	Type *ApiTypeEnum `json:"type"`
+	// Null when the key has none.
+	Permissions       *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec `json:"permissions"`
+	Notes             *string                                                                                          `json:"notes"`
+	Status            *ApiKeyStatus                                                                                    `json:"status"`
+	SecretExpiresDays *int                                                                                             `json:"secretExpiresDays"`
+	SessionMaxMinutes *int                                                                                             `json:"sessionMaxMinutes"`
+	Provenance        *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance  `json:"provenance"`
+}
+
+// GetName returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec.Name, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec) GetName() string {
+	return v.Name
+}
+
+// GetType returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec.Type, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec) GetType() *ApiTypeEnum {
+	return v.Type
+}
+
+// GetPermissions returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec.Permissions, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec) GetPermissions() *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec {
+	return v.Permissions
+}
+
+// GetNotes returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec.Notes, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec) GetNotes() *string {
+	return v.Notes
+}
+
+// GetStatus returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec.Status, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec) GetStatus() *ApiKeyStatus {
+	return v.Status
+}
+
+// GetSecretExpiresDays returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec.SecretExpiresDays, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec) GetSecretExpiresDays() *int {
+	return v.SecretExpiresDays
+}
+
+// GetSessionMaxMinutes returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec.SessionMaxMinutes, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec) GetSessionMaxMinutes() *int {
+	return v.SessionMaxMinutes
+}
+
+// GetProvenance returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec.Provenance, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec) GetProvenance() *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance {
+	return v.Provenance
+}
+
+// ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec includes the requested fields of the GraphQL type ApiKeyPermissionsSpec.
+// The GraphQL type's documentation follows.
+//
+// A FREEFORM key's permissions: the organization-wide level, functions and approval roles, and grants on single objects.
+type ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec struct {
+	ApiKeyPermissionsFields `json:"-"`
+}
+
+// GetType returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec.Type, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec) GetType() *PermissionType {
+	return v.ApiKeyPermissionsFields.Type
+}
+
+// GetFunctions returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec.Functions, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec) GetFunctions() []PermissionFunction {
+	return v.ApiKeyPermissionsFields.Functions
+}
+
+// GetApprovals returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec.Approvals, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec) GetApprovals() []string {
+	return v.ApiKeyPermissionsFields.Approvals
+}
+
+// GetObjects returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec.Objects, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec) GetObjects() []*ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec {
+	return v.ApiKeyPermissionsFields.Objects
+}
+
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ApiKeyPermissionsFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec struct {
+	Type *PermissionType `json:"type"`
+
+	Functions []PermissionFunction `json:"functions"`
+
+	Approvals []string `json:"approvals"`
+
+	Objects []*ApiKeyPermissionsFieldsObjectsApiKeyObjectPermissionSpec `json:"objects"`
+}
+
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec) __premarshalJSON() (*__premarshalExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec, error) {
+	var retval __premarshalExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec
+
+	retval.Type = v.ApiKeyPermissionsFields.Type
+	retval.Functions = v.ApiKeyPermissionsFields.Functions
+	retval.Approvals = v.ApiKeyPermissionsFields.Approvals
+	retval.Objects = v.ApiKeyPermissionsFields.Objects
+	return &retval, nil
+}
+
+// ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance includes the requested fields of the GraphQL type DeclarativeProvenance.
+type ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance struct {
+	ProvenanceFields `json:"-"`
+}
+
+// GetSpecHash returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance.SpecHash, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance) GetSpecHash() *string {
+	return v.ProvenanceFields.SpecHash
+}
+
+// GetAppliedAt returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance.AppliedAt, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance) GetAppliedAt() *string {
+	return v.ProvenanceFields.AppliedAt
+}
+
+// GetSource returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance.Source, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance) GetSource() *ProvenanceFieldsSourceDeclarativeSource {
+	return v.ProvenanceFields.Source
+}
+
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ProvenanceFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance struct {
+	SpecHash *string `json:"specHash"`
+
+	AppliedAt *string `json:"appliedAt"`
+
+	Source *ProvenanceFieldsSourceDeclarativeSource `json:"source"`
+}
+
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance) __premarshalJSON() (*__premarshalExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance, error) {
+	var retval __premarshalExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecProvenanceDeclarativeProvenance
+
+	retval.SpecHash = v.ProvenanceFields.SpecHash
+	retval.AppliedAt = v.ProvenanceFields.AppliedAt
+	retval.Source = v.ProvenanceFields.Source
+	return &retval, nil
+}
+
+// ExportApiKeysResponse is returned by ExportApiKeys on success.
+type ExportApiKeysResponse struct {
+	// Export the organization's declared API keys as an API_KEYS file (CONFIGURATION_WRITE); with keys, only those names.
+	ExportApiKeysProgrammatic *ExportApiKeysExportApiKeysProgrammaticApiKeysSpec `json:"exportApiKeysProgrammatic"`
+}
+
+// GetExportApiKeysProgrammatic returns ExportApiKeysResponse.ExportApiKeysProgrammatic, and is useful for accessing the field via an interface.
+func (v *ExportApiKeysResponse) GetExportApiKeysProgrammatic() *ExportApiKeysExportApiKeysProgrammaticApiKeysSpec {
+	return v.ExportApiKeysProgrammatic
 }
 
 // ExportBoardExportBoardProgrammaticBoardSpec includes the requested fields of the GraphQL type BoardSpec.
@@ -51597,6 +52643,59 @@ func (v *MedicalProfileInput) GetUdiBearing() *bool { return v.UdiBearing }
 // GetGudidDefaults returns MedicalProfileInput.GudidDefaults, and is useful for accessing the field via an interface.
 func (v *MedicalProfileInput) GetGudidDefaults() *GudidDefaultsInput { return v.GudidDefaults }
 
+// MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret includes the requested fields of the GraphQL type MintedApiKeySecret.
+// The GraphQL type's documentation follows.
+//
+// A secret minted, or not: minted false and no secret when the slot already held one and no rotation was asked.
+type MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret struct {
+	KeyId  string  `json:"keyId"`
+	Name   *string `json:"name"`
+	Slot   int     `json:"slot"`
+	Minted bool    `json:"minted"`
+	// The value, this once; it is stored hashed and cannot be read again.
+	Secret      *string `json:"secret"`
+	ExpiresDate *string `json:"expiresDate"`
+}
+
+// GetKeyId returns MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret.KeyId, and is useful for accessing the field via an interface.
+func (v *MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret) GetKeyId() string {
+	return v.KeyId
+}
+
+// GetName returns MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret.Name, and is useful for accessing the field via an interface.
+func (v *MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret) GetName() *string {
+	return v.Name
+}
+
+// GetSlot returns MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret.Slot, and is useful for accessing the field via an interface.
+func (v *MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret) GetSlot() int { return v.Slot }
+
+// GetMinted returns MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret.Minted, and is useful for accessing the field via an interface.
+func (v *MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret) GetMinted() bool {
+	return v.Minted
+}
+
+// GetSecret returns MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret.Secret, and is useful for accessing the field via an interface.
+func (v *MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret) GetSecret() *string {
+	return v.Secret
+}
+
+// GetExpiresDate returns MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret.ExpiresDate, and is useful for accessing the field via an interface.
+func (v *MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret) GetExpiresDate() *string {
+	return v.ExpiresDate
+}
+
+// MintApiKeySecretResponse is returned by MintApiKeySecret on success.
+type MintApiKeySecretResponse struct {
+	// Mint a secret in slot 1 or 2 of a FREEFORM key, or rotate it (CONFIGURATION_WRITE); the value is returned once.
+	MintApiKeySecretProgrammatic *MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret `json:"mintApiKeySecretProgrammatic"`
+}
+
+// GetMintApiKeySecretProgrammatic returns MintApiKeySecretResponse.MintApiKeySecretProgrammatic, and is useful for accessing the field via an interface.
+func (v *MintApiKeySecretResponse) GetMintApiKeySecretProgrammatic() *MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret {
+	return v.MintApiKeySecretProgrammatic
+}
+
 // The kinds of work a model's strength can differ by. A board role maps to one of these through
 // AgentTaskRoleConfig.strengthCategory.
 type ModelRoleCategory string
@@ -51792,6 +52891,47 @@ var AllPermissionFunction = []PermissionFunction{
 	PermissionFunctionBoardRead,
 	PermissionFunctionBoardAgent,
 	PermissionFunctionBoardWrite,
+}
+
+type PermissionScope string
+
+const (
+	PermissionScopeOrganization PermissionScope = "ORGANIZATION"
+	PermissionScopeInstance     PermissionScope = "INSTANCE"
+	PermissionScopePerspective  PermissionScope = "PERSPECTIVE"
+	// An agent task board: a leaf beside a component, reaching no component.
+	PermissionScopeBoard     PermissionScope = "BOARD"
+	PermissionScopeComponent PermissionScope = "COMPONENT"
+	PermissionScopeBranch    PermissionScope = "BRANCH"
+	PermissionScopeRelease   PermissionScope = "RELEASE"
+)
+
+var AllPermissionScope = []PermissionScope{
+	PermissionScopeOrganization,
+	PermissionScopeInstance,
+	PermissionScopePerspective,
+	PermissionScopeBoard,
+	PermissionScopeComponent,
+	PermissionScopeBranch,
+	PermissionScopeRelease,
+}
+
+type PermissionType string
+
+const (
+	PermissionTypeAdmin         PermissionType = "ADMIN"
+	PermissionTypeReadOnly      PermissionType = "READ_ONLY"
+	PermissionTypeReadWrite     PermissionType = "READ_WRITE"
+	PermissionTypeEssentialRead PermissionType = "ESSENTIAL_READ"
+	PermissionTypeNone          PermissionType = "NONE"
+)
+
+var AllPermissionType = []PermissionType{
+	PermissionTypeAdmin,
+	PermissionTypeReadOnly,
+	PermissionTypeReadWrite,
+	PermissionTypeEssentialRead,
+	PermissionTypeNone,
 }
 
 // PersonTaskFields includes the GraphQL fields of AgentTask requested by the fragment PersonTaskFields.
@@ -56659,6 +57799,30 @@ func (v *__AgenticReleaseProgrammaticInput) GetSessionUuid() *string { return v.
 // GetClientSessionId returns __AgenticReleaseProgrammaticInput.ClientSessionId, and is useful for accessing the field via an interface.
 func (v *__AgenticReleaseProgrammaticInput) GetClientSessionId() *string { return v.ClientSessionId }
 
+// __ApiKeysInput is used internally by genqlient
+type __ApiKeysInput struct {
+	Keys []string `json:"keys"`
+}
+
+// GetKeys returns __ApiKeysInput.Keys, and is useful for accessing the field via an interface.
+func (v *__ApiKeysInput) GetKeys() []string { return v.Keys }
+
+// __ApplyApiKeysInput is used internally by genqlient
+type __ApplyApiKeysInput struct {
+	Spec   *map[string]interface{} `json:"spec,omitempty"`
+	DryRun *bool                   `json:"dryRun"`
+	Source *DeclarativeSourceInput `json:"source,omitempty"`
+}
+
+// GetSpec returns __ApplyApiKeysInput.Spec, and is useful for accessing the field via an interface.
+func (v *__ApplyApiKeysInput) GetSpec() *map[string]interface{} { return v.Spec }
+
+// GetDryRun returns __ApplyApiKeysInput.DryRun, and is useful for accessing the field via an interface.
+func (v *__ApplyApiKeysInput) GetDryRun() *bool { return v.DryRun }
+
+// GetSource returns __ApplyApiKeysInput.Source, and is useful for accessing the field via an interface.
+func (v *__ApplyApiKeysInput) GetSource() *DeclarativeSourceInput { return v.Source }
+
 // __ApplyBoardInput is used internally by genqlient
 type __ApplyBoardInput struct {
 	Spec   *map[string]interface{} `json:"spec,omitempty"`
@@ -56733,6 +57897,14 @@ func (v *__ApproveReleaseProgrammaticInput) GetReleaseApprovals() *ReleaseApprov
 	return v.ReleaseApprovals
 }
 
+// __ArchiveApiKeyInput is used internally by genqlient
+type __ArchiveApiKeyInput struct {
+	Name string `json:"name"`
+}
+
+// GetName returns __ArchiveApiKeyInput.Name, and is useful for accessing the field via an interface.
+func (v *__ArchiveApiKeyInput) GetName() string { return v.Name }
+
 // __ArchiveBoardInput is used internally by genqlient
 type __ArchiveBoardInput struct {
 	Name string `json:"name"`
@@ -56796,6 +57968,14 @@ type __EnrollSigningKeyProgrammaticInput struct {
 func (v *__EnrollSigningKeyProgrammaticInput) GetSigningKey() *AgentSigningKeyInput {
 	return v.SigningKey
 }
+
+// __ExportApiKeysInput is used internally by genqlient
+type __ExportApiKeysInput struct {
+	Keys []string `json:"keys"`
+}
+
+// GetKeys returns __ExportApiKeysInput.Keys, and is useful for accessing the field via an interface.
+func (v *__ExportApiKeysInput) GetKeys() []string { return v.Keys }
 
 // __ExportBoardInput is used internally by genqlient
 type __ExportBoardInput struct {
@@ -57034,6 +58214,22 @@ func (v *__ListInstanceProductFeatureSetsInput) GetInstanceUri() *string { retur
 
 // GetNamespace returns __ListInstanceProductFeatureSetsInput.Namespace, and is useful for accessing the field via an interface.
 func (v *__ListInstanceProductFeatureSetsInput) GetNamespace() *string { return v.Namespace }
+
+// __MintApiKeySecretInput is used internally by genqlient
+type __MintApiKeySecretInput struct {
+	Key    string `json:"key"`
+	Slot   int    `json:"slot"`
+	Rotate *bool  `json:"rotate"`
+}
+
+// GetKey returns __MintApiKeySecretInput.Key, and is useful for accessing the field via an interface.
+func (v *__MintApiKeySecretInput) GetKey() string { return v.Key }
+
+// GetSlot returns __MintApiKeySecretInput.Slot, and is useful for accessing the field via an interface.
+func (v *__MintApiKeySecretInput) GetSlot() int { return v.Slot }
+
+// GetRotate returns __MintApiKeySecretInput.Rotate, and is useful for accessing the field via an interface.
+func (v *__MintApiKeySecretInput) GetRotate() *bool { return v.Rotate }
 
 // __ProbeSbomProgrammaticInput is used internally by genqlient
 type __ProbeSbomProgrammaticInput struct {
@@ -66153,6 +67349,144 @@ func AgenticReleaseProgrammatic(
 	return data_, err_
 }
 
+// The query executed by ApiKeys.
+const ApiKeys_Operation = `
+query ApiKeys ($keys: [String!]) {
+	apiKeysProgrammatic(keys: $keys) {
+		... DeclaredApiKeyFields
+	}
+}
+fragment DeclaredApiKeyFields on DeclaredApiKey {
+	uuid
+	keyId
+	name
+	type
+	status
+	adminDisabled
+	notes
+	permissions {
+		... ApiKeyPermissionsFields
+	}
+	secretExpiresDays
+	sessionMaxMinutes
+	secretSlots {
+		slot
+		active
+		createdDate
+		lastUsedDate
+		expiresDate
+	}
+	declarative {
+		... ProvenanceFields
+	}
+}
+fragment ApiKeyPermissionsFields on ApiKeyPermissionsSpec {
+	type
+	functions
+	approvals
+	objects {
+		scope
+		object
+		type
+		functions
+		approvals
+	}
+}
+fragment ProvenanceFields on DeclarativeProvenance {
+	specHash
+	appliedAt
+	source {
+		repo
+		path
+		commit
+	}
+}
+`
+
+func ApiKeys(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	keys []string,
+) (data_ *ApiKeysResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ApiKeys",
+		Query:  ApiKeys_Operation,
+		Variables: &__ApiKeysInput{
+			Keys: keys,
+		},
+	}
+
+	data_ = &ApiKeysResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by ApplyApiKeys.
+const ApplyApiKeys_Operation = `
+mutation ApplyApiKeys ($spec: ApiKeysSpecInput!, $dryRun: Boolean, $source: DeclarativeSourceInput) {
+	applyApiKeysProgrammatic(spec: $spec, dryRun: $dryRun, source: $source) {
+		... ApplyResultFields
+	}
+}
+fragment ApplyResultFields on DeclarativeApplyResult {
+	kind
+	dryRun
+	specHash
+	created
+	updated
+	unchanged
+	archived
+	errors
+	changes {
+		... ChangeFields
+	}
+}
+fragment ChangeFields on DeclarativeChange {
+	kind
+	name
+	action
+	fields
+	message
+	warnings
+}
+`
+
+func ApplyApiKeys(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	spec *map[string]interface{},
+	dryRun *bool,
+	source *DeclarativeSourceInput,
+) (data_ *ApplyApiKeysResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ApplyApiKeys",
+		Query:  ApplyApiKeys_Operation,
+		Variables: &__ApplyApiKeysInput{
+			Spec:   spec,
+			DryRun: dryRun,
+			Source: source,
+		},
+	}
+
+	data_ = &ApplyApiKeysResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by ApplyBoard.
 const ApplyBoard_Operation = `
 mutation ApplyBoard ($spec: BoardSpecInput!, $dryRun: Boolean, $source: DeclarativeSourceInput) {
@@ -66440,6 +67774,85 @@ func ApproveReleaseProgrammatic(
 	return data_, err_
 }
 
+// The mutation executed by ArchiveApiKey.
+const ArchiveApiKey_Operation = `
+mutation ArchiveApiKey ($name: String!) {
+	archiveApiKeyProgrammatic(name: $name) {
+		... DeclaredApiKeyFields
+	}
+}
+fragment DeclaredApiKeyFields on DeclaredApiKey {
+	uuid
+	keyId
+	name
+	type
+	status
+	adminDisabled
+	notes
+	permissions {
+		... ApiKeyPermissionsFields
+	}
+	secretExpiresDays
+	sessionMaxMinutes
+	secretSlots {
+		slot
+		active
+		createdDate
+		lastUsedDate
+		expiresDate
+	}
+	declarative {
+		... ProvenanceFields
+	}
+}
+fragment ApiKeyPermissionsFields on ApiKeyPermissionsSpec {
+	type
+	functions
+	approvals
+	objects {
+		scope
+		object
+		type
+		functions
+		approvals
+	}
+}
+fragment ProvenanceFields on DeclarativeProvenance {
+	specHash
+	appliedAt
+	source {
+		repo
+		path
+		commit
+	}
+}
+`
+
+func ArchiveApiKey(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	name string,
+) (data_ *ArchiveApiKeyResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ArchiveApiKey",
+		Query:  ArchiveApiKey_Operation,
+		Variables: &__ArchiveApiKeyInput{
+			Name: name,
+		},
+	}
+
+	data_ = &ArchiveApiKeyResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by ArchiveBoard.
 const ArchiveBoard_Operation = `
 mutation ArchiveBoard ($name: String!) {
@@ -66679,6 +68092,77 @@ func EnrollSigningKeyProgrammatic(
 	}
 
 	data_ = &EnrollSigningKeyProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by ExportApiKeys.
+const ExportApiKeys_Operation = `
+query ExportApiKeys ($keys: [String!]) {
+	exportApiKeysProgrammatic(keys: $keys) {
+		kind
+		version
+		authoritative
+		keys {
+			name
+			type
+			permissions {
+				... ApiKeyPermissionsFields
+			}
+			notes
+			status
+			secretExpiresDays
+			sessionMaxMinutes
+			provenance {
+				... ProvenanceFields
+			}
+		}
+	}
+}
+fragment ApiKeyPermissionsFields on ApiKeyPermissionsSpec {
+	type
+	functions
+	approvals
+	objects {
+		scope
+		object
+		type
+		functions
+		approvals
+	}
+}
+fragment ProvenanceFields on DeclarativeProvenance {
+	specHash
+	appliedAt
+	source {
+		repo
+		path
+		commit
+	}
+}
+`
+
+func ExportApiKeys(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	keys []string,
+) (data_ *ExportApiKeysResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ExportApiKeys",
+		Query:  ExportApiKeys_Operation,
+		Variables: &__ExportApiKeysInput{
+			Keys: keys,
+		},
+	}
+
+	data_ = &ExportApiKeysResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -67799,6 +69283,49 @@ func ListInstanceProductFeatureSetsFeaturesets(
 	}
 
 	data_ = &ListInstanceProductFeatureSetsFeaturesetsResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by MintApiKeySecret.
+const MintApiKeySecret_Operation = `
+mutation MintApiKeySecret ($key: String!, $slot: Int!, $rotate: Boolean) {
+	mintApiKeySecretProgrammatic(key: $key, slot: $slot, rotate: $rotate) {
+		keyId
+		name
+		slot
+		minted
+		secret
+		expiresDate
+	}
+}
+`
+
+func MintApiKeySecret(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	key string,
+	slot int,
+	rotate *bool,
+) (data_ *MintApiKeySecretResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "MintApiKeySecret",
+		Query:  MintApiKeySecret_Operation,
+		Variables: &__MintApiKeySecretInput{
+			Key:    key,
+			Slot:   slot,
+			Rotate: rotate,
+		},
+	}
+
+	data_ = &MintApiKeySecretResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

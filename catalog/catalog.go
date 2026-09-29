@@ -1,5 +1,5 @@
-// Package catalog works with declarative ReARM spec files (kind CATALOG, BRANCHES, BOARD and
-// ROLE_PRESETS): load and save YAML, apply through the ReARM API, export from it, and print change
+// Package catalog works with declarative ReARM spec files (kind CATALOG, BRANCHES, BOARD,
+// ROLE_PRESETS and API_KEYS): load and save YAML, apply through the ReARM API, export from it, and print change
 // sets.
 // The same helpers back `rearm ... apply` in the CLI and the resources of the Terraform
 // provider, so the two never disagree on what a file means.
@@ -52,6 +52,16 @@ type BoardFile struct {
 type RolePresetsFile struct {
 	Spec map[string]any
 }
+
+// ApiKeysFile is a `kind: API_KEYS` document: an organization's API keys by declared name -- identity
+// and settings, never a secret (task RD3-11). A map for the same reason as BoardFile: a setting sent
+// as null clears it and one left out leaves it.
+type ApiKeysFile struct {
+	Spec map[string]any
+}
+
+// MarshalJSON writes the file as its spec.
+func (f *ApiKeysFile) MarshalJSON() ([]byte, error) { return json.Marshal(f.Spec) }
 
 // MarshalJSON writes the file as its spec, so ToYAML and callers see the document itself.
 func (f *BoardFile) MarshalJSON() ([]byte, error) { return json.Marshal(f.Spec) }
@@ -153,6 +163,15 @@ func Parse(raw []byte) (any, error) {
 			spec["version"] = 1
 		}
 		return &RolePresetsFile{Spec: spec}, nil
+	case rearm.DeclarativeKindApiKeys:
+		spec, err := normalised(generic)
+		if err != nil {
+			return nil, fmt.Errorf("spec (%s): %w", kind, err)
+		}
+		if _, ok := spec["version"]; !ok {
+			spec["version"] = 1
+		}
+		return &ApiKeysFile{Spec: spec}, nil
 	case "":
 		return nil, fmt.Errorf("spec: missing 'kind' (expected one of %s)", kindList())
 	default:
@@ -162,7 +181,7 @@ func Parse(raw []byte) (any, error) {
 
 func kindList() string {
 	return strings.Join([]string{string(rearm.DeclarativeKindCatalog), string(rearm.DeclarativeKindBranches),
-		string(rearm.DeclarativeKindBoard), string(rearm.DeclarativeKindRolePresets)}, ", ")
+		string(rearm.DeclarativeKindBoard), string(rearm.DeclarativeKindRolePresets), string(rearm.DeclarativeKindApiKeys)}, ", ")
 }
 
 // normalised round-trips a YAML-decoded document through JSON, so nested maps are
@@ -353,6 +372,15 @@ func Apply(ctx context.Context, c *rearm.Client, file any, dryRun bool, source *
 			return nil, fmt.Errorf("apply: empty response")
 		}
 		return fromResult(&resp.ApplyRolePresetsProgrammatic.ApplyResultFields), nil
+	case *ApiKeysFile:
+		resp, err := rearm.ApplyApiKeys(ctx, c, &f.Spec, &dryRun, source)
+		if err != nil {
+			return nil, err
+		}
+		if resp == nil || resp.ApplyApiKeysProgrammatic == nil {
+			return nil, fmt.Errorf("apply: empty response")
+		}
+		return fromResult(&resp.ApplyApiKeysProgrammatic.ApplyResultFields), nil
 	default:
 		return nil, fmt.Errorf("apply: unsupported spec type %T", file)
 	}
@@ -438,6 +466,31 @@ func ExportRolePresets(ctx context.Context, c *rearm.Client) (*RolePresetsFile, 
 	return &RolePresetsFile{Spec: spec}, nil
 }
 
+// ExportApiKeys fetches the organization's declared API keys as an API_KEYS file (task RD3-11); with
+// names, only those, and the file is not authoritative. It carries no secret: none leaves ReARM this way.
+// Each key's provenance is dropped, so the file applies again as it is.
+func ExportApiKeys(ctx context.Context, c *rearm.Client, names []string) (*ApiKeysFile, error) {
+	resp, err := rearm.ExportApiKeys(ctx, c, names)
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil || resp.ExportApiKeysProgrammatic == nil {
+		return nil, fmt.Errorf("export: empty response")
+	}
+	spec := map[string]any{}
+	if err := roundTrip(resp.ExportApiKeysProgrammatic, &spec); err != nil {
+		return nil, err
+	}
+	keys, _ := spec["keys"].([]any)
+	for _, k := range keys {
+		if m, ok := k.(map[string]any); ok {
+			delete(m, "provenance")
+		}
+	}
+	spec["kind"] = string(rearm.DeclarativeKindApiKeys)
+	return &ApiKeysFile{Spec: stripNulls(spec).(map[string]any)}, nil
+}
+
 // ToYAML renders a spec file for humans and git: nulls dropped, kind first, then version.
 func ToYAML(file any) ([]byte, error) {
 	js, err := json.Marshal(file)
@@ -497,6 +550,8 @@ func entityOf(ch Change) string {
 		return "board"
 	case rearm.DeclarativeKindRolePresets:
 		return "preset"
+	case rearm.DeclarativeKindApiKeys:
+		return "api key"
 	default:
 		return string(ch.Kind)
 	}
@@ -568,7 +623,7 @@ func stripNulls(v any) any {
 // Key order for the document envelope and for nested entries; anything else follows alphabetically.
 var (
 	topLevelKeyOrder = []string{"kind", "version", "authoritative", "name", "description", "target", "component",
-		"components", "branches", "sources", "settings", "coordinatorPrompt", "groups", "roles", "presets"}
+		"components", "branches", "sources", "settings", "coordinatorPrompt", "groups", "roles", "presets", "keys"}
 	entryKeyOrder = []string{"key", "name", "type", "component", "branch", "release", "pattern", "orderIndex", "kind",
 		"necessity", "humanGate", "prompt"}
 )
