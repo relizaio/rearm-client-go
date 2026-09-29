@@ -13623,6 +13623,11 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequ
 	State        *string `json:"state"`
 	TargetBranch *string `json:"targetBranch"`
 	MergedDate   *string `json:"mergedDate"`
+	// Commits ReARM recorded on the PR's target branch since the task's newest round started (task RD4-2): "base
+	// moved: N commits since your round". From CI reports of builds on that branch, so a merge nobody reported is
+	// not counted; it says nothing about whether the PR still merges. Null when the PR is not registered here, the
+	// round recorded no base, or the branch has no entry at all -- never zero for those.
+	BaseMovedBy *int `json:"baseMovedBy"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
 	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
@@ -13647,6 +13652,11 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPull
 // GetMergedDate returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.MergedDate, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetMergedDate() *string {
 	return v.MergedDate
+}
+
+// GetBaseMovedBy returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.BaseMovedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetBaseMovedBy() *int {
+	return v.BaseMovedBy
 }
 
 // GetRegistered returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
@@ -19996,6 +20006,11 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequests
 	State        *string `json:"state"`
 	TargetBranch *string `json:"targetBranch"`
 	MergedDate   *string `json:"mergedDate"`
+	// Commits ReARM recorded on the PR's target branch since the task's newest round started (task RD4-2): "base
+	// moved: N commits since your round". From CI reports of builds on that branch, so a merge nobody reported is
+	// not counted; it says nothing about whether the PR still merges. Null when the PR is not registered here, the
+	// round recorded no base, or the branch has no entry at all -- never zero for those.
+	BaseMovedBy *int `json:"baseMovedBy"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
 	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
@@ -20020,6 +20035,11 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequ
 // GetMergedDate returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.MergedDate, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetMergedDate() *string {
 	return v.MergedDate
+}
+
+// GetBaseMovedBy returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.BaseMovedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetBaseMovedBy() *int {
+	return v.BaseMovedBy
 }
 
 // GetRegistered returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
@@ -25042,6 +25062,11 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPul
 	State        *string `json:"state"`
 	TargetBranch *string `json:"targetBranch"`
 	MergedDate   *string `json:"mergedDate"`
+	// Commits ReARM recorded on the PR's target branch since the task's newest round started (task RD4-2): "base
+	// moved: N commits since your round". From CI reports of builds on that branch, so a merge nobody reported is
+	// not counted; it says nothing about whether the PR still merges. Null when the PR is not registered here, the
+	// round recorded no base, or the branch has no entry at all -- never zero for those.
+	BaseMovedBy *int `json:"baseMovedBy"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
 	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
@@ -25068,6 +25093,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTas
 // GetMergedDate returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.MergedDate, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetMergedDate() *string {
 	return v.MergedDate
+}
+
+// GetBaseMovedBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.BaseMovedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetBaseMovedBy() *int {
+	return v.BaseMovedBy
 }
 
 // GetRegistered returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
@@ -30141,6 +30171,11 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequests
 	State        *string `json:"state"`
 	TargetBranch *string `json:"targetBranch"`
 	MergedDate   *string `json:"mergedDate"`
+	// Commits ReARM recorded on the PR's target branch since the task's newest round started (task RD4-2): "base
+	// moved: N commits since your round". From CI reports of builds on that branch, so a merge nobody reported is
+	// not counted; it says nothing about whether the PR still merges. Null when the PR is not registered here, the
+	// round recorded no base, or the branch has no entry at all -- never zero for those.
+	BaseMovedBy *int `json:"baseMovedBy"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
 	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
@@ -30165,6 +30200,11 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequ
 // GetMergedDate returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.MergedDate, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetMergedDate() *string {
 	return v.MergedDate
+}
+
+// GetBaseMovedBy returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.BaseMovedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetBaseMovedBy() *int {
+	return v.BaseMovedBy
 }
 
 // GetRegistered returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
@@ -37505,6 +37545,11 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullReques
 	State        *string `json:"state"`
 	TargetBranch *string `json:"targetBranch"`
 	MergedDate   *string `json:"mergedDate"`
+	// Commits ReARM recorded on the PR's target branch since the task's newest round started (task RD4-2): "base
+	// moved: N commits since your round". From CI reports of builds on that branch, so a merge nobody reported is
+	// not counted; it says nothing about whether the PR still merges. Null when the PR is not registered here, the
+	// round recorded no base, or the branch has no entry at all -- never zero for those.
+	BaseMovedBy *int `json:"baseMovedBy"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
 	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
@@ -37529,6 +37574,11 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRe
 // GetMergedDate returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.MergedDate, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetMergedDate() *string {
 	return v.MergedDate
+}
+
+// GetBaseMovedBy returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.BaseMovedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetBaseMovedBy() *int {
+	return v.BaseMovedBy
 }
 
 // GetRegistered returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
@@ -37944,6 +37994,8 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAg
 	ReviewedBy *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
 	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// True when the hop said its round changed no code (sign-off noCode, task RD4-2); null otherwise.
+	NoCode *bool `json:"noCode"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
 	// True when the hop said its round changes nothing to build (sign-off noChange, task RD4-13); null otherwise.
@@ -38000,6 +38052,11 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOf
 // GetUsage returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
 	return v.Usage
+}
+
+// GetNoCode returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.NoCode, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetNoCode() *bool {
+	return v.NoCode
 }
 
 // GetOverAllowanceMicros returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
@@ -38329,6 +38386,9 @@ type AgentTaskSignOffProgrammaticResponse struct {
 	// noChange (task RD4-13): on a PASSED that answers a finding about the signing role's own document, the new
 	// round changes nothing to build, so the task goes back to the filer rather than to the role that builds
 	// from the round. Recorded on the sign-off; refused on REJECTED.
+	// noCode (task RD4-2): the round changed no code (a note-only round). A PASSED sign-off by a role holding
+	// CODE_PUSH is refused when no linked PR in play moved since the assignment ("no linked PR moved since your
+	// assignment"); noCode passes it and is recorded on the sign-off. Refused on REJECTED.
 	AgentTaskSignOffProgrammatic *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask `json:"agentTaskSignOffProgrammatic"`
 }
 
@@ -42098,6 +42158,11 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullReques
 	State        *string `json:"state"`
 	TargetBranch *string `json:"targetBranch"`
 	MergedDate   *string `json:"mergedDate"`
+	// Commits ReARM recorded on the PR's target branch since the task's newest round started (task RD4-2): "base
+	// moved: N commits since your round". From CI reports of builds on that branch, so a merge nobody reported is
+	// not counted; it says nothing about whether the PR still merges. Null when the PR is not registered here, the
+	// round recorded no base, or the branch has no entry at all -- never zero for those.
+	BaseMovedBy *int `json:"baseMovedBy"`
 	// False when no PR row has this URL: the repository's CI is not reporting PRs.
 	Registered *bool `json:"registered"`
 	// The PR's newest commit sha as CI last reported it; null when unregistered (task 3b97ccfd).
@@ -42124,6 +42189,11 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRe
 // GetMergedDate returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.MergedDate, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetMergedDate() *string {
 	return v.MergedDate
+}
+
+// GetBaseMovedBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.BaseMovedBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest) GetBaseMovedBy() *int {
+	return v.BaseMovedBy
 }
 
 // GetRegistered returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequest.Registered, and is useful for accessing the field via an interface.
@@ -58018,6 +58088,7 @@ type __AgentTaskSignOffProgrammaticInput struct {
 	Outputs     []string            `json:"outputs"`
 	SeenInputs  []string            `json:"seenInputs"`
 	NoChange    *bool               `json:"noChange"`
+	NoCode      *bool               `json:"noCode"`
 }
 
 // GetTaskUuid returns __AgentTaskSignOffProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -58040,6 +58111,9 @@ func (v *__AgentTaskSignOffProgrammaticInput) GetSeenInputs() []string { return 
 
 // GetNoChange returns __AgentTaskSignOffProgrammaticInput.NoChange, and is useful for accessing the field via an interface.
 func (v *__AgentTaskSignOffProgrammaticInput) GetNoChange() *bool { return v.NoChange }
+
+// GetNoCode returns __AgentTaskSignOffProgrammaticInput.NoCode, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSignOffProgrammaticInput) GetNoCode() *bool { return v.NoCode }
 
 // __AgentTaskSplitProgrammaticInput is used internally by genqlient
 type __AgentTaskSplitProgrammaticInput struct {
@@ -61904,6 +61978,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 			state
 			targetBranch
 			mergedDate
+			baseMovedBy
 			registered
 			head
 		}
@@ -63177,6 +63252,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 			state
 			targetBranch
 			mergedDate
+			baseMovedBy
 			registered
 			head
 		}
@@ -63950,6 +64026,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 			state
 			targetBranch
 			mergedDate
+			baseMovedBy
 			registered
 			head
 			attestation {
@@ -64880,6 +64957,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 			state
 			targetBranch
 			mergedDate
+			baseMovedBy
 			registered
 			head
 		}
@@ -66442,8 +66520,8 @@ func AgentTaskSetTagsProgrammatic(
 
 // The mutation executed by AgentTaskSignOffProgrammatic.
 const AgentTaskSignOffProgrammatic_Operation = `
-mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!], $noChange: Boolean) {
-	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs, seenInputs: $seenInputs, noChange: $noChange) {
+mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!], $noChange: Boolean, $noCode: Boolean) {
+	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs, seenInputs: $seenInputs, noChange: $noChange, noCode: $noCode) {
 		key
 		number
 		uuid
@@ -66508,6 +66586,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 			usage {
 				... HopUsageFields
 			}
+			noCode
 			overAllowanceMicros
 			noChange
 			answered
@@ -66550,6 +66629,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 			state
 			targetBranch
 			mergedDate
+			baseMovedBy
 			registered
 			head
 		}
@@ -66600,6 +66680,7 @@ func AgentTaskSignOffProgrammatic(
 	outputs []string,
 	seenInputs []string,
 	noChange *bool,
+	noCode *bool,
 ) (data_ *AgentTaskSignOffProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskSignOffProgrammatic",
@@ -66612,6 +66693,7 @@ func AgentTaskSignOffProgrammatic(
 			Outputs:     outputs,
 			SeenInputs:  seenInputs,
 			NoChange:    noChange,
+			NoCode:      noCode,
 		},
 	}
 
@@ -67063,6 +67145,7 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 			state
 			targetBranch
 			mergedDate
+			baseMovedBy
 			registered
 			head
 			attestation {

@@ -185,17 +185,17 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 	role rolePrompt promptVersion hopBudgetMicros
 } }
 
-mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!], $noChange: Boolean) {
-	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs, seenInputs: $seenInputs, noChange: $noChange) {
+mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!], $noChange: Boolean, $noCode: Boolean) {
+	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs, seenInputs: $seenInputs, noChange: $noChange, noCode: $noCode) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros noChange answered }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } noCode overAllowanceMicros noChange answered }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate registered head }
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
@@ -388,7 +388,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate registered head }
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
@@ -418,7 +418,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate registered head }
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -449,7 +449,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate registered head }
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
@@ -464,7 +464,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate registered head
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head
 		attestation { unit commit outcome by { ...ActorFields } at note supersededBy } }
 	testedHeads { pr head }
 	deliveries { unit commit outcome by { ...ActorFields } at note supersededBy }
@@ -495,7 +495,7 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgra
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate registered head
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head
 		attestation { unit commit outcome by { ...ActorFields } at note supersededBy } }
 	testedHeads { pr head }
 	deliveries { unit commit outcome by { ...ActorFields } at note supersededBy }
