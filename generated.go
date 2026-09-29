@@ -12600,6 +12600,8 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskTagsTagR
 
 // AgentTaskCancelProgrammaticResponse is returned by AgentTaskCancelProgrammatic on success.
 type AgentTaskCancelProgrammaticResponse struct {
+	// Cancel a task: the coordinator seat. Or withdraw one (task RD4-5): the session that registered it, while it is
+	// PENDING_INTAKE, with the reason as the note (required); refused once the coordinator has authorised it.
 	AgentTaskCancelProgrammatic *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask `json:"agentTaskCancelProgrammatic"`
 }
 
@@ -18765,6 +18767,9 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskTagsTagRecor
 
 // AgentTaskHoldProgrammaticResponse is returned by AgentTaskHoldProgrammatic on success.
 type AgentTaskHoldProgrammaticResponse struct {
+	// Put a task on hold pending human input. The coordinator seat holds at COORDINATOR level (the default) a task
+	// nobody is working. The session holding the task's current assignment parks its own hop at OPERATOR level only
+	// (task RD4-5), with the question as the reason; a person's release answers it and the hop resumes.
 	AgentTaskHoldProgrammatic *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask `json:"agentTaskHoldProgrammatic"`
 }
 
@@ -57590,9 +57595,10 @@ func (v *__AgentTaskEscalateHoldProgrammaticInput) GetReason() string { return v
 
 // __AgentTaskHoldProgrammaticInput is used internally by genqlient
 type __AgentTaskHoldProgrammaticInput struct {
-	TaskUuid    string `json:"taskUuid"`
-	SessionUuid string `json:"sessionUuid"`
-	Reason      string `json:"reason"`
+	TaskUuid    string              `json:"taskUuid"`
+	SessionUuid string              `json:"sessionUuid"`
+	Reason      string              `json:"reason"`
+	Level       *AgentTaskHoldLevel `json:"level"`
 }
 
 // GetTaskUuid returns __AgentTaskHoldProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -57603,6 +57609,9 @@ func (v *__AgentTaskHoldProgrammaticInput) GetSessionUuid() string { return v.Se
 
 // GetReason returns __AgentTaskHoldProgrammaticInput.Reason, and is useful for accessing the field via an interface.
 func (v *__AgentTaskHoldProgrammaticInput) GetReason() string { return v.Reason }
+
+// GetLevel returns __AgentTaskHoldProgrammaticInput.Level, and is useful for accessing the field via an interface.
+func (v *__AgentTaskHoldProgrammaticInput) GetLevel() *AgentTaskHoldLevel { return v.Level }
 
 // __AgentTaskHumanReviewInput is used internally by genqlient
 type __AgentTaskHumanReviewInput struct {
@@ -62631,8 +62640,8 @@ func AgentTaskEscalateHoldProgrammatic(
 
 // The mutation executed by AgentTaskHoldProgrammatic.
 const AgentTaskHoldProgrammatic_Operation = `
-mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
-	agentTaskHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
+mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!, $level: AgentTaskHoldLevel) {
+	agentTaskHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason, level: $level) {
 		key
 		number
 		uuid
@@ -62761,6 +62770,7 @@ func AgentTaskHoldProgrammatic(
 	taskUuid string,
 	sessionUuid string,
 	reason string,
+	level *AgentTaskHoldLevel,
 ) (data_ *AgentTaskHoldProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskHoldProgrammatic",
@@ -62769,6 +62779,7 @@ func AgentTaskHoldProgrammatic(
 			TaskUuid:    taskUuid,
 			SessionUuid: sessionUuid,
 			Reason:      reason,
+			Level:       level,
 		},
 	}
 
