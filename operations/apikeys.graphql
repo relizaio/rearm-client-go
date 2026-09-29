@@ -1,5 +1,5 @@
-# API keys as declarative configuration (task RD3-11): identity and settings by declared name, never a
-# secret; secrets are minted apart and returned once.
+# API keys as declarative configuration (task RD3-11): FREEFORM keys, identity and settings by declared
+# name, never a secret; secrets are minted apart and returned once.
 
 fragment ApiKeyPermissionsFields on ApiKeyPermissionsSpec {
   type
@@ -19,8 +19,6 @@ fragment DeclaredApiKeyFields on DeclaredApiKey {
   keyId
   name
   type
-  object
-  objectUuid
   status
   adminDisabled
   notes
@@ -55,7 +53,6 @@ query ExportApiKeys($keys: [String!]) {
     keys {
       name
       type
-      object
       permissions {
         ...ApiKeyPermissionsFields
       }

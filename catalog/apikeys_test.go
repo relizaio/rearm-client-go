@@ -91,7 +91,7 @@ func TestTheApiKeysExportAppliesAgainAsItIs(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(map[string]any{"data": map[string]any{"exportApiKeysProgrammatic": map[string]any{
 			"kind": "API_KEYS", "version": 1, "authoritative": true, "keys": []any{
-				map[string]any{"name": "ci-release", "type": "FREEFORM", "object": nil, "notes": nil, "status": "ACTIVE",
+				map[string]any{"name": "ci-release", "type": "FREEFORM", "notes": nil, "status": "ACTIVE",
 					"permissions": map[string]any{"type": "READ_WRITE", "functions": []any{"BOARD_WRITE"}, "approvals": nil, "objects": nil},
 					"provenance": map[string]any{"specHash": "h"}},
 			}}}})

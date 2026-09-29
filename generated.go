@@ -45660,16 +45660,6 @@ func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetType() *ApiTypeEnum {
 	return v.DeclaredApiKeyFields.Type
 }
 
-// GetObject returns ApiKeysApiKeysProgrammaticDeclaredApiKey.Object, and is useful for accessing the field via an interface.
-func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetObject() *string {
-	return v.DeclaredApiKeyFields.Object
-}
-
-// GetObjectUuid returns ApiKeysApiKeysProgrammaticDeclaredApiKey.ObjectUuid, and is useful for accessing the field via an interface.
-func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetObjectUuid() *string {
-	return v.DeclaredApiKeyFields.ObjectUuid
-}
-
 // GetStatus returns ApiKeysApiKeysProgrammaticDeclaredApiKey.Status, and is useful for accessing the field via an interface.
 func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) GetStatus() *ApiKeyStatus {
 	return v.DeclaredApiKeyFields.Status
@@ -45744,10 +45734,6 @@ type __premarshalApiKeysApiKeysProgrammaticDeclaredApiKey struct {
 
 	Type *ApiTypeEnum `json:"type"`
 
-	Object *string `json:"object"`
-
-	ObjectUuid *string `json:"objectUuid"`
-
 	Status *ApiKeyStatus `json:"status"`
 
 	AdminDisabled *bool `json:"adminDisabled"`
@@ -45780,8 +45766,6 @@ func (v *ApiKeysApiKeysProgrammaticDeclaredApiKey) __premarshalJSON() (*__premar
 	retval.KeyId = v.DeclaredApiKeyFields.KeyId
 	retval.Name = v.DeclaredApiKeyFields.Name
 	retval.Type = v.DeclaredApiKeyFields.Type
-	retval.Object = v.DeclaredApiKeyFields.Object
-	retval.ObjectUuid = v.DeclaredApiKeyFields.ObjectUuid
 	retval.Status = v.DeclaredApiKeyFields.Status
 	retval.AdminDisabled = v.DeclaredApiKeyFields.AdminDisabled
 	retval.Notes = v.DeclaredApiKeyFields.Notes
@@ -46769,16 +46753,6 @@ func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetType() *ApiTyp
 	return v.DeclaredApiKeyFields.Type
 }
 
-// GetObject returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.Object, and is useful for accessing the field via an interface.
-func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetObject() *string {
-	return v.DeclaredApiKeyFields.Object
-}
-
-// GetObjectUuid returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.ObjectUuid, and is useful for accessing the field via an interface.
-func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetObjectUuid() *string {
-	return v.DeclaredApiKeyFields.ObjectUuid
-}
-
 // GetStatus returns ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey.Status, and is useful for accessing the field via an interface.
 func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) GetStatus() *ApiKeyStatus {
 	return v.DeclaredApiKeyFields.Status
@@ -46853,10 +46827,6 @@ type __premarshalArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey struct {
 
 	Type *ApiTypeEnum `json:"type"`
 
-	Object *string `json:"object"`
-
-	ObjectUuid *string `json:"objectUuid"`
-
 	Status *ApiKeyStatus `json:"status"`
 
 	AdminDisabled *bool `json:"adminDisabled"`
@@ -46889,8 +46859,6 @@ func (v *ArchiveApiKeyArchiveApiKeyProgrammaticDeclaredApiKey) __premarshalJSON(
 	retval.KeyId = v.DeclaredApiKeyFields.KeyId
 	retval.Name = v.DeclaredApiKeyFields.Name
 	retval.Type = v.DeclaredApiKeyFields.Type
-	retval.Object = v.DeclaredApiKeyFields.Object
-	retval.ObjectUuid = v.DeclaredApiKeyFields.ObjectUuid
 	retval.Status = v.DeclaredApiKeyFields.Status
 	retval.AdminDisabled = v.DeclaredApiKeyFields.AdminDisabled
 	retval.Notes = v.DeclaredApiKeyFields.Notes
@@ -48203,7 +48171,7 @@ const (
 	DeclarativeKindBranches    DeclarativeKind = "BRANCHES"
 	DeclarativeKindBoard       DeclarativeKind = "BOARD"
 	DeclarativeKindRolePresets DeclarativeKind = "ROLE_PRESETS"
-	// An organization's API keys: identity and settings, never a secret (task RD3-11).
+	// An organization's FREEFORM API keys: identity and settings, never a secret (task RD3-11).
 	DeclarativeKindApiKeys DeclarativeKind = "API_KEYS"
 )
 
@@ -48242,8 +48210,6 @@ type DeclaredApiKeyFields struct {
 	// The declared name; null for a key nobody has declared.
 	Name              *string                                               `json:"name"`
 	Type              *ApiTypeEnum                                          `json:"type"`
-	Object            *string                                               `json:"object"`
-	ObjectUuid        *string                                               `json:"objectUuid"`
 	Status            *ApiKeyStatus                                         `json:"status"`
 	AdminDisabled     *bool                                                 `json:"adminDisabled"`
 	Notes             *string                                               `json:"notes"`
@@ -48266,12 +48232,6 @@ func (v *DeclaredApiKeyFields) GetName() *string { return v.Name }
 
 // GetType returns DeclaredApiKeyFields.Type, and is useful for accessing the field via an interface.
 func (v *DeclaredApiKeyFields) GetType() *ApiTypeEnum { return v.Type }
-
-// GetObject returns DeclaredApiKeyFields.Object, and is useful for accessing the field via an interface.
-func (v *DeclaredApiKeyFields) GetObject() *string { return v.Object }
-
-// GetObjectUuid returns DeclaredApiKeyFields.ObjectUuid, and is useful for accessing the field via an interface.
-func (v *DeclaredApiKeyFields) GetObjectUuid() *string { return v.ObjectUuid }
 
 // GetStatus returns DeclaredApiKeyFields.Status, and is useful for accessing the field via an interface.
 func (v *DeclaredApiKeyFields) GetStatus() *ApiKeyStatus { return v.Status }
@@ -48802,8 +48762,8 @@ func (v *EnrollSigningKeyProgrammaticResponse) GetEnrollSigningKeyProgrammatic()
 // ExportApiKeysExportApiKeysProgrammaticApiKeysSpec includes the requested fields of the GraphQL type ApiKeysSpec.
 // The GraphQL type's documentation follows.
 //
-// An API_KEYS file (task RD3-11): an organization's keys by declared name -- identity and settings, never a
-// secret.
+// An API_KEYS file (task RD3-11): an organization's FREEFORM keys by declared name -- identity and settings,
+// never a secret.
 type ExportApiKeysExportApiKeysProgrammaticApiKeysSpec struct {
 	Kind          DeclarativeKind                                                    `json:"kind"`
 	Version       int                                                                `json:"version"`
@@ -48829,11 +48789,10 @@ func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpec) GetKeys() []*ExportA
 
 // ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec includes the requested fields of the GraphQL type ApiKeySpec.
 type ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec struct {
-	Name string       `json:"name"`
+	Name string `json:"name"`
+	// FREEFORM: the one type a file declares.
 	Type *ApiTypeEnum `json:"type"`
-	// COMPONENT keys: the component or product, by name when one active component carries it, else by uuid.
-	Object *string `json:"object"`
-	// FREEFORM keys only; null when the key has none.
+	// Null when the key has none.
 	Permissions       *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpecPermissionsApiKeyPermissionsSpec `json:"permissions"`
 	Notes             *string                                                                                          `json:"notes"`
 	Status            *ApiKeyStatus                                                                                    `json:"status"`
@@ -48850,11 +48809,6 @@ func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec) GetNam
 // GetType returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec.Type, and is useful for accessing the field via an interface.
 func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec) GetType() *ApiTypeEnum {
 	return v.Type
-}
-
-// GetObject returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec.Object, and is useful for accessing the field via an interface.
-func (v *ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec) GetObject() *string {
-	return v.Object
 }
 
 // GetPermissions returns ExportApiKeysExportApiKeysProgrammaticApiKeysSpecKeysApiKeySpec.Permissions, and is useful for accessing the field via an interface.
@@ -52589,7 +52543,7 @@ func (v *MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret) GetExpi
 
 // MintApiKeySecretResponse is returned by MintApiKeySecret on success.
 type MintApiKeySecretResponse struct {
-	// Mint a secret in slot 1 or 2 of a key, or rotate it (CONFIGURATION_WRITE); the value is returned once.
+	// Mint a secret in slot 1 or 2 of a FREEFORM key, or rotate it (CONFIGURATION_WRITE); the value is returned once.
 	MintApiKeySecretProgrammatic *MintApiKeySecretMintApiKeySecretProgrammaticMintedApiKeySecret `json:"mintApiKeySecretProgrammatic"`
 }
 
@@ -67241,8 +67195,6 @@ fragment DeclaredApiKeyFields on DeclaredApiKey {
 	keyId
 	name
 	type
-	object
-	objectUuid
 	status
 	adminDisabled
 	notes
@@ -67668,8 +67620,6 @@ fragment DeclaredApiKeyFields on DeclaredApiKey {
 	keyId
 	name
 	type
-	object
-	objectUuid
 	status
 	adminDisabled
 	notes
@@ -67997,7 +67947,6 @@ query ExportApiKeys ($keys: [String!]) {
 		keys {
 			name
 			type
-			object
 			permissions {
 				... ApiKeyPermissionsFields
 			}

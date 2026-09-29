@@ -279,7 +279,7 @@ type Mutation {
   applyApiKeysProgrammatic(spec: ApiKeysSpecInput!, dryRun: Boolean, source: DeclarativeSourceInput): DeclarativeApplyResult
   """Deactivate a declared key by name (CONFIGURATION_WRITE): what deleting it from Terraform does."""
   archiveApiKeyProgrammatic(name: String!): DeclaredApiKey
-  """Mint a secret in slot 1 or 2 of a key, or rotate it (CONFIGURATION_WRITE); the value is returned once."""
+  """Mint a secret in slot 1 or 2 of a FREEFORM key, or rotate it (CONFIGURATION_WRITE); the value is returned once."""
   mintApiKeySecretProgrammatic(key: String!, slot: Int!, rotate: Boolean): MintedApiKeySecret
   """
   Programmatic (API-key) upsert of a PullRequest. CI registers the PR
@@ -3472,7 +3472,7 @@ enum DeclarativeKind {
   BRANCHES
   BOARD
   ROLE_PRESETS
-  """An organization's API keys: identity and settings, never a secret (task RD3-11)."""
+  """An organization's FREEFORM API keys: identity and settings, never a secret (task RD3-11)."""
   API_KEYS
 }
 
@@ -7974,8 +7974,8 @@ enum ApiKeyStatus {
 }
 
 """
-An API_KEYS file (task RD3-11): an organization's keys by declared name -- identity and settings, never a
-secret.
+An API_KEYS file (task RD3-11): an organization's FREEFORM keys by declared name -- identity and settings,
+never a secret.
 """
 type ApiKeysSpec {
   kind: DeclarativeKind!
@@ -7986,14 +7986,9 @@ type ApiKeysSpec {
 
 type ApiKeySpec {
   name: String!
+  """FREEFORM: the one type a file declares."""
   type: ApiTypeEnum
-  """
-  COMPONENT keys: the component or product, by name when one active component carries it, else by uuid.
-  """
-  object: String
-  """
-  FREEFORM keys only; null when the key has none.
-  """
+  """Null when the key has none."""
   permissions: ApiKeyPermissionsSpec
   notes: String
   status: ApiKeyStatus
@@ -8030,38 +8025,20 @@ input ApiKeysSpecInput {
   keys: [ApiKeySpecInput!]
 }
 
-"""
-One key. A setting left out is left alone; one sent as null is cleared.
-"""
+"""One key. A setting left out is left alone; one sent as null is cleared."""
 input ApiKeySpecInput {
-  """
-  Unique among the organization's live keys: the key's declared identity.
-  """
+  """Unique among the organization's live keys: the key's declared identity."""
   name: String!
-  """
-  FREEFORM, ORGANIZATION, ORGANIZATION_RW or COMPONENT; required to create, fixed after.
-  """
+  """FREEFORM, the one type a file declares; left out, FREEFORM."""
   type: ApiTypeEnum
-  """
-  COMPONENT keys: the component or product the key serves, by exact name or uuid; fixed after.
-  """
-  object: String
-  """
-  FREEFORM keys: replaces the key's permissions whole.
-  """
+  """Replaces the key's permissions whole."""
   permissions: ApiKeyPermissionsSpecInput
   notes: String
-  """
-  ACTIVE or INACTIVE.
-  """
+  """ACTIVE or INACTIVE."""
   status: ApiKeyStatus
-  """
-  Days a minted secret lives, 1 to 3650; null mints secrets that do not expire.
-  """
+  """Days a minted secret lives, 1 to 3650; null mints secrets that do not expire."""
   secretExpiresDays: Int
-  """
-  FREEFORM keys: bounds device-login sessions approved on the key, in minutes (task RD3-7).
-  """
+  """Bounds device-login sessions approved on the key, in minutes (task RD3-7)."""
   sessionMaxMinutes: Int
 }
 
@@ -8080,31 +8057,21 @@ input ApiKeyObjectPermissionSpecInput {
   approvals: [String!]
 }
 
-"""
-A key as the provider and `rearm apikey list` read it: its declaration, identity and secrets' metadata.
-"""
+"""A key as the provider and `rearm apikey list` read it: its declaration, identity and secrets' metadata."""
 type DeclaredApiKey {
   uuid: ID!
-  """
-  The id a client presents with a secret (REARM_APIKEYID): stable across rotation, not itself a secret.
-  """
+  """The id a client presents with a secret (REARM_APIKEYID): stable across rotation, not itself a secret."""
   keyId: String!
-  """
-  The declared name; null for a key nobody has declared.
-  """
+  """The declared name; null for a key nobody has declared."""
   name: String
   type: ApiTypeEnum
-  object: String
-  objectUuid: ID
   status: ApiKeyStatus
   adminDisabled: Boolean
   notes: String
   permissions: ApiKeyPermissionsSpec
   secretExpiresDays: Int
   sessionMaxMinutes: Int
-  """
-  The key's secrets: slot, state and dates -- never a value or a hash.
-  """
+  """The key's secrets: slot, state and dates -- never a value or a hash."""
   secretSlots: [ApiKeySecretInfo!]
   declarative: DeclarativeProvenance
 }
