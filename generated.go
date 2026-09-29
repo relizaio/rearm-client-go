@@ -37941,6 +37941,10 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAg
 	Usage *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
 	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+	// True when the hop said its round changes nothing to build (sign-off noChange, task RD4-13); null otherwise.
+	NoChange *bool `json:"noChange"`
+	// The findings round this hop answered with a round of its own document (task RD4-13): it answered the work rather than made it. Null otherwise.
+	Answered *string `json:"answered"`
 }
 
 // GetRole returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
@@ -37996,6 +38000,16 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOf
 // GetOverAllowanceMicros returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
 	return v.OverAllowanceMicros
+}
+
+// GetNoChange returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.NoChange, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetNoChange() *bool {
+	return v.NoChange
+}
+
+// GetAnswered returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.Answered, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetAnswered() *string {
+	return v.Answered
 }
 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
@@ -38307,6 +38321,9 @@ type AgentTaskSignOffProgrammaticResponse struct {
 	// seenInputs (task RD2-34): the task's documents the hop read. When given, every document published on the
 	// task since the assignment by anyone but this hop must be in it, or the sign-off is refused naming them; null
 	// skips the check.
+	// noChange (task RD4-13): on a PASSED that answers a finding about the signing role's own document, the new
+	// round changes nothing to build, so the task goes back to the filer rather than to the role that builds
+	// from the round. Recorded on the sign-off; refused on REJECTED.
 	AgentTaskSignOffProgrammatic *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask `json:"agentTaskSignOffProgrammatic"`
 }
 
@@ -57991,6 +58008,7 @@ type __AgentTaskSignOffProgrammaticInput struct {
 	Note        *string             `json:"note"`
 	Outputs     []string            `json:"outputs"`
 	SeenInputs  []string            `json:"seenInputs"`
+	NoChange    *bool               `json:"noChange"`
 }
 
 // GetTaskUuid returns __AgentTaskSignOffProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -58010,6 +58028,9 @@ func (v *__AgentTaskSignOffProgrammaticInput) GetOutputs() []string { return v.O
 
 // GetSeenInputs returns __AgentTaskSignOffProgrammaticInput.SeenInputs, and is useful for accessing the field via an interface.
 func (v *__AgentTaskSignOffProgrammaticInput) GetSeenInputs() []string { return v.SeenInputs }
+
+// GetNoChange returns __AgentTaskSignOffProgrammaticInput.NoChange, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSignOffProgrammaticInput) GetNoChange() *bool { return v.NoChange }
 
 // __AgentTaskSplitProgrammaticInput is used internally by genqlient
 type __AgentTaskSplitProgrammaticInput struct {
@@ -66410,8 +66431,8 @@ func AgentTaskSetTagsProgrammatic(
 
 // The mutation executed by AgentTaskSignOffProgrammatic.
 const AgentTaskSignOffProgrammatic_Operation = `
-mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!]) {
-	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs, seenInputs: $seenInputs) {
+mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!], $noChange: Boolean) {
+	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs, seenInputs: $seenInputs, noChange: $noChange) {
 		key
 		number
 		uuid
@@ -66477,6 +66498,8 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 				... HopUsageFields
 			}
 			overAllowanceMicros
+			noChange
+			answered
 		}
 		returns {
 			role
@@ -66565,6 +66588,7 @@ func AgentTaskSignOffProgrammatic(
 	note *string,
 	outputs []string,
 	seenInputs []string,
+	noChange *bool,
 ) (data_ *AgentTaskSignOffProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskSignOffProgrammatic",
@@ -66576,6 +66600,7 @@ func AgentTaskSignOffProgrammatic(
 			Note:        note,
 			Outputs:     outputs,
 			SeenInputs:  seenInputs,
+			NoChange:    noChange,
 		},
 	}
 
