@@ -185,13 +185,13 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 	role rolePrompt promptVersion hopBudgetMicros
 } }
 
-mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!]) {
-	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs, seenInputs: $seenInputs) {
+mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!], $noChange: Boolean) {
+	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs, seenInputs: $seenInputs, noChange: $noChange) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
-	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros noChange answered }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
