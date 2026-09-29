@@ -409,7 +409,12 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   requiredInputs: [AgentRequiredInputInput]
   requiredStrength: Float
   budgetMicros: Long): AgentTask
-  agentTaskHoldProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: String!): AgentTask
+  """
+  Put a task on hold pending human input. The coordinator seat holds at COORDINATOR level (the default) a task
+  nobody is working. The session holding the task's current assignment parks its own hop at OPERATOR level only
+  (task RD4-5), with the question as the reason; a person's release answers it and the hop resumes.
+  """
+  agentTaskHoldProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: String!, level: AgentTaskHoldLevel): AgentTask
   """
   Release a COORDINATOR-level hold. role, optionally: an active role on the board to route to
   instead of the one routing would pick (task 4c566d0d). note, optionally: why, posted to the board
@@ -497,6 +502,10 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskReleaseAssignmentProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: String!): AgentTask
   agentTaskSplitProgrammatic(taskUuid: ID!, sessionUuid: ID!, children: [AgentTaskSplitChildInput!]!): [AgentTask]
   agentTaskCompleteProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
+  """
+  Cancel a task: the coordinator seat. Or withdraw one (task RD4-5): the session that registered it, while it is
+  PENDING_INTAKE, with the reason as the note (required); refused once the coordinator has authorised it.
+  """
   agentTaskCancelProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
   """
   Coordinator: send a COMPLETED task back to an active role, with a reason -- its delivery cannot

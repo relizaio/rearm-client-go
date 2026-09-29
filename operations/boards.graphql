@@ -240,8 +240,8 @@ mutation AgentTaskAuthorizeProgrammatic (
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
-mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
-	agentTaskHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
+mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!, $level: AgentTaskHoldLevel) {
+	agentTaskHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason, level: $level) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
