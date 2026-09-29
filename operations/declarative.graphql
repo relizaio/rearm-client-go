@@ -177,6 +177,7 @@ query ExportBoard($board: String!) {
       coordinatorStopRelease
       eventRetentionDays
       staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes }
+      ladder { levels { number name description } prompt }
     }
     groups { key name description dependsOn defaultLevel status }
     roles { ...BoardRoleSpecFields }

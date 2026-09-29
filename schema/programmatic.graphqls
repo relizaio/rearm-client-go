@@ -1425,6 +1425,10 @@ type AgentBoard {
   """
   staleness: AgentBoardStaleness
   """
+  The level ladder (task RD3-6); null when the board has none.
+  """
+  ladder: AgentBoardLadder
+  """
   Whether coordinator priority is advisory (LAX, default) or enforced at assignment (STRICT).
   """
   priorityType: AgentBoardPriorityType
@@ -3605,6 +3609,10 @@ type BoardSettingsSpec {
   Staleness thresholds that post ALERTs (task RD3-4); null when every rule is off.
   """
   staleness: AgentBoardStaleness
+  """
+  The level ladder (task RD3-6); null when the board has none.
+  """
+  ladder: AgentBoardLadder
 }
 
 """
@@ -5221,6 +5229,10 @@ input BoardSettingsSpecInput {
   The staleness block (task RD3-4): given, it replaces the board's whole block; null turns every rule off.
   """
   staleness: AgentBoardStalenessInput
+  """
+  The level ladder (task RD3-6): given, it replaces the board's; null removes it, refused while a task carries a level.
+  """
+  ladder: AgentBoardLadderInput
 }
 
 """
@@ -8676,4 +8688,29 @@ type AgentSessionTaskRef {
   board: ID
   """The board's name, so a page names it without reading the boards."""
   boardName: String
+}
+
+"""
+A board's level ladder (task RD3-6), opt-in.
+"""
+type AgentBoardLadder {
+  levels: [AgentBoardLadderLevel]
+  prompt: String
+}
+
+type AgentBoardLadderLevel {
+  number: Int
+  name: String
+  description: String
+}
+
+input AgentBoardLadderInput {
+  levels: [AgentBoardLadderLevelInput!]!
+  prompt: String
+}
+
+input AgentBoardLadderLevelInput {
+  number: Int
+  name: String!
+  description: String
 }
