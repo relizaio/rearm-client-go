@@ -32,6 +32,7 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	effectiveDeliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
 	eventRetentionDays effectiveEventRetentionDays
 	staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes }
+	ladder { levels { number name description } prompt }
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
 } }
@@ -66,6 +67,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	effectiveDeliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
 	eventRetentionDays effectiveEventRetentionDays
 	staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes }
+	ladder { levels { number name description } prompt }
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
 } }
@@ -220,8 +222,11 @@ mutation AgentTaskAuthorizeProgrammatic (
 	# @genqlient(omitempty: true)
 	$requiredStrength: Float,
 	# @genqlient(omitempty: true)
-	$budgetMicros: Long) {
-	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength, budgetMicros: $budgetMicros) {
+	$budgetMicros: Long,
+	# The task's level on the board's ladder (task RD3-6); left out, the task keeps its own or the default.
+	# @genqlient(omitempty: true)
+	$level: Int) {
+	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength, budgetMicros: $budgetMicros, level: $level) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups requiredStrength
 	budgetMicros budgetSetBy { ...ActorFields } budgetSetAt
 	dependsOn requireHumanReview
