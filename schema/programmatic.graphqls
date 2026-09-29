@@ -1455,6 +1455,52 @@ type AgentBoard {
   spendBreakdown(
   from: DateTime
   to: DateTime): BoardSpendBreakdown
+  """
+  Who works the board (task RD3-5): every session that worked or polled it, open ones first, then closed,
+  each by last activity, newest first. Spend and cache share are for the window.
+  """
+  agents(
+  from: DateTime
+  to: DateTime): [BoardAgentRow]
+}
+
+"""
+One session on a board's Agents tab (task RD3-5).
+"""
+type BoardAgentRow {
+  session: ID
+  agent: ID
+  agentName: String
+  roles: [String]
+  state: BoardAgentState
+  lastPollAt: DateTime
+  lastOfferAt: DateTime
+  lastActivityAt: DateTime
+  tasksCompleted: Int
+  tokens: UsageTotals
+  costMicros: Long
+  cacheShare: Float
+  stale: [BoardAgentStaleMark]
+}
+
+enum BoardAgentStateKind {
+  WORKING
+  WAITING
+  IDLE
+  CLOSED
+}
+
+type BoardAgentState {
+  kind: BoardAgentStateKind
+  taskUuid: ID
+  taskKey: String
+  since: DateTime
+  closedBy: AgentActor
+}
+
+type BoardAgentStaleMark {
+  rule: String
+  message: String
 }
 
 """
