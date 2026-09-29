@@ -2464,6 +2464,8 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	EffectiveEventRetentionDays *int `json:"effectiveEventRetentionDays"`
 	// Staleness thresholds that post ALERTs (task RD3-4); null when every rule is off.
 	Staleness *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardStaleness `json:"staleness"`
+	// The level ladder (task RD3-6); null when the board has none.
+	Ladder *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadder `json:"ladder"`
 	// The board file that last applied to this board; null on a board never applied from a file.
 	Declarative *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeclarativeDeclarativeProvenance `json:"declarative"`
 	CreatedDate *string                                                                                 `json:"createdDate"`
@@ -2699,6 +2701,11 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetEffectiveEve
 // GetStaleness returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Staleness, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetStaleness() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardStaleness {
 	return v.Staleness
+}
+
+// GetLadder returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Ladder, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetLadder() *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadder {
+	return v.Ladder
 }
 
 // GetDeclarative returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.Declarative, and is useful for accessing the field via an interface.
@@ -3257,6 +3264,47 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupPr
 // GetComplete returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress.Complete, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskGroupProgress) GetComplete() *bool {
 	return v.Complete
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadder includes the requested fields of the GraphQL type AgentBoardLadder.
+// The GraphQL type's documentation follows.
+//
+// A board's level ladder (task RD3-6), opt-in.
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadder struct {
+	Levels []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel `json:"levels"`
+	Prompt *string                                                                                    `json:"prompt"`
+}
+
+// GetLevels returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadder.Levels, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadder) GetLevels() []*AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel {
+	return v.Levels
+}
+
+// GetPrompt returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadder.Prompt, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadder) GetPrompt() *string {
+	return v.Prompt
+}
+
+// AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel includes the requested fields of the GraphQL type AgentBoardLadderLevel.
+type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel struct {
+	Number      *int    `json:"number"`
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+}
+
+// GetNumber returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel.Number, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel) GetNumber() *int {
+	return v.Number
+}
+
+// GetName returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel) GetName() *string {
+	return v.Name
+}
+
+// GetDescription returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel.Description, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel) GetDescription() *string {
+	return v.Description
 }
 
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardLock includes the requested fields of the GraphQL type AgentBoardLock.
@@ -4484,6 +4532,8 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	EffectiveEventRetentionDays *int `json:"effectiveEventRetentionDays"`
 	// Staleness thresholds that post ALERTs (task RD3-4); null when every rule is off.
 	Staleness *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardStaleness `json:"staleness"`
+	// The level ladder (task RD3-6); null when the board has none.
+	Ladder *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadder `json:"ladder"`
 	// The board file that last applied to this board; null on a board never applied from a file.
 	Declarative *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeclarativeDeclarativeProvenance `json:"declarative"`
 	CreatedDate *string                                                                                   `json:"createdDate"`
@@ -4711,6 +4761,11 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetEffectiveE
 // GetStaleness returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Staleness, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetStaleness() *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardStaleness {
 	return v.Staleness
+}
+
+// GetLadder returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Ladder, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetLadder() *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadder {
+	return v.Ladder
 }
 
 // GetDeclarative returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.Declarative, and is useful for accessing the field via an interface.
@@ -5167,6 +5222,47 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEventsAgentBoar
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadder includes the requested fields of the GraphQL type AgentBoardLadder.
+// The GraphQL type's documentation follows.
+//
+// A board's level ladder (task RD3-6), opt-in.
+type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadder struct {
+	Levels []*AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel `json:"levels"`
+	Prompt *string                                                                                      `json:"prompt"`
+}
+
+// GetLevels returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadder.Levels, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadder) GetLevels() []*AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel {
+	return v.Levels
+}
+
+// GetPrompt returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadder.Prompt, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadder) GetPrompt() *string {
+	return v.Prompt
+}
+
+// AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel includes the requested fields of the GraphQL type AgentBoardLadderLevel.
+type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel struct {
+	Number      *int    `json:"number"`
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+}
+
+// GetNumber returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel.Number, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel) GetNumber() *int {
+	return v.Number
+}
+
+// GetName returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel) GetName() *string {
+	return v.Name
+}
+
+// GetDescription returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel.Description, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLadderLevelsAgentBoardLadderLevel) GetDescription() *string {
+	return v.Description
 }
 
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardLock includes the requested fields of the GraphQL type AgentBoardLock.
@@ -49508,6 +49604,8 @@ type ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec struct
 	EventRetentionDays *int `json:"eventRetentionDays"`
 	// Staleness thresholds that post ALERTs (task RD3-4); null when every rule is off.
 	Staleness *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecStalenessAgentBoardStaleness `json:"staleness"`
+	// The level ladder (task RD3-6); null when the board has none.
+	Ladder *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadder `json:"ladder"`
 }
 
 // GetBudgetMicros returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.BudgetMicros, and is useful for accessing the field via an interface.
@@ -49558,6 +49656,52 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) G
 // GetStaleness returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.Staleness, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetStaleness() *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecStalenessAgentBoardStaleness {
 	return v.Staleness
+}
+
+// GetLadder returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.Ladder, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetLadder() *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadder {
+	return v.Ladder
+}
+
+// ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadder includes the requested fields of the GraphQL type AgentBoardLadder.
+// The GraphQL type's documentation follows.
+//
+// A board's level ladder (task RD3-6), opt-in.
+type ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadder struct {
+	Levels []*ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadderLevelsAgentBoardLadderLevel `json:"levels"`
+	Prompt *string                                                                                                                  `json:"prompt"`
+}
+
+// GetLevels returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadder.Levels, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadder) GetLevels() []*ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadderLevelsAgentBoardLadderLevel {
+	return v.Levels
+}
+
+// GetPrompt returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadder.Prompt, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadder) GetPrompt() *string {
+	return v.Prompt
+}
+
+// ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadderLevelsAgentBoardLadderLevel includes the requested fields of the GraphQL type AgentBoardLadderLevel.
+type ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadderLevelsAgentBoardLadderLevel struct {
+	Number      *int    `json:"number"`
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+}
+
+// GetNumber returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadderLevelsAgentBoardLadderLevel.Number, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadderLevelsAgentBoardLadderLevel) GetNumber() *int {
+	return v.Number
+}
+
+// GetName returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadderLevelsAgentBoardLadderLevel.Name, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadderLevelsAgentBoardLadderLevel) GetName() *string {
+	return v.Name
+}
+
+// GetDescription returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadderLevelsAgentBoardLadderLevel.Description, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecLadderAgentBoardLadderLevelsAgentBoardLadderLevel) GetDescription() *string {
+	return v.Description
 }
 
 // ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpecStalenessAgentBoardStaleness includes the requested fields of the GraphQL type AgentBoardStaleness.
@@ -56858,6 +57002,7 @@ type __AgentTaskAuthorizeProgrammaticInput struct {
 	DependsOn        []string `json:"dependsOn"`
 	RequiredStrength *float64 `json:"requiredStrength,omitempty"`
 	BudgetMicros     *int64   `json:"budgetMicros,omitempty"`
+	Level            *int     `json:"level,omitempty"`
 }
 
 // GetTaskUuid returns __AgentTaskAuthorizeProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -56882,6 +57027,9 @@ func (v *__AgentTaskAuthorizeProgrammaticInput) GetRequiredStrength() *float64 {
 
 // GetBudgetMicros returns __AgentTaskAuthorizeProgrammaticInput.BudgetMicros, and is useful for accessing the field via an interface.
 func (v *__AgentTaskAuthorizeProgrammaticInput) GetBudgetMicros() *int64 { return v.BudgetMicros }
+
+// GetLevel returns __AgentTaskAuthorizeProgrammaticInput.Level, and is useful for accessing the field via an interface.
+func (v *__AgentTaskAuthorizeProgrammaticInput) GetLevel() *int { return v.Level }
 
 // __AgentTaskBindExternalRefProgrammaticInput is used internally by genqlient
 type __AgentTaskBindExternalRefProgrammaticInput struct {
@@ -59111,6 +59259,14 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 			seatSilentMinutes
 			repeatMinutes
 		}
+		ladder {
+			levels {
+				number
+				name
+				description
+			}
+			prompt
+		}
 		declarative {
 			specHash
 			appliedAt
@@ -59505,6 +59661,14 @@ query AgentBoardsProgrammatic {
 			deliveryStuckMinutes
 			seatSilentMinutes
 			repeatMinutes
+		}
+		ladder {
+			levels {
+				number
+				name
+				description
+			}
+			prompt
 		}
 		declarative {
 			specHash
@@ -60316,8 +60480,8 @@ func AgentTaskAuthorize(
 
 // The mutation executed by AgentTaskAuthorizeProgrammatic.
 const AgentTaskAuthorizeProgrammatic_Operation = `
-mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!], $requiredStrength: Float, $budgetMicros: Long) {
-	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength, budgetMicros: $budgetMicros) {
+mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!], $requiredStrength: Float, $budgetMicros: Long, $level: Int) {
+	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength, budgetMicros: $budgetMicros, level: $level) {
 		key
 		number
 		uuid
@@ -60456,6 +60620,7 @@ func AgentTaskAuthorizeProgrammatic(
 	dependsOn []string,
 	requiredStrength *float64,
 	budgetMicros *int64,
+	level *int,
 ) (data_ *AgentTaskAuthorizeProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskAuthorizeProgrammatic",
@@ -60468,6 +60633,7 @@ func AgentTaskAuthorizeProgrammatic(
 			DependsOn:        dependsOn,
 			RequiredStrength: requiredStrength,
 			BudgetMicros:     budgetMicros,
+			Level:            level,
 		},
 	}
 
@@ -68067,6 +68233,14 @@ query ExportBoard ($board: String!) {
 				deliveryStuckMinutes
 				seatSilentMinutes
 				repeatMinutes
+			}
+			ladder {
+				levels {
+					number
+					name
+					description
+				}
+				prompt
 			}
 		}
 		groups {
