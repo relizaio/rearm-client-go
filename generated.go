@@ -1555,6 +1555,58 @@ func (v *AgentBoardCoordinatorLockProgrammaticResponse) GetAgentBoardCoordinator
 	return v.AgentBoardCoordinatorLockProgrammatic
 }
 
+// AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
+type AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoard struct {
+	Uuid *string `json:"uuid"`
+	// Every effective family prefix with the specification types that define its ids, in order of precedence
+	// (grammar 1.2, elements.md §1.1): the board's own list where it sets one, else the family's default.
+	EffectiveElementFamilyEntries []*AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoardEffectiveElementFamilyEntriesElementFamilyEntry `json:"effectiveElementFamilyEntries"`
+}
+
+// GetUuid returns AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoard.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoard) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetEffectiveElementFamilyEntries returns AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoard.EffectiveElementFamilyEntries, and is useful for accessing the field via an interface.
+func (v *AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoard) GetEffectiveElementFamilyEntries() []*AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoardEffectiveElementFamilyEntriesElementFamilyEntry {
+	return v.EffectiveElementFamilyEntries
+}
+
+// AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoardEffectiveElementFamilyEntriesElementFamilyEntry includes the requested fields of the GraphQL type ElementFamilyEntry.
+type AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoardEffectiveElementFamilyEntriesElementFamilyEntry struct {
+	Prefix string `json:"prefix"`
+	Family string `json:"family"`
+	// In order of precedence: a document of an earlier type that defines an id owns it; empty means references only.
+	DefinedIn []SpecificationType `json:"definedIn"`
+}
+
+// GetPrefix returns AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoardEffectiveElementFamilyEntriesElementFamilyEntry.Prefix, and is useful for accessing the field via an interface.
+func (v *AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoardEffectiveElementFamilyEntriesElementFamilyEntry) GetPrefix() string {
+	return v.Prefix
+}
+
+// GetFamily returns AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoardEffectiveElementFamilyEntriesElementFamilyEntry.Family, and is useful for accessing the field via an interface.
+func (v *AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoardEffectiveElementFamilyEntriesElementFamilyEntry) GetFamily() string {
+	return v.Family
+}
+
+// GetDefinedIn returns AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoardEffectiveElementFamilyEntriesElementFamilyEntry.DefinedIn, and is useful for accessing the field via an interface.
+func (v *AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoardEffectiveElementFamilyEntriesElementFamilyEntry) GetDefinedIn() []SpecificationType {
+	return v.DefinedIn
+}
+
+// AgentBoardElementFamilyEntriesResponse is returned by AgentBoardElementFamilyEntries on success.
+type AgentBoardElementFamilyEntriesResponse struct {
+	// Agent-key auth: one board (includes coordinatorPrompt and lock state).
+	AgentBoardProgrammatic *AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoard `json:"agentBoardProgrammatic"`
+}
+
+// GetAgentBoardProgrammatic returns AgentBoardElementFamilyEntriesResponse.AgentBoardProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentBoardElementFamilyEntriesResponse) GetAgentBoardProgrammatic() *AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoard {
+	return v.AgentBoardProgrammatic
+}
+
 type AgentBoardEventKind string
 
 const (
@@ -5736,6 +5788,109 @@ var AllAgentCapability = []AgentCapability{
 	AgentCapabilityTrackerWrite,
 	AgentCapabilityCodePush,
 	AgentCapabilityPrMerge,
+}
+
+// AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport includes the requested fields of the GraphQL type CheckReport.
+// The GraphQL type's documentation follows.
+//
+// What the named element checks found on one document (elements.md §7). Deterministic: the same
+// scope gives the same report, and the digest is its identity.
+type AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport struct {
+	CheckReportFields `json:"-"`
+}
+
+// GetCatalogueVersion returns AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport.CatalogueVersion, and is useful for accessing the field via an interface.
+func (v *AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport) GetCatalogueVersion() *string {
+	return v.CheckReportFields.CatalogueVersion
+}
+
+// GetGrammarVersion returns AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport.GrammarVersion, and is useful for accessing the field via an interface.
+func (v *AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport) GetGrammarVersion() *string {
+	return v.CheckReportFields.GrammarVersion
+}
+
+// GetDigest returns AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport.Digest, and is useful for accessing the field via an interface.
+func (v *AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport) GetDigest() *string {
+	return v.CheckReportFields.Digest
+}
+
+// GetScope returns AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport.Scope, and is useful for accessing the field via an interface.
+func (v *AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport) GetScope() *CheckReportFieldsScopeCheckScope {
+	return v.CheckReportFields.Scope
+}
+
+// GetResults returns AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport.Results, and is useful for accessing the field via an interface.
+func (v *AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport) GetResults() []*CheckReportFieldsResultsCheckResult {
+	return v.CheckReportFields.Results
+}
+
+func (v *AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.CheckReportFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport struct {
+	CatalogueVersion *string `json:"catalogueVersion"`
+
+	GrammarVersion *string `json:"grammarVersion"`
+
+	Digest *string `json:"digest"`
+
+	Scope *CheckReportFieldsScopeCheckScope `json:"scope"`
+
+	Results []*CheckReportFieldsResultsCheckResult `json:"results"`
+}
+
+func (v *AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport) __premarshalJSON() (*__premarshalAgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport, error) {
+	var retval __premarshalAgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport
+
+	retval.CatalogueVersion = v.CheckReportFields.CatalogueVersion
+	retval.GrammarVersion = v.CheckReportFields.GrammarVersion
+	retval.Digest = v.CheckReportFields.Digest
+	retval.Scope = v.CheckReportFields.Scope
+	retval.Results = v.CheckReportFields.Results
+	return &retval, nil
+}
+
+// AgentCheckPreviewProgrammaticResponse is returned by AgentCheckPreviewProgrammatic on success.
+type AgentCheckPreviewProgrammaticResponse struct {
+	// The element checks a publish of this index would run on the task, in its current scope, with nothing created
+	// (task RD4-6): what `rearm agent doc publish --check` prints. elements is the index JSON exactly as doc publish
+	// would send it; elementsDigest, when given, must match it. The report's checked release is the nil uuid.
+	AgentCheckPreviewProgrammatic *AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport `json:"agentCheckPreviewProgrammatic"`
+}
+
+// GetAgentCheckPreviewProgrammatic returns AgentCheckPreviewProgrammaticResponse.AgentCheckPreviewProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentCheckPreviewProgrammaticResponse) GetAgentCheckPreviewProgrammatic() *AgentCheckPreviewProgrammaticAgentCheckPreviewProgrammaticCheckReport {
+	return v.AgentCheckPreviewProgrammatic
 }
 
 // AgentCheckReportProgrammaticAgentCheckReportProgrammaticRelease includes the requested fields of the GraphQL type Release.
@@ -57141,6 +57296,14 @@ func (v *__AgentBoardCoordinatorLockProgrammaticInput) GetLock() bool { return v
 // GetReason returns __AgentBoardCoordinatorLockProgrammaticInput.Reason, and is useful for accessing the field via an interface.
 func (v *__AgentBoardCoordinatorLockProgrammaticInput) GetReason() *string { return v.Reason }
 
+// __AgentBoardElementFamilyEntriesInput is used internally by genqlient
+type __AgentBoardElementFamilyEntriesInput struct {
+	BoardUuid string `json:"boardUuid"`
+}
+
+// GetBoardUuid returns __AgentBoardElementFamilyEntriesInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentBoardElementFamilyEntriesInput) GetBoardUuid() string { return v.BoardUuid }
+
 // __AgentBoardEventsProgrammaticInput is used internally by genqlient
 type __AgentBoardEventsProgrammaticInput struct {
 	BoardUuid string  `json:"boardUuid"`
@@ -57284,6 +57447,32 @@ type __AgentBoardsOfOrgInput struct {
 
 // GetOrgUuid returns __AgentBoardsOfOrgInput.OrgUuid, and is useful for accessing the field via an interface.
 func (v *__AgentBoardsOfOrgInput) GetOrgUuid() string { return v.OrgUuid }
+
+// __AgentCheckPreviewProgrammaticInput is used internally by genqlient
+type __AgentCheckPreviewProgrammaticInput struct {
+	SessionUuid    string            `json:"sessionUuid"`
+	TaskUuid       string            `json:"taskUuid"`
+	Specification  SpecificationType `json:"specification"`
+	Elements       string            `json:"elements"`
+	ElementsDigest *string           `json:"elementsDigest"`
+}
+
+// GetSessionUuid returns __AgentCheckPreviewProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__AgentCheckPreviewProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetTaskUuid returns __AgentCheckPreviewProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentCheckPreviewProgrammaticInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetSpecification returns __AgentCheckPreviewProgrammaticInput.Specification, and is useful for accessing the field via an interface.
+func (v *__AgentCheckPreviewProgrammaticInput) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetElements returns __AgentCheckPreviewProgrammaticInput.Elements, and is useful for accessing the field via an interface.
+func (v *__AgentCheckPreviewProgrammaticInput) GetElements() string { return v.Elements }
+
+// GetElementsDigest returns __AgentCheckPreviewProgrammaticInput.ElementsDigest, and is useful for accessing the field via an interface.
+func (v *__AgentCheckPreviewProgrammaticInput) GetElementsDigest() *string { return v.ElementsDigest }
 
 // __AgentCheckReportProgrammaticInput is used internally by genqlient
 type __AgentCheckReportProgrammaticInput struct {
@@ -59253,6 +59442,48 @@ func AgentBoardCoordinatorLockProgrammatic(
 	return data_, err_
 }
 
+// The query executed by AgentBoardElementFamilyEntries.
+const AgentBoardElementFamilyEntries_Operation = `
+query AgentBoardElementFamilyEntries ($boardUuid: ID!) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		effectiveElementFamilyEntries {
+			prefix
+			family
+			definedIn
+		}
+	}
+}
+`
+
+// A board's element families with the types that define their ids (grammar 1.2, task RD4-6). Its own
+// operation rather than a field of the board reads, so a client reading boards keeps working against a
+// server older than grammar 1.2, which refuses the field.
+func AgentBoardElementFamilyEntries(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+) (data_ *AgentBoardElementFamilyEntriesResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentBoardElementFamilyEntries",
+		Query:  AgentBoardElementFamilyEntries_Operation,
+		Variables: &__AgentBoardElementFamilyEntriesInput{
+			BoardUuid: boardUuid,
+		},
+	}
+
+	data_ = &AgentBoardElementFamilyEntriesResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The query executed by AgentBoardEventsProgrammatic.
 const AgentBoardEventsProgrammatic_Operation = `
 query AgentBoardEventsProgrammatic ($boardUuid: ID!, $after: Long, $since: DateTime, $limit: Int) {
@@ -60215,6 +60446,77 @@ func AgentBoardsProgrammatic(
 	}
 
 	data_ = &AgentBoardsProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentCheckPreviewProgrammatic.
+const AgentCheckPreviewProgrammatic_Operation = `
+query AgentCheckPreviewProgrammatic ($sessionUuid: ID!, $taskUuid: ID!, $specification: SpecificationType!, $elements: String!, $elementsDigest: String) {
+	agentCheckPreviewProgrammatic(sessionUuid: $sessionUuid, taskUuid: $taskUuid, specification: $specification, elements: $elements, elementsDigest: $elementsDigest) {
+		... CheckReportFields
+	}
+}
+fragment CheckReportFields on CheckReport {
+	catalogueVersion
+	grammarVersion
+	digest
+	scope {
+		task
+		checked
+		releases {
+			release
+			specification
+			elementsDigest
+			lifecycle
+		}
+	}
+	results {
+		check
+		result
+		blocking
+		reason
+		offences {
+			elementId
+			release
+			message
+		}
+	}
+}
+`
+
+// What a publish of this element index would be checked for, in the task's current scope, with nothing
+// created (task RD4-6): `rearm agent doc publish --check`. elements is the index JSON exactly as the
+// publish sends it; the report's checked release is the nil uuid.
+func AgentCheckPreviewProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	sessionUuid string,
+	taskUuid string,
+	specification SpecificationType,
+	elements string,
+	elementsDigest *string,
+) (data_ *AgentCheckPreviewProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentCheckPreviewProgrammatic",
+		Query:  AgentCheckPreviewProgrammatic_Operation,
+		Variables: &__AgentCheckPreviewProgrammaticInput{
+			SessionUuid:    sessionUuid,
+			TaskUuid:       taskUuid,
+			Specification:  specification,
+			Elements:       elements,
+			ElementsDigest: elementsDigest,
+		},
+	}
+
+	data_ = &AgentCheckPreviewProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

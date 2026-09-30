@@ -186,6 +186,17 @@ roles: the roles this agent can take, each a role name on the board
   agentCheckReportProgrammatic(
   releaseUuid: ID!): Release
   """
+  The element checks a publish of this index would run on the task, in its current scope, with nothing created
+  (task RD4-6): what `rearm agent doc publish --check` prints. elements is the index JSON exactly as doc publish
+  would send it; elementsDigest, when given, must match it. The report's checked release is the nil uuid.
+  """
+  agentCheckPreviewProgrammatic(
+  sessionUuid: ID!
+  taskUuid: ID!
+  specification: SpecificationType!
+  elements: String!
+  elementsDigest: String): CheckReport
+  """
   The element check catalogue (elements.md §7): every fixed check with what it means and when it
   skips, and the coverage.<gate> pattern the board's gates are named by. Served on both endpoints.
   """
@@ -1334,6 +1345,11 @@ type AgentBoard {
   The defaults with this board's entries over them: what the CLI parses documents against (gaps §2.A).
   """
   effectiveElementFamilies: Object
+  """
+  Every effective family prefix with the specification types that define its ids, in order of precedence
+  (grammar 1.2, elements.md §1.1): the board's own list where it sets one, else the family's default.
+  """
+  effectiveElementFamilyEntries: [ElementFamilyEntry!]
   """
   The element check policy as this board declared it; null when it uses the defaults (elements.md §7).
   """
@@ -7208,15 +7224,45 @@ warnings on the index; nothing here refuses a publish.
 """
 type ElementIndex {
   """
-  The grammar the parser implemented; "1".
+  The grammar the parser implemented: "1", "1.1" or "1.2".
   """
   grammarVersion: String
+  """
+  The elements the document defines; under grammar 1.2 only those in a type their family lists.
+  """
   elements: [Element]
   warnings: [ElementWarning]
   """
   sha256 of the JSON the CLI sent, tying the index to one parse of the file.
   """
   digest: String
+  """
+  Grammar 1.2: headings and table rows naming an id the document does not define, because its family is defined
+  in other document types. Empty before 1.2.
+  """
+  references: [ElementReference]
+}
+
+type ElementReference {
+  id: String
+  """
+  The family name the board maps the id's prefix to; null for an unknown family.
+  """
+  family: String
+  title: String
+  """
+  1-based line of the heading or table row.
+  """
+  line: Int
+}
+
+type ElementFamilyEntry {
+  prefix: String!
+  family: String!
+  """
+  In order of precedence: a document of an earlier type that defines an id owns it; empty means references only.
+  """
+  definedIn: [SpecificationType!]!
 }
 
 type ArtifactComparison {
