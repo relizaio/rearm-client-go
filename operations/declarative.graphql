@@ -134,6 +134,7 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
   requiredCapabilities
   requiredInputs { kind specification scope component minLifecycle resolution }
   producesOutputs { specification scope required }
+  commissions { roles intake defaultBudgetMicros review }
   hopBudgetMicros
   blindReview
   strength {
@@ -176,7 +177,7 @@ query ExportBoard($board: String!) {
       humanQueueAgeMinutes
       coordinatorStopRelease
       eventRetentionDays
-      staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes }
+      staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes investigationOverdueMinutes }
       ladder { levels { number name description } prompt }
     }
     groups { key name description dependsOn defaultLevel status }

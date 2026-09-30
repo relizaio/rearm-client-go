@@ -29,10 +29,19 @@ type Query {
   Export the key's organization's role presets as a presets file (CONFIGURATION_READ).
   """
   agentRolePresetsSpecProgrammatic: RolePresetsSpec
-  """Export the organization's declared API keys as an API_KEYS file (CONFIGURATION_WRITE); with keys, only those names."""
-  exportApiKeysProgrammatic(keys: [String!]): ApiKeysSpec
-  """The organization's API keys with their key ids and secrets' metadata, never a value (CONFIGURATION_WRITE)."""
-  apiKeysProgrammatic(keys: [String!]): [DeclaredApiKey!]
+  """
+  Export the organization's declared API keys as an API_KEYS file (CONFIGURATION_WRITE); with keys, only
+  those names, and the file is not authoritative. No secret and no secret metadata is in it.
+  """
+  exportApiKeysProgrammatic(
+  keys: [String!]): ApiKeysSpec
+  """
+  The organization's API keys as the provider and `rearm apikey list` read them (CONFIGURATION_WRITE): with
+  keys, the ones declared under those names; without, every live key, declared or not. Each with its key id
+  and its secrets' metadata -- never a value.
+  """
+  apiKeysProgrammatic(
+  keys: [String!]): [DeclaredApiKey!]
   release(releaseUuid: ID!, orgUuid: ID): Release
   getSbomProbingResult(runId: String!): SbomProbingResult
   getReleaseByHashProgrammatic(hash: String!, componentId: ID): String
@@ -286,12 +295,32 @@ type Mutation {
   """
   archiveBoardProgrammatic(
   name: String!): AgentBoard
-  """Apply an API_KEYS file (CONFIGURATION_WRITE): identity and settings by declared name, never a secret."""
-  applyApiKeysProgrammatic(spec: ApiKeysSpecInput!, dryRun: Boolean, source: DeclarativeSourceInput): DeclarativeApplyResult
-  """Deactivate a declared key by name (CONFIGURATION_WRITE): what deleting it from Terraform does."""
-  archiveApiKeyProgrammatic(name: String!): DeclaredApiKey
-  """Mint a secret in slot 1 or 2 of a FREEFORM key, or rotate it (CONFIGURATION_WRITE); the value is returned once."""
-  mintApiKeySecretProgrammatic(key: String!, slot: Int!, rotate: Boolean): MintedApiKeySecret
+  """
+  Apply an API_KEYS file (CONFIGURATION_WRITE), keyed by each key's declared name: identity and settings
+  only, never a secret; a key it creates has none. A caller declares only keys no stronger than itself.
+  Per key: one that fails is one ERROR line, the others land. dryRun writes nothing.
+  """
+  applyApiKeysProgrammatic(
+  spec: ApiKeysSpecInput!
+  dryRun: Boolean
+  source: DeclarativeSourceInput): DeclarativeApplyResult
+  """
+  Deactivate a declared key by name (CONFIGURATION_WRITE): what deleting it from Terraform does. The row, its
+  name and its secrets stay; declaring the name again takes the key back.
+  """
+  archiveApiKeyProgrammatic(
+  name: String!): DeclaredApiKey
+  """
+  Mint a secret in slot 1 or 2 of a FREEFORM key (CONFIGURATION_WRITE), named by its declared name, key id or uuid:
+  an empty slot is minted; a slot that holds a secret is left alone (minted false, no value), or regenerated
+  with rotate. The value is returned once here and stored hashed; its expiry follows the key's
+  secretExpiresDays. Only for a declared key (a hand-made one once an org admin declares it), no stronger than
+  the caller, and not one a person holds.
+  """
+  mintApiKeySecretProgrammatic(
+  key: String!
+  slot: Int!
+  rotate: Boolean): MintedApiKeySecret
   """
   Programmatic (API-key) upsert of a PullRequest. CI registers the PR
   row independently of release creation so the registration survives
@@ -404,6 +433,14 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskRoleConfigSetProgrammatic(boardUuid: ID!, sessionUuid: ID!, input: AgentTaskRoleConfigInput!): AgentTaskRoleConfig
   agentTaskRegisterProgrammatic(input: AgentTaskRegisterInput!): AgentTask
   """
+  Commission an investigation (task RD4-12): a new INVESTIGATION task for a role that produces
+  INVESTIGATION_REPORT. With sessionUuid, the session commissions from the task it holds (fromTask), in that
+  task's role, a role its commissions name (BOARD_AGENT on the board). Without one, the key commissions as a
+  person would (BOARD_WRITE on the board). Its report comes back pinned on fromTask.
+  """
+  agentTaskCommissionProgrammatic(
+  input: AgentTaskCommissionInput!): AgentTask
+  """
   requiredStrength: raise the model strength this task needs above what its role usually asks,
   for work harder than the role usually is. Raise only: at least the task's current requirement
   (its override, else the role's floor); lower values and null are refused -- people lower it
@@ -421,11 +458,20 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   requiredStrength: Float
   budgetMicros: Long): AgentTask
   """
-  Put a task on hold pending human input. The coordinator seat holds at COORDINATOR level (the default) a task
-  nobody is working. The session holding the task's current assignment parks its own hop at OPERATOR level only
-  (task RD4-5), with the question as the reason; a person's release answers it and the hop resumes.
+  Put a task on hold pending human input (excluded from polls, no effect on other tasks). Two callers:
+  
+- the coordinator seat, at COORDINATOR level (the default), on a task nobody is working; its release
+    returns the task to the loop;
+  - the session holding the task's current assignment, at OPERATOR level only (task RD4-5), with the question
+    for the person as the reason: the task shows "awaiting the operator: <question>", the board's writers are
+    told, and the hop stays assigned to the session. A person releases it with the answer as the note, which
+    is recorded on the task, and the hop resumes with its holder.
   """
-  agentTaskHoldProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: String!, level: AgentTaskHoldLevel): AgentTask
+  agentTaskHoldProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  reason: String!
+  level: AgentTaskHoldLevel): AgentTask
   """
   Release a COORDINATOR-level hold. role, optionally: an active role on the board to route to
   instead of the one routing would pick (task 4c566d0d). note, optionally: why, posted to the board
@@ -454,7 +500,9 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   note: String): AgentTask
   """
   Declare a linked PR superseded by its replacement (task RD3-13): oldUrl closed without merging, byUrl linked
-  to the task and on the same repository. The session holding the task in a role with CODE_PUSH.
+  to the task and on the same repository. Recorded as a SUPERSEDED attestation of oldUrl naming byUrl; delivery
+  then counts byUrl and treats oldUrl as absent. The session holding the task in a role with CODE_PUSH, the
+  board's coordinator seat, or a key holding BOARD_WRITE on the board (task RD3-18).
   """
   agentTaskSupersedePullRequestProgrammatic(
   taskUuid: ID!
@@ -487,6 +535,13 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   sessionUuid: ID!
   level: Int): AgentTask
   """
+  The coordinator seat releases an ASSIGNED task back to QUEUED for the same role, with a reason (task RD3-4).
+  """
+  agentTaskReleaseAssignmentProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  reason: String!): AgentTask
+  """
   The coordinator seat creates or edits a group of its board, by key (task RD2-29).
   """
   agentBoardGroupSetProgrammatic(
@@ -507,17 +562,17 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   taskUuid: ID!
   sessionUuid: ID!
   tags: [TagRecordInput!]!): AgentTask
-  """
-  The coordinator seat releases an ASSIGNED task back to QUEUED for the same role, with a reason (task RD3-4).
-  """
-  agentTaskReleaseAssignmentProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: String!): AgentTask
   agentTaskSplitProgrammatic(taskUuid: ID!, sessionUuid: ID!, children: [AgentTaskSplitChildInput!]!): [AgentTask]
   agentTaskCompleteProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
   """
-  Cancel a task: the coordinator seat. Or withdraw one (task RD4-5): the session that registered it, while it is
-  PENDING_INTAKE, with the reason as the note (required); refused once the coordinator has authorised it.
+  Cancel a task: the coordinator seat, in any state but completed. Or withdraw one (task RD4-5): the session that
+  registered it, while it is PENDING_INTAKE, with the reason as the note (required); refused once the coordinator
+  has authorised it.
   """
-  agentTaskCancelProgrammatic(taskUuid: ID!, sessionUuid: ID!, note: String): AgentTask
+  agentTaskCancelProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  note: String): AgentTask
   """
   Coordinator: send a COMPLETED task back to an active role, with a reason -- its delivery cannot
   land, e.g. its PR no longer merges. The role's earlier passes stop counting; whoever read its
@@ -548,7 +603,15 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   CODE_PUSH is refused when no linked PR in play moved since the assignment ("no linked PR moved since your
   assignment"); noCode passes it and is recorded on the sign-off. Refused on REJECTED.
   """
-  agentTaskSignOffProgrammatic(taskUuid: ID!, sessionUuid: ID!, outcome: AgentSignOffOutcome!, note: String, outputs: [ID!], seenInputs: [ID!], noChange: Boolean, noCode: Boolean): AgentTask
+  agentTaskSignOffProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  outcome: AgentSignOffOutcome!
+  note: String
+  outputs: [ID!]
+  seenInputs: [ID!]
+  noChange: Boolean
+  noCode: Boolean): AgentTask
   agentTaskReturnProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: AgentTaskReturnReason!, description: String, outputs: [ID!]): AgentTask
   agentDocumentPublishProgrammatic(input: AgentDocumentPublishInput!): Release
   agentTaskBindExternalRefProgrammatic(taskUuid: ID!, externalRef: String!, sourceUrl: String): AgentTask
@@ -601,6 +664,8 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   Operator manual hold (OPERATOR level; the coordinator cannot lift it) or release. HUMAN_GATE holds resolve via
   agentTaskHumanReview, not here. On a release, role optionally names an active role to route to instead of the one
   routing would pick; a release of a no-progress or cycle-cap stop routes past that stop once (task 4c566d0d).
+  A hop its holder parked for the operator (task RD4-5) is released with the answer as reason, which is required
+  and recorded on the task (a status row and an INFO); it takes no role, and the hop resumes with its holder.
   """
   agentTaskOperatorHold(
   taskUuid: ID!
@@ -632,6 +697,12 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskRegister(
   boardUuid: ID!
   input: AgentTaskUserRegisterInput!): AgentTask
+  """
+  Commission an investigation as a person with BOARD_WRITE (task RD4-12): any role that produces
+  INVESTIGATION_REPORT, from a task (its report comes back pinned there) or from none. Queued at once.
+  """
+  agentTaskCommission(
+  input: AgentTaskCommissionInput!): AgentTask
   """
   Authorize a task for a role, as the coordinator does, from PENDING_INTAKE or
   AWAITING_COORDINATOR. Strength is set separately, with agentTaskSetStrength.
@@ -667,7 +738,9 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   A person releases an ASSIGNED task back to QUEUED for the same role, with a reason (task RD3-4). BOARD_WRITE.
   The holding session stays open; its later sign-off, publish or question on the task is refused.
   """
-  agentTaskReleaseAssignment(taskUuid: ID!, reason: String!): AgentTask
+  agentTaskReleaseAssignment(
+  taskUuid: ID!
+  reason: String!): AgentTask
   """
   Create or edit a group of the board, by key (task RD2-29). CONFIGURATION_WRITE and BOARD_WRITE on
   the board. status CLOSED closes it: no new tasks, nothing else changes.
@@ -711,6 +784,14 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   unit: String!
   commit: String
   outcome: AgentDeliveryOutcome = DELIVERED
+  note: String): AgentTask
+  """
+  A person declares a linked PR superseded by its replacement, as agentTaskSupersedePullRequestProgrammatic (task RD3-13). BOARD_WRITE.
+  """
+  agentTaskSupersedePullRequest(
+  taskUuid: ID!
+  oldUrl: String!
+  byUrl: String!
   note: String): AgentTask
   """
   Cancel a task from any state but COMPLETED. An agent working it finds it gone at its next call.
@@ -789,6 +870,9 @@ type BoardSpec {
   Per-type path templates, keyed by SpecificationType. Omitted types use the defaults by scope.
   """
   documentPaths: Object
+  """
+  Element id families over the defaults: prefix to a family name, or to {family, definedIn} where the board sets definedIn (grammar 1.2).
+  """
   elementFamilies: Object
   """
   The element checks: which block the hand-over, mandatory fields per level, orphan families.
@@ -847,6 +931,44 @@ type RolePresetsSpec {
   version: Int!
   authoritative: Boolean
   presets: [BoardRoleSpec]
+}
+
+"""
+An API_KEYS file (task RD3-11): an organization's FREEFORM keys by declared name -- identity and settings,
+never a secret.
+"""
+type ApiKeysSpec {
+  kind: DeclarativeKind!
+  version: Int!
+  authoritative: Boolean
+  keys: [ApiKeySpec!]
+}
+
+"""
+A key as the provider and `rearm apikey list` read it: its declaration, identity and secrets' metadata.
+"""
+type DeclaredApiKey {
+  uuid: ID!
+  """
+  The id a client presents with a secret (REARM_APIKEYID): stable across rotation, not itself a secret.
+  """
+  keyId: String!
+  """
+  The declared name; null for a key nobody has declared.
+  """
+  name: String
+  type: ApiTypeEnum
+  status: ApiKeyStatus
+  adminDisabled: Boolean
+  notes: String
+  permissions: ApiKeyPermissionsSpec
+  secretExpiresDays: Int
+  sessionMaxMinutes: Int
+  """
+  The key's secrets: slot, state and dates -- never a value or a hash.
+  """
+  secretSlots: [ApiKeySecretInfo!]
+  declarative: DeclarativeProvenance
 }
 
 type Release {
@@ -1158,6 +1280,11 @@ type Session {
   """
   idleWarnedAt: DateTime
   """
+  When the idle sweep closes this session unless it calls again (task RD2-15): its last activity plus its
+  org's idle window, twice that while it holds a task or a seat. Null once closed.
+  """
+  idleCloseAt: DateTime
+  """
   Rollup of this session's usage rows; null until the first report arrives.
   """
   usageTotals: UsageTotals
@@ -1338,11 +1465,12 @@ type AgentBoard {
   """
   documentSeries: [AgentBoardDocumentSeries!]
   """
-  Element id families as this board declared them over the defaults (prefix to family name); null when it uses the defaults alone.
+  Element id families as this board declared them over the defaults: prefix to family name, or to {family,
+  definedIn} for a prefix with its own definedIn (grammar 1.2); null when it uses the defaults alone.
   """
   elementFamilies: Object
   """
-  The defaults with this board's entries over them: what the CLI parses documents against (gaps §2.A).
+  The defaults with this board's entries over them, prefix to family name: what the CLI parses documents against (gaps §2.A).
   """
   effectiveElementFamilies: Object
   """
@@ -1466,7 +1594,8 @@ type AgentBoard {
   """
   staleness: AgentBoardStaleness
   """
-  The level ladder (task RD3-6); null when the board has none.
+  The level ladder (task RD3-6); null when the board has none, and then every task's level reads null and the
+  level UI is hidden.
   """
   ladder: AgentBoardLadder
   """
@@ -1501,51 +1630,13 @@ type AgentBoard {
   from: DateTime
   to: DateTime): BoardSpendBreakdown
   """
-  Who works the board (task RD3-5): every session that worked or polled it, open ones first, then closed,
-  each by last activity, newest first. Spend and cache share are for the window.
+  Who works the board (task RD3-5): every session that worked or polled it, open ones first, then closed, each
+  by last activity, newest first. Spend and cache share are for the window, as spendBreakdown's; a null window
+  is the board's life.
   """
   agents(
   from: DateTime
   to: DateTime): [BoardAgentRow]
-}
-
-"""
-One session on a board's Agents tab (task RD3-5).
-"""
-type BoardAgentRow {
-  session: ID
-  agent: ID
-  agentName: String
-  roles: [String]
-  state: BoardAgentState
-  lastPollAt: DateTime
-  lastOfferAt: DateTime
-  lastActivityAt: DateTime
-  tasksCompleted: Int
-  tokens: UsageTotals
-  costMicros: Long
-  cacheShare: Float
-  stale: [BoardAgentStaleMark]
-}
-
-enum BoardAgentStateKind {
-  WORKING
-  WAITING
-  IDLE
-  CLOSED
-}
-
-type BoardAgentState {
-  kind: BoardAgentStateKind
-  taskUuid: ID
-  taskKey: String
-  since: DateTime
-  closedBy: AgentActor
-}
-
-type BoardAgentStaleMark {
-  rule: String
-  message: String
 }
 
 """
@@ -1616,6 +1707,18 @@ type AgentTask {
   uuid: ID
   org: ID
   board: ID
+  """
+  WORK, or INVESTIGATION for a commissioned report (task RD4-12).
+  """
+  kind: AgentTaskKind
+  """
+  The investigation block; null on a WORK task.
+  """
+  investigation: AgentInvestigation
+  """
+  Reports investigations commissioned from this task brought back, oldest first.
+  """
+  reportsReturned: [AgentReturnedReport]
   """
   The task's number on its board, stamped at registration and never changed (board-documents.md D7).
   """
@@ -1907,7 +2010,9 @@ type AgentTaskRoleConfig {
   readable without taking a task, so a fresh context can brief itself.
   """
   servedPrompt: String
-  """The version the served prompt is pinned by on a sign-off: a hash of the prompt alone."""
+  """
+  The version the served prompt is pinned by on a sign-off: a hash of the prompt alone.
+  """
   promptVersion: String
   """
   Advisory routing order for the coordinator; routing is a per-hop decision, not a pipeline.
@@ -1952,6 +2057,78 @@ type AgentTaskRoleConfig {
   can produce anything.
   """
   producesOutputs: [AgentProducedOutput]
+  """
+  Who this role may commission for a report (task RD4-12); null when it commissions nobody. Operator-only.
+  """
+  commissions: AgentRoleCommissions
+}
+
+"""
+What the named element checks found on one document (elements.md §7). Deterministic: the same
+scope gives the same report, and the digest is its identity.
+"""
+type CheckReport {
+  """
+  The catalogue the checks came from; bumped on any change to a check's meaning.
+  """
+  catalogueVersion: String
+  """
+  The element grammar of the checked document's index.
+  """
+  grammarVersion: String
+  scope: CheckScope
+  """
+  One per check in the catalogue, in catalogue order.
+  """
+  results: [CheckResult]
+  """
+  sha256 of the report's canonical JSON without the digest.
+  """
+  digest: String
+}
+
+"""
+Well-known specification documents. When an identifier's idType is SPECIFICATION its idValue is
+one of these values -- the design-stage counterpart of TEA's compliance-document-type, so a
+document set is discoverable by identifier rather than by naming convention.
+"""
+enum SpecificationType {
+  CONOPS
+  USE_CASES
+  REQUIREMENTS
+  FUNCTIONS
+  PRODUCT_BREAKDOWN
+  INTERFACES
+  DATA_MODEL
+  ARCHITECTURE
+  DETAILED_DESIGN
+  UX_CONCEPT
+  TEST_PLAN
+  GLOSSARY
+  DECISION_RECORD
+  """
+  One review round of one task. Task-scoped: one component per board target holds every task's rounds.
+  """
+  REVIEW_FINDINGS
+  """
+  One test run of one task. Task-scoped, like REVIEW_FINDINGS.
+  """
+  TEST_REPORT
+  """
+  What one hop could not proceed without knowing. Task-scoped, like REVIEW_FINDINGS, and
+  usually published with no file at all -- the items are the document.
+  """
+  QUESTIONS
+  """
+  What the element checks found on one document of one task (gaps §2.A). Task-scoped and always
+  index-only: the board cuts it, no agent publishes it, and it has no path.
+  """
+  CHECK_REPORT
+  """
+  What one investigation found (task RD4-12): the deliverable of an INVESTIGATION task, which comes back
+  pinned on the task that commissioned it. Task-scoped prose whose elements are references only.
+  """
+  INVESTIGATION_REPORT
 }
 
 """
@@ -2053,7 +2230,9 @@ input BoardSpecInput {
   documentsRepo: String
   documentPaths: Object
   """
-  Element id families over the defaults; declared null restores the defaults, absent leaves them.
+  Element id families over the defaults; declared null restores the defaults, absent leaves them. An entry is a
+  family name, or {family, definedIn} (grammar 1.2, elements.md §1.1): definedIn lists the specification types that
+  define the prefix's ids, in order of precedence; absent takes the family's default, [] means references only.
   """
   elementFamilies: Object
   """
@@ -2103,6 +2282,31 @@ input RolePresetsSpecInput {
   version: Int!
   authoritative: Boolean
   presets: [BoardRoleSpecInput!]
+}
+
+input ApiKeysSpecInput {
+  kind: DeclarativeKind!
+  version: Int!
+  """
+  Deactivate declared keys the file leaves out, under the organization's declarativePrune (ARCHIVE); false by default.
+  """
+  authoritative: Boolean
+  keys: [ApiKeySpecInput!]
+}
+
+"""
+A secret minted, or not: minted false and no secret when the slot already held one and no rotation was asked.
+"""
+type MintedApiKeySecret {
+  keyId: String!
+  name: String
+  slot: Int!
+  minted: Boolean!
+  """
+  The value, this once; it is stored hashed and cannot be read again.
+  """
+  secret: String
+  expiresDate: DateTime
 }
 
 """
@@ -3036,9 +3240,19 @@ type ModelOntology {
   resolution: ModelResolution
   pricing: [PricingEntry]
   """
-  Other rows of this org ranked by similarity; the UI offers the top few for merge.
+  Other rows of this org to merge with: one carrying this row's canonical id first, then the rest
+  by similarity, resolved rows included; never the synthetic pseudo-model.
   """
   mergeCandidates: [ModelOntology]
+  """
+  Sessions and usage lines on this model in the last days (default 30), to tell a live duplicate from a dead one.
+  """
+  usage(
+  days: Int = 30): ModelUsageCount
+  """
+  The bundled canonical id this row's name and version resolve to, if any: the edit form's suggestion.
+  """
+  suggestedCanonicalId: String
   notes: String
   createdDate: DateTime
 }
@@ -3189,6 +3403,10 @@ input AgentTaskRoleConfigInput {
   """
   producesOutputs: [AgentProducedOutputInput]
   """
+  Operator-only (task RD4-12). Left out, unchanged; sent as null, or naming no role, the role commissions nobody.
+  """
+  commissions: AgentRoleCommissionsInput
+  """
   Operator-only. The floor a model must meet for this role, at most two decimal places. Left
   out, unchanged; sent as null, the floor is removed.
   """
@@ -3242,6 +3460,52 @@ input AgentTaskRegisterInput {
   tags: [TagRecordInput]
 }
 
+"""
+Commission an investigation (task RD4-12). A session commissions from the task it holds (fromTask), in that
+task's role, a role its commissions name; a person with BOARD_WRITE commissions any role that produces
+INVESTIGATION_REPORT, from a task or from none.
+"""
+input AgentTaskCommissionInput {
+  boardUuid: ID!
+  """
+  The commissioning session; required on agentTaskCommissionProgrammatic from an agent, refused on agentTaskCommission.
+  """
+  sessionUuid: ID
+  """
+  The investigating role, by name: it must produce INVESTIGATION_REPORT at TASK scope.
+  """
+  role: String!
+  title: String!
+  """
+  What to investigate: the task's description.
+  """
+  brief: String
+  """
+  The task it is commissioned from, which the report returns to.
+  """
+  fromTask: ID
+  """
+  Releases the investigation reads, pinned as its required inputs.
+  """
+  inputs: [ID!]
+  """
+  What it may spend, in USD micros; left out, the commissioning role's default, capped by the board's budget.
+  """
+  budgetMicros: Long
+  deadline: DateTime
+  """
+  The role that reviews the report; left out, the commissioning role's default.
+  """
+  review: String
+  """
+  Left out: TASK with a fromTask, NONE without.
+  """
+  returnTo: AgentInvestigationReturnTo
+  level: Int
+  group: String
+  tags: [TagRecordInput]
+}
+
 input AgentRequiredInputInput {
   kind: AgentInputKind!
   specification: SpecificationType
@@ -3251,6 +3515,19 @@ input AgentRequiredInputInput {
   resolution: AgentInputResolution
 }
 
+"""
+Two-tier task hold, mirroring board locks: the coordinator cannot lift an OPERATOR hold.
+"""
+enum AgentTaskHoldLevel {
+  COORDINATOR
+  OPERATOR
+}
+
+"""
+SUPERSEDED (task RD3-13): a linked PR closed unmerged and replaced by another linked PR on its repository,
+named in supersededBy; delivery counts the replacement. Declared with agentTaskSupersedePullRequest, never
+through agentTaskDelivered.
+"""
 enum AgentDeliveryOutcome {
   DELIVERED
   ABANDONED
@@ -3507,45 +3784,6 @@ input AgentTaskUserRegisterInput {
 }
 
 """
-Well-known specification documents. When an identifier's idType is SPECIFICATION its idValue is
-one of these values -- the design-stage counterpart of TEA's compliance-document-type, so a
-document set is discoverable by identifier rather than by naming convention.
-"""
-enum SpecificationType {
-  CONOPS
-  USE_CASES
-  REQUIREMENTS
-  FUNCTIONS
-  PRODUCT_BREAKDOWN
-  INTERFACES
-  DATA_MODEL
-  ARCHITECTURE
-  DETAILED_DESIGN
-  UX_CONCEPT
-  TEST_PLAN
-  GLOSSARY
-  DECISION_RECORD
-  """
-  One review round of one task. Task-scoped: one component per board target holds every task's rounds.
-  """
-  REVIEW_FINDINGS
-  """
-  One test run of one task. Task-scoped, like REVIEW_FINDINGS.
-  """
-  TEST_REPORT
-  """
-  What one hop could not proceed without knowing. Task-scoped, like REVIEW_FINDINGS, and
-  usually published with no file at all -- the items are the document.
-  """
-  QUESTIONS
-  """
-  What the element checks found on one document of one task (gaps §2.A). Task-scoped and always
-  index-only: the board cuts it, no agent publishes it, and it has no path.
-  """
-  CHECK_REPORT
-}
-
-"""
 Ownership slice a declarative spec describes. One kind per file; the apply / export operations are per kind.
 """
 enum DeclarativeKind {
@@ -3553,7 +3791,9 @@ enum DeclarativeKind {
   BRANCHES
   BOARD
   ROLE_PRESETS
-  """An organization's FREEFORM API keys: identity and settings, never a secret (task RD3-11)."""
+  """
+  An organization's FREEFORM API keys: identity and settings, never a secret (task RD3-11).
+  """
   API_KEYS
 }
 
@@ -3705,18 +3945,6 @@ type BoardSettingsSpec {
 }
 
 """
-When a board ALERTs that work has gone stale (task RD3-4), minutes each; null turns a rule off. Only an
-ALERT is posted: no task changes state, and a person releases a stalled assignment by hand.
-"""
-type AgentBoardStaleness {
-  roleUnstaffedMinutes: Int
-  hopNoProgressMinutes: Int
-  deliveryStuckMinutes: Int
-  seatSilentMinutes: Int
-  repeatMinutes: Int
-}
-
-"""
 A task group as a board file declares it: configuration only, dependencies by key.
 """
 type BoardGroupSpec {
@@ -3752,7 +3980,85 @@ type BoardRoleSpec {
   Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported.
   """
   hopBudgetMicros: Long
+  """
+  Who the role may commission for a report (task RD4-12); null commissions nobody.
+  """
+  commissions: AgentRoleCommissions
   strength: BoardStrengthSpec
+}
+
+type ApiKeySpec {
+  name: String!
+  """
+  FREEFORM: the one type a file declares.
+  """
+  type: ApiTypeEnum
+  """
+  Null when the key has none.
+  """
+  permissions: ApiKeyPermissionsSpec
+  notes: String
+  status: ApiKeyStatus
+  secretExpiresDays: Int
+  sessionMaxMinutes: Int
+  provenance: DeclarativeProvenance
+}
+
+enum ApiTypeEnum {
+  APPROVAL
+  INSTANCE
+  CLUSTER
+  COMPONENT
+  ORGANIZATION
+  ORGANIZATION_RW
+  FREEFORM
+  "Personal key owned by a user: its permissions are a ceiling intersected with the owner's current permissions"
+  USER
+  "Identity row for one external repository trusted by the org's federated trust rules: no secret, permissions computed from the rules on every call"
+  FEDERATED
+}
+
+enum ApiKeyStatus {
+  ACTIVE
+  INACTIVE
+  "Delete tombstone; never listed, and setApiKeyStatus refuses it (delete the key instead)"
+  REVOKED
+  "A free-form key a write user asked for: listed, never usable, until an admin approves (ACTIVE) or denies it"
+  REQUESTED
+  "A denied request: listed for the requester with the reason in the notes, never usable"
+  DENIED
+}
+
+"""
+A FREEFORM key's permissions: the organization-wide level, functions and approval roles, and grants on single objects.
+"""
+type ApiKeyPermissionsSpec {
+  type: PermissionType
+  functions: [PermissionFunction!]
+  approvals: [String!]
+  objects: [ApiKeyObjectPermissionSpec!]
+}
+
+"""
+One of up to two secrets of a key id (rotation: add the second, move clients, retire the first).
+Only metadata: the secret itself is shown once, when created or regenerated.
+"""
+type ApiKeySecretInfo {
+  slot: Int!
+  active: Boolean!
+  createdDate: DateTime
+  lastUsedDate: DateTime
+  "Optional hard stop; past it the secret is refused like a retired one, and its tokens end here at the latest"
+  expiresDate: DateTime
+}
+
+type DeclarativeProvenance {
+  """
+  SHA-256 of the canonical JSON of the spec that last touched this row.
+  """
+  specHash: String
+  appliedAt: DateTime
+  source: DeclarativeSource
 }
 
 enum Status {
@@ -4198,6 +4504,12 @@ type DocumentRef {
   The role the round was published as: the holding role, or for an advisory round the author's. Absent on older rounds.
   """
   publishedByRole: String
+  """
+  The release that replaced this version of the round (task RD4-7): the same hop published the same path
+  again, so that release keeps this round number as its newer version. Newest-round reads skip a version
+  that has one; it stays readable by uuid and in the task's documents. Absent means not replaced.
+  """
+  supersededBy: ID
 }
 
 """
@@ -4390,6 +4702,24 @@ enum SessionUsageCompleteness {
   COMPLETE
   INCOMPLETE
   NONE
+}
+
+"""
+A task a session worked, as the session page names it (task RD2-11).
+"""
+type AgentSessionTaskRef {
+  uuid: ID
+  key: String
+  title: String
+  """
+  The role the session last worked the task as.
+  """
+  role: String
+  board: ID
+  """
+  The board's name, so a page names it without reading the boards.
+  """
+  boardName: String
 }
 
 """
@@ -4589,6 +4919,22 @@ type AgentBoardDocumentSeries {
   The newest check report on the latest round: FAIL (a blocking check failed), WARN, PASS; null when unchecked.
   """
   checkVerdict: String
+  """
+  That report's results counted as the task page counts them (task RD2-24); null when unchecked.
+  """
+  checkCounts: AgentBoardCheckCounts
+}
+
+"""
+An element family prefix of a board and the specification types that define its ids (grammar 1.2).
+"""
+type ElementFamilyEntry {
+  prefix: String!
+  family: String!
+  """
+  In order of precedence: a document of an earlier type that defines an id owns it; empty means references only.
+  """
+  definedIn: [SpecificationType!]!
 }
 
 type AgentBoardEvent {
@@ -4622,13 +4968,51 @@ type AgentCoordinatorSeat {
   claimedAt: DateTime
 }
 
-type DeclarativeProvenance {
+"""
+When a board ALERTs that work has gone stale (task RD3-4), minutes each; null turns a rule off. Only an
+ALERT is posted: no task changes state, and a person releases a stalled assignment by hand.
+"""
+type AgentBoardStaleness {
   """
-  SHA-256 of the canonical JSON of the spec that last touched this row.
+  A task QUEUED for a role this long while no session of that role polled the board within the same span.
   """
-  specHash: String
-  appliedAt: DateTime
-  source: DeclarativeSource
+  roleUnstaffedMinutes: Int
+  """
+  A task ASSIGNED this long with nothing from the holder: no document, sign-off, question or usage report.
+  """
+  hopNoProgressMinutes: Int
+  """
+  A task DELIVERING this long with a linked PR not delivered, or nothing delivered.
+  """
+  deliveryStuckMinutes: Int
+  """
+  A task waiting on the coordinator (PENDING_INTAKE or AWAITING_COORDINATOR) this long while the seat is held.
+  """
+  seatSilentMinutes: Int
+  """
+  How long a standing breach stays quiet before it is alerted again; null is 240.
+  """
+  repeatMinutes: Int
+  """
+  An investigation (task RD4-12) neither completed nor cancelled this long past its deadline; 0 alerts at the deadline.
+  """
+  investigationOverdueMinutes: Int
+}
+
+"""
+A board's level ladder (task RD3-6), opt-in. With one, every task has a level (the board default is 0 when unset),
+a level off the ladder is refused, and the served prompts carry a ladder section; without one, levels stay null
+and a level is refused.
+"""
+type AgentBoardLadder {
+  """
+  The rungs, 0 first and without gaps.
+  """
+  levels: [AgentBoardLadderLevel]
+  """
+  The ladder section served on this board, overriding the default; {{levels}} and {{last}} are rendered in. Null serves the default.
+  """
+  prompt: String
 }
 
 """
@@ -4663,6 +5047,46 @@ type BoardSpendBreakdown {
   unattributedMicros: Long
   from: DateTime
   to: DateTime
+}
+
+"""
+One session on a board's Agents tab (task RD3-5).
+"""
+type BoardAgentRow {
+  session: ID
+  agent: ID
+  """
+  The agent's display name, else its name.
+  """
+  agentName: String
+  """
+  The roles it worked here; for a session that only polled, the roles it asked for.
+  """
+  roles: [String]
+  state: BoardAgentState
+  lastPollAt: DateTime
+  lastOfferAt: DateTime
+  """
+  The newest of its polls, offers, assignments, sign-offs, returns and session activity here.
+  """
+  lastActivityAt: DateTime
+  """
+  Completed tasks it signed off on.
+  """
+  tasksCompleted: Int
+  """
+  Its usage on the board in the window; null when it reported none.
+  """
+  tokens: UsageTotals
+  costMicros: Long
+  """
+  Cache read tokens over input plus cache read plus cache write; null when none were counted.
+  """
+  cacheShare: Float
+  """
+  The staleness rules that name it or its task, with the ALERT each posts; empty when none.
+  """
+  stale: [BoardAgentStaleMark]
 }
 
 type AgentTaskSnapshot {
@@ -4722,6 +5146,73 @@ type AgentResolvedInput {
 }
 
 """
+What a task is for (task RD4-12).
+"""
+enum AgentTaskKind {
+  """
+  An ordinary task, and every task from before kinds.
+  """
+  WORK
+  """
+  Research one role commissions from another: it delivers a report, links no PRs and has no delivery step.
+  """
+  INVESTIGATION
+}
+
+"""
+The investigation block of an INVESTIGATION task (task RD4-12).
+"""
+type AgentInvestigation {
+  commissionedBy: AgentInvestigationCommissioner
+  """
+  What it delivers: INVESTIGATION_REPORT.
+  """
+  deliverable: SpecificationType
+  """
+  The investigating role, whatever role the task is queued for now.
+  """
+  role: String
+  roleUuid: ID
+  """
+  The role that reviews the report before it returns; null when none.
+  """
+  review: String
+  reviewUuid: ID
+  """
+  When the report is due; the board's investigationOverdue staleness rule alerts past it.
+  """
+  deadline: DateTime
+  returnTo: AgentInvestigationReturnTo
+  """
+  The report release the investigation completed with; null until then.
+  """
+  report: ID
+  completedAt: DateTime
+}
+
+"""
+A report an investigation commissioned from this task brought back (task RD4-12).
+"""
+type AgentReturnedReport {
+  investigation: ID
+  investigationKey: String
+  """
+  The report release, pinned as an input on this task.
+  """
+  report: ID
+  """
+  The session that commissioned it; a poll prefers it when the task is offered back.
+  """
+  session: ID
+  role: String
+  at: DateTime
+  """
+  Whether the return queued this task for the commissioning role again.
+  """
+  reoffered: Boolean
+}
+
+"""
 An element of one of a task's documents, with the release and specification it came from.
 """
 type AgentTaskElement {
@@ -4741,30 +5232,6 @@ type AgentTaskElement {
   Glossary terms the element uses (grammar 1.1).
   """
   terms: [String]
-}
-
-"""
-What the named element checks found on one document (elements.md §7). Deterministic: the same
-scope gives the same report, and the digest is its identity.
-"""
-type CheckReport {
-  """
-  The catalogue the checks came from; bumped on any change to a check's meaning.
-  """
-  catalogueVersion: String
-  """
-  The element grammar of the checked document's index.
-  """
-  grammarVersion: String
-  scope: CheckScope
-  """
-  One per check in the catalogue, in catalogue order.
-  """
-  results: [CheckResult]
-  """
-  sha256 of the report's canonical JSON without the digest.
-  """
-  digest: String
 }
 
 """
@@ -4995,21 +5462,6 @@ type AgentTaskSignOff {
   noCode: Boolean
 }
 
-"""
-An assignment a person released back to the queue (task RD3-4); the released session's later sign-off, publish or question is refused.
-"""
-type AgentTaskReleasedAssignment {
-  role: String
-  roleUuid: ID
-  agent: ID
-  session: ID
-  assignedAt: DateTime
-  releasedAt: DateTime
-  releasedBy: AgentActor
-  reason: String
-  usage: HopUsage
-}
-
 type AgentTaskReturn {
   role: String
   """
@@ -5036,6 +5488,24 @@ type AgentTaskReturn {
 }
 
 """
+An assignment a person released back to the queue (task RD3-4); the released session's later sign-off, publish or question is refused.
+"""
+type AgentTaskReleasedAssignment {
+  role: String
+  roleUuid: ID
+  agent: ID
+  session: ID
+  assignedAt: DateTime
+  releasedAt: DateTime
+  releasedBy: AgentActor
+  reason: String
+  """
+  What the hop had spent when it was released.
+  """
+  usage: HopUsage
+}
+
+"""
 One status transition, written atomically with the transition. Intervals between rows are the
 cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
 
@@ -5050,7 +5520,7 @@ type AgentTaskStatusChange {
   trigger: AgentStatusTrigger
   actor: AgentActor
   """
-  What the actor said: a completion's or cancellation's note. Null on changes recorded before notes were kept.
+  What the actor said: a completion's or cancellation's note, or routing's reason and the role it sent the task to (RD2-23). Null on changes recorded before notes were kept.
   """
   note: String
 }
@@ -5083,6 +5553,10 @@ type AgentRequiredInput {
   Null falls back to the board's defaultInputResolution.
   """
   resolution: AgentInputResolution
+  """
+  One release pinned by uuid (task RD4-12): an investigation's inputs, a report returned; null otherwise.
+  """
+  release: ID
 }
 
 """
@@ -5220,6 +5694,61 @@ type AgentProducedOutput {
   required: Boolean
 }
 
+"""
+Which roles a role may commission an investigation from (task RD4-12). Every role named must produce
+INVESTIGATION_REPORT at TASK scope; an apply or an upsert that names one that does not is refused.
+"""
+type AgentRoleCommissions {
+  """
+  The investigating roles, by name.
+  """
+  roles: [String]
+  """
+  AUTO (the default) or COORDINATOR.
+  """
+  intake: AgentCommissionIntake
+  """
+  The investigation's budget when a commission names none, in USD micros; capped by the board's.
+  """
+  defaultBudgetMicros: Long
+  """
+  The role that reviews the report before it returns, when a commission names none; null for no review.
+  """
+  review: String
+}
+
+type CheckScope {
+  """
+  The task the report was cut on.
+  """
+  task: ID
+  """
+  The release the report is about.
+  """
+  checked: ID
+  """
+  Every release whose elements the checks could see, the checked one first.
+  """
+  releases: [CheckScopedRelease]
+}
+
+type CheckResult {
+  """
+  The check's name, e.g. trace.parent_exists.
+  """
+  check: String
+  result: CheckOutcome
+  """
+  Whether the board blocked the hand-over on this check when it ran.
+  """
+  blocking: Boolean
+  """
+  Why a check was skipped, or a one-line summary of a failure.
+  """
+  reason: String
+  offences: [CheckOffence]
+}
+
 type DeclarativeChange {
   """
   Slice the entry belongs to: CATALOG entries are components, BRANCHES entries are branches.
@@ -5344,17 +5873,6 @@ input BoardSettingsSpecInput {
 }
 
 """
-The staleness block as input: declared, it replaces the board's whole block; each threshold at least 1, null off.
-"""
-input AgentBoardStalenessInput {
-  roleUnstaffedMinutes: Int
-  hopNoProgressMinutes: Int
-  deliveryStuckMinutes: Int
-  seatSilentMinutes: Int
-  repeatMinutes: Int
-}
-
-"""
 A task group in a board file: dependsOn names groups of the board or of the file by key.
 """
 input BoardGroupSpecInput {
@@ -5396,7 +5914,42 @@ input BoardRoleSpecInput {
   Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported.
   """
   hopBudgetMicros: Long
+  """
+  Who the role may commission for a report (task RD4-12); null commissions nobody.
+  """
+  commissions: AgentRoleCommissionsInput
   strength: BoardStrengthSpecInput
+}
+
+"""
+One key. A setting left out is left alone; one sent as null is cleared.
+"""
+input ApiKeySpecInput {
+  """
+  Unique among the organization's live keys: the key's declared identity.
+  """
+  name: String!
+  """
+  FREEFORM, the one type a file declares; left out, FREEFORM.
+  """
+  type: ApiTypeEnum
+  """
+  Replaces the key's permissions whole.
+  """
+  permissions: ApiKeyPermissionsSpecInput
+  notes: String
+  """
+  ACTIVE or INACTIVE.
+  """
+  status: ApiKeyStatus
+  """
+  Days a minted secret lives, 1 to 3650; null mints secrets that do not expire.
+  """
+  secretExpiresDays: Int
+  """
+  Bounds device-login sessions approved on the key, in minutes (task RD3-7).
+  """
+  sessionMaxMinutes: Int
 }
 
 type PullRequestValidationEvent {
@@ -5937,6 +6490,12 @@ type AgentBoardRef {
   uuid: ID!
   name: String
   taskPrefix: String
+  """
+  Whether you may open the board: BOARD_READ on it (task RD2-9). The component is read under its own
+  permission and the board under the board's, so a page links to the board only when this is true.
+  Null for a caller that is not a person.
+  """
+  readable: Boolean
 }
 
 input VcsRepositoryInput {
@@ -6259,6 +6818,25 @@ type ApiKey {
   "FEDERATED rows: the external repository this identity stands for"
   federation: FederatedIdentity
   """
+  Bounds device-login sessions approved on this key: a session ends this many minutes after its
+  approval, refreshes included (1 to 129600; null for no bound but the 90-day cap). Direct use of
+  the key's secret is bounded by the secret's expiry instead. A change applies to sessions
+  approved afterwards, not to open ones.
+  """
+  sessionMaxMinutes: Int
+  """
+  The name an API_KEYS file knows this key by (task RD3-11); null for a key nobody has declared.
+  """
+  declaredName: String
+  """
+  The declarative apply that last wrote this key: when, and from which repository and path.
+  """
+  declarative: DeclarativeProvenance
+  """
+  Days a secret minted through the declarative mint lives; null for no expiry.
+  """
+  secretExpiresDays: Int
+  """
   Root agents this key is bound to via the agent-identity it
   resolves to (agent_identity_credentials). Empty until an agent
   has authenticated with this key at least once. FREEFORM keys only.
@@ -6369,6 +6947,15 @@ type PricingEntry {
 }
 
 """
+How much a model has been used lately (task RD2-27).
+"""
+type ModelUsageCount {
+  sessions: Int
+  lines: Int
+  days: Int
+}
+
+"""
 Expected/asserted state of a device (defaults from its shipment's release).
 """
 type DevicePlan {
@@ -6471,6 +7058,16 @@ input AgentProducedOutputInput {
 }
 
 """
+A role's commissions as input (task RD4-12); an empty roles list, or null, commissions nobody.
+"""
+input AgentRoleCommissionsInput {
+  roles: [String!]
+  intake: AgentCommissionIntake
+  defaultBudgetMicros: Long
+  review: String
+}
+
+"""
 One model's strength for one role, overriding what the catalogue says about the model.
 """
 input RoleModelStrengthInput {
@@ -6479,6 +7076,20 @@ input RoleModelStrengthInput {
   """
   model: ID!
   strength: Float!
+}
+
+"""
+Where an investigation's report goes when it completes (task RD4-12).
+"""
+enum AgentInvestigationReturnTo {
+  """
+  Pinned on the commissioning task, which is offered back to the commissioning role.
+  """
+  TASK
+  """
+  A standalone investigation: the report stays on it.
+  """
+  NONE
 }
 
 """
@@ -6636,6 +7247,28 @@ type BoardStrengthSpec {
   strengthHeadroom: Float
   strengthCategory: ModelRoleCategory
   modelStrengths: [BoardModelStrengthSpec]
+}
+
+enum PermissionType {
+  ADMIN
+  READ_ONLY
+  READ_WRITE
+  ESSENTIAL_READ
+  NONE
+}
+
+type ApiKeyObjectPermissionSpec {
+  scope: PermissionScope!
+  object: ID!
+  type: PermissionType!
+  functions: [PermissionFunction!]
+  approvals: [String!]
+}
+
+type DeclarativeSource {
+  repo: String
+  path: String
+  commit: String
 }
 
 enum OrganizationType {
@@ -7243,28 +7876,6 @@ type ElementIndex {
   references: [ElementReference]
 }
 
-type ElementReference {
-  id: String
-  """
-  The family name the board maps the id's prefix to; null for an unknown family.
-  """
-  family: String
-  title: String
-  """
-  1-based line of the heading or table row.
-  """
-  line: Int
-}
-
-type ElementFamilyEntry {
-  prefix: String!
-  family: String!
-  """
-  In order of precedence: a document of an earlier type that defines an id owns it; empty means references only.
-  """
-  definedIn: [SpecificationType!]!
-}
-
 type ArtifactComparison {
   changelog: ArtifactChangelog
   comparedReleaseUuid: ID
@@ -7460,6 +8071,19 @@ type AgentBoardDocumentRound {
 }
 
 """
+A check report's results by outcome; checkVerdict is read from these (task RD2-24).
+"""
+type AgentBoardCheckCounts {
+  pass: Int!
+  fail: Int!
+  skip: Int!
+  """
+  Failed checks the board blocks the hand-over on.
+  """
+  blockingFailed: Int!
+}
+
+"""
 Locks stop NEW assignments only; the coordinator cannot lift or override an OPERATOR lock.
 """
 enum AgentBoardLockLevel {
@@ -7468,10 +8092,10 @@ enum AgentBoardLockLevel {
   OPERATOR
 }
 
-type DeclarativeSource {
-  repo: String
-  path: String
-  commit: String
+type AgentBoardLadderLevel {
+  number: Int
+  name: String
+  description: String
 }
 
 type BoardRoleSpend {
@@ -7499,6 +8123,31 @@ type BoardSessionSpend {
   costMicros: Long
 }
 
+type BoardAgentState {
+  kind: BoardAgentStateKind
+  """
+  For WORKING, the task and its key.
+  """
+  taskUuid: ID
+  """
+  The task's key alone, e.g. RD3-5 -- not its title; null for a task without a key.
+  """
+  taskKey: String
+  since: DateTime
+  """
+  For CLOSED, who closed it.
+  """
+  closedBy: AgentActor
+}
+
+type BoardAgentStaleMark {
+  """
+  The staleness rule: hopNoProgress, seatSilent or deliveryStuck.
+  """
+  rule: String
+  message: String
+}
+
 """
 One task another task waits on, with enough of its state to tell whether the wait is over.
 """
@@ -7510,43 +8159,34 @@ type AgentTaskDependency {
 }
 
 """
+Who commissioned an investigation (task RD4-12).
+"""
+type AgentInvestigationCommissioner {
+  """
+  The commissioning role; for a person, the role of the task it was commissioned from, else null.
+  """
+  role: String
+  roleUuid: ID
+  """
+  The commissioning session; null for a person.
+  """
+  session: ID
+  """
+  The task it was commissioned from, which the report returns to; null when none.
+  """
+  task: ID
+  """
+  The session or the person.
+  """
+  by: AgentActor
+}
+
+"""
 A typed link. Verbs are kept as written.
 """
 type ElementLink {
   verb: String
   target: String
-}
-
-type CheckScope {
-  """
-  The task the report was cut on.
-  """
-  task: ID
-  """
-  The release the report is about.
-  """
-  checked: ID
-  """
-  Every release whose elements the checks could see, the checked one first.
-  """
-  releases: [CheckScopedRelease]
-}
-
-type CheckResult {
-  """
-  The check's name, e.g. trace.parent_exists.
-  """
-  check: String
-  result: CheckOutcome
-  """
-  Whether the board blocked the hand-over on this check when it ran.
-  """
-  blocking: Boolean
-  """
-  Why a check was skipped, or a one-line summary of a failure.
-  """
-  reason: String
-  offences: [CheckOffence]
 }
 
 """
@@ -7559,14 +8199,6 @@ type ElementDependent {
   1 for a direct dependent.
   """
   distance: Int
-}
-
-"""
-Two-tier task hold, mirroring board locks: the coordinator cannot lift an OPERATOR hold.
-"""
-enum AgentTaskHoldLevel {
-  COORDINATOR
-  OPERATOR
 }
 
 """
@@ -7691,6 +8323,48 @@ type FindingLocation {
   element: String
 }
 
+"""
+How a commission from a role enters the board (task RD4-12).
+"""
+enum AgentCommissionIntake {
+  """
+  Queued for the investigating role at once.
+  """
+  AUTO
+  """
+  PENDING_INTAKE, authorised by the coordinator like any registered task.
+  """
+  COORDINATOR
+}
+
+"""
+One release in scope, as it stood when the checks ran.
+"""
+type CheckScopedRelease {
+  release: ID
+  specification: SpecificationType
+  elementsDigest: String
+  lifecycle: String
+}
+
+"""
+SKIP is a result, never silence: a check that cannot run says why.
+"""
+enum CheckOutcome {
+  PASS
+  FAIL
+  SKIP
+}
+
+"""
+One element a check failed on.
+"""
+type CheckOffence {
+  elementId: String
+  release: ID
+  message: String
+}
+
 enum DeclarativeAction {
   CREATE
   UPDATE
@@ -7737,6 +8411,29 @@ input AgentMergeProcedureInput {
   order: AgentMergeOrder
 }
 
+"""
+The staleness block as input: declared, it replaces the board's whole block; each threshold at least 1, null off.
+"""
+input AgentBoardStalenessInput {
+  roleUnstaffedMinutes: Int
+  hopNoProgressMinutes: Int
+  deliveryStuckMinutes: Int
+  seatSilentMinutes: Int
+  repeatMinutes: Int
+  """
+  Minutes past an investigation's deadline before it alerts; 0 alerts at the deadline, null off.
+  """
+  investigationOverdueMinutes: Int
+}
+
+"""
+The ladder as input: declared, it replaces the board's; null removes it, refused while a task carries a level.
+"""
+input AgentBoardLadderInput {
+  levels: [AgentBoardLadderLevelInput!]!
+  prompt: String
+}
+
 input BoardRequiredInputSpecInput {
   kind: AgentInputKind
   specification: SpecificationType
@@ -7760,6 +8457,13 @@ input BoardStrengthSpecInput {
   strengthHeadroom: Float
   strengthCategory: ModelRoleCategory
   modelStrengths: [BoardModelStrengthSpecInput!]
+}
+
+input ApiKeyPermissionsSpecInput {
+  type: PermissionType
+  functions: [PermissionFunction!]
+  approvals: [String!]
+  objects: [ApiKeyObjectPermissionSpecInput!]
 }
 
 enum LockSubjectType {
@@ -8086,162 +8790,6 @@ enum SessionUsageHosting {
   OTHER
 }
 
-enum ApiTypeEnum {
-  APPROVAL
-  INSTANCE
-  CLUSTER
-  COMPONENT
-  ORGANIZATION
-  ORGANIZATION_RW
-  FREEFORM
-  "Personal key owned by a user: its permissions are a ceiling intersected with the owner's current permissions"
-  USER
-  "Identity row for one external repository trusted by the org's federated trust rules: no secret, permissions computed from the rules on every call"
-  FEDERATED
-}
-
-enum ApiKeyStatus {
-  ACTIVE
-  INACTIVE
-  "Delete tombstone; never listed, and setApiKeyStatus refuses it (delete the key instead)"
-  REVOKED
-  "A free-form key a write user asked for: listed, never usable, until an admin approves (ACTIVE) or denies it"
-  REQUESTED
-  "A denied request: listed for the requester with the reason in the notes, never usable"
-  DENIED
-}
-
-"""
-An API_KEYS file (task RD3-11): an organization's FREEFORM keys by declared name -- identity and settings,
-never a secret.
-"""
-type ApiKeysSpec {
-  kind: DeclarativeKind!
-  version: Int!
-  authoritative: Boolean
-  keys: [ApiKeySpec!]
-}
-
-type ApiKeySpec {
-  name: String!
-  """FREEFORM: the one type a file declares."""
-  type: ApiTypeEnum
-  """Null when the key has none."""
-  permissions: ApiKeyPermissionsSpec
-  notes: String
-  status: ApiKeyStatus
-  secretExpiresDays: Int
-  sessionMaxMinutes: Int
-  provenance: DeclarativeProvenance
-}
-
-"""
-A FREEFORM key's permissions: the organization-wide level, functions and approval roles, and grants on single objects.
-"""
-type ApiKeyPermissionsSpec {
-  type: PermissionType
-  functions: [PermissionFunction!]
-  approvals: [String!]
-  objects: [ApiKeyObjectPermissionSpec!]
-}
-
-type ApiKeyObjectPermissionSpec {
-  scope: PermissionScope!
-  object: ID!
-  type: PermissionType!
-  functions: [PermissionFunction!]
-  approvals: [String!]
-}
-
-input ApiKeysSpecInput {
-  kind: DeclarativeKind!
-  version: Int!
-  """
-  Deactivate declared keys the file leaves out, under the organization's declarativePrune (ARCHIVE); false by default.
-  """
-  authoritative: Boolean
-  keys: [ApiKeySpecInput!]
-}
-
-"""One key. A setting left out is left alone; one sent as null is cleared."""
-input ApiKeySpecInput {
-  """Unique among the organization's live keys: the key's declared identity."""
-  name: String!
-  """FREEFORM, the one type a file declares; left out, FREEFORM."""
-  type: ApiTypeEnum
-  """Replaces the key's permissions whole."""
-  permissions: ApiKeyPermissionsSpecInput
-  notes: String
-  """ACTIVE or INACTIVE."""
-  status: ApiKeyStatus
-  """Days a minted secret lives, 1 to 3650; null mints secrets that do not expire."""
-  secretExpiresDays: Int
-  """Bounds device-login sessions approved on the key, in minutes (task RD3-7)."""
-  sessionMaxMinutes: Int
-}
-
-input ApiKeyPermissionsSpecInput {
-  type: PermissionType
-  functions: [PermissionFunction!]
-  approvals: [String!]
-  objects: [ApiKeyObjectPermissionSpecInput!]
-}
-
-input ApiKeyObjectPermissionSpecInput {
-  scope: PermissionScope!
-  object: ID!
-  type: PermissionType!
-  functions: [PermissionFunction!]
-  approvals: [String!]
-}
-
-"""A key as the provider and `rearm apikey list` read it: its declaration, identity and secrets' metadata."""
-type DeclaredApiKey {
-  uuid: ID!
-  """The id a client presents with a secret (REARM_APIKEYID): stable across rotation, not itself a secret."""
-  keyId: String!
-  """The declared name; null for a key nobody has declared."""
-  name: String
-  type: ApiTypeEnum
-  status: ApiKeyStatus
-  adminDisabled: Boolean
-  notes: String
-  permissions: ApiKeyPermissionsSpec
-  secretExpiresDays: Int
-  sessionMaxMinutes: Int
-  """The key's secrets: slot, state and dates -- never a value or a hash."""
-  secretSlots: [ApiKeySecretInfo!]
-  declarative: DeclarativeProvenance
-}
-
-"""
-A secret minted, or not: minted false and no secret when the slot already held one and no rotation was asked.
-"""
-type MintedApiKeySecret {
-  keyId: String!
-  name: String
-  slot: Int!
-  minted: Boolean!
-  """
-  The value, this once; it is stored hashed and cannot be read again.
-  """
-  secret: String
-  expiresDate: DateTime
-}
-
-"""
-One of up to two secrets of a key id (rotation: add the second, move clients, retire the first).
-Only metadata: the secret itself is shown once, when created or regenerated.
-"""
-type ApiKeySecretInfo {
-  slot: Int!
-  active: Boolean!
-  createdDate: DateTime
-  lastUsedDate: DateTime
-  "Optional hard stop; past it the secret is refused like a retired one, and its tokens end here at the latest"
-  expiresDate: DateTime
-}
-
 """
 Kill switch for a whole key id: INACTIVE refuses every secret and every token issued for the key, without deleting anything.
 """
@@ -8377,6 +8925,19 @@ type BoardModelStrengthSpec {
   """
   model: String
   strength: Float
+}
+
+enum PermissionScope {
+  ORGANIZATION
+  INSTANCE
+  PERSPECTIVE
+  """
+  An agent task board: a leaf beside a component, reaching no component.
+  """
+  BOARD
+  COMPONENT
+  BRANCH
+  RELEASE
 }
 
 """
@@ -8678,37 +9239,35 @@ type ElementWarning {
   message: String
 }
 
+"""
+A heading or table row that names an id without defining it (grammar 1.2).
+"""
+type ElementReference {
+  id: String
+  """
+  The family name the board maps the id's prefix to; null for an unknown family.
+  """
+  family: String
+  title: String
+  """
+  1-based line of the heading or table row.
+  """
+  line: Int
+}
+
 type ArtifactChangelog {
   added: [DiffComponent]
   removed: [DiffComponent]
 }
 
 """
-One release in scope, as it stood when the checks ran.
+WORKING a task since its assignment; WAITING since its last poll; IDLE since its last activity; CLOSED at its close.
 """
-type CheckScopedRelease {
-  release: ID
-  specification: SpecificationType
-  elementsDigest: String
-  lifecycle: String
-}
-
-"""
-SKIP is a result, never silence: a check that cannot run says why.
-"""
-enum CheckOutcome {
-  PASS
-  FAIL
-  SKIP
-}
-
-"""
-One element a check failed on.
-"""
-type CheckOffence {
-  elementId: String
-  release: ID
-  message: String
+enum BoardAgentStateKind {
+  WORKING
+  WAITING
+  IDLE
+  CLOSED
 }
 
 """
@@ -8723,9 +9282,26 @@ type ElementEdge {
   kind: String
 }
 
+"""
+A rung: its number, when given, is its place from 0; the name is required and unique on the ladder.
+"""
+input AgentBoardLadderLevelInput {
+  number: Int
+  name: String!
+  description: String
+}
+
 input BoardModelStrengthSpecInput {
   model: String!
   strength: Float!
+}
+
+input ApiKeyObjectPermissionSpecInput {
+  scope: PermissionScope!
+  object: ID!
+  type: PermissionType!
+  functions: [PermissionFunction!]
+  approvals: [String!]
 }
 
 input PartyInput {
@@ -8903,27 +9479,6 @@ input OriginShareInput {
   percentage: Float
 }
 
-enum PermissionScope {
-  ORGANIZATION
-  INSTANCE
-  PERSPECTIVE
-  """
-  An agent task board: a leaf beside a component, reaching no component.
-  """
-  BOARD
-  COMPONENT
-  BRANCH
-  RELEASE
-}
-
-enum PermissionType {
-  ADMIN
-  READ_ONLY
-  READ_WRITE
-  ESSENTIAL_READ
-  NONE
-}
-
 type Coords {
   latitude: Float
   longitude: Float
@@ -8934,39 +9489,3 @@ input CoordsInput {
   longitude: Float
 }
 
-"""A task a session worked, as the session page names it (task RD2-11)."""
-type AgentSessionTaskRef {
-  uuid: ID
-  key: String
-  title: String
-  """The role the session last worked the task as."""
-  role: String
-  board: ID
-  """The board's name, so a page names it without reading the boards."""
-  boardName: String
-}
-
-"""
-A board's level ladder (task RD3-6), opt-in.
-"""
-type AgentBoardLadder {
-  levels: [AgentBoardLadderLevel]
-  prompt: String
-}
-
-type AgentBoardLadderLevel {
-  number: Int
-  name: String
-  description: String
-}
-
-input AgentBoardLadderInput {
-  levels: [AgentBoardLadderLevelInput!]!
-  prompt: String
-}
-
-input AgentBoardLadderLevelInput {
-  number: Int
-  name: String!
-  description: String
-}
