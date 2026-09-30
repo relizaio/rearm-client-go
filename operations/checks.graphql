@@ -20,6 +20,24 @@ mutation AgentCheckRunProgrammatic ($sessionUuid: ID!, $releaseUuid: ID!) {
 	}
 }
 
+# What a publish of this element index would be checked for, in the task's current scope, with nothing
+# created (task RD4-6): `rearm agent doc publish --check`. elements is the index JSON exactly as the
+# publish sends it; the report's checked release is the nil uuid.
+query AgentCheckPreviewProgrammatic ($sessionUuid: ID!, $taskUuid: ID!, $specification: SpecificationType!,
+		$elements: String!, $elementsDigest: String) {
+	agentCheckPreviewProgrammatic(sessionUuid: $sessionUuid, taskUuid: $taskUuid, specification: $specification,
+			elements: $elements, elementsDigest: $elementsDigest) {
+		...CheckReportFields
+	}
+}
+
+# A board's element families with the types that define their ids (grammar 1.2, task RD4-6). Its own
+# operation rather than a field of the board reads, so a client reading boards keeps working against a
+# server older than grammar 1.2, which refuses the field.
+query AgentBoardElementFamilyEntries ($boardUuid: ID!) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) { uuid effectiveElementFamilyEntries { prefix family definedIn } }
+}
+
 # What `doc check --task` runs over: the task's documents that carry an element index.
 query AgentTaskCheckTargetsProgrammatic ($taskUuid: ID!) {
 	agentTaskProgrammatic(taskUuid: $taskUuid) {
