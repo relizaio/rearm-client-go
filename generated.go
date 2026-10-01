@@ -669,13 +669,13 @@ func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoard
 // AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStateBoardAgentStateClosedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -798,7 +798,7 @@ func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoard
 
 // AgentBoardAgentsProgrammaticResponse is returned by AgentBoardAgentsProgrammatic on success.
 type AgentBoardAgentsProgrammaticResponse struct {
-	// Agent-key auth: one board (includes coordinatorPrompt and lock state).
+	// Agent-key auth: one board (includes coordinatorPrompt and pause state).
 	AgentBoardProgrammatic *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoard `json:"agentBoardProgrammatic"`
 }
 
@@ -998,13 +998,13 @@ func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBo
 // AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -1105,13 +1105,13 @@ func (v *AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBo
 // AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -1374,13 +1374,13 @@ func (v *AgentBoardCoordinatorPauseProgrammaticAgentBoardCoordinatorPauseProgram
 // AgentBoardCoordinatorPauseProgrammaticAgentBoardCoordinatorPauseProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardCoordinatorPauseProgrammaticAgentBoardCoordinatorPauseProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -1481,13 +1481,13 @@ func (v *AgentBoardCoordinatorPauseProgrammaticAgentBoardCoordinatorPauseProgram
 // AgentBoardCoordinatorPauseProgrammaticAgentBoardCoordinatorPauseProgrammaticAgentBoardPausePausedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardCoordinatorPauseProgrammaticAgentBoardCoordinatorPauseProgrammaticAgentBoardPausePausedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -1613,7 +1613,7 @@ func (v *AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoardEffective
 
 // AgentBoardElementFamilyEntriesResponse is returned by AgentBoardElementFamilyEntries on success.
 type AgentBoardElementFamilyEntriesResponse struct {
-	// Agent-key auth: one board (includes coordinatorPrompt and lock state).
+	// Agent-key auth: one board (includes coordinatorPrompt and pause state).
 	AgentBoardProgrammatic *AgentBoardElementFamilyEntriesAgentBoardProgrammaticAgentBoard `json:"agentBoardProgrammatic"`
 }
 
@@ -1727,13 +1727,13 @@ func (v *AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEvent
 // AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardEventsProgrammaticAgentBoardEventsProgrammaticAgentBoardEventPageEventsAgentBoardLoggedEventActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -2167,7 +2167,7 @@ func (v *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoardGroupsTaskG
 
 // AgentBoardGroupsProgrammaticResponse is returned by AgentBoardGroupsProgrammatic on success.
 type AgentBoardGroupsProgrammaticResponse struct {
-	// Agent-key auth: one board (includes coordinatorPrompt and lock state).
+	// Agent-key auth: one board (includes coordinatorPrompt and pause state).
 	AgentBoardProgrammatic *AgentBoardGroupsProgrammaticAgentBoardProgrammaticAgentBoard `json:"agentBoardProgrammatic"`
 }
 
@@ -2231,13 +2231,13 @@ func (v *AgentBoardOperatorPauseAgentBoardOperatorPauseAgentBoardPause) GetPause
 // AgentBoardOperatorPauseAgentBoardOperatorPauseAgentBoardPausePausedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardOperatorPauseAgentBoardOperatorPauseAgentBoardPausePausedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -2515,13 +2515,13 @@ func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoar
 // AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -2622,13 +2622,13 @@ func (v *AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoar
 // AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardPausePausedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardPostEventProgrammaticAgentBoardPostEventProgrammaticAgentBoardPausePausedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -3459,13 +3459,13 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEventsAgentBoardE
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -3732,13 +3732,13 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardPause) GetPausedA
 // AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardPausePausedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardPausePausedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -3860,7 +3860,7 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardStaleness) GetInv
 
 // AgentBoardProgrammaticResponse is returned by AgentBoardProgrammatic on success.
 type AgentBoardProgrammaticResponse struct {
-	// Agent-key auth: one board (includes coordinatorPrompt and lock state).
+	// Agent-key auth: one board (includes coordinatorPrompt and pause state).
 	AgentBoardProgrammatic *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard `json:"agentBoardProgrammatic"`
 }
 
@@ -4007,13 +4007,13 @@ func (v *AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardS
 // AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardSnapshotProgrammaticAgentBoardSnapshotProgrammaticAgentBoardSnapshotTasksAgentTaskSnapshotHolderAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -4615,7 +4615,7 @@ func (v *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoardSpe
 
 // AgentBoardSpendBreakdownProgrammaticResponse is returned by AgentBoardSpendBreakdownProgrammatic on success.
 type AgentBoardSpendBreakdownProgrammaticResponse struct {
-	// Agent-key auth: one board (includes coordinatorPrompt and lock state).
+	// Agent-key auth: one board (includes coordinatorPrompt and pause state).
 	AgentBoardProgrammatic *AgentBoardSpendBreakdownProgrammaticAgentBoardProgrammaticAgentBoard `json:"agentBoardProgrammatic"`
 }
 
@@ -4728,13 +4728,13 @@ func (v *AgentBoardsOfOrgAgentBoardsOfOrgAgentBoardPause) GetPausedAt() *string 
 // AgentBoardsOfOrgAgentBoardsOfOrgAgentBoardPausePausedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardsOfOrgAgentBoardsOfOrgAgentBoardPausePausedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -5537,13 +5537,13 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEventsAgentBoar
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -5689,13 +5689,13 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardPause) GetPause
 // AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardPausePausedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardPausePausedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -5915,7 +5915,7 @@ func (v *AgentDocumentPathAgentBoardProgrammaticAgentBoard) GetDocumentPath() *s
 
 // AgentDocumentPathResponse is returned by AgentDocumentPath on success.
 type AgentDocumentPathResponse struct {
-	// Agent-key auth: one board (includes coordinatorPrompt and lock state).
+	// Agent-key auth: one board (includes coordinatorPrompt and pause state).
 	AgentBoardProgrammatic *AgentDocumentPathAgentBoardProgrammaticAgentBoard `json:"agentBoardProgrammatic"`
 }
 
@@ -7829,13 +7829,13 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -7908,13 +7908,13 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -8240,13 +8240,13 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -8443,13 +8443,13 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -8544,13 +8544,13 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -9223,13 +9223,13 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskAs
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -9377,13 +9377,13 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHo
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -9456,13 +9456,13 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskHo
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -9788,13 +9788,13 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSi
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -9991,13 +9991,13 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSt
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -10092,13 +10092,13 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskTa
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -10555,13 +10555,13 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -10634,13 +10634,13 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -10966,13 +10966,13 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -11169,13 +11169,13 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -11270,13 +11270,13 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -12047,13 +12047,13 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHold) Ge
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -12126,13 +12126,13 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskHoldHeld
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -12458,13 +12458,13 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffs
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -12661,13 +12661,13 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskStatusHi
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -12762,13 +12762,13 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskTagsTagR
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -13180,13 +13180,13 @@ func (v *AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTask
 // AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskInvestigationAgentInvestigationCommissionedByAgentInvestigationCommissionerByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskInvestigationAgentInvestigationCommissionedByAgentInvestigationCommissionerByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -13418,13 +13418,13 @@ func (v *AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTask
 // AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -14160,13 +14160,13 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHold
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -14239,13 +14239,13 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskHold
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -14627,13 +14627,13 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSign
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -14830,13 +14830,13 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStat
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -14987,13 +14987,13 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskUnas
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -15141,13 +15141,13 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskUnas
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -16171,13 +16171,13 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 // AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -16250,13 +16250,13 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 // AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -16582,13 +16582,13 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 // AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -16785,13 +16785,13 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 // AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -16886,13 +16886,13 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 // AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -17669,13 +17669,13 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -17748,13 +17748,13 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -18080,13 +18080,13 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -18283,13 +18283,13 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -18384,13 +18384,13 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -18874,13 +18874,13 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHold) GetSto
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -18953,13 +18953,13 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskHoldHeldByAg
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -19285,13 +19285,13 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgen
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -19488,13 +19488,13 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskStatusHistor
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -19589,13 +19589,13 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskTagsTagRecor
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -20665,13 +20665,13 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskHold
 // AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -20744,13 +20744,13 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskHold
 // AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -21076,13 +21076,13 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSign
 // AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -21279,13 +21279,13 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskStat
 // AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -21380,13 +21380,13 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskTags
 // AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -21847,13 +21847,13 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHold) Ge
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -21926,13 +21926,13 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskHoldHeld
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -22314,13 +22314,13 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffs
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -22517,13 +22517,13 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHi
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -22674,13 +22674,13 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskUnassign
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -22828,13 +22828,13 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskUnassign
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -23318,13 +23318,13 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -23397,13 +23397,13 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -23729,13 +23729,13 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -23932,13 +23932,13 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -24033,13 +24033,13 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -25052,13 +25052,13 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHold) GetS
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -25131,13 +25131,13 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskHoldHeldBy
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -25463,13 +25463,13 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAg
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -25666,13 +25666,13 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskStatusHist
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -25767,13 +25767,13 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskTagsTagRec
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -26396,13 +26396,13 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDeliveriesAgentTaskD
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDeliveriesAgentTaskDeliveryByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDeliveriesAgentTaskDeliveryByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -26828,13 +26828,13 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHold) GetStop() *Age
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -27020,13 +27020,13 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskInvestigationAgentIn
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskInvestigationAgentInvestigationCommissionedByAgentInvestigationCommissionerByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskInvestigationAgentInvestigationCommissionedByAgentInvestigationCommissionerByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -27282,13 +27282,13 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenReviewItemsBoard
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -27476,13 +27476,13 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTas
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequestDeclarationAgentTaskDeliveryByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskPullRequestsAgentTaskPullRequestDeclarationAgentTaskDeliveryByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -27640,13 +27640,13 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReopensAgentTaskReop
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -28083,13 +28083,13 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSig
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -28322,13 +28322,13 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTa
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -28499,13 +28499,13 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskUnassignmentsAgentTa
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -28653,13 +28653,13 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskUnassignmentsAgentTa
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -29435,13 +29435,13 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHold
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -29514,13 +29514,13 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskHold
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -29846,13 +29846,13 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSign
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -30049,13 +30049,13 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskStat
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -30150,13 +30150,13 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskTags
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -30646,13 +30646,13 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHold) Ge
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -30725,13 +30725,13 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskHoldHeld
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -30945,13 +30945,13 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskReopensA
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -31229,13 +31229,13 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSignOffs
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -31432,13 +31432,13 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskStatusHi
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -31589,13 +31589,13 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskUnassign
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -31743,13 +31743,13 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskUnassign
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -32472,13 +32472,13 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -32551,13 +32551,13 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -32883,13 +32883,13 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -33086,13 +33086,13 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -33187,13 +33187,13 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -33646,13 +33646,13 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHold) Ge
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -33725,13 +33725,13 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskHoldHeld
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -34057,13 +34057,13 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffs
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -34260,13 +34260,13 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHi
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -34361,13 +34361,13 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskTagsTagR
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -36883,13 +36883,13 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 // AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -36962,13 +36962,13 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 // AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -37294,13 +37294,13 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 // AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -37497,13 +37497,13 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 // AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -37598,13 +37598,13 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 // AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -38073,13 +38073,13 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHold) 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -38152,13 +38152,13 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskHoldHe
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -38561,13 +38561,13 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOf
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -38764,13 +38764,13 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatus
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -38921,13 +38921,13 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskUnassi
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -39075,13 +39075,13 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskUnassi
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -39578,13 +39578,13 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHold) GetS
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -39657,13 +39657,13 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskHoldHeldBy
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -39989,13 +39989,13 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAg
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -40192,13 +40192,13 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskStatusHist
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -40293,13 +40293,13 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskTagsTagRec
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -40767,13 +40767,13 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 // AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -40846,13 +40846,13 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 // AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -41178,13 +41178,13 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 // AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -41381,13 +41381,13 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 // AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -41482,13 +41482,13 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 // AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -41910,13 +41910,13 @@ func (v *AgentTaskUnassignAgentTaskUnassignAgentTaskUnassignmentsAgentTaskUnassi
 // AgentTaskUnassignAgentTaskUnassignAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskUnassignAgentTaskUnassignAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -42081,13 +42081,13 @@ func (v *AgentTaskUnassignProgrammaticAgentTaskUnassignProgrammaticAgentTaskUnas
 // AgentTaskUnassignProgrammaticAgentTaskUnassignProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTaskUnassignProgrammaticAgentTaskUnassignProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -42755,13 +42755,13 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDelive
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDeliveriesAgentTaskDeliveryByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDeliveriesAgentTaskDeliveryByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -43187,13 +43187,13 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHold) 
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -43379,13 +43379,13 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskInvest
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskInvestigationAgentInvestigationCommissionedByAgentInvestigationCommissionerByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskInvestigationAgentInvestigationCommissionedByAgentInvestigationCommissionerByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -43641,13 +43641,13 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenRe
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -43835,13 +43835,13 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRe
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequestDeclarationAgentTaskDeliveryByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskPullRequestsAgentTaskPullRequestDeclarationAgentTaskDeliveryByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -43999,13 +43999,13 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopen
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -44442,13 +44442,13 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOf
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -44681,13 +44681,13 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatus
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -44858,13 +44858,13 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskUnassi
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskUnassignmentsAgentTaskUnassignmentUnassignedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -45012,13 +45012,13 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskUnassi
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -45785,13 +45785,13 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHold) GetStop() *A
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -45977,13 +45977,13 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskInvestigationAgent
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskInvestigationAgentInvestigationCommissionedByAgentInvestigationCommissionerByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskInvestigationAgentInvestigationCommissionedByAgentInvestigationCommissionerByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -46056,13 +46056,13 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskInvestigationAgent
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskOrderSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -46220,13 +46220,13 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReopensAgentTaskRe
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReopensAgentTaskReopenByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -46570,13 +46570,13 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskS
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -46773,13 +46773,13 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgent
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -46874,13 +46874,13 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskTagsTagRecord) Get
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -55664,13 +55664,13 @@ func (v *PersonTaskFieldsAssignmentAgentTaskWorkAssignment) GetAssignedAt() *str
 // PersonTaskFieldsBudgetSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type PersonTaskFieldsBudgetSetByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -55794,13 +55794,13 @@ func (v *PersonTaskFieldsHoldAgentTaskHold) GetStop() *AgentTaskHoldStop { retur
 // PersonTaskFieldsHoldAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type PersonTaskFieldsHoldAgentTaskHoldHeldByAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -56049,13 +56049,13 @@ func (v *PersonTaskFieldsStatusHistoryAgentTaskStatusChange) GetNote() *string {
 // PersonTaskFieldsStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type PersonTaskFieldsStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
 	ActorFields `json:"-"`
 }
@@ -56144,13 +56144,13 @@ func (v *PersonTaskFieldsTagsTagRecord) GetRemovable() *RemvovableType { return 
 // PersonTaskFieldsWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
 // The GraphQL type's documentation follows.
 //
-// Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 //
 // These were all String, and every writer invented its own encoding -- a session uuid behind a
 // "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 // knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 // to; name is what a human should read. Rows written before this are decoded on read, so an
-// older lock still resolves.
+// older pause still resolves.
 type PersonTaskFieldsWorkLevelSetByAgentActor struct {
 	ActorFields `json:"-"`
 }

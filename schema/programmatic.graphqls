@@ -115,7 +115,7 @@ type Query {
   agentBoardSnapshotProgrammatic(
   boardUuid: ID!): AgentBoardSnapshot
   """
-  Agent-key auth: one board (includes coordinatorPrompt and lock state).
+  Agent-key auth: one board (includes coordinatorPrompt and pause state).
   """
   agentBoardProgrammatic(
   boardUuid: ID!): AgentBoard
@@ -4670,13 +4670,13 @@ enum SessionStatus {
 }
 
 """
-Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 
 These were all String, and every writer invented its own encoding -- a session uuid behind a
 "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 to; name is what a human should read. Rows written before this are decoded on read, so an
-older lock still resolves.
+older pause still resolves.
 """
 type AgentActor {
   kind: AgentActorKind
