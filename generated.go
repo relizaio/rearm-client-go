@@ -58893,7 +58893,7 @@ func (v *TagRecordInput) GetKey() *string { return v.Key }
 func (v *TagRecordInput) GetValue() *string { return v.Value }
 
 // A group to create or edit, by key (task RD2-29). Omitted fields are left as they are on an edit;
-// defaultLevel sent as null clears it. uuid names the group when its key is changing, which is refused
+// defaultWorkLevel sent as null clears it. uuid names the group when its key is changing, which is refused
 // once a task names the group. status CLOSED is the close, OPEN the reopen.
 type TaskGroupInput struct {
 	Uuid             *string               `json:"uuid"`
@@ -64083,7 +64083,7 @@ fragment ActorFields on AgentActor {
 `
 
 // Commission an investigation (task RD4-12): a new INVESTIGATION task for a role that produces
-// INVESTIGATION_REPORT. With sessionUuid, the session commissions from the task it holds (fromTask); without, the
+// BOARD_INVESTIGATION_REPORT. With sessionUuid, the session commissions from the task it holds (fromTask); without, the
 // key commissions as a person with BOARD_WRITE would. Its report comes back pinned on fromTask.
 func AgentTaskCommissionProgrammatic(
 	ctx_ context.Context,

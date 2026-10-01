@@ -3592,7 +3592,7 @@ type TaskGroup {
 
 """
 A group to create or edit, by key (task RD2-29). Omitted fields are left as they are on an edit;
-defaultLevel sent as null clears it. uuid names the group when its key is changing, which is refused
+defaultWorkLevel sent as null clears it. uuid names the group when its key is changing, which is refused
 once a task names the group. status CLOSED is the close, OPEN the reopen.
 """
 input TaskGroupInput {
