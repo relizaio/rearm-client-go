@@ -49590,6 +49590,159 @@ var AllArtifactType = []ArtifactType{
 	ArtifactTypeOther,
 }
 
+// AttestProgrammaticAttestProgrammaticAttestation includes the requested fields of the GraphQL type Attestation.
+// The GraphQL type's documentation follows.
+//
+// An accountable statement by a user or an agent. Append-only: a correction is a new row plus a
+// revocation of the old one, because a record that can be edited afterwards is not one.
+type AttestProgrammaticAttestProgrammaticAttestation struct {
+	Uuid      *string               `json:"uuid"`
+	Type      *AttestationType      `json:"type"`
+	Verdict   *AttestationVerdict   `json:"verdict"`
+	Note      *string               `json:"note"`
+	ActorType *AttestationActorType `json:"actorType"`
+	ActorUuid *string               `json:"actorUuid"`
+	// AGENT: the session it was filed under.
+	AgentSession *string                                                    `json:"agentSession"`
+	Status       *AttestationRecordStatus                                   `json:"status"`
+	CreatedDate  *string                                                    `json:"createdDate"`
+	SubjectRef   *AttestProgrammaticAttestProgrammaticAttestationSubjectRef `json:"subjectRef"`
+}
+
+// GetUuid returns AttestProgrammaticAttestProgrammaticAttestation.Uuid, and is useful for accessing the field via an interface.
+func (v *AttestProgrammaticAttestProgrammaticAttestation) GetUuid() *string { return v.Uuid }
+
+// GetType returns AttestProgrammaticAttestProgrammaticAttestation.Type, and is useful for accessing the field via an interface.
+func (v *AttestProgrammaticAttestProgrammaticAttestation) GetType() *AttestationType { return v.Type }
+
+// GetVerdict returns AttestProgrammaticAttestProgrammaticAttestation.Verdict, and is useful for accessing the field via an interface.
+func (v *AttestProgrammaticAttestProgrammaticAttestation) GetVerdict() *AttestationVerdict {
+	return v.Verdict
+}
+
+// GetNote returns AttestProgrammaticAttestProgrammaticAttestation.Note, and is useful for accessing the field via an interface.
+func (v *AttestProgrammaticAttestProgrammaticAttestation) GetNote() *string { return v.Note }
+
+// GetActorType returns AttestProgrammaticAttestProgrammaticAttestation.ActorType, and is useful for accessing the field via an interface.
+func (v *AttestProgrammaticAttestProgrammaticAttestation) GetActorType() *AttestationActorType {
+	return v.ActorType
+}
+
+// GetActorUuid returns AttestProgrammaticAttestProgrammaticAttestation.ActorUuid, and is useful for accessing the field via an interface.
+func (v *AttestProgrammaticAttestProgrammaticAttestation) GetActorUuid() *string { return v.ActorUuid }
+
+// GetAgentSession returns AttestProgrammaticAttestProgrammaticAttestation.AgentSession, and is useful for accessing the field via an interface.
+func (v *AttestProgrammaticAttestProgrammaticAttestation) GetAgentSession() *string {
+	return v.AgentSession
+}
+
+// GetStatus returns AttestProgrammaticAttestProgrammaticAttestation.Status, and is useful for accessing the field via an interface.
+func (v *AttestProgrammaticAttestProgrammaticAttestation) GetStatus() *AttestationRecordStatus {
+	return v.Status
+}
+
+// GetCreatedDate returns AttestProgrammaticAttestProgrammaticAttestation.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AttestProgrammaticAttestProgrammaticAttestation) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetSubjectRef returns AttestProgrammaticAttestProgrammaticAttestation.SubjectRef, and is useful for accessing the field via an interface.
+func (v *AttestProgrammaticAttestProgrammaticAttestation) GetSubjectRef() *AttestProgrammaticAttestProgrammaticAttestationSubjectRef {
+	return v.SubjectRef
+}
+
+// AttestProgrammaticAttestProgrammaticAttestationSubjectRef includes the requested fields of the GraphQL type AttestationSubjectRef.
+// The GraphQL type's documentation follows.
+//
+// What the subject was called when the statement was made; display only.
+type AttestProgrammaticAttestProgrammaticAttestationSubjectRef struct {
+	ComponentName *string `json:"componentName"`
+	Commit        *string `json:"commit"`
+}
+
+// GetComponentName returns AttestProgrammaticAttestProgrammaticAttestationSubjectRef.ComponentName, and is useful for accessing the field via an interface.
+func (v *AttestProgrammaticAttestProgrammaticAttestationSubjectRef) GetComponentName() *string {
+	return v.ComponentName
+}
+
+// GetCommit returns AttestProgrammaticAttestProgrammaticAttestationSubjectRef.Commit, and is useful for accessing the field via an interface.
+func (v *AttestProgrammaticAttestProgrammaticAttestationSubjectRef) GetCommit() *string {
+	return v.Commit
+}
+
+// AttestProgrammaticResponse is returned by AttestProgrammatic on success.
+type AttestProgrammaticResponse struct {
+	// Claim or disown a commit as the key's agent. The commit is named the way getversion and
+	// addrelease name a component -- a component uuid, or vcsUri plus repoPath -- plus the sha,
+	// which the server resolves through that component's repository. A sha ReARM has never seen is
+	// refused rather than recorded: a commit that does not exist cannot be a lock cause.
+	//
+	// The session is required rather than inferred from the key: an attestation says who stood
+	// behind a claim, and a key is not a who. An agent already opens a session before it works, so
+	// it has one to name.
+	//
+	// This is the mutation a refusal points at. An agent that made a mistake claims it, and if
+	// that was the last thing a lock was waiting on and the lock is allowed to release itself, the
+	// next build goes through with no human in the loop.
+	AttestProgrammatic *AttestProgrammaticAttestProgrammaticAttestation `json:"attestProgrammatic"`
+}
+
+// GetAttestProgrammatic returns AttestProgrammaticResponse.AttestProgrammatic, and is useful for accessing the field via an interface.
+func (v *AttestProgrammaticResponse) GetAttestProgrammatic() *AttestProgrammaticAttestProgrammaticAttestation {
+	return v.AttestProgrammatic
+}
+
+type AttestationActorType string
+
+const (
+	AttestationActorTypeUser  AttestationActorType = "USER"
+	AttestationActorTypeAgent AttestationActorType = "AGENT"
+)
+
+var AllAttestationActorType = []AttestationActorType{
+	AttestationActorTypeUser,
+	AttestationActorTypeAgent,
+}
+
+type AttestationRecordStatus string
+
+const (
+	AttestationRecordStatusActive  AttestationRecordStatus = "ACTIVE"
+	AttestationRecordStatusRevoked AttestationRecordStatus = "REVOKED"
+)
+
+var AllAttestationRecordStatus = []AttestationRecordStatus{
+	AttestationRecordStatusActive,
+	AttestationRecordStatusRevoked,
+}
+
+type AttestationType string
+
+const (
+	AttestationTypeCommitAcknowledgement AttestationType = "COMMIT_ACKNOWLEDGEMENT"
+	AttestationTypeLockRelease           AttestationType = "LOCK_RELEASE"
+)
+
+var AllAttestationType = []AttestationType{
+	AttestationTypeCommitAcknowledgement,
+	AttestationTypeLockRelease,
+}
+
+// Verdicts of a commit acknowledgement. MINE makes a commit recognized; it does not certify the
+// content and is not a review. NOT_MINE leaves it unrecognized and escalates every lock it is a
+// cause of.
+type AttestationVerdict string
+
+const (
+	AttestationVerdictMine    AttestationVerdict = "MINE"
+	AttestationVerdictNotMine AttestationVerdict = "NOT_MINE"
+)
+
+var AllAttestationVerdict = []AttestationVerdict{
+	AttestationVerdictMine,
+	AttestationVerdictNotMine,
+}
+
 type AttributionState string
 
 const (
@@ -50355,6 +50508,24 @@ var AllComponentNature = []ComponentNature{
 	ComponentNatureSoftware,
 	ComponentNatureHardware,
 }
+
+// How a programmatic caller names a component: by uuid, or by the VCS coordinates CI already has.
+// The same block getversion and addrelease accept, resolved by the same code, so a CI job that can
+// call one can call the others without learning a second convention.
+type ComponentRefInput struct {
+	Component *string `json:"component"`
+	VcsUri    *string `json:"vcsUri"`
+	RepoPath  *string `json:"repoPath"`
+}
+
+// GetComponent returns ComponentRefInput.Component, and is useful for accessing the field via an interface.
+func (v *ComponentRefInput) GetComponent() *string { return v.Component }
+
+// GetVcsUri returns ComponentRefInput.VcsUri, and is useful for accessing the field via an interface.
+func (v *ComponentRefInput) GetVcsUri() *string { return v.VcsUri }
+
+// GetRepoPath returns ComponentRefInput.RepoPath, and is useful for accessing the field via an interface.
+func (v *ComponentRefInput) GetRepoPath() *string { return v.RepoPath }
 
 type ComponentType string
 
@@ -55157,6 +55328,18 @@ func (v *ListInstanceProductFeatureSetsResponse) GetListInstanceProductFeatureSe
 	return v.ListInstanceProductFeatureSets
 }
 
+type LockStatus string
+
+const (
+	LockStatusActive   LockStatus = "ACTIVE"
+	LockStatusReleased LockStatus = "RELEASED"
+)
+
+var AllLockStatus = []LockStatus{
+	LockStatusActive,
+	LockStatusReleased,
+}
+
 type MatchOperator string
 
 const (
@@ -56671,6 +56854,70 @@ var AllReleaseLifecycleEnum = []ReleaseLifecycleEnum{
 	ReleaseLifecycleEnumEndOfDistribution,
 	ReleaseLifecycleEnumEndOfSupport,
 	ReleaseLifecycleEnumEndOfLife,
+}
+
+// ReleaseLockProgrammaticReleaseLockProgrammaticLock includes the requested fields of the GraphQL type Lock.
+// The GraphQL type's documentation follows.
+//
+// A sticky refusal of writes on a component or one of its branches.
+//
+// Every other gate in ReARM evaluates a point in time, so a rule about a commit is defeated by
+// pushing another commit on top of it. A lock is the state that outlives the build: it refuses the
+// next one outright and stays until somebody resolves the cause and says so on the record.
+type ReleaseLockProgrammaticReleaseLockProgrammaticLock struct {
+	Uuid   *string     `json:"uuid"`
+	Status *LockStatus `json:"status"`
+	// Shown verbatim in every refusal.
+	Reason        *string `json:"reason"`
+	ComponentName *string `json:"componentName"`
+	BranchName    *string `json:"branchName"`
+	ReleasedAt    *string `json:"releasedAt"`
+	// The LOCK_RELEASE attestation that released it.
+	ReleaseAttestation *string `json:"releaseAttestation"`
+}
+
+// GetUuid returns ReleaseLockProgrammaticReleaseLockProgrammaticLock.Uuid, and is useful for accessing the field via an interface.
+func (v *ReleaseLockProgrammaticReleaseLockProgrammaticLock) GetUuid() *string { return v.Uuid }
+
+// GetStatus returns ReleaseLockProgrammaticReleaseLockProgrammaticLock.Status, and is useful for accessing the field via an interface.
+func (v *ReleaseLockProgrammaticReleaseLockProgrammaticLock) GetStatus() *LockStatus { return v.Status }
+
+// GetReason returns ReleaseLockProgrammaticReleaseLockProgrammaticLock.Reason, and is useful for accessing the field via an interface.
+func (v *ReleaseLockProgrammaticReleaseLockProgrammaticLock) GetReason() *string { return v.Reason }
+
+// GetComponentName returns ReleaseLockProgrammaticReleaseLockProgrammaticLock.ComponentName, and is useful for accessing the field via an interface.
+func (v *ReleaseLockProgrammaticReleaseLockProgrammaticLock) GetComponentName() *string {
+	return v.ComponentName
+}
+
+// GetBranchName returns ReleaseLockProgrammaticReleaseLockProgrammaticLock.BranchName, and is useful for accessing the field via an interface.
+func (v *ReleaseLockProgrammaticReleaseLockProgrammaticLock) GetBranchName() *string {
+	return v.BranchName
+}
+
+// GetReleasedAt returns ReleaseLockProgrammaticReleaseLockProgrammaticLock.ReleasedAt, and is useful for accessing the field via an interface.
+func (v *ReleaseLockProgrammaticReleaseLockProgrammaticLock) GetReleasedAt() *string {
+	return v.ReleasedAt
+}
+
+// GetReleaseAttestation returns ReleaseLockProgrammaticReleaseLockProgrammaticLock.ReleaseAttestation, and is useful for accessing the field via an interface.
+func (v *ReleaseLockProgrammaticReleaseLockProgrammaticLock) GetReleaseAttestation() *string {
+	return v.ReleaseAttestation
+}
+
+// ReleaseLockProgrammaticResponse is returned by ReleaseLockProgrammatic on success.
+type ReleaseLockProgrammaticResponse struct {
+	// Release a lock whose level is AGENT and whose requirement is met. Anything stricter, or any
+	// lock that has escalated, refuses and says so.
+	//
+	// The session is required and must belong to the calling key's agent: the LOCK_RELEASE
+	// attestation this writes is the durable record of who released the lock.
+	ReleaseLockProgrammatic *ReleaseLockProgrammaticReleaseLockProgrammaticLock `json:"releaseLockProgrammatic"`
+}
+
+// GetReleaseLockProgrammatic returns ReleaseLockProgrammaticResponse.ReleaseLockProgrammatic, and is useful for accessing the field via an interface.
+func (v *ReleaseLockProgrammaticResponse) GetReleaseLockProgrammatic() *ReleaseLockProgrammaticReleaseLockProgrammaticLock {
+	return v.ReleaseLockProgrammatic
 }
 
 type ReleaseUpdateActionEnum string
@@ -58788,7 +59035,6 @@ const (
 	StatusDraft     Status = "DRAFT"
 	StatusIgnored   Status = "IGNORED"
 	StatusJob       Status = "JOB"
-	StatusOptional  Status = "OPTIONAL"
 	StatusPending   Status = "PENDING"
 	StatusRejected  Status = "REJECTED"
 	StatusRequired  Status = "REQUIRED"
@@ -58803,7 +59049,6 @@ var AllStatus = []Status{
 	StatusDraft,
 	StatusIgnored,
 	StatusJob,
-	StatusOptional,
 	StatusPending,
 	StatusRejected,
 	StatusRequired,
@@ -60551,6 +60796,30 @@ type __ArchiveBoardInput struct {
 // GetName returns __ArchiveBoardInput.Name, and is useful for accessing the field via an interface.
 func (v *__ArchiveBoardInput) GetName() string { return v.Name }
 
+// __AttestProgrammaticInput is used internally by genqlient
+type __AttestProgrammaticInput struct {
+	ComponentRef *ComponentRefInput `json:"componentRef,omitempty"`
+	Commit       string             `json:"commit"`
+	Verdict      AttestationVerdict `json:"verdict"`
+	Note         *string            `json:"note"`
+	Session      string             `json:"session"`
+}
+
+// GetComponentRef returns __AttestProgrammaticInput.ComponentRef, and is useful for accessing the field via an interface.
+func (v *__AttestProgrammaticInput) GetComponentRef() *ComponentRefInput { return v.ComponentRef }
+
+// GetCommit returns __AttestProgrammaticInput.Commit, and is useful for accessing the field via an interface.
+func (v *__AttestProgrammaticInput) GetCommit() string { return v.Commit }
+
+// GetVerdict returns __AttestProgrammaticInput.Verdict, and is useful for accessing the field via an interface.
+func (v *__AttestProgrammaticInput) GetVerdict() AttestationVerdict { return v.Verdict }
+
+// GetNote returns __AttestProgrammaticInput.Note, and is useful for accessing the field via an interface.
+func (v *__AttestProgrammaticInput) GetNote() *string { return v.Note }
+
+// GetSession returns __AttestProgrammaticInput.Session, and is useful for accessing the field via an interface.
+func (v *__AttestProgrammaticInput) GetSession() string { return v.Session }
+
 // __CreateComponentInPerspectiveProgrammaticInput is used internally by genqlient
 type __CreateComponentInPerspectiveProgrammaticInput struct {
 	CreateComponentInput *CreateComponentInput `json:"CreateComponentInput,omitempty"`
@@ -60884,6 +61153,22 @@ func (v *__ProbeSbomProgrammaticInput) GetComponentUuid() *string { return v.Com
 
 // GetBranchUuid returns __ProbeSbomProgrammaticInput.BranchUuid, and is useful for accessing the field via an interface.
 func (v *__ProbeSbomProgrammaticInput) GetBranchUuid() *string { return v.BranchUuid }
+
+// __ReleaseLockProgrammaticInput is used internally by genqlient
+type __ReleaseLockProgrammaticInput struct {
+	LockUuid string `json:"lockUuid"`
+	Reason   string `json:"reason"`
+	Session  string `json:"session"`
+}
+
+// GetLockUuid returns __ReleaseLockProgrammaticInput.LockUuid, and is useful for accessing the field via an interface.
+func (v *__ReleaseLockProgrammaticInput) GetLockUuid() string { return v.LockUuid }
+
+// GetReason returns __ReleaseLockProgrammaticInput.Reason, and is useful for accessing the field via an interface.
+func (v *__ReleaseLockProgrammaticInput) GetReason() string { return v.Reason }
+
+// GetSession returns __ReleaseLockProgrammaticInput.Session, and is useful for accessing the field via an interface.
+func (v *__ReleaseLockProgrammaticInput) GetSession() string { return v.Session }
 
 // __ReleasecompletionfinalizerProgrammaticInput is used internally by genqlient
 type __ReleasecompletionfinalizerProgrammaticInput struct {
@@ -70974,6 +71259,64 @@ func ArchiveBoard(
 	return data_, err_
 }
 
+// The mutation executed by AttestProgrammatic.
+const AttestProgrammatic_Operation = `
+mutation AttestProgrammatic ($componentRef: ComponentRefInput!, $commit: String!, $verdict: AttestationVerdict!, $note: String, $session: ID!) {
+	attestProgrammatic(componentRef: $componentRef, commit: $commit, verdict: $verdict, note: $note, session: $session) {
+		uuid
+		type
+		verdict
+		note
+		actorType
+		actorUuid
+		agentSession
+		status
+		createdDate
+		subjectRef {
+			componentName
+			commit
+		}
+	}
+}
+`
+
+// from rearm-cli attest.go -- claim or disown a commit as the key's agent.
+//
+// The session is named rather than inferred from the key: an attestation records who stood behind
+// a claim, and a key is not a who. The CLI already opens a session before it works.
+func AttestProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	componentRef *ComponentRefInput,
+	commit string,
+	verdict AttestationVerdict,
+	note *string,
+	session string,
+) (data_ *AttestProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AttestProgrammatic",
+		Query:  AttestProgrammatic_Operation,
+		Variables: &__AttestProgrammaticInput{
+			ComponentRef: componentRef,
+			Commit:       commit,
+			Verdict:      verdict,
+			Note:         note,
+			Session:      session,
+		},
+	}
+
+	data_ = &AttestProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by CreateComponentInPerspectiveProgrammatic.
 const CreateComponentInPerspectiveProgrammatic_Operation = `
 mutation CreateComponentInPerspectiveProgrammatic ($CreateComponentInput: CreateComponentInput!, $perspectiveUuid: ID!) {
@@ -72464,6 +72807,55 @@ func ProbeSbomProgrammatic(
 	}
 
 	data_ = &ProbeSbomProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by ReleaseLockProgrammatic.
+const ReleaseLockProgrammatic_Operation = `
+mutation ReleaseLockProgrammatic ($lockUuid: ID!, $reason: String!, $session: ID!) {
+	releaseLockProgrammatic(lockUuid: $lockUuid, reason: $reason, session: $session) {
+		uuid
+		status
+		reason
+		componentName
+		branchName
+		releasedAt
+		releaseAttestation
+	}
+}
+`
+
+// from rearm-cli lockRelease.go -- release a lock an agent is allowed to release.
+//
+// Anything stricter refuses and says which level it needs, so a CI log shows the reason rather
+// than a bare permission error. The session is named for the same reason attest names it: the
+// LOCK_RELEASE attestation is the record of who released the lock.
+func ReleaseLockProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	lockUuid string,
+	reason string,
+	session string,
+) (data_ *ReleaseLockProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ReleaseLockProgrammatic",
+		Query:  ReleaseLockProgrammatic_Operation,
+		Variables: &__ReleaseLockProgrammaticInput{
+			LockUuid: lockUuid,
+			Reason:   reason,
+			Session:  session,
+		},
+	}
+
+	data_ = &ReleaseLockProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
