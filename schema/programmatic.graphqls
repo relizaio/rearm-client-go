@@ -5197,7 +5197,7 @@ type AgentReturnedReport {
   investigation: ID
   investigationKey: String
   """
-  The report release, pinned as an input on this task.
+  The report release, pinned as an input on this task; null when the investigation was cancelled.
   """
   report: ID
   """
@@ -5210,6 +5210,14 @@ type AgentReturnedReport {
   Whether the return queued this task for the commissioning role again.
   """
   reoffered: Boolean
+  """
+  Whether the investigation was cancelled: no report came back, and this task no longer waits on it.
+  """
+  cancelled: Boolean
+  """
+  What the cancel said; null for a report that came back.
+  """
+  note: String
 }
 
 """

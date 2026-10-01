@@ -42,7 +42,7 @@ func TestTheTaskReadsCarryTheInvestigationAndThePins(t *testing.T) {
 		if !strings.Contains(n, "kind investigation { commissionedBy {") {
 			t.Errorf("%s does not read the investigation", name)
 		}
-		if !strings.Contains(n, "reportsReturned { investigation investigationKey report session role at reoffered }") {
+		if !strings.Contains(n, "reportsReturned { investigation investigationKey report session role at reoffered cancelled note }") {
 			t.Errorf("%s does not read the returned reports", name)
 		}
 	}

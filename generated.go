@@ -13388,7 +13388,7 @@ func (v *AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTask
 type AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskReportsReturnedAgentReturnedReport struct {
 	Investigation    *string `json:"investigation"`
 	InvestigationKey *string `json:"investigationKey"`
-	// The report release, pinned as an input on this task.
+	// The report release, pinned as an input on this task; null when the investigation was cancelled.
 	Report *string `json:"report"`
 	// The session that commissioned it; a poll prefers it when the task is offered back.
 	Session *string `json:"session"`
@@ -13396,6 +13396,10 @@ type AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskRepo
 	At      *string `json:"at"`
 	// Whether the return queued this task for the commissioning role again.
 	Reoffered *bool `json:"reoffered"`
+	// Whether the investigation was cancelled: no report came back, and this task no longer waits on it.
+	Cancelled *bool `json:"cancelled"`
+	// What the cancel said; null for a report that came back.
+	Note *string `json:"note"`
 }
 
 // GetInvestigation returns AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Investigation, and is useful for accessing the field via an interface.
@@ -13431,6 +13435,16 @@ func (v *AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTask
 // GetReoffered returns AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Reoffered, and is useful for accessing the field via an interface.
 func (v *AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskReportsReturnedAgentReturnedReport) GetReoffered() *bool {
 	return v.Reoffered
+}
+
+// GetCancelled returns AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Cancelled, and is useful for accessing the field via an interface.
+func (v *AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskReportsReturnedAgentReturnedReport) GetCancelled() *bool {
+	return v.Cancelled
+}
+
+// GetNote returns AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskReportsReturnedAgentReturnedReport) GetNote() *string {
+	return v.Note
 }
 
 // AgentTaskCommissionProgrammaticAgentTaskCommissionProgrammaticAgentTaskRequiredInputsAgentRequiredInput includes the requested fields of the GraphQL type AgentRequiredInput.
@@ -26806,7 +26820,7 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReopensAgentTaskReop
 type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReportsReturnedAgentReturnedReport struct {
 	Investigation    *string `json:"investigation"`
 	InvestigationKey *string `json:"investigationKey"`
-	// The report release, pinned as an input on this task.
+	// The report release, pinned as an input on this task; null when the investigation was cancelled.
 	Report *string `json:"report"`
 	// The session that commissioned it; a poll prefers it when the task is offered back.
 	Session *string `json:"session"`
@@ -26814,6 +26828,10 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReportsReturnedAgentRetu
 	At      *string `json:"at"`
 	// Whether the return queued this task for the commissioning role again.
 	Reoffered *bool `json:"reoffered"`
+	// Whether the investigation was cancelled: no report came back, and this task no longer waits on it.
+	Cancelled *bool `json:"cancelled"`
+	// What the cancel said; null for a report that came back.
+	Note *string `json:"note"`
 }
 
 // GetInvestigation returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Investigation, and is useful for accessing the field via an interface.
@@ -26849,6 +26867,16 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReportsReturnedAgent
 // GetReoffered returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Reoffered, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReportsReturnedAgentReturnedReport) GetReoffered() *bool {
 	return v.Reoffered
+}
+
+// GetCancelled returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Cancelled, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReportsReturnedAgentReturnedReport) GetCancelled() *bool {
+	return v.Cancelled
+}
+
+// GetNote returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReportsReturnedAgentReturnedReport) GetNote() *string {
+	return v.Note
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRequiredInputsAgentRequiredInput includes the requested fields of the GraphQL type AgentRequiredInput.
@@ -44316,7 +44344,7 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReopen
 type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReportsReturnedAgentReturnedReport struct {
 	Investigation    *string `json:"investigation"`
 	InvestigationKey *string `json:"investigationKey"`
-	// The report release, pinned as an input on this task.
+	// The report release, pinned as an input on this task; null when the investigation was cancelled.
 	Report *string `json:"report"`
 	// The session that commissioned it; a poll prefers it when the task is offered back.
 	Session *string `json:"session"`
@@ -44324,6 +44352,10 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReportsRet
 	At      *string `json:"at"`
 	// Whether the return queued this task for the commissioning role again.
 	Reoffered *bool `json:"reoffered"`
+	// Whether the investigation was cancelled: no report came back, and this task no longer waits on it.
+	Cancelled *bool `json:"cancelled"`
+	// What the cancel said; null for a report that came back.
+	Note *string `json:"note"`
 }
 
 // GetInvestigation returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Investigation, and is useful for accessing the field via an interface.
@@ -44359,6 +44391,16 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReport
 // GetReoffered returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Reoffered, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReportsReturnedAgentReturnedReport) GetReoffered() *bool {
 	return v.Reoffered
+}
+
+// GetCancelled returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Cancelled, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReportsReturnedAgentReturnedReport) GetCancelled() *bool {
+	return v.Cancelled
+}
+
+// GetNote returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Note, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReportsReturnedAgentReturnedReport) GetNote() *string {
+	return v.Note
 }
 
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRequiredInputsAgentRequiredInput includes the requested fields of the GraphQL type AgentRequiredInput.
@@ -46311,7 +46353,7 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReopensAgentTaskRe
 type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReportsReturnedAgentReturnedReport struct {
 	Investigation    *string `json:"investigation"`
 	InvestigationKey *string `json:"investigationKey"`
-	// The report release, pinned as an input on this task.
+	// The report release, pinned as an input on this task; null when the investigation was cancelled.
 	Report *string `json:"report"`
 	// The session that commissioned it; a poll prefers it when the task is offered back.
 	Session *string `json:"session"`
@@ -46319,6 +46361,10 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReportsReturnedAgentRe
 	At      *string `json:"at"`
 	// Whether the return queued this task for the commissioning role again.
 	Reoffered *bool `json:"reoffered"`
+	// Whether the investigation was cancelled: no report came back, and this task no longer waits on it.
+	Cancelled *bool `json:"cancelled"`
+	// What the cancel said; null for a report that came back.
+	Note *string `json:"note"`
 }
 
 // GetInvestigation returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Investigation, and is useful for accessing the field via an interface.
@@ -46354,6 +46400,16 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReportsReturnedAge
 // GetReoffered returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Reoffered, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReportsReturnedAgentReturnedReport) GetReoffered() *bool {
 	return v.Reoffered
+}
+
+// GetCancelled returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Cancelled, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReportsReturnedAgentReturnedReport) GetCancelled() *bool {
+	return v.Cancelled
+}
+
+// GetNote returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReportsReturnedAgentReturnedReport.Note, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReportsReturnedAgentReturnedReport) GetNote() *string {
+	return v.Note
 }
 
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturn includes the requested fields of the GraphQL type AgentTaskReturn.
@@ -63980,6 +64036,8 @@ mutation AgentTaskCommissionProgrammatic ($input: AgentTaskCommissionInput!) {
 			role
 			at
 			reoffered
+			cancelled
+			note
 		}
 		requiredInputs {
 			kind
@@ -66270,6 +66328,8 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 			role
 			at
 			reoffered
+			cancelled
+			note
 		}
 		requiredInputs {
 			kind
@@ -69440,6 +69500,8 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 			role
 			at
 			reoffered
+			cancelled
+			note
 		}
 		requiredInputs {
 			kind
@@ -69920,6 +69982,8 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $change
 			role
 			at
 			reoffered
+			cancelled
+			note
 		}
 		dependsOn
 		requireHumanReview
