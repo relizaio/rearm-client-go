@@ -7,9 +7,9 @@ import (
 
 // The report reads and the re-run come back as the report's release, carrying the whole report:
 // the CLI prints the summary and each failing check's offences from it (elements.md §7).
-func TestTheCheckOperationsSelectTheWholeReport(t *testing.T) {
+func TestTheElementCheckOperationsSelectTheWholeReport(t *testing.T) {
 	for name, op := range map[string]string{
-		"report": AgentCheckReportProgrammatic_Operation, "run": AgentCheckRunProgrammatic_Operation,
+		"report": AgentElementCheckReportProgrammatic_Operation, "run": AgentElementCheckRunProgrammatic_Operation,
 	} {
 		for _, want := range []string{"round", "catalogueVersion", "results {", "blocking", "offences {", "elementId", "scope {"} {
 			if !strings.Contains(op, want) {
@@ -17,24 +17,24 @@ func TestTheCheckOperationsSelectTheWholeReport(t *testing.T) {
 			}
 		}
 	}
-	if !strings.Contains(AgentCheckRunProgrammatic_Operation, "$sessionUuid: ID!") {
+	if !strings.Contains(AgentElementCheckRunProgrammatic_Operation, "$sessionUuid: ID!") {
 		t.Error("a run is a session's")
 	}
 }
 
-// A board's check policy is read where its element families are, and travels in the exported file.
-func TestTheBoardViewsAndTheExportCarryTheCheckPolicy(t *testing.T) {
+// A board's element check policy is read where its element families are, and travels in the exported file.
+func TestTheBoardViewsAndTheExportCarryTheElementCheckPolicy(t *testing.T) {
 	for name, op := range map[string]string{
 		"list": AgentBoardsProgrammatic_Operation, "show": AgentBoardProgrammatic_Operation,
 	} {
-		if !strings.Contains(op, "checkPolicy {") || !strings.Contains(op, "effectiveCheckPolicy {") {
-			t.Errorf("%s does not select the check policy", name)
+		if !strings.Contains(op, "elementCheckPolicy {") || !strings.Contains(op, "effectiveElementCheckPolicy {") {
+			t.Errorf("%s does not select the element check policy", name)
 		}
 	}
-	if !strings.Contains(ExportBoard_Operation, "checks {") || !strings.Contains(ExportBoard_Operation, "mandatoryFields") {
-		t.Error("the export leaves the check policy behind")
+	if !strings.Contains(ExportBoard_Operation, "elementChecks {") || !strings.Contains(ExportBoard_Operation, "mandatoryFields") {
+		t.Error("the export leaves the element check policy behind")
 	}
-	if SpecificationTypeCheckReport != "CHECK_REPORT" {
-		t.Error("CHECK_REPORT is a specification type")
+	if SpecificationTypeBoardElementCheckReport != "BOARD_ELEMENT_CHECK_REPORT" {
+		t.Error("BOARD_ELEMENT_CHECK_REPORT is a specification type")
 	}
 }

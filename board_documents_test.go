@@ -6,7 +6,7 @@ import (
 )
 
 // A board's document components (task e2ae9cfa): the board reads carry the documents block and the
-// specification-to-component map, the export carries the documents block, and DOCUMENT is a kind.
+// specification-to-component map, the export carries the documents block, and BOARD_DOCUMENT is a kind.
 // The block has shared and root, and the reads carry the root resolved (task 0cc38817).
 func TestBoardReadsCarryTheDocumentComponentsAndTheExportTheDocumentsBlock(t *testing.T) {
 	for name, op := range map[string]string{
@@ -26,7 +26,7 @@ func TestBoardReadsCarryTheDocumentComponentsAndTheExportTheDocumentsBlock(t *te
 	if !strings.Contains(normalised(ExportBoard_Operation), "documents { prefix shared root }") {
 		t.Error("board export does not carry the documents block")
 	}
-	if ComponentKindDocument != "DOCUMENT" {
-		t.Errorf("ComponentKindDocument is %q", ComponentKindDocument)
+	if ComponentKindBoardDocument != "BOARD_DOCUMENT" {
+		t.Errorf("ComponentKindBoardDocument is %q", ComponentKindBoardDocument)
 	}
 }

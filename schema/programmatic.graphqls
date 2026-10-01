@@ -115,7 +115,7 @@ type Query {
   agentBoardSnapshotProgrammatic(
   boardUuid: ID!): AgentBoardSnapshot
   """
-  Agent-key auth: one board (includes coordinatorPrompt and lock state).
+  Agent-key auth: one board (includes coordinatorPrompt and pause state).
   """
   agentBoardProgrammatic(
   boardUuid: ID!): AgentBoard
@@ -132,7 +132,7 @@ type Query {
   limit: Int = 200): AgentBoardEventPage
   """
   Worker poll: the lowest-ordered QUEUED task across the org's
-  unlocked boards (or one board) whose constraints admit the calling
+  unpaused boards (or one board) whose constraints admit the calling
   session's agent (WIP limits, distinct-agent, seat exclusion).
   Returns the role to assume and its served prompt; the agent follows
   up with agentTaskAssignProgrammatic. Null = no work.
@@ -189,27 +189,27 @@ roles: the roles this agent can take, each a role name on the board
   agentBoardSpecProgrammatic(
   boardUuid: ID!): BoardSpec
   """
-  The newest CHECK_REPORT round about a document (elements.md §7): the release, whose
-  document.checks is the report. Null when the document has none.
+  The newest BOARD_ELEMENT_CHECK_REPORT round about a document (elements.md §7): the release, whose
+  document.elementChecks is the report. Null when the document has none.
   """
-  agentCheckReportProgrammatic(
+  agentElementCheckReportProgrammatic(
   releaseUuid: ID!): Release
   """
   The element checks a publish of this index would run on the task, in its current scope, with nothing created
   (task RD4-6): what `rearm agent doc publish --check` prints. elements is the index JSON exactly as doc publish
   would send it; elementsDigest, when given, must match it. The report's checked release is the nil uuid.
   """
-  agentCheckPreviewProgrammatic(
+  agentElementCheckPreviewProgrammatic(
   sessionUuid: ID!
   taskUuid: ID!
   specification: SpecificationType!
   elements: String!
-  elementsDigest: String): CheckReport
+  elementsDigest: String): ElementCheckReport
   """
   The element check catalogue (elements.md §7): every fixed check with what it means and when it
   skips, and the coverage.<gate> pattern the board's gates are named by. Served on both endpoints.
   """
-  checkCatalogue: [CheckCatalogueEntry]
+  elementCheckCatalogue: [ElementCheckCatalogueEntry]
   """
   A person's read: the org's boards.
   """
@@ -429,12 +429,12 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   reportDeviceState(report: DeviceStateReportInput!): Device
   enrollSigningKeyProgrammatic(signingKey: AgentSigningKeyInput!): SigningKey
   agentBoardCoordinateProgrammatic(boardUuid: ID!, sessionUuid: ID!): AgentBoard
-  agentBoardCoordinatorLockProgrammatic(boardUuid: ID!, sessionUuid: ID!, lock: Boolean!, reason: String): AgentBoard
+  agentBoardCoordinatorPauseProgrammatic(boardUuid: ID!, sessionUuid: ID!, pause: Boolean!, reason: String): AgentBoard
   agentTaskRoleConfigSetProgrammatic(boardUuid: ID!, sessionUuid: ID!, input: AgentTaskRoleConfigInput!): AgentTaskRoleConfig
   agentTaskRegisterProgrammatic(input: AgentTaskRegisterInput!): AgentTask
   """
   Commission an investigation (task RD4-12): a new INVESTIGATION task for a role that produces
-  INVESTIGATION_REPORT. With sessionUuid, the session commissions from the task it holds (fromTask), in that
+  BOARD_INVESTIGATION_REPORT. With sessionUuid, the session commissions from the task it holds (fromTask), in that
   task's role, a role its commissions name (BOARD_AGENT on the board). Without one, the key commissions as a
   person would (BOARD_WRITE on the board). Its report comes back pinned on fromTask.
   """
@@ -453,8 +453,8 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   orderIndex: Int
   dependsOn: [ID!]
   producesComponent: ID
-  level: Int
-  requiredInputs: [AgentRequiredInputInput]
+  workLevel: Int
+  requiredInputs: [AgentTaskPrerequisiteInput]
   requiredStrength: Float
   budgetMicros: Long): AgentTask
   """
@@ -464,8 +464,16 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
     returns the task to the loop;
   - the session holding the task's current assignment, at OPERATOR level only (task RD4-5), with the question
     for the person as the reason: the task shows "awaiting the operator: <question>", the board's writers are
-    told, and the hop stays assigned to the session. A person releases it with the answer as the note, which
+    told, and the hop stays assigned to the session. A person lifts the hold with the answer as the note, which
     is recorded on the task, and the hop resumes with its holder.
+  - the coordinator seat, at OPERATOR level with the question as the reason (task RD4-17), on a task in
+    PENDING_INTAKE, QUEUED, AWAITING_COORDINATOR or DELIVERING: the same record and notification. A person's
+    release with the answer as the note, or anything else a person does on the task (answering its questions,
+    a delivery declaration, a supersede, a complete, a reopen, a cancel, a new order or work level), answers it: the answer is
+    recorded, the task returns to the status it was parked from, and the action then runs. Until then every task
+    verb is refused for every session, except agentTaskLinkPrProgrammatic (`task linkpr`), which is accepted,
+    recorded on the decision (hold.linked) and posted as an INFO; it does not answer the question (task RD4-19).
+    The delivery sweep leaves the task alone. A DELIVERING task is parked only this way.
   """
   agentTaskHoldProgrammatic(
   taskUuid: ID!
@@ -473,25 +481,25 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   reason: String!
   level: AgentTaskHoldLevel): AgentTask
   """
-  Release a COORDINATOR-level hold. role, optionally: an active role on the board to route to
+  Lift a COORDINATOR-level hold. role, optionally: an active role on the board to route to
   instead of the one routing would pick (task 4c566d0d). note, optionally: why, posted to the board
-  feed with the release. A no-progress or cycle-cap stop parks here first when the board allows it
-  (coordinatorStopRelease): its release routes past the stop once, and the next stop of that kind on
+  feed with the lift. A no-progress or cycle-cap stop parks here first when the board allows it
+  (coordinatorStopLift): lifting it routes past the stop once, and the next stop of that kind on
   the task is the operator's (task c0a2134c).
   """
-  agentTaskReleaseHoldProgrammatic(
+  agentTaskLiftHoldProgrammatic(
   taskUuid: ID!
   sessionUuid: ID!
   role: String
   note: String): AgentTask
   """
-  Attest that a delivery unit of a task landed, or never will (task 18c5c293): unit is a linked PR's
+  Declare that a delivery unit of a task landed, or never will (task 18c5c293): unit is a linked PR's
   URL, or on a board delivering without PRs a branch or release; commit is the merged or pushed sha
   (required for DELIVERED). The coordinator seat, or a session that worked this task in a role that
   merges (PR_MERGE). A DELIVERING task then settles: completed once every unit is delivered, to the
   coordinator when one is abandoned.
   """
-  agentTaskDeliveredProgrammatic(
+  agentTaskDeclareDeliveryProgrammatic(
   taskUuid: ID!
   sessionUuid: ID!
   unit: String!
@@ -500,7 +508,7 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   note: String): AgentTask
   """
   Declare a linked PR superseded by its replacement (task RD3-13): oldUrl closed without merging, byUrl linked
-  to the task and on the same repository. Recorded as a SUPERSEDED attestation of oldUrl naming byUrl; delivery
+  to the task and on the same repository. Recorded as a SUPERSEDED declaration of oldUrl naming byUrl; delivery
   then counts byUrl and treats oldUrl as absent. The session holding the task in a role with CODE_PUSH, the
   board's coordinator seat, or a key holding BOARD_WRITE on the board (task RD3-18).
   """
@@ -528,16 +536,16 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentBoardPostEventProgrammatic(boardUuid: ID!, sessionUuid: ID!, kind: AgentBoardEventKind!, message: String!): AgentBoard
   agentTaskOrderProgrammatic(taskUuid: ID!, sessionUuid: ID!, orderIndex: Int!): AgentTask
   """
-  The coordinator seat sets a task's level, 0 to 9, or clears it (null) to the board's default (RD2-1).
+  The coordinator seat sets a task's work level, 0 to 9, or clears it (null) to the board's default (RD2-1).
   """
-  agentTaskSetLevelProgrammatic(
+  agentTaskSetWorkLevelProgrammatic(
   taskUuid: ID!
   sessionUuid: ID!
-  level: Int): AgentTask
+  workLevel: Int): AgentTask
   """
-  The coordinator seat releases an ASSIGNED task back to QUEUED for the same role, with a reason (task RD3-4).
+  The coordinator seat unassigns an ASSIGNED task, back to QUEUED for the same role, with a reason (task RD3-4).
   """
-  agentTaskReleaseAssignmentProgrammatic(
+  agentTaskUnassignProgrammatic(
   taskUuid: ID!
   sessionUuid: ID!
   reason: String!): AgentTask
@@ -577,7 +585,7 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   Coordinator: send a COMPLETED task back to an active role, with a reason -- its delivery cannot
   land, e.g. its PR no longer merges. The role's earlier passes stop counting; whoever read its
   part re-runs when the redone hop republishes. Refused on a cancelled task (register a new one)
-  and on a locked board; a round the budget does not cover holds for an operator.
+  and on a paused board; a round the budget does not cover holds for an operator.
   """
   agentTaskReopenProgrammatic(
   taskUuid: ID!
@@ -596,7 +604,7 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   seenInputs (task RD2-34): the task's documents the hop read. When given, every document published on the
   task since the assignment by anyone but this hop must be in it, or the sign-off is refused naming them; null
   skips the check.
-  noChange (task RD4-13): on a PASSED that answers a finding about the signing role's own document, the new
+  noChange (task RD4-13): on a PASSED that answers a review item about the signing role's own document, the new
   round changes nothing to build, so the task goes back to the filer rather than to the role that builds
   from the round. Recorded on the sign-off; refused on REJECTED.
   noCode (task RD4-2): the round changed no code (a note-only round). A PASSED sign-off by a role holding
@@ -615,7 +623,14 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskReturnProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: AgentTaskReturnReason!, description: String, outputs: [ID!]): AgentTask
   agentDocumentPublishProgrammatic(input: AgentDocumentPublishInput!): Release
   agentTaskBindExternalRefProgrammatic(taskUuid: ID!, externalRef: String!, sourceUrl: String): AgentTask
-  agentTaskLinkPrProgrammatic(taskUuid: ID!, prUrl: String!): AgentTask
+  """
+  Attach a delivering pull-request URL. On a task the coordinator seat parked for the operator it is accepted too,
+  recorded on the decision (hold.linked: the PR, the key's agent, the time) and posted as an INFO; it does not answer
+  the question or lift the hold (task RD4-19).
+  """
+  agentTaskLinkPrProgrammatic(
+  taskUuid: ID!
+  prUrl: String!): AgentTask
   """
   Attach a release this task produced -- the release counterpart of linkPr, and what a downstream role waits on when it requires this task's output.
   """
@@ -624,13 +639,13 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   releaseUuid: ID!): AgentTask
   """
   Re-run the element checks of a document of the session's task in its current scope, and cut a
-  new CHECK_REPORT round when anything changed (the newest one otherwise). The session must hold
+  new BOARD_ELEMENT_CHECK_REPORT round when anything changed (the newest one otherwise). The session must hold
   the task.
   """
-  agentCheckRunProgrammatic(
+  agentElementCheckRunProgrammatic(
   sessionUuid: ID!
   releaseUuid: ID!): Release
-  agentBoardOperatorLock(boardUuid: ID!, lock: Boolean!, reason: String): AgentBoard
+  agentBoardOperatorPause(boardUuid: ID!, pause: Boolean!, reason: String): AgentBoard
   """
   Require a model of at least this strength for one task, overriding what its role asks for.
   Recorded with who set it and when, on the task rather than in the status history: the status
@@ -641,18 +656,18 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   requiredStrength: Float): AgentTask
   """
   Operator verdict on a HUMAN_GATE hold: records a human sign-off for the gated role and lets the
-  board route what follows. Approval hands the gated hop's documents over (DRAFT to ASSEMBLED).
-  Either verdict may carry findings decisions: they are cut as a round first and become the
-  verdict's output, so a rejection routes like a reviewer's would. An approval may carry findings
-  too: they are filed as corrections, open work that does not block the approval. An approval
+  board route what follows. Acceptance hands the gated hop's documents over (DRAFT to ASSEMBLED).
+  Either verdict may carry review item decisions: they are cut as a round first and become the
+  verdict's output, so a rejection routes like a reviewer's would. An acceptance may carry review items
+  too: they are filed as corrections, open work that does not block the acceptance. An acceptance
   that leaves a blocking item undecided is refused.
   """
   agentTaskHumanReview(
   taskUuid: ID!
-  approve: Boolean!
+  accept: Boolean!
   note: String
-  findings: [FindingDecisionInput!]
-  about: FindingsAboutInput): AgentTask
+  reviewItems: [BoardReviewItemDecisionInput!]
+  about: BoardReviewItemsAboutInput): AgentTask
   """
   Operator sign-off on a task queued in a HUMAN-kind role (no claim step; humans have no sessions).
   """
@@ -661,11 +676,13 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   outcome: AgentSignOffOutcome!
   note: String): AgentTask
   """
-  Operator manual hold (OPERATOR level; the coordinator cannot lift it) or release. HUMAN_GATE holds resolve via
-  agentTaskHumanReview, not here. On a release, role optionally names an active role to route to instead of the one
-  routing would pick; a release of a no-progress or cycle-cap stop routes past that stop once (task 4c566d0d).
-  A hop its holder parked for the operator (task RD4-5) is released with the answer as reason, which is required
+  Operator manual hold (OPERATOR level; the coordinator cannot lift it) or lift. HUMAN_GATE holds resolve via
+  agentTaskHumanReview, not here. On a lift, role optionally names an active role to route to instead of the one
+  routing would pick; lifting a no-progress or cycle-cap stop routes past that stop once (task 4c566d0d).
+  A hop its holder parked for the operator (task RD4-5) is lifted with the answer as reason, which is required
   and recorded on the task (a status row and an INFO); it takes no role, and the hop resumes with its holder.
+  A task the coordinator seat parked for the operator (task RD4-17) is lifted the same way, and returns to the
+  status it was parked from (hold.returnTo).
   """
   agentTaskOperatorHold(
   taskUuid: ID!
@@ -679,16 +696,16 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   taskUuid: ID!
   value: Boolean!): AgentTask
   """
-  Answer the open questions a task is waiting on, as a round of its QUESTIONS index, and let the
+  Answer the open questions a task is waiting on, as a round of its BOARD_QUESTIONS index, and let the
   board route the answer back to whoever asked. The answer is a round rather than a note so the
   asking agent reads it as a pinned input instead of prose it would have to go and find. Either
-  per-id answers or one text applied to every open id; releaseHold also lifts a QUESTION hold.
+  per-id answers or one text applied to every open id; liftHold also lifts a QUESTION hold.
   """
   agentTaskAnswer(
   taskUuid: ID!
-  answers: [FindingAnswerInput!]
+  answers: [BoardReviewItemAnswerInput!]
   answerAll: String
-  releaseHold: Boolean = true): AgentTask
+  liftHold: Boolean = true): AgentTask
   """
   Register a task by hand, as PENDING_INTAKE. On a board with sources the tracker reference is
   required and must belong to one of them, so the coordinator's later intake of the same issue
@@ -699,7 +716,7 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   input: AgentTaskUserRegisterInput!): AgentTask
   """
   Commission an investigation as a person with BOARD_WRITE (task RD4-12): any role that produces
-  INVESTIGATION_REPORT, from a task (its report comes back pinned there) or from none. Queued at once.
+  BOARD_INVESTIGATION_REPORT, from a task (its report comes back pinned there) or from none. Queued at once.
   """
   agentTaskCommission(
   input: AgentTaskCommissionInput!): AgentTask
@@ -713,8 +730,8 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   orderIndex: Int
   dependsOn: [ID!]
   producesComponent: ID
-  level: Int
-  requiredInputs: [AgentRequiredInputInput]): AgentTask
+  workLevel: Int
+  requiredInputs: [AgentTaskPrerequisiteInput]): AgentTask
   """
   Set a task's order. Recorded as orderSetBy; the coordinator may reorder after you.
   """
@@ -728,17 +745,17 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   taskUuid: ID!
   budgetMicros: Long): AgentTask
   """
-  Set a task's level, 0 to 9, or clear it (null) so it reads the board's default (RD2-1). BOARD_WRITE
-  on the board. Refused on a completed or cancelled task. Recorded as levelSetBy and levelSetAt.
+  Set a task's work level, 0 to 9, or clear it (null) so it reads the board's default (RD2-1). BOARD_WRITE
+  on the board. Refused on a completed or cancelled task. Recorded as workLevelSetBy and workLevelSetAt.
   """
-  agentTaskSetLevel(
+  agentTaskSetWorkLevel(
   taskUuid: ID!
-  level: Int): AgentTask
+  workLevel: Int): AgentTask
   """
-  A person releases an ASSIGNED task back to QUEUED for the same role, with a reason (task RD3-4). BOARD_WRITE.
+  A person unassigns an ASSIGNED task, back to QUEUED for the same role, with a reason (task RD3-4). BOARD_WRITE.
   The holding session stays open; its later sign-off, publish or question on the task is refused.
   """
-  agentTaskReleaseAssignment(
+  agentTaskUnassign(
   taskUuid: ID!
   reason: String!): AgentTask
   """
@@ -767,19 +784,19 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   taskUuid: ID!
   tags: [TagRecordInput!]!): AgentTask
   """
-  Complete a task. Refused while a finding that blocks completion is open -- accept or dismiss it
+  Complete a task. Refused while a review item that blocks completion is open -- accept or dismiss it
   first -- and while a required role has not passed. A required role whose rejection you have
   decided over counts as passed. skipRequiredRoles completes without the others, and needs a note
-  saying why; findings are never skipped.
+  saying why; review items are never skipped.
   """
   agentTaskComplete(
   taskUuid: ID!
   note: String
   skipRequiredRoles: Boolean): AgentTask
   """
-  A person's attestation of a delivery unit, as agentTaskDeliveredProgrammatic (task 18c5c293). Org admin.
+  A person's declaration of a delivery unit, as agentTaskDeclareDeliveryProgrammatic (task 18c5c293). Org admin.
   """
-  agentTaskDelivered(
+  agentTaskDeclareDelivery(
   taskUuid: ID!
   unit: String!
   commit: String
@@ -800,15 +817,15 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   taskUuid: ID!
   note: String): AgentTask
   """
-  Decide findings on a task, as one round of its REVIEW_FINDINGS or TEST_REPORT index. A round that
+  Decide review items on a task, as one round of its BOARD_REVIEW_ITEMS or BOARD_TEST_REPORT index. A round that
   leaves something new blocking sends the task back to the role that produces what it is about;
   name that in about when the index does not say yet. Refused while an agent is working the task.
   """
-  agentTaskDecideFindings(
+  agentTaskDecideReviewItems(
   taskUuid: ID!
   specification: SpecificationType!
-  decisions: [FindingDecisionInput!]!
-  about: FindingsAboutInput): AgentTask
+  decisions: [BoardReviewItemDecisionInput!]!
+  about: BoardReviewItemsAboutInput): AgentTask
   """
   Apply a board file: the organization's admin, or a user holding CONFIGURATION_WRITE. One
   transaction; any problem refuses the whole file and the result lists every one. dryRun returns
@@ -855,7 +872,7 @@ type BoardSpec {
   Name of the component this board builds -- a spec is portable, so names rather than uuids.
   """
   target: String
-  defaultTaskLevel: Int
+  defaultWorkLevel: Int
   defaultInputResolution: AgentInputResolution
   priorityType: AgentBoardPriorityType
   perAgentWipLimit: Int
@@ -877,7 +894,7 @@ type BoardSpec {
   """
   The element checks: which block the hand-over, mandatory fields per level, orphan families.
   """
-  checks: CheckPolicy
+  elementChecks: ElementCheckPolicy
   """
   How a task proves it was delivered (task 18c5c293); absent means PR_ROWS.
   """
@@ -1481,11 +1498,11 @@ type AgentBoard {
   """
   The element check policy as this board declared it; null when it uses the defaults (elements.md §7).
   """
-  checkPolicy: CheckPolicy
+  elementCheckPolicy: ElementCheckPolicy
   """
   The policy in force: the declared one, or the defaults (report only, test and requirement orphans).
   """
-  effectiveCheckPolicy: CheckPolicy
+  effectiveElementCheckPolicy: ElementCheckPolicy
   """
   How a task on this board proves it was delivered, as set; null is the default (task 18c5c293).
   """
@@ -1495,7 +1512,7 @@ type AgentBoard {
   """
   effectiveDeliveryPolicy: AgentDeliveryPolicy
   """
-  Append-only board notices, newest last (lock transitions auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
+  Append-only board notices, newest last (pauses and resumes auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
   """
   events: [AgentBoardEvent]
   """
@@ -1523,7 +1540,7 @@ type AgentBoard {
   alert (missingCapabilities) counts them as covered.
   """
   coordinatorCapabilities: [AgentCapability]
-  lock: AgentBoardLock
+  pause: AgentBoardPause
   coordinatorSeat: AgentCoordinatorSeat
   """
   Max concurrently ASSIGNED tasks per agent on this board (default 2).
@@ -1575,11 +1592,11 @@ type AgentBoard {
   Whether a no-progress or cycle-cap stop parks for the coordinator first, which may release it once
   per stop kind per task or escalate it (task c0a2134c). As set: null is the default, on.
   """
-  coordinatorStopRelease: Boolean
+  coordinatorStopLift: Boolean
   """
-  coordinatorStopRelease with its default resolved.
+  coordinatorStopLift with its default resolved.
   """
-  effectiveCoordinatorStopRelease: Boolean
+  effectiveCoordinatorStopLift: Boolean
   """
   Days the event log keeps an event before the daily sweep deletes it (task 04dedcc5). As set: null
   is the default, 15; 0 keeps everything.
@@ -1594,8 +1611,8 @@ type AgentBoard {
   """
   staleness: AgentBoardStaleness
   """
-  The level ladder (task RD3-6); null when the board has none, and then every task's level reads null and the
-  level UI is hidden.
+  The level ladder (task RD3-6); null when the board has none, and then every task's work level reads null and the
+  work level UI is hidden.
   """
   ladder: AgentBoardLadder
   """
@@ -1608,9 +1625,9 @@ type AgentBoard {
   target: ID
   targetDetails: Component
   """
-  Level applied to tasks of this board that do not declare one.
+  Work level applied to tasks of this board that do not declare one.
   """
-  defaultTaskLevel: Int
+  defaultWorkLevel: Int
   """
   Resolution mode for requirements of this board that do not name one.
   """
@@ -1694,7 +1711,7 @@ type AgentTaskAssignment {
   """
   Versions the agent is to work from, resolved at assignment.
   """
-  resolvedInputs: [AgentResolvedInput]
+  resolvedInputs: [AgentTaskResolvedPrerequisite]
   """
   What this hop is expected to cost, in USD micros: the role's allowance. Not a cap -- a hop that
   will blow it should be returned (reason OTHER, saying so) rather than pressed on. Null when the
@@ -1760,9 +1777,9 @@ type AgentTask {
   """
   elements: [AgentTaskElement]
   """
-  The newest check report for each of the task's element-bearing documents (elements.md §7).
+  The newest element check report for each of the task's element-bearing documents (elements.md §7).
   """
-  checks: [CheckReport]
+  elementChecks: [ElementCheckReport]
   """
   What depends on an element, transitively, nearest first (elements.md §8): over the task's
   documents, its bound inputs and the latest release of each document series under the board's
@@ -1794,13 +1811,13 @@ type AgentTask {
   """
   pullRequests: [AgentTaskPullRequest]
   """
-  The PR heads the newest passing TEST_REPORT round covered, one per linked PR (task 3b97ccfd): merge
+  The PR heads the newest passing BOARD_TEST_REPORT round covered, one per linked PR (task 3b97ccfd): merge
   at these. A review's heads are informative and not read here (task 5ec48b02). Empty when no passing
   test report names any.
   """
   testedHeads: [TestedHead]
   """
-  Delivery attestations, oldest first; the newest per unit counts (task 18c5c293).
+  Delivery declarations, oldest first; the newest per unit counts (task 18c5c293).
   """
   deliveries: [AgentTaskDelivery]
   """
@@ -1866,9 +1883,9 @@ type AgentTask {
   signOffs: [AgentTaskSignOff]
   returns: [AgentTaskReturn]
   """
-  Assignments a person released back to the queue, oldest first (task RD3-4).
+  Assignments a person ended by unassigning the task, oldest first (task RD3-4).
   """
-  releasedAssignments: [AgentTaskReleasedAssignment]
+  unassignments: [AgentTaskUnassignment]
   parentTask: ID
   childTasks: [ID]
   """
@@ -1893,14 +1910,14 @@ type AgentTask {
   """
   releases: [ID]
   """
-  Declared level of the work, 0 to 9; null when not set, in which case the board's defaultTaskLevel
-  applies (effectiveLevel). The default is resolved on read, never written here (RD2-1).
+  Declared work level, 0 to 9; null when not set, in which case the board's defaultWorkLevel
+  applies (effectiveWorkLevel). The default is resolved on read, never written here (RD2-1).
   """
-  level: Int
+  workLevel: Int
   """
-  The level the board reads: level, else the board's defaultTaskLevel, else null (RD2-1).
+  The work level the board reads: workLevel, else the board's defaultWorkLevel, else null (RD2-1).
   """
-  effectiveLevel: Int
+  effectiveWorkLevel: Int
   """
   The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
   """
@@ -1914,14 +1931,14 @@ type AgentTask {
   """
   waitingOnGroups: [String]
   """
-  Who last set or cleared the level after registration, and when (RD2-1).
+  Who last set or cleared the work level after registration, and when (RD2-1).
   """
-  levelSetBy: AgentActor
-  levelSetAt: DateTime
+  workLevelSetBy: AgentActor
+  workLevelSetAt: DateTime
   """
   Requirements this task adds on top of its role's -- add-only.
   """
-  requiredInputs: [AgentRequiredInput]
+  requiredInputs: [AgentTaskPrerequisite]
   """
   Pinned inputs that have since moved below what the requirement asks for; computed per read.
   """
@@ -1942,18 +1959,18 @@ type AgentTask {
   """
   documents: [Release]
   """
-  Findings still open on this task, from the NEWEST round of each indexed
+  Review items still open on this task, from the NEWEST round of each indexed
   type, ordered by priority. Newest round only by design: every round
   carries forward what the previous one left open, so the newest is the
-  current state and summing rounds would count one finding several times.
+  current state and summing rounds would count one review item several times.
   """
-  openFindings: [Finding]
+  openReviewItems: [BoardReviewItem]
   """
-  The open items of the newest QUESTIONS round only, which is what a human answers. Separate
-  from openFindings, which flattens every indexed type and carries nothing on an item saying
+  The open items of the newest BOARD_QUESTIONS round only, which is what a human answers. Separate
+  from openReviewItems, which flattens every indexed type and carries nothing on an item saying
   which round it came from.
   """
-  openQuestions: [Finding]
+  openQuestions: [BoardReviewItem]
 }
 
 """
@@ -2050,7 +2067,7 @@ type AgentTaskRoleConfig {
   """
   What every task in this role must be able to read before it starts.
   """
-  requiredInputs: [AgentRequiredInput]
+  requiredInputs: [AgentTaskPrerequisite]
   """
   What a hop in this role must leave behind: the mirror of requiredInputs.
   Enforced at sign-off, not at assignment -- the hop has to run before it
@@ -2067,7 +2084,7 @@ type AgentTaskRoleConfig {
 What the named element checks found on one document (elements.md §7). Deterministic: the same
 scope gives the same report, and the digest is its identity.
 """
-type CheckReport {
+type ElementCheckReport {
   """
   The catalogue the checks came from; bumped on any change to a check's meaning.
   """
@@ -2076,11 +2093,11 @@ type CheckReport {
   The element grammar of the checked document's index.
   """
   grammarVersion: String
-  scope: CheckScope
+  scope: ElementCheckScope
   """
   One per check in the catalogue, in catalogue order.
   """
-  results: [CheckResult]
+  results: [ElementCheckResult]
   """
   sha256 of the report's canonical JSON without the digest.
   """
@@ -2109,32 +2126,32 @@ enum SpecificationType {
   """
   One review round of one task. Task-scoped: one component per board target holds every task's rounds.
   """
-  REVIEW_FINDINGS
+  BOARD_REVIEW_ITEMS
   """
-  One test run of one task. Task-scoped, like REVIEW_FINDINGS.
+  One test run of one task. Task-scoped, like BOARD_REVIEW_ITEMS.
   """
-  TEST_REPORT
+  BOARD_TEST_REPORT
   """
-  What one hop could not proceed without knowing. Task-scoped, like REVIEW_FINDINGS, and
+  What one hop could not proceed without knowing. Task-scoped, like BOARD_REVIEW_ITEMS, and
   usually published with no file at all -- the items are the document.
   """
-  QUESTIONS
+  BOARD_QUESTIONS
   """
   What the element checks found on one document of one task (gaps §2.A). Task-scoped and always
   index-only: the board cuts it, no agent publishes it, and it has no path.
   """
-  CHECK_REPORT
+  BOARD_ELEMENT_CHECK_REPORT
   """
   What one investigation found (task RD4-12): the deliverable of an INVESTIGATION task, which comes back
   pinned on the task that commissioned it. Task-scoped prose whose elements are references only.
   """
-  INVESTIGATION_REPORT
+  BOARD_INVESTIGATION_REPORT
 }
 
 """
 One check of the catalogue.
 """
-type CheckCatalogueEntry {
+type ElementCheckCatalogueEntry {
   """
   The check's name; coverage.<gate> stands for every board gate.
   """
@@ -2222,7 +2239,7 @@ input BoardSpecInput {
   Component name in this organization; required when the file creates the board.
   """
   target: String
-  defaultTaskLevel: Int
+  defaultWorkLevel: Int
   defaultInputResolution: AgentInputResolution
   priorityType: AgentBoardPriorityType
   perAgentWipLimit: Int
@@ -2238,7 +2255,7 @@ input BoardSpecInput {
   """
   The element checks (elements.md §7); declared null restores the defaults, absent leaves them.
   """
-  checks: CheckPolicyInput
+  elementChecks: ElementCheckPolicyInput
   """
   How a task proves it was delivered; declared null restores the default, PR_ROWS.
   """
@@ -2765,7 +2782,7 @@ type Component {
   """
   locks: [Lock!]
   """
-  For a DOCUMENT component, the board whose document series it is (board-documents.md §5); null for
+  For a BOARD_DOCUMENT component, the board whose document series it is (board-documents.md §5); null for
   every other kind and for a document no board owns. The board page checks the board's permissions.
   """
   agentBoard: AgentBoardRef
@@ -3397,7 +3414,7 @@ input AgentTaskRoleConfigInput {
   """
   Operator-only, like prompts and capabilities.
   """
-  requiredInputs: [AgentRequiredInputInput]
+  requiredInputs: [AgentTaskPrerequisiteInput]
   """
   Operator-only, like prompts and capabilities. Also the board's routing graph.
   """
@@ -3448,8 +3465,8 @@ input AgentTaskRegisterInput {
   sessionUuid: ID
   parentTask: ID
   producesComponent: ID
-  level: Int
-  requiredInputs: [AgentRequiredInputInput]
+  workLevel: Int
+  requiredInputs: [AgentTaskPrerequisiteInput]
   """
   A group of the board by key (task RD2-29); refused when unknown or CLOSED. The orderIndex defaults after the group's last task.
   """
@@ -3463,7 +3480,7 @@ input AgentTaskRegisterInput {
 """
 Commission an investigation (task RD4-12). A session commissions from the task it holds (fromTask), in that
 task's role, a role its commissions name; a person with BOARD_WRITE commissions any role that produces
-INVESTIGATION_REPORT, from a task or from none.
+BOARD_INVESTIGATION_REPORT, from a task or from none.
 """
 input AgentTaskCommissionInput {
   boardUuid: ID!
@@ -3472,7 +3489,7 @@ input AgentTaskCommissionInput {
   """
   sessionUuid: ID
   """
-  The investigating role, by name: it must produce INVESTIGATION_REPORT at TASK scope.
+  The investigating role, by name: it must produce BOARD_INVESTIGATION_REPORT at TASK scope.
   """
   role: String!
   title: String!
@@ -3501,12 +3518,12 @@ input AgentTaskCommissionInput {
   Left out: TASK with a fromTask, NONE without.
   """
   returnTo: AgentInvestigationReturnTo
-  level: Int
+  workLevel: Int
   group: String
   tags: [TagRecordInput]
 }
 
-input AgentRequiredInputInput {
+input AgentTaskPrerequisiteInput {
   kind: AgentInputKind!
   specification: SpecificationType
   scope: AgentInputScope
@@ -3516,7 +3533,7 @@ input AgentRequiredInputInput {
 }
 
 """
-Two-tier task hold, mirroring board locks: the coordinator cannot lift an OPERATOR hold.
+Two-tier task hold, mirroring board pauses: the coordinator cannot lift an OPERATOR hold.
 """
 enum AgentTaskHoldLevel {
   COORDINATOR
@@ -3526,7 +3543,7 @@ enum AgentTaskHoldLevel {
 """
 SUPERSEDED (task RD3-13): a linked PR closed unmerged and replaced by another linked PR on its repository,
 named in supersededBy; delivery counts the replacement. Declared with agentTaskSupersedePullRequest, never
-through agentTaskDelivered.
+through agentTaskDeclareDelivery.
 """
 enum AgentDeliveryOutcome {
   DELIVERED
@@ -3535,8 +3552,8 @@ enum AgentDeliveryOutcome {
 }
 
 enum AgentBoardEventKind {
-  LOCKED
-  UNLOCKED
+  PAUSED
+  RESUMED
   ALERT
   INFO
 }
@@ -3561,9 +3578,9 @@ type TaskGroup {
   """
   dependsOn: [String]
   """
-  The level its tasks read when they set none (task, then group, then board).
+  The work level its tasks read when they set none (task, then group, then board).
   """
-  defaultLevel: Int
+  defaultWorkLevel: Int
   status: AgentTaskGroupStatus
   createdAt: DateTime
   progress: TaskGroupProgress
@@ -3575,7 +3592,7 @@ type TaskGroup {
 
 """
 A group to create or edit, by key (task RD2-29). Omitted fields are left as they are on an edit;
-defaultLevel sent as null clears it. uuid names the group when its key is changing, which is refused
+defaultWorkLevel sent as null clears it. uuid names the group when its key is changing, which is refused
 once a task names the group. status CLOSED is the close, OPEN the reopen.
 """
 input TaskGroupInput {
@@ -3585,7 +3602,7 @@ input TaskGroupInput {
   description: String
   order: Int
   dependsOn: [String]
-  defaultLevel: Int
+  defaultWorkLevel: Int
   status: AgentTaskGroupStatus
 }
 
@@ -3611,9 +3628,9 @@ input AgentTaskSplitChildInput {
   dependsOnSiblingIndexes: [Int!]
   producesComponent: ID
   """
-  Omitted children inherit the parent task's level.
+  Omitted children inherit the parent task's work level.
   """
-  level: Int
+  workLevel: Int
   """
   A group by key; omitted children inherit the parent's group (D9).
   """
@@ -3648,7 +3665,7 @@ What an agent states about a document it has already committed.
 input AgentDocumentPublishInput {
   sessionUuid: ID!
   """
-  Required for TASK-scoped types (REVIEW_FINDINGS, TEST_REPORT).
+  Required for TASK-scoped types (BOARD_REVIEW_ITEMS, BOARD_TEST_REPORT).
   """
   taskUuid: ID
   specification: SpecificationType!
@@ -3658,7 +3675,7 @@ input AgentDocumentPublishInput {
   component: ID
   """
   Repo-relative path of the document at the commit below. Omit it, with digest, commit and
-  vcsUri, to publish an index alone -- a QUESTIONS round usually has no prose worth committing,
+  vcsUri, to publish an index alone -- a BOARD_QUESTIONS round usually has no prose worth committing,
   and requiring a file would put an empty markdown in the repository to satisfy a check.
   """
   path: String
@@ -3670,7 +3687,7 @@ input AgentDocumentPublishInput {
   indexPath: String
   indexDigest: String
   """
-  The findings index. Required for REVIEW_FINDINGS, TEST_REPORT and QUESTIONS.
+  The review item index. Required for BOARD_REVIEW_ITEMS, BOARD_TEST_REPORT and BOARD_QUESTIONS.
   """
   index: Object
   """
@@ -3709,14 +3726,14 @@ input AgentDocumentPublishInput {
 }
 
 """
-One decision about one finding.
+One decision about one review item.
 """
-input FindingDecisionInput {
-  action: FindingDecisionAction!
+input BoardReviewItemDecisionInput {
+  action: BoardReviewItemDecisionAction!
   """
-  The finding decided. Every action but FILE.
+  The review item decided. Every action but FILE.
   """
-  findingId: String
+  reviewItemId: String
   """
   SET_PRIORITY and FILE: 1 highest, at most the organization's level count.
   """
@@ -3728,7 +3745,7 @@ input FindingDecisionInput {
   """
   FILE, optional.
   """
-  location: FindingLocationInput
+  location: BoardReviewItemLocationInput
   """
   Required for ACCEPT (why the risk is acceptable) and DISMISS (why it does not apply).
   """
@@ -3736,9 +3753,9 @@ input FindingDecisionInput {
 }
 
 """
-What an index's findings are about. Sets it when the index does not say yet; may not contradict it.
+What an index's review items are about. Sets it when the index does not say yet; may not contradict it.
 """
-input FindingsAboutInput {
+input BoardReviewItemsAboutInput {
   specification: SpecificationType!
   release: ID
 }
@@ -3746,12 +3763,12 @@ input FindingsAboutInput {
 """
 One answered question: the id, what it becomes, and the words that close it.
 """
-input FindingAnswerInput {
+input BoardReviewItemAnswerInput {
   id: String!
   """
   RESOLVED when the question is answered, WITHDRAWN when it does not apply after all.
   """
-  status: FindingStatus = RESOLVED
+  status: BoardReviewItemStatus = RESOLVED
   resolution: String!
 }
 
@@ -3771,8 +3788,8 @@ input AgentTaskUserRegisterInput {
   sourceUrl: String
   parentTask: ID
   producesComponent: ID
-  level: Int
-  requiredInputs: [AgentRequiredInputInput]
+  workLevel: Int
+  requiredInputs: [AgentTaskPrerequisiteInput]
   """
   A group of the board by key (task RD2-29); refused when unknown or CLOSED.
   """
@@ -3849,7 +3866,7 @@ enum AgentBoardPriorityType {
 """
 What a board does with the element checks (elements.md §7).
 """
-type CheckPolicy {
+type ElementCheckPolicy {
   """
   Checks whose failure refuses the sign-off that hands the document over; empty means report only.
   """
@@ -3871,9 +3888,9 @@ type CheckPolicy {
 type AgentDeliveryPolicy {
   mode: AgentDeliveryMode
   """
-  On NONE: wait for an attestation of a push or release instead of completing at the last pass.
+  On NONE: wait for a declaration of a push or release instead of completing at the last pass.
   """
-  attest: Boolean
+  awaitDeclaration: Boolean
   """
   Who merges and how (task 71a3dd22). As declared on deliveryPolicy, null parts meaning their
   defaults; resolved on effectiveDeliveryPolicy.
@@ -3919,17 +3936,17 @@ type BoardSettingsSpec {
   noProgressRepeatsToStop: Int
   humanQueueAgeMinutes: Int
   """
-  Findings at or above this priority send work back; null means every open finding does.
+  Review items at or above this priority send work back; null means every open review item does.
   """
   blockingPriority: Int
   """
-  Findings at or above this priority stop completion; null means every open finding does.
+  Review items at or above this priority stop completion; null means every open review item does.
   """
   completionPriority: Int
   """
   Whether a no-progress or cycle-cap stop parks for the coordinator first; null means the default, on.
   """
-  coordinatorStopRelease: Boolean
+  coordinatorStopLift: Boolean
   """
   Days the event log keeps an event; null means the default, 15, and 0 keeps everything.
   """
@@ -3956,9 +3973,9 @@ type BoardGroupSpec {
   """
   dependsOn: [String]
   """
-  The level its tasks read when they set none (task, then group, then board).
+  The work level its tasks read when they set none (task, then group, then board).
   """
-  defaultLevel: Int
+  defaultWorkLevel: Int
   status: AgentTaskGroupStatus
 }
 
@@ -4346,10 +4363,10 @@ type ReleaseApprovalEvent {
   date: DateTime
   wu: WhoUpdated
   """
-  Optional free-form approver comment, sanitised server-side via
-  jsoup's Safelist.basic() (allows simple inline tags, strips
-  scripts/styles/event handlers). Capped at 4000 chars at the input
-  boundary; empty-after-clean is normalised to null.
+  Optional free-form approver comment, plain text: sanitised server-side
+  via jsoup's Safelist.none(), which removes all markup including links.
+  Capped at 4000 chars at the input boundary; empty-after-clean is
+  normalised to null.
   """
   comment: String
 }
@@ -4447,6 +4464,12 @@ type DependencyTrackMetrics {
   vulnerabilityDetails: [Vulnerability]
   violationDetails: [Violation]
   weaknessDetails: [Weakness]
+  "Open findings in the CISA KEV catalog (FALSE_POSITIVE / NOT_AFFECTED / RESOLVED excluded). On Release metrics as stamped at metrics compute; on Artifact metrics counted at read time, which makes selecting it load the artifact's finding rows and probe the KEV catalog once per artifact; on other metrics the stored count, 0 where none was recorded"
+  kevCount: Int
+  "Read-time summary over the OPEN vulnerability findings (FALSE_POSITIVE / NOT_AFFECTED / RESOLVED excluded), scored from the org's vulnerability records; never stored. Null when these metrics were not reached through a Release or an Artifact"
+  riskSummary: RiskSummary
+  "Read-time, per component of vulnerabilityDetails: the fix versions its findings' advisories name, and which findings each one fixes; never stored. Components with none are left out. Null when these metrics were not reached through a Release or an Artifact, or a vulnerability record read failed"
+  fixTargets: [ComponentFixTargets!]
 }
 
 type Identifier {
@@ -4484,17 +4507,17 @@ type DocumentRef {
   """
   round: Int
   """
-  The findings index for REVIEW_FINDINGS and TEST_REPORT; absent otherwise.
+  The review item index for BOARD_REVIEW_ITEMS and BOARD_TEST_REPORT; absent otherwise.
   """
-  findings: FindingsIndex
+  reviewItems: BoardReviewItemIndex
   """
   The element index of a prose document, as the CLI parsed it and the server checked it (gaps §2.A); absent when none was published.
   """
   elements: ElementIndex
   """
-  On a CHECK_REPORT round: what the element checks found (elements.md §7).
+  On a BOARD_ELEMENT_CHECK_REPORT round: what the element checks found (elements.md §7).
   """
-  checks: CheckReport
+  elementChecks: ElementCheckReport
   """
   A round a role published on a task it did not hold (task e97fde56): assembled at publish, never
   a hop's output. False or absent on every other round.
@@ -4647,13 +4670,13 @@ enum SessionStatus {
 }
 
 """
-Who did something on a board: the identity on a lock, an event, a hold or a human sign-off.
+Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
 
 These were all String, and every writer invented its own encoding -- a session uuid behind a
 "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
 knowing the convention and splitting on a colon. kind says which identity space uuid belongs
 to; name is what a human should read. Rows written before this are decoded on read, so an
-older lock still resolves.
+older pause still resolves.
 """
 type AgentActor {
   kind: AgentActorKind
@@ -4914,15 +4937,15 @@ type AgentBoardDocumentSeries {
   """
   For an index type, the OPEN items across each task's latest round; null for prose.
   """
-  openFindings: Int
+  openReviewItems: Int
   """
-  The newest check report on the latest round: FAIL (a blocking check failed), WARN, PASS; null when unchecked.
+  The newest element check report on the latest round: FAIL (a blocking element check failed), WARN, PASS; null when unchecked.
   """
-  checkVerdict: String
+  elementCheckVerdict: String
   """
   That report's results counted as the task page counts them (task RD2-24); null when unchecked.
   """
-  checkCounts: AgentBoardCheckCounts
+  elementCheckCounts: AgentBoardElementCheckCounts
 }
 
 """
@@ -4952,11 +4975,11 @@ type BoardCoverageGap {
   message: String!
 }
 
-type AgentBoardLock {
-  level: AgentBoardLockLevel
+type AgentBoardPause {
+  level: AgentBoardPauseLevel
   reason: String
-  lockedBy: AgentActor
-  lockedAt: DateTime
+  pausedBy: AgentActor
+  pausedAt: DateTime
 }
 
 """
@@ -5000,9 +5023,9 @@ type AgentBoardStaleness {
 }
 
 """
-A board's level ladder (task RD3-6), opt-in. With one, every task has a level (the board default is 0 when unset),
-a level off the ladder is refused, and the served prompts carry a ladder section; without one, levels stay null
-and a level is refused.
+A board's level ladder (task RD3-6), opt-in. With one, every task has a work level (the board default is 0 when unset),
+a work level off the ladder is refused, and the served prompts carry a ladder section; without one, work levels
+stay null and a work level is refused.
 """
 type AgentBoardLadder {
   """
@@ -5136,7 +5159,7 @@ type AgentBoardLoggedEvent {
 What a requirement resolved to when the task was assigned, pinned on the assignment: the version
 the agent works from, and the trail from a later rejection back to the work that consumed it.
 """
-type AgentResolvedInput {
+type AgentTaskResolvedPrerequisite {
   kind: AgentInputKind
   specification: SpecificationType
   component: ID
@@ -5165,7 +5188,7 @@ The investigation block of an INVESTIGATION task (task RD4-12).
 type AgentInvestigation {
   commissionedBy: AgentInvestigationCommissioner
   """
-  What it delivers: INVESTIGATION_REPORT.
+  What it delivers: BOARD_INVESTIGATION_REPORT.
   """
   deliverable: SpecificationType
   """
@@ -5315,9 +5338,9 @@ type AgentTaskPullRequest {
   """
   baseMovedBy: Int
   """
-  The newest attestation for this PR, when one was recorded (task 18c5c293).
+  The newest declaration for this PR, when one was recorded (task 18c5c293).
   """
-  attestation: AgentTaskDelivery
+  declaration: AgentTaskDelivery
 }
 
 """
@@ -5332,7 +5355,7 @@ type TestedHead {
 }
 
 """
-An attestation that a delivery unit landed, or never will (task 18c5c293).
+A declaration that a delivery unit landed, or never will (task 18c5c293).
 """
 type AgentTaskDelivery {
   """
@@ -5386,14 +5409,25 @@ type AgentTaskHold {
   heldAt: DateTime
   """
   The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
-  COORDINATOR level is the coordinator's to release once; at OPERATOR level it is the operator's
+  COORDINATOR level is the coordinator's to lift once; at OPERATOR level it is the operator's
   (task c0a2134c).
   """
   stop: AgentTaskHoldStop
+  """
+  The status the task returns to when a person answers: set only when the coordinator seat parked the task for an
+  operator decision (task RD4-17), whose release puts it back where it was -- DELIVERING stays DELIVERING. Null on
+  every other hold.
+  """
+  returnTo: AgentTaskStatus
+  """
+  The PRs linked to the task while the coordinator seat had it parked for the operator (task RD4-19), oldest first:
+  preparation for the person's decision, never its answer. Empty or null on every other hold.
+  """
+  linked: [AgentTaskHoldLink]
 }
 
 """
-The single live assignment -- bound to session liveness, released on any session close.
+The single live assignment -- bound to session liveness, ended on any session close.
 """
 type AgentTaskWorkAssignment {
   session: ID
@@ -5408,7 +5442,7 @@ type AgentTaskWorkAssignment {
   """
   Versions this assignment is bound to work from.
   """
-  resolvedInputs: [AgentResolvedInput]
+  resolvedInputs: [AgentTaskResolvedPrerequisite]
 }
 
 """
@@ -5438,7 +5472,7 @@ type AgentTaskSignOff {
   """
   Document releases this hop published, in publish order. Recorded on the hop rather
   than only on the task because a later round's reader needs to know WHICH hop produced
-  a document to carry its open findings forward.
+  a document to carry its open review items forward.
   """
   outputs: [ID]
   """
@@ -5450,7 +5484,7 @@ type AgentTaskSignOff {
   what it had pinned, for either outcome. For a person's approval at a gate: the gated hop's
   outputs and what a gated reviewer had reviewed. Null when the hop reviewed nothing.
   """
-  reviewedInputs: [AgentTaskReviewedInput]
+  reviewedInputs: [AgentTaskReviewedPrerequisite]
   """
   The documents this sign-off's review would have promoted and an organization guard kept where
   they were, with the guard's reason. Empty when nothing was refused.
@@ -5461,7 +5495,7 @@ type AgentTaskSignOff {
   """
   noChange: Boolean
   """
-  The findings round this hop answered with a round of its own document (task RD4-13): it answered the work rather than made it. Null otherwise.
+  The review item round this hop answered with a round of its own document (task RD4-13): it answered the work rather than made it. Null otherwise.
   """
   answered: ID
   """
@@ -5496,19 +5530,19 @@ type AgentTaskReturn {
 }
 
 """
-An assignment a person released back to the queue (task RD3-4); the released session's later sign-off, publish or question is refused.
+An assignment a person ended by unassigning the task (task RD3-4); the unassigned session's later sign-off, publish or question is refused.
 """
-type AgentTaskReleasedAssignment {
+type AgentTaskUnassignment {
   role: String
   roleUuid: ID
   agent: ID
   session: ID
   assignedAt: DateTime
-  releasedAt: DateTime
-  releasedBy: AgentActor
+  unassignedAt: DateTime
+  unassignedBy: AgentActor
   reason: String
   """
-  What the hop had spent when it was released.
+  What the hop had spent when it was unassigned.
   """
   usage: HopUsage
 }
@@ -5531,6 +5565,10 @@ type AgentTaskStatusChange {
   What the actor said: a completion's or cancellation's note, or routing's reason and the role it sent the task to (RD2-23). Null on changes recorded before notes were kept.
   """
   note: String
+  """
+  On the row that leaves a hold the coordinator seat placed for the operator, the PRs linked while it stood (task RD4-19); null otherwise.
+  """
+  linked: [AgentTaskHoldLink]
 }
 
 """
@@ -5542,7 +5580,7 @@ type TaskGroupRef {
   name: String
 }
 
-type AgentRequiredInput {
+type AgentTaskPrerequisite {
   kind: AgentInputKind
   """
   DOCUMENT only: which specification document, resolved against the board's target node.
@@ -5593,21 +5631,21 @@ type HopUsage {
   refreshedAt: DateTime
 }
 
-type Finding {
+type BoardReviewItem {
   """
-  Stable within a task across rounds: an open finding is carried forward under the same id.
+  Stable within a task across rounds: an open review item is carried forward under the same id.
   """
   id: String
   """
   1 highest, at most the organization's level count.
   """
   priority: Int
-  status: FindingStatus
+  status: BoardReviewItemStatus
   """
   One line; the reasoning is in the markdown under a heading carrying the id.
   """
   title: String
-  location: FindingLocation
+  location: BoardReviewItemLocation
   """
   The uuid of the release whose round closed it -- a pointer, never text. Null while the item is
   open. A round that closes an item names itself here, unless another release already answers
@@ -5620,9 +5658,9 @@ type Finding {
   """
   resolution: String
   """
-  Who last decided this finding -- accepted, dismissed or re-prioritised it, or filed it by hand --
+  Who last decided this review item -- accepted, dismissed or re-prioritised it, or filed it by hand --
   a person or the agent session whose round did. Written by the server, never by an agent. Null
-  when nobody has decided it: an agent's finding as filed, or a decision made before this was kept.
+  when nobody has decided it: an agent's review item as filed, or a decision made before this was kept.
   """
   decidedBy: AgentActor
   """
@@ -5704,7 +5742,7 @@ type AgentProducedOutput {
 
 """
 Which roles a role may commission an investigation from (task RD4-12). Every role named must produce
-INVESTIGATION_REPORT at TASK scope; an apply or an upsert that names one that does not is refused.
+BOARD_INVESTIGATION_REPORT at TASK scope; an apply or an upsert that names one that does not is refused.
 """
 type AgentRoleCommissions {
   """
@@ -5725,7 +5763,7 @@ type AgentRoleCommissions {
   review: String
 }
 
-type CheckScope {
+type ElementCheckScope {
   """
   The task the report was cut on.
   """
@@ -5737,15 +5775,15 @@ type CheckScope {
   """
   Every release whose elements the checks could see, the checked one first.
   """
-  releases: [CheckScopedRelease]
+  releases: [ElementCheckScopedRelease]
 }
 
-type CheckResult {
+type ElementCheckResult {
   """
   The check's name, e.g. trace.parent_exists.
   """
   check: String
-  result: CheckOutcome
+  result: ElementCheckOutcome
   """
   Whether the board blocked the hand-over on this check when it ran.
   """
@@ -5754,7 +5792,7 @@ type CheckResult {
   Why a check was skipped, or a one-line summary of a failure.
   """
   reason: String
-  offences: [CheckOffence]
+  offences: [ElementCheckOffence]
 }
 
 type DeclarativeChange {
@@ -5811,7 +5849,7 @@ input BranchSpecInput {
   dependencyPatterns: [DependencyPatternSpecInput!]
 }
 
-input CheckPolicyInput {
+input ElementCheckPolicyInput {
   """
   Check names from the catalogue; an unknown name is refused with the catalogue's list.
   """
@@ -5832,7 +5870,7 @@ input CheckPolicyInput {
 
 input AgentDeliveryPolicyInput {
   mode: AgentDeliveryMode
-  attest: Boolean
+  awaitDeclaration: Boolean
   merge: AgentMergeProcedureInput
 }
 
@@ -5865,7 +5903,7 @@ input BoardSettingsSpecInput {
   """
   Whether a no-progress or cycle-cap stop parks for the coordinator first; null restores the default, on.
   """
-  coordinatorStopRelease: Boolean
+  coordinatorStopLift: Boolean
   """
   Days the event log keeps an event; null restores the default, 15, 0 keeps everything, and a negative number is refused.
   """
@@ -5875,7 +5913,7 @@ input BoardSettingsSpecInput {
   """
   staleness: AgentBoardStalenessInput
   """
-  The level ladder (task RD3-6): given, it replaces the board's; null removes it, refused while a task carries a level.
+  The level ladder (task RD3-6): given, it replaces the board's; null removes it, refused while a task carries a work level.
   """
   ladder: AgentBoardLadderInput
 }
@@ -5888,7 +5926,7 @@ input BoardGroupSpecInput {
   name: String
   description: String
   dependsOn: [String]
-  defaultLevel: Int
+  defaultWorkLevel: Int
   status: AgentTaskGroupStatus
 }
 
@@ -6194,7 +6232,7 @@ enum ComponentKind {
   """
   A board's document series. Boards set it; a component update cannot change a kind to or from it.
   """
-  DOCUMENT
+  BOARD_DOCUMENT
 }
 
 enum VersionType {
@@ -6535,11 +6573,12 @@ input ReleaseApprovalInput {
   approvalRoleId: String!
   state: ApprovalState!
   """
-  Optional free-form approver comment. Server sanitises via jsoup
-  Safelist.basic() and caps at 4000 chars; empty-after-clean is treated
-  as null. Reused for both the manual mutation and the programmatic
-  one -- for the latter, approvalEntry may be either a UUID or an
-  approval-entry name (per existing semantics).
+  Optional free-form approver comment, plain text. Server sanitises via
+  jsoup Safelist.none() (no markup, no links) and caps at 4000 chars;
+  empty-after-clean is treated as null. Reused for both the manual
+  mutation and the programmatic one -- for the latter, approvalEntry
+  may be either a UUID or an approval-entry name (per existing
+  semantics).
   """
   comment: String
 }
@@ -7048,12 +7087,12 @@ enum SigningKeyOwnerType {
 }
 
 """
-What a hop in this role must leave behind: the mirror of AgentRequiredInputInput, and the other
+What a hop in this role must leave behind: the mirror of AgentTaskPrerequisiteInput, and the other
 half of the contract between roles. It is also the routing graph -- open items are sent to
 whichever active role produces the specification they are about -- so a board whose roles declare
 nothing routes every question to its coordinator instead.
 
-QUESTIONS is refused here and in requiredInputs: a question is a side channel any role may emit,
+BOARD_QUESTIONS is refused here and in requiredInputs: a question is a side channel any role may emit,
 never a role's contracted product or prerequisite.
 """
 input AgentProducedOutputInput {
@@ -7135,46 +7174,46 @@ type TaskGroupProgress {
 }
 
 """
-What a person does to one finding.
+What a person does to one review item.
 """
-enum FindingDecisionAction {
+enum BoardReviewItemDecisionAction {
   """
   The risk is taken knowingly: ACCEPTED, with a resolution saying why.
   """
   ACCEPT
   """
-  The finding does not apply: WITHDRAWN, with a reason.
+  The review item does not apply: WITHDRAWN, with a reason.
   """
   DISMISS
   """
-  A new priority for the finding; its status is unchanged.
+  A new priority for the review item; its status is unchanged.
   """
   SET_PRIORITY
   """
-  A new finding, OPEN, numbered P-1, P-2... by the board. Filed with an approval at a human gate it
-  is a correction, which never blocks; anywhere else it blocks like any finding.
+  A new review item, OPEN, numbered P-1, P-2... by the board. Filed with an approval at a human gate it
+  is a correction, which never blocks; anywhere else it blocks like any review item.
   """
   FILE
 }
 
-input FindingLocationInput {
+input BoardReviewItemLocationInput {
   path: String
   line: Int
   ref: String
   """
-  The element the finding is about; path and line are filled in from the index when left out.
+  The element the review item is about; path and line are filled in from the index when left out.
   """
   element: String
 }
 
 """
-Where a finding stands. The closed statuses are not interchangeable: RESOLVED says the work was
+Where a review item stands. The closed statuses are not interchangeable: RESOLVED says the work was
 done, ACCEPTED says an operator took the risk knowingly, POLICY_ACCEPTED says nobody looked --
 the loop ran out under a cycle cap, a no-progress stop or a budget, and the board completed the
 task with the item still open -- and WITHDRAWN says the reviewer was wrong. Only OPEN must be
 carried into the next round.
 """
-enum FindingStatus {
+enum BoardReviewItemStatus {
   OPEN
   RESOLVED
   ACCEPTED
@@ -7192,13 +7231,13 @@ type DependencySpec {
 
 """
 How a board's tasks prove delivery (task 18c5c293). PR_ROWS: the linked PRs' rows on this ReARM,
-merged, or an attestation per PR. ATTESTED: the linked PRs register elsewhere, so an attestation per
+merged, or a declaration per PR. DECLARED: the linked PRs register elsewhere, so a declaration per
 PR (a merged row here counts too). NONE: no PRs; the task completes at its last pass, or with
-attest, once its delivery is attested.
+awaitDeclaration, once its delivery is declared.
 """
 enum AgentDeliveryMode {
   PR_ROWS
-  ATTESTED
+  DECLARED
   NONE
 }
 
@@ -7220,9 +7259,9 @@ type AgentMergeProcedure {
   """
   atTestedHead: Boolean
   """
-  Attest each merge (task delivered). Default false; always true on an ATTESTED board.
+  Declare each merge (agentTaskDeclareDelivery). Default false; always true on a DECLARED board.
   """
-  requireAttestation: Boolean
+  requireDeclaration: Boolean
   """
   Default NOTE_ORDER.
   """
@@ -7303,10 +7342,10 @@ type Settings {
   declarativePrune: DeclarativePruneMode
   justificationMandatory: Boolean
   """
-  How many finding priority levels this organization uses, 1 being the highest. Null
-  means the default. Write side is SettingsInput.findingPriorityLevels, which bounds it.
+  How many review item priority levels this organization uses, 1 being the highest. Null
+  means the default. Write side is SettingsInput.reviewItemPriorityLevels, which bounds it.
   """
-  findingPriorityLevels: Int
+  reviewItemPriorityLevels: Int
   branchSuffixMode: BranchSuffixMode
   vexComplianceFramework: VexComplianceFramework
   """
@@ -7774,6 +7813,18 @@ type Vulnerability {
   attributedAt: DateTime
   "True when this vulnerability (by CVE id or alias) is in the CISA KEV catalog"
   knownExploited: Boolean
+  "All merged scores from the org's vulnerability record (looked up by vulnId, primary or alias); empty when there is no record, or when these metrics were not reached through a Release or an Artifact"
+  scores: [VulnScore!]!
+  "The headline CVSS entry: CVSS_V4, else CVSS_V3, else CVSS_V2; null when none has a score"
+  topScore: VulnScore
+  "The EPSS entry (score = probability 0..1, sub-score PERCENTILE); null when none"
+  epss: VulnScore
+  "Which version fixes this finding, from the affected ranges the org's vulnerability record holds for the finding's package; null when these metrics were not reached through a Release or an Artifact, or when the record could not be read"
+  fixedIn: FixedIn
+  "The component of the release's SBOM this finding's package URL names, or why none does; null when these metrics were not reached through a Release (an artifact's findings belong to no one release), or when the release's SBOM could not be read. Costs one read of the release's SBOM per release in the response: select it on one release's findings, not across a list of releases"
+  sbomMatch: FindingSbomMatch
+  "Whether moving the finding's SBOM component to its latest version (FindingSbomMatch.latestVersion) takes it out of the finding's affected ranges, compared as fixedIn compares; the advisory's claim, like fixedIn. Null when the finding matched no component, the component has no latest version, or a read failed. Same cost as sbomMatch"
+  latestFix: LatestFixVerdict
 }
 
 type Violation {
@@ -7797,6 +7848,34 @@ type Weakness {
   analysisState: AnalysisState
   analysisDate: DateTime
   attributedAt: DateTime
+}
+
+type RiskSummary {
+  "Highest headline CVSS score; null when no open finding is scored"
+  maxCvss: Float
+  maxCvssType: VulnScoreType
+  maxCvssVulnId: String
+  "Highest EPSS probability (0..1); null when no open finding has one"
+  maxEpss: Float
+  maxEpssVulnId: String
+  "Open finding rows per headline-CVSS band; a row counts once"
+  cvssBands: CvssBands
+  "Open finding rows with an EPSS probability of at least 0.1"
+  epssAtLeastTenPercent: Int
+  "Open finding rows in the CISA KEV catalog, over the same rows as the rest of the summary"
+  kevCount: Int
+  "Dependency-Track's inherited-risk weighting of the stored severity counts: critical*10 + high*5 + medium*3 + low*1 + unassigned*5 (inheritedRiskScore itself is Dependency-Track's own, stored value)"
+  severityWeightedScore: Int
+  "Open finding rows with a headline CVSS score"
+  scoredFindings: Int
+  "Open finding rows"
+  totalFindings: Int
+}
+
+type ComponentFixTargets {
+  purl: String!
+  major: String
+  targets: [FixTarget!]!
 }
 
 enum IdentifierType {
@@ -7831,28 +7910,28 @@ enum IdentifierType {
 """
 The machine-read half of a review or test document: what was found, how badly it
 matters and whether it is still open. The prose lives in the markdown the release
-points at, under a heading carrying each finding's id.
+points at, under a heading carrying each review item's id.
 """
-type FindingsIndex {
+type BoardReviewItemIndex {
   kind: SpecificationType
   """
   1-based round for display; the authoritative value is on the release.
   """
   round: Int
-  verdict: FindingsVerdict
+  verdict: BoardReviewVerdict
   """
-  Totals on a TEST_REPORT; absent on a review.
+  Totals on a BOARD_TEST_REPORT; absent on a review.
   """
   counts: TestCounts
-  findings: [Finding]
+  reviewItems: [BoardReviewItem]
   """
   The input these items are about, which is what sends them to the role that produces it.
   Absent on a review, where the work under review is meant.
   """
-  about: FindingsAbout
+  about: BoardReviewItemsAbout
   """
-  The PR heads a TEST_REPORT or REVIEW_FINDINGS round covered, one per linked PR (task 3b97ccfd).
-  A passing TEST_REPORT of a task with linked PRs names every one of them; on REVIEW_FINDINGS it is
+  The PR heads a BOARD_TEST_REPORT or BOARD_REVIEW_ITEMS round covered, one per linked PR (task 3b97ccfd).
+  A passing BOARD_TEST_REPORT of a task with linked PRs names every one of them; on BOARD_REVIEW_ITEMS it is
   optional and informative (task 5ec48b02). Every head named must be of a linked PR.
   """
   tested: [TestedHead]
@@ -8079,22 +8158,22 @@ type AgentBoardDocumentRound {
 }
 
 """
-A check report's results by outcome; checkVerdict is read from these (task RD2-24).
+An element check report's results by outcome; elementCheckVerdict is read from these (task RD2-24).
 """
-type AgentBoardCheckCounts {
+type AgentBoardElementCheckCounts {
   pass: Int!
   fail: Int!
   skip: Int!
   """
-  Failed checks the board blocks the hand-over on.
+  Failed element checks the board blocks the hand-over on.
   """
   blockingFailed: Int!
 }
 
 """
-Locks stop NEW assignments only; the coordinator cannot lift or override an OPERATOR lock.
+A pause stops NEW assignments only; the coordinator cannot lift or override an OPERATOR pause.
 """
-enum AgentBoardLockLevel {
+enum AgentBoardPauseLevel {
   NONE
   COORDINATOR
   OPERATOR
@@ -8211,9 +8290,9 @@ type ElementDependent {
 
 """
 MANUAL: coordinator/operator parked the task. HUMAN_GATE: a gated role signed off; only a human
-review verdict (not a plain release) resolves it. QUESTION: the board could not route a question
-and the coordinator escalated -- releasing THAT hold with words records them as the answer to the
-open ids, which releasing any other hold must never do.
+review verdict (not a plain lift) resolves it. QUESTION: the board could not route a question
+and the coordinator escalated -- lifting THAT hold with words records them as the answer to the
+open ids, which lifting any other hold must never do.
 """
 enum AgentTaskHoldKind {
   MANUAL
@@ -8231,16 +8310,28 @@ enum AgentTaskHoldStop {
 }
 
 """
+A PR linked to a task the coordinator seat parked for the operator (task RD4-19): recorded on the decision, not the answer.
+"""
+type AgentTaskHoldLink {
+  prUrl: String
+  """
+  Who linked it: the linking key's agent.
+  """
+  by: String
+  at: DateTime
+}
+
+"""
 One document a sign-off reviewed.
 """
-type AgentTaskReviewedInput {
+type AgentTaskReviewedPrerequisite {
   release: ID
   """
   The document's type, when the release is a board document.
   """
   specification: SpecificationType
   """
-  Its round, for a findings index or a question round.
+  Its round, for a review item index or a question round.
   """
   round: Int
   """
@@ -8279,16 +8370,16 @@ enum AgentStatusTrigger {
   CANCEL
   SPLIT
   HOLD
-  RELEASE_HOLD
+  LIFT_HOLD
   HUMAN_GATE
-  HUMAN_APPROVE
+  HUMAN_ACCEPT
   HUMAN_REJECT
   HUMAN_SIGNOFF
   SESSION_CLOSED
   """
-  A person released the assignment back to the queue, with a reason (task RD3-4).
+  A person unassigned the task, back to the queue, with a reason (task RD3-4).
   """
-  RELEASE
+  UNASSIGN
   """
   The board completed a task whose loop ran out -- a cycle cap, a no-progress stop or a budget --
   with items left open below what the board requires resolved. Distinct from COMPLETE: the work
@@ -8312,7 +8403,7 @@ enum AgentStatusTrigger {
   """
   PR_CLOSED
   """
-  A delivery unit was attested abandoned: to the coordinator (task 18c5c293).
+  A delivery unit was declared abandoned: to the coordinator (task 18c5c293).
   """
   DELIVERY_ABANDONED
 }
@@ -8320,12 +8411,12 @@ enum AgentStatusTrigger {
 """
 path and line for code, ref for a requirement or design section. All optional.
 """
-type FindingLocation {
+type BoardReviewItemLocation {
   path: String
   line: Int
   ref: String
   """
-  The id of the element the finding is about (elements.md §8). With it, path and line are filled
+  The id of the element the review item is about (elements.md §8). With it, path and line are filled
   in from the index when the author left them out; the rework point is about.release + element.
   """
   element: String
@@ -8348,7 +8439,7 @@ enum AgentCommissionIntake {
 """
 One release in scope, as it stood when the checks ran.
 """
-type CheckScopedRelease {
+type ElementCheckScopedRelease {
   release: ID
   specification: SpecificationType
   elementsDigest: String
@@ -8358,7 +8449,7 @@ type CheckScopedRelease {
 """
 SKIP is a result, never silence: a check that cannot run says why.
 """
-enum CheckOutcome {
+enum ElementCheckOutcome {
   PASS
   FAIL
   SKIP
@@ -8367,7 +8458,7 @@ enum CheckOutcome {
 """
 One element a check failed on.
 """
-type CheckOffence {
+type ElementCheckOffence {
   elementId: String
   release: ID
   message: String
@@ -8413,9 +8504,9 @@ input AgentMergeProcedureInput {
   method: AgentMergeMethod
   atTestedHead: Boolean
   """
-  Refused as false on an ATTESTED board.
+  Refused as false on a DECLARED board.
   """
-  requireAttestation: Boolean
+  requireDeclaration: Boolean
   order: AgentMergeOrder
 }
 
@@ -8435,7 +8526,7 @@ input AgentBoardStalenessInput {
 }
 
 """
-The ladder as input: declared, it replaces the board's; null removes it, refused while a task carries a level.
+The ladder as input: declared, it replaces the board's; null removes it, refused while a task carries a work level.
 """
 input AgentBoardLadderInput {
   levels: [AgentBoardLadderLevelInput!]!
@@ -9097,6 +9188,8 @@ enum DigestScope {
   ORIGINAL_FILE
   OCI_STORAGE
   REARM
+  AS_UPLOADED
+  RAW_OCI_STORAGE
 }
 
 """
@@ -9178,13 +9271,70 @@ enum AnalysisState {
   RESOLVED
 }
 
+type VulnScore {
+  type: VulnScoreType!
+  score: Float
+  vector: String
+  subScores: [VulnSubScore!]!
+  upstreamSource: UpstreamSource
+  scoreSource: ScoreSource
+}
+
+type FixedIn {
+  version: String
+  verdict: FixedInVerdict!
+  versionEndIncluding: String
+  sources: [UpstreamSource!]!
+  identities: [String!]!
+}
+
+type FindingSbomMatch {
+  sbomComponentUuid: ID
+  canonicalPurl: String
+  missReason: FindingSbomMissReason
+  latestVersion: String
+  latestVersionChecked: String
+}
+
+enum LatestFixVerdict {
+  FIXES
+  DOES_NOT_FIX
+  NOT_ABOVE_CURRENT
+  NOT_IN_ADVISORY_RANGE
+  NO_RANGE_DATA
+  UNCOMPARABLE
+}
+
 enum ViolationType {
   LICENSE
   SECURITY
   OPERATIONAL
 }
 
-enum FindingsVerdict {
+enum VulnScoreType {
+  CVSS_V2
+  CVSS_V3
+  CVSS_V4
+  EPSS
+  OWASP_RR
+}
+
+type CvssBands {
+  critical: Int
+  high: Int
+  medium: Int
+  low: Int
+  none: Int
+  unscored: Int
+}
+
+type FixTarget {
+  version: String!
+  sameMajor: Boolean!
+  fixes: [String!]!
+}
+
+enum BoardReviewVerdict {
   PASSED
   REJECTED
 }
@@ -9198,7 +9348,7 @@ type TestCounts {
 """
 What an index's items are about, and therefore who answers them.
 """
-type FindingsAbout {
+type BoardReviewItemsAbout {
   specification: SpecificationType
   """
   The release of that input the items refer to, so an answer is recognisable as one.
@@ -9461,6 +9611,41 @@ enum SeveritySource {
   OTHER
 }
 
+type VulnSubScore {
+  type: VulnSubScoreType!
+  value: Float!
+}
+
+enum UpstreamSource {
+  GITHUB
+  OSV
+  NVD
+  VULNDB
+  OTHER
+}
+
+enum ScoreSource {
+  UPSTREAM
+  COMPUTED_FROM_VECTOR
+}
+
+enum FixedInVerdict {
+  FIXED_IN
+  FIXED_AFTER
+  NO_FIX_AVAILABLE
+  NOT_IN_ADVISORY_RANGE
+  NO_RANGE_DATA
+  UNCOMPARABLE
+}
+
+enum FindingSbomMissReason {
+  NO_PURL
+  UNPARSEABLE_PURL
+  NO_INVENTORY
+  INVENTORY_PENDING
+  NOT_IN_INVENTORY
+}
+
 type DiffComponent {
   purl: String
   version: String
@@ -9490,6 +9675,15 @@ input OriginShareInput {
 type Coords {
   latitude: Float
   longitude: Float
+}
+
+enum VulnSubScoreType {
+  IMPACT
+  EXPLOITABILITY
+  PERCENTILE
+  LIKELIHOOD
+  TECHNICAL_IMPACT
+  BUSINESS_IMPACT
 }
 
 input CoordsInput {

@@ -24,7 +24,7 @@ func TestTaskReadsCarryGroupsAndTags(t *testing.T) {
 		!strings.Contains(normalised(AgentTasksOfBoard_Operation), "group: $group, tag: $tag") {
 		t.Error("the task lists do not filter by group and tag")
 	}
-	if !strings.Contains(normalised(AgentBoardProgrammatic_Operation), "groups { uuid key name description order dependsOn defaultLevel status createdAt progress") {
+	if !strings.Contains(normalised(AgentBoardProgrammatic_Operation), "groups { uuid key name description order dependsOn defaultWorkLevel status createdAt progress") {
 		t.Error("board show does not read the groups")
 	}
 	if !strings.Contains(normalised(AgentBoardGroupsProgrammatic_Operation), "spentMicros") {

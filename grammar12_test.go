@@ -5,13 +5,13 @@ import (
 	"testing"
 )
 
-// Element grammar 1.2 (task RD4-6): the check preview returns the whole report without a release, and a board's
+// Element grammar 1.2 (task RD4-6): the element check preview returns the whole report without a release, and a board's
 // families come with the types that define their ids, read on their own so a board read never needs a newer server.
 func TestThePreviewSelectsTheWholeReportAndCreatesNothing(t *testing.T) {
-	op := AgentCheckPreviewProgrammatic_Operation
-	for _, want := range []string{"query AgentCheckPreviewProgrammatic", "$sessionUuid: ID!", "$taskUuid: ID!",
+	op := AgentElementCheckPreviewProgrammatic_Operation
+	for _, want := range []string{"query AgentElementCheckPreviewProgrammatic", "$sessionUuid: ID!", "$taskUuid: ID!",
 		"$specification: SpecificationType!", "$elements: String!", "$elementsDigest: String",
-		"... CheckReportFields", "catalogueVersion", "blocking", "offences {"} {
+		"... ElementCheckReportFields", "catalogueVersion", "blocking", "offences {"} {
 		if !strings.Contains(op, want) {
 			t.Errorf("the preview does not carry %s:\n%s", want, op)
 		}

@@ -5,9 +5,9 @@ import (
 	"testing"
 )
 
-// A finding names the element it is about, and every read of a task's findings carries it
-// (elements.md §8): the documents' rounds, openFindings and openQuestions.
-func TestFindingReadsSelectTheElementAFindingNames(t *testing.T) {
+// A review item names the element it is about, and every read of a task's review items carries it
+// (elements.md §8): the documents' rounds, openReviewItems and openQuestions.
+func TestReviewItemReadsSelectTheElementAReviewItemNames(t *testing.T) {
 	locations := regexp.MustCompile(`location \{[^}]*\}`).FindAllString(AgentTaskProgrammatic_Operation, -1)
 	if len(locations) != 3 {
 		t.Fatalf("expected three location selections, got %d", len(locations))

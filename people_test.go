@@ -13,11 +13,11 @@ func TestPeopleOperationsCarryNoSession(t *testing.T) {
 		"boards": AgentBoardsOfOrg_Operation, "tasks": AgentTasksOfBoard_Operation,
 		"register": AgentTaskRegister_Operation, "authorize": AgentTaskAuthorize_Operation,
 		"order": AgentTaskOrder_Operation, "complete": AgentTaskComplete_Operation,
-		"cancel": AgentTaskCancel_Operation, "decide": AgentTaskDecideFindings_Operation,
+		"cancel": AgentTaskCancel_Operation, "decide": AgentTaskDecideReviewItems_Operation,
 		"answer": AgentTaskAnswer_Operation, "review": AgentTaskHumanReview_Operation,
 		"signoff": AgentTaskHumanSignOff_Operation, "hold": AgentTaskOperatorHold_Operation,
 		"requireReview": AgentTaskRequireHumanReview_Operation, "strength": AgentTaskSetStrength_Operation,
-		"lock": AgentBoardOperatorLock_Operation,
+		"pause": AgentBoardOperatorPause_Operation,
 	}
 	for name, op := range ops {
 		if strings.Contains(op, "sessionUuid") {
@@ -32,16 +32,16 @@ func TestPeopleOperationsCarryNoSession(t *testing.T) {
 // Every task a person acts on comes back with what they need to see the result: status, hold,
 // what is still open, and who moved it.
 func TestPeopleTaskResultsSelectTheOutcome(t *testing.T) {
-	for _, want := range []string{"status", "hold {", "openFindings {", "openQuestions {", "statusHistory {", "actor {"} {
+	for _, want := range []string{"status", "hold {", "openReviewItems {", "openQuestions {", "statusHistory {", "actor {"} {
 		if !strings.Contains(AgentTaskComplete_Operation, want) {
 			t.Errorf("person task result lacks %q", want)
 		}
 	}
 }
 
-// A person's hold release names the role to route to, as the coordinator's does (task 4c566d0d);
+// A person's hold lift names the role to route to, as the coordinator's does (task 4c566d0d);
 // the operator hold moved to this lane, and the role must come with it.
-func TestPersonHoldReleaseSendsTheRole(t *testing.T) {
+func TestPersonHoldLiftSendsTheRole(t *testing.T) {
 	for _, want := range []string{"$role: String", "role: $role"} {
 		if !strings.Contains(AgentTaskOperatorHold_Operation, want) {
 			t.Errorf("person hold operation lacks %q", want)
