@@ -59,6 +59,13 @@ mutation SessionInitializeProgrammatic ($sessionInit: SessionInitializeInput!) {
 					status
 					title
 					startedAt
+					providerSessions { provider id remoteId reportedAt }
+					origin {
+						authMethod ownerUser ownerSource cliSession observedIp capturedAt restricted
+						loginDevice { hostname os timeZone client observedIp }
+						reportedDevice { hostname os timeZone client }
+						federation { provider repository ref sha workflowRef event environment actor runId }
+					}
 					policyEvents {
 						policyName
 						kind
@@ -72,11 +79,45 @@ mutation SessionInitializeProgrammatic ($sessionInit: SessionInitializeInput!) {
 			}
 
 # from rearm-cli agent.go
+mutation SessionUpdateMetaProgrammatic ($updateMeta: SessionUpdateMetaInput!) {
+				sessionUpdateMetaProgrammatic(updateMeta: $updateMeta) {
+					uuid
+					clientSessionId
+					status
+					title
+					lastActivityAt
+					providerSessions { provider id remoteId reportedAt }
+				}
+			}
+
+# from rearm-cli agent.go
 mutation SessionTouchProgrammatic ($sessionUuid: ID!) {
 				sessionTouchProgrammatic(sessionUuid: $sessionUuid) {
 					uuid
 					status
 					lastActivityAt
+				}
+			}
+
+# from rearm-cli agentDoc.go
+mutation AgentDocumentPublishProgrammatic ($input: AgentDocumentPublishInput!) {
+				agentDocumentPublishProgrammatic(input: $input) {
+					uuid
+					version
+					lifecycle
+				}
+			}
+
+# from rearm-cli agentUsage.go
+mutation SessionReportUsageProgrammatic ($input: SessionUsageReportInput!) {
+				sessionReportUsageProgrammatic(input: $input) {
+					accepted
+					duplicates
+					refused
+					attribution
+					task
+					hopAllowanceMicros
+					hopSpentMicros
 				}
 			}
 
@@ -94,7 +135,16 @@ query SessionProgrammatic ($sessionUuid: ID!) {
 				sessionProgrammatic(sessionUuid: $sessionUuid) {
 					uuid clientSessionId status startedAt closedAt lastActivityAt
 					agent title parentSession
+					providerSessions { provider id remoteId reportedAt }
+					origin {
+						authMethod ownerUser ownerSource cliSession observedIp capturedAt restricted
+						loginDevice { hostname os timeZone client observedIp }
+						reportedDevice { hostname os timeZone client }
+						federation { provider repository ref sha workflowRef event environment actor runId }
+					}
 					artifacts
+					boardsWorked
+					tasksWorked { uuid key title role board boardName }
 					commits
 					policyEvents {
 						policyName kind state severity message evaluatedAt

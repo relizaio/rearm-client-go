@@ -16,6 +16,9 @@ import (
 // A session is JWT-only: the server hands out an opaque refresh token once (stored by the
 // caller, never a key secret) and the client trades it for one-hour access tokens on demand.
 // The server slides the session 30 days on each refresh, capped at 90 days after approval.
+// When the key bounds its sessions (sessionMaxMinutes) the session has a hard end: no token
+// outlives it, the client does not refresh past it, and a session that ends inside its first
+// access token is delivered with no refresh token at all.
 // The interactive part (printing the code, opening the browser, polling policy) stays with the
 // caller; StartDeviceLogin and PollDeviceLogin are the two plain HTTP calls it needs.
 
@@ -35,18 +38,22 @@ type SessionTokens struct {
 	RefreshToken string
 	// SessionExpiry is when the refresh token stops working; it moves forward on each refresh.
 	SessionExpiry time.Time
+	// SessionHardExpiry is the session's fixed end when the key bounds its sessions; zero when
+	// nothing but the 90-day cap does. No refresh is attempted at or after it.
+	SessionHardExpiry time.Time
 }
 
 // NewWithSession builds a client that acts as the key behind a browser-login session. tokens may
 // carry a cached access token; persist (optional) receives every new token set so the caller can
 // store it. There is no Basic fallback and no legacy endpoint: session tokens are honoured on the
-// programmatic endpoint only.
+// programmatic endpoint only. refreshToken may be empty for a session delivered without one (it
+// ends inside its first access token): tokens must then carry that access token.
 func NewWithSession(baseURL, refreshToken string, tokens SessionTokens, persist func(SessionTokens), opts ...Option) (*Client, error) {
 	if strings.TrimSpace(baseURL) == "" {
 		return nil, fmt.Errorf("rearm: base URL is required")
 	}
-	if refreshToken == "" {
-		return nil, fmt.Errorf("rearm: refresh token is required for a session client")
+	if refreshToken == "" && tokens.AccessToken == "" {
+		return nil, fmt.Errorf("rearm: a refresh token or an access token is required for a session client")
 	}
 	o := &options{userAgent: "rearm-client-go/" + Version}
 	for _, opt := range opts {
@@ -58,8 +65,8 @@ func NewWithSession(baseURL, refreshToken string, tokens SessionTokens, persist 
 	}
 	root := normalizeRoot(baseURL)
 	t := &authTransport{next: transportOf(base), userAgent: o.userAgent, tokenURL: root + TokenPath,
-		revokeURL: root + RevokePath, exchange: true, refreshToken: refreshToken, persist: persist,
-		bearer: tokens.AccessToken, sessionExp: tokens.SessionExpiry}
+		revokeURL: root + RevokePath, exchange: true, sessionMode: true, refreshToken: refreshToken, persist: persist,
+		bearer: tokens.AccessToken, sessionExp: tokens.SessionExpiry, sessionHardExp: tokens.SessionHardExpiry}
 	if tokens.AccessToken != "" && !tokens.AccessTokenExpiry.IsZero() {
 		t.bearerExp = tokens.AccessTokenExpiry.Add(-time.Minute)
 	}
@@ -74,6 +81,35 @@ func normalizeRoot(baseURL string) string {
 		root = "https://" + root
 	}
 	return root
+}
+
+// ensureSessionToken refreshes when a refresh can still buy time: there is a refresh token, the
+// session's hard end (if any) has not come, and the current token does not already run to it.
+// Otherwise the current token is used to its real expiry, and after that the session has ended.
+func (t *authTransport) ensureSessionToken(ctx context.Context, now time.Time) error {
+	t.mu.Lock()
+	tokenEnd := t.bearerExp.Add(time.Minute)
+	hard := t.sessionHardExp
+	canRefresh := t.refreshToken != "" && (hard.IsZero() || (now.Before(hard) && tokenEnd.Before(hard)))
+	usable := t.bearer != "" && now.Before(tokenEnd)
+	t.mu.Unlock()
+	if canRefresh {
+		return t.refreshAccessToken(ctx)
+	}
+	if usable {
+		return nil
+	}
+	end := hard
+	if end.IsZero() {
+		end = tokenEnd
+	}
+	return &SessionError{Code: "invalid_grant", Description: SessionEndedDescription(end)}
+}
+
+// SessionEndedDescription is the refusal the server gives a refresh after the hard end; the client
+// gives the same words when it knows the session is over without asking.
+func SessionEndedDescription(end time.Time) string {
+	return "session ended at " + end.UTC().Format(time.RFC3339) + "; run rearm login"
 }
 
 // refreshAccessToken trades the refresh token for a new access token and reports the tokens.
@@ -97,6 +133,7 @@ func (t *authTransport) refreshAccessToken(ctx context.Context) error {
 		ExpiresIn        int64  `json:"expires_in"`
 		RefreshToken     string `json:"refresh_token"`
 		SessionExpiresAt string `json:"session_expires_at"`
+		SessionHardEnd   string `json:"session_hard_expiry"`
 		Error            string `json:"error"`
 		Description      string `json:"error_description"`
 	}
@@ -118,13 +155,21 @@ func (t *authTransport) refreshAccessToken(ctx context.Context) error {
 	if se, err := time.Parse(time.RFC3339, tok.SessionExpiresAt); err == nil {
 		t.sessionExp = se
 	}
+	if he, err := time.Parse(time.RFC3339, tok.SessionHardEnd); err == nil {
+		t.sessionHardExp = he
+	}
+	// the token lives no longer than the session: never plan to use it past the hard end
+	if !t.sessionHardExp.IsZero() && t.bearerExp.Add(time.Minute).After(t.sessionHardExp) {
+		t.bearerExp = t.sessionHardExp.Add(-time.Minute)
+	}
 	rotated := ""
 	if tok.RefreshToken != "" && tok.RefreshToken != t.refreshToken {
 		// rotation: from now on only the new token refreshes; the persist callback carries it to disk
 		t.refreshToken = tok.RefreshToken
 		rotated = tok.RefreshToken
 	}
-	snapshot := SessionTokens{AccessToken: t.bearer, AccessTokenExpiry: t.bearerExp.Add(time.Minute), SessionExpiry: t.sessionExp, RefreshToken: rotated}
+	snapshot := SessionTokens{AccessToken: t.bearer, AccessTokenExpiry: t.bearerExp.Add(time.Minute), SessionExpiry: t.sessionExp,
+		SessionHardExpiry: t.sessionHardExp, RefreshToken: rotated}
 	persist := t.persist
 	t.mu.Unlock()
 	if persist != nil {
@@ -151,9 +196,10 @@ func (c *Client) Tokens() SessionTokens {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	if t.bearer == "" {
-		return SessionTokens{SessionExpiry: t.sessionExp}
+		return SessionTokens{SessionExpiry: t.sessionExp, SessionHardExpiry: t.sessionHardExp}
 	}
-	return SessionTokens{AccessToken: t.bearer, AccessTokenExpiry: t.bearerExp.Add(time.Minute), SessionExpiry: t.sessionExp, RefreshToken: t.refreshToken}
+	return SessionTokens{AccessToken: t.bearer, AccessTokenExpiry: t.bearerExp.Add(time.Minute), SessionExpiry: t.sessionExp,
+		SessionHardExpiry: t.sessionHardExp, RefreshToken: t.refreshToken}
 }
 
 // Revoke ends the browser-login session on the server (RFC 7009). Always succeeds from the
@@ -260,6 +306,7 @@ const (
 )
 
 // DeviceLogin is the delivered session: everything the caller stores, plus the key it acts as.
+// RefreshToken is empty when the session ends inside its first access token (Tokens.SessionHardExpiry).
 type DeviceLogin struct {
 	Status       DevicePollStatus
 	Description  string
@@ -301,13 +348,15 @@ func PollDeviceLogin(ctx context.Context, hc *http.Client, baseURL, deviceCode s
 		Org              string `json:"org"`
 		Session          string `json:"session"`
 		SessionExpiresAt string `json:"session_expires_at"`
+		SessionHardEnd   string `json:"session_hard_expiry"`
 	}
 	_ = json.Unmarshal(raw, &out)
 	// outcomes arrive as 200 with an error member; a non-JSON 4xx page from an ingress reads as invalid
 	if out.Error != "" {
 		return &DeviceLogin{Status: DevicePollStatus(out.Error), Description: out.Description}, nil
 	}
-	if resp.StatusCode != http.StatusOK || out.AccessToken == "" || out.RefreshToken == "" {
+	// no refresh token is a valid delivery only for a session with a hard end inside the first token
+	if resp.StatusCode != http.StatusOK || out.AccessToken == "" || (out.RefreshToken == "" && out.SessionHardEnd == "") {
 		return &DeviceLogin{Status: DeviceInvalid, Description: fmt.Sprintf("unexpected response (status %d)", resp.StatusCode)}, nil
 	}
 	l := &DeviceLogin{Status: DeviceDelivered, RefreshToken: out.RefreshToken, APIKeyID: out.APIKeyID, APIKeyUUID: out.APIKeyUUID, Org: out.Org, SessionUUID: out.Session}
@@ -315,6 +364,9 @@ func PollDeviceLogin(ctx context.Context, hc *http.Client, baseURL, deviceCode s
 	l.Tokens.AccessTokenExpiry = time.Now().Add(time.Duration(out.ExpiresIn) * time.Second)
 	if se, err := time.Parse(time.RFC3339, out.SessionExpiresAt); err == nil {
 		l.Tokens.SessionExpiry = se
+	}
+	if he, err := time.Parse(time.RFC3339, out.SessionHardEnd); err == nil {
+		l.Tokens.SessionHardExpiry = he
 	}
 	return l, nil
 }

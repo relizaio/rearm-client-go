@@ -1,0 +1,91 @@
+# API keys as declarative configuration (task RD3-11): FREEFORM keys, identity and settings by declared
+# name, never a secret; secrets are minted apart and returned once.
+
+fragment ApiKeyPermissionsFields on ApiKeyPermissionsSpec {
+  type
+  functions
+  approvals
+  objects {
+    scope
+    object
+    type
+    functions
+    approvals
+  }
+}
+
+fragment DeclaredApiKeyFields on DeclaredApiKey {
+  uuid
+  keyId
+  name
+  type
+  status
+  adminDisabled
+  notes
+  permissions {
+    ...ApiKeyPermissionsFields
+  }
+  secretExpiresDays
+  sessionMaxMinutes
+  secretSlots {
+    slot
+    active
+    createdDate
+    lastUsedDate
+    expiresDate
+  }
+  declarative {
+    ...ProvenanceFields
+  }
+}
+
+mutation ApplyApiKeys($spec: ApiKeysSpecInput!, $dryRun: Boolean, $source: DeclarativeSourceInput) {
+  applyApiKeysProgrammatic(spec: $spec, dryRun: $dryRun, source: $source) {
+    ...ApplyResultFields
+  }
+}
+
+query ExportApiKeys($keys: [String!]) {
+  exportApiKeysProgrammatic(keys: $keys) {
+    kind
+    version
+    authoritative
+    keys {
+      name
+      type
+      permissions {
+        ...ApiKeyPermissionsFields
+      }
+      notes
+      status
+      secretExpiresDays
+      sessionMaxMinutes
+      provenance {
+        ...ProvenanceFields
+      }
+    }
+  }
+}
+
+query ApiKeys($keys: [String!]) {
+  apiKeysProgrammatic(keys: $keys) {
+    ...DeclaredApiKeyFields
+  }
+}
+
+mutation ArchiveApiKey($name: String!) {
+  archiveApiKeyProgrammatic(name: $name) {
+    ...DeclaredApiKeyFields
+  }
+}
+
+mutation MintApiKeySecret($key: String!, $slot: Int!, $rotate: Boolean) {
+  mintApiKeySecretProgrammatic(key: $key, slot: $slot, rotate: $rotate) {
+    keyId
+    name
+    slot
+    minted
+    secret
+    expiresDate
+  }
+}

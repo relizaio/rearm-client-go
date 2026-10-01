@@ -1,0 +1,636 @@
+# Agent task boards -- the operations `rearm agent board` / `rearm agent task` send.
+# Hub-and-spoke distribution: the coordinator holds a singleton session-bound seat,
+# authorizes and orders tasks, and every sign-off or return routes back to it.
+
+# Every actor selection goes through this fragment. genqlient still generates one struct
+# per selection set either way -- the fragment does not collapse those -- but each of them
+# then EMBEDS a single shared ActorFields, so the CLI can format any actor with one helper
+# instead of eleven copies that share no type. That is the whole reason it is here.
+fragment ActorFields on AgentActor { kind uuid name }
+
+# What a hop cost against its role's allowance, frozen when the hop ended. With overAllowanceMicros
+# beside it on a sign-off or return, a CLI reader sees an overrun without the user lane.
+fragment HopUsageFields on HopUsage { derivedCostMicros costComplete allowanceMicros }
+
+query AgentBoardsProgrammatic { agentBoardsProgrammatic {
+	uuid org name description status sources
+	documentsRepo { uuid uri } documentPaths elementFamilies effectiveElementFamilies
+	documents { prefix shared root } documentsRoot documentComponents { specification component } adoptsLegacyDocuments
+	perspectives perspectiveNames myPermissions
+	taskPrefix taskPrefixHistory
+	elementCheckPolicy { blocking mandatoryFields orphans coverage } effectiveElementCheckPolicy { blocking mandatoryFields orphans coverage }
+	coordinatorPrompt missingCapabilities coordinatorCapabilities
+	events { kind message actor { ...ActorFields } eventAt }
+	pause { level reason pausedBy { ...ActorFields } pausedAt }
+	coordinatorSeat { session agent claimedAt }
+	perAgentWipLimit priorityType
+	target defaultWorkLevel defaultInputResolution
+	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
+	blockingPriority completionPriority humanQueueAgeMinutes
+	coordinatorStopLift effectiveCoordinatorStopLift
+	deliveryPolicy { mode awaitDeclaration merge { by method atTestedHead requireDeclaration order } }
+	effectiveDeliveryPolicy { mode awaitDeclaration merge { by method atTestedHead requireDeclaration order } }
+	eventRetentionDays effectiveEventRetentionDays
+	staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes investigationOverdueMinutes }
+	ladder { levels { number name description } prompt }
+	declarative { specHash appliedAt source { repo path commit } }
+	createdDate
+} }
+
+# A board's event log since a point, oldest first (task 1c5442d2): follow the feed by passing the
+# page's nextAfter as the next $after. gap says the board's retention deleted events this read
+# asked for (task 04dedcc5); truncatedBefore is where its window starts.
+query AgentBoardEventsProgrammatic ($boardUuid: ID!, $after: Long, $since: DateTime, $limit: Int) {
+	agentBoardEventsProgrammatic(boardUuid: $boardUuid, after: $after, since: $since, limit: $limit) {
+	events { seq uuid kind message actor { ...ActorFields } eventAt }
+	nextAfter hasMore truncatedBefore gap
+} }
+
+query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUuid: $boardUuid) {
+	uuid org name description status sources
+	groups { uuid key name description order dependsOn defaultWorkLevel status createdAt progress { total done open complete } }
+	documentsRepo { uuid uri } documentPaths elementFamilies effectiveElementFamilies
+	documents { prefix shared root } documentsRoot documentComponents { specification component } adoptsLegacyDocuments
+	perspectives perspectiveNames myPermissions
+	taskPrefix taskPrefixHistory
+	elementCheckPolicy { blocking mandatoryFields orphans coverage } effectiveElementCheckPolicy { blocking mandatoryFields orphans coverage }
+	coordinatorPrompt missingCapabilities missingCoverage { function message } coordinatorCapabilities
+	events { kind message actor { ...ActorFields } eventAt }
+	pause { level reason pausedBy { ...ActorFields } pausedAt }
+	coordinatorSeat { session agent claimedAt }
+	perAgentWipLimit priorityType
+	target defaultWorkLevel defaultInputResolution
+	budgetMicros softAlertPercent cycleCap noProgressRepeatsToStop
+	blockingPriority completionPriority humanQueueAgeMinutes
+	coordinatorStopLift effectiveCoordinatorStopLift
+	deliveryPolicy { mode awaitDeclaration merge { by method atTestedHead requireDeclaration order } }
+	effectiveDeliveryPolicy { mode awaitDeclaration merge { by method atTestedHead requireDeclaration order } }
+	eventRetentionDays effectiveEventRetentionDays
+	staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes investigationOverdueMinutes }
+	ladder { levels { number name description } prompt }
+	declarative { specHash appliedAt source { repo path commit } }
+	createdDate
+} }
+
+mutation AgentBoardCoordinateProgrammatic ($boardUuid: ID!, $sessionUuid: ID!) {
+	agentBoardCoordinateProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid) {
+	uuid org name description status sources
+	documentsRepo { uuid uri } documentPaths
+	coordinatorPrompt servedCoordinatorPrompt missingCapabilities
+	events { kind message actor { ...ActorFields } eventAt }
+	pause { level reason pausedBy { ...ActorFields } pausedAt }
+	coordinatorSeat { session agent claimedAt }
+	perAgentWipLimit priorityType createdDate
+} }
+
+mutation AgentBoardCoordinatorPauseProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $pause: Boolean!, $reason: String) {
+	agentBoardCoordinatorPauseProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid, pause: $pause, reason: $reason) {
+	uuid org name description status sources
+	documentsRepo { uuid uri } documentPaths
+	coordinatorPrompt missingCapabilities
+	events { kind message actor { ...ActorFields } eventAt }
+	pause { level reason pausedBy { ...ActorFields } pausedAt }
+	coordinatorSeat { session agent claimedAt }
+	perAgentWipLimit priorityType createdDate
+} }
+
+mutation AgentBoardPostEventProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $kind: AgentBoardEventKind!, $message: String!) {
+	agentBoardPostEventProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid, kind: $kind, message: $message) {
+	uuid org name description status sources
+	documentsRepo { uuid uri } documentPaths
+	coordinatorPrompt missingCapabilities
+	events { kind message actor { ...ActorFields } eventAt }
+	pause { level reason pausedBy { ...ActorFields } pausedAt }
+	coordinatorSeat { session agent claimedAt }
+	perAgentWipLimit priorityType createdDate
+} }
+
+# The server reads a strength field sent as null as "clear it" and one left out as "leave it",
+# so these are omitted when nil: a typed caller that does not set them never clears a floor.
+# @genqlient(for: "AgentTaskRoleConfigInput.requiredStrength", omitempty: true)
+# @genqlient(for: "AgentTaskRoleConfigInput.strengthHeadroom", omitempty: true)
+# @genqlient(for: "AgentTaskRoleConfigInput.strengthCategory", omitempty: true)
+# @genqlient(for: "AgentTaskRoleConfigInput.modelStrengths", omitempty: true)
+mutation AgentTaskRoleConfigSetProgrammatic (
+	$boardUuid: ID!, $sessionUuid: ID!, $input: AgentTaskRoleConfigInput!) {
+	agentTaskRoleConfigSetProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid, input: $input) {
+	uuid board org name prompt orderIndex wipLimit requireDistinctAgent active requiredCapabilities
+	kind necessity humanGate
+} }
+
+query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsProgrammatic(boardUuid: $boardUuid) {
+	uuid board org name prompt orderIndex wipLimit requireDistinctAgent active requiredCapabilities
+	kind necessity humanGate
+	requiredStrength strengthHeadroom strengthCategory modelStrengths { model strength }
+	hopBudgetMicros
+	blindReview
+	requiredInputs { kind specification scope minLifecycle resolution }
+	producesOutputs { specification scope required }
+	commissions { roles intake defaultBudgetMicros review }
+} }
+
+# The role part of a brief (task RD3-9): each role's served prompt and version, and what it reads and
+# leaves behind, so the brief can name a role's inputs and print them.
+query AgentRoleBriefProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsProgrammatic(boardUuid: $boardUuid) {
+	uuid name servedPrompt promptVersion requiredCapabilities
+	requiredInputs { kind specification scope minLifecycle resolution }
+	producesOutputs { specification scope required }
+} }
+
+mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
+	agentTaskRegisterProgrammatic(input: $input) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+# Commission an investigation (task RD4-12): a new INVESTIGATION task for a role that produces
+# BOARD_INVESTIGATION_REPORT. With sessionUuid, the session commissions from the task it holds (fromTask); without, the
+# key commissions as a person with BOARD_WRITE would. Its report comes back pinned on fromTask.
+mutation AgentTaskCommissionProgrammatic ($input: AgentTaskCommissionInput!) {
+	agentTaskCommissionProgrammatic(input: $input) {
+	key number uuid org board title description status role orderIndex workLevel budgetMicros dependsOn
+	kind investigation { commissionedBy { role roleUuid session task by { ...ActorFields } } deliverable role roleUuid review reviewUuid deadline returnTo report completedAt }
+	reportsReturned { investigation investigationKey report session role at reoffered cancelled note }
+	requiredInputs { kind specification scope minLifecycle resolution release }
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	createdDate
+} }
+
+query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [String!]) {
+	agentTaskNextProgrammatic(sessionUuid: $sessionUuid, boardUuid: $boardUuid, roles: $roles) {
+	task {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+ }
+	role rolePrompt promptVersion hopBudgetMicros
+} }
+
+mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles: [String!]) {
+	agentTaskAssignProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, roles: $roles) {
+	task {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+	documents { uuid version lifecycle document { specification path round task advisory publishedByRole } }
+ }
+	role rolePrompt promptVersion hopBudgetMicros
+} }
+
+mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!], $noChange: Boolean, $noCode: Boolean) {
+	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs, seenInputs: $seenInputs, noChange: $noChange, noCode: $noCode) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } noCode overAllowanceMicros noChange answered }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head }
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: AgentTaskReturnReason!, $description: String, $outputs: [ID!]) {
+	agentTaskReturnProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason, description: $description, outputs: $outputs) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+mutation AgentTaskAuthorizeProgrammatic (
+	$taskUuid: ID!, $sessionUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!],
+	# Raise only: left out, the task's strength requirement stands; null is refused on this
+	# coordinator path. So a typed caller passing nil must omit it rather than send null.
+	# @genqlient(omitempty: true)
+	$requiredStrength: Float,
+	# @genqlient(omitempty: true)
+	$budgetMicros: Long,
+	# The task's work level on the board's ladder (task RD3-6); left out, the task keeps its own or the default.
+	# @genqlient(omitempty: true)
+	$workLevel: Int) {
+	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength, budgetMicros: $budgetMicros, workLevel: $workLevel) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups requiredStrength
+	budgetMicros budgetSetBy { ...ActorFields } budgetSetAt
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!, $level: AgentTaskHoldLevel) {
+	agentTaskHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason, level: $level) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+# Declare a delivery unit (task 18c5c293): a linked PR merged where this ReARM cannot see it, or on a
+# board delivering without PRs a push or release; ABANDONED sends the task to the coordinator.
+mutation AgentTaskDeclareDeliveryProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $unit: String!, $commit: String, $outcome: AgentDeliveryOutcome, $note: String) {
+	agentTaskDeclareDeliveryProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, unit: $unit, commit: $commit, outcome: $outcome, note: $note) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+# Declare a linked PR superseded by its replacement (task RD3-13): the old PR closed unmerged, the replacement
+# linked and on the same repository; delivery then counts the replacement only.
+mutation AgentTaskSupersedePullRequestProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $oldUrl: String!, $byUrl: String!, $note: String) {
+	agentTaskSupersedePullRequestProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, oldUrl: $oldUrl, byUrl: $byUrl, note: $note) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
+	agentTaskEscalateHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+mutation AgentTaskLiftHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String, $note: String) {
+	agentTaskLiftHoldProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, note: $note) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
+	agentTaskRequireHumanReviewProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIndex: Int!) {
+	agentTaskOrderProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, orderIndex: $orderIndex) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+# The coordinator seat sets a task's work level, 0 to 9, or clears it (workLevel omitted is null: the board default; RD2-1).
+mutation AgentTaskSetWorkLevelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $workLevel: Int) {
+	agentTaskSetWorkLevelProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, workLevel: $workLevel) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+# The coordinator seat unassigns a stalled task back to the queue, with a reason (task RD3-4).
+mutation AgentTaskUnassignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: String!) {
+	agentTaskUnassignProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason) {
+	key uuid board status role
+	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason }
+} }
+
+mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $children: [AgentTaskSplitChildInput!]!) {
+	agentTaskSplitProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, children: $children) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: String) {
+	agentTaskCompleteProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, note: $note) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head }
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: String) {
+	agentTaskCancelProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, note: $note) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: String!, $reason: String!) {
+	agentTaskReopenProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, reason: $reason) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head }
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: String!, $sourceUrl: String) {
+	agentTaskBindExternalRefProgrammatic(taskUuid: $taskUuid, externalRef: $externalRef, sourceUrl: $sourceUrl) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
+	agentTaskLinkPrProgrammatic(taskUuid: $taskUuid, prUrl: $prUrl) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head }
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $taskUuid) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	kind investigation { commissionedBy { role roleUuid session task by { ...ActorFields } } deliverable role roleUuid review reviewUuid deadline returnTo report completedAt }
+	reportsReturned { investigation investigationKey report session role at reoffered cancelled note }
+	requiredInputs { kind specification scope minLifecycle resolution release }
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion resolvedInputs { kind specification release version lifecycle } }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros reviewedInputs { release specification round promotedTo } refusedPromotions { release specification round reason } }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head
+		declaration { unit commit outcome by { ...ActorFields } at note supersededBy } }
+	testedHeads { pr head }
+	deliveries { unit commit outcome by { ...ActorFields } at note supersededBy }
+	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped updatedAt
+	budgetMicros coordinatorEstimateMicros spentMicros
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+	documents { uuid version lifecycle document { specification path round task advisory publishedByRole
+		reviewItems { kind round verdict counts { passed failed skipped } tested { pr head }
+			reviewItems { id priority status title location { path line ref element } resolvedBy resolution correction } } } }
+	openReviewItems { id priority status title location { path line ref element } resolvedBy resolution correction }
+	openQuestions { id priority status title location { path line ref element } resolvedBy resolution }
+} }
+
+# A named set of tasks in one read, in the order given (task cc14f4cb): at most 100; unknown uuids,
+# and another organization's tasks, are absent. For a board's tasks by status, AgentTasksProgrammatic.
+# One task by its key, e.g. RD-42 (task 3d1f9dd7): the CLI resolves a key argument through this
+# before a call that takes a task uuid. Null when no task has the key.
+query AgentTaskByKeyProgrammatic ($key: String!) { agentTaskByKeyProgrammatic(key: $key) { uuid key board } }
+
+query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgrammatic(taskUuids: $taskUuids) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	kind investigation { commissionedBy { role roleUuid session task by { ...ActorFields } } deliverable role roleUuid review reviewUuid deadline returnTo report completedAt }
+	reportsReturned { investigation investigationKey report session role at reoffered cancelled note }
+	requiredInputs { kind specification scope minLifecycle resolution release }
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion resolvedInputs { kind specification release version lifecycle } }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros reviewedInputs { release specification round promotedTo } refusedPromotions { release specification round reason } }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head
+		declaration { unit commit outcome by { ...ActorFields } at note supersededBy } }
+	testedHeads { pr head }
+	deliveries { unit commit outcome by { ...ActorFields } at note supersededBy }
+	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped updatedAt
+	budgetMicros coordinatorEstimateMicros spentMicros
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+	documents { uuid version lifecycle document { specification path round task advisory publishedByRole
+		reviewItems { kind round verdict counts { passed failed skipped } tested { pr head }
+			reviewItems { id priority status title location { path line ref element } resolvedBy resolution correction } } } }
+	openReviewItems { id priority status title location { path line ref element } resolvedBy resolution correction }
+	openQuestions { id priority status title location { path line ref element } resolvedBy resolution }
+} }
+
+query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $changedSince: DateTime, $group: String, $tag: [String]) {
+	agentTasksProgrammatic(boardUuid: $boardUuid, status: $status, changedSince: $changedSince, group: $group, tag: $tag) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	kind investigation { commissionedBy { role roleUuid session task by { ...ActorFields } } deliverable role roleUuid review reviewUuid deadline returnTo report completedAt }
+	reportsReturned { investigation investigationKey report session role at reoffered cancelled note }
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped updatedAt
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+# The board's DELIVERING tasks and their PRs' states, for 'rearm agent wait --coordinator' (task
+# RD2-32): a task waits on the coordinator when the board's merge is its and a PR is not merged.
+# Light on purpose: the loop reads it once per poll only while the snapshot shows a DELIVERING task.
+query AgentWaitDeliveringProgrammatic ($boardUuid: ID!) {
+	agentTasksProgrammatic(boardUuid: $boardUuid, status: DELIVERING) {
+	key uuid status
+	pullRequests { url state }
+} }
+
+# The whole board in one read: what everyone is doing, what waits on what, and which questions
+# are outstanding. An agent that needs N calls to learn this does not make them.
+query AgentBoardSnapshotProgrammatic($boardUuid: ID!) { agentBoardSnapshotProgrammatic(boardUuid: $boardUuid) {
+	board { uuid name status }
+	tasks {
+		task { key number uuid externalRef title description status role roleUuid workLevel effectiveWorkLevel orderIndex hold { level kind } group { key } tags { key } waitingOnGroups }
+		holder { ...ActorFields }
+		heldSince
+		dependsOn { task externalRef title status }
+		latestDocuments { uuid version lifecycle document { specification path round } }
+		waitingOn { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+		spentMicros
+		budgetMicros
+	}
+} }
+
+# Where a new document of a type would go on a board, every placeholder filled by the server:
+# what rearm agent doc publish uses when it is not given a file.
+query AgentDocumentPath ($boardUuid: ID!, $specification: SpecificationType!, $task: ID, $component: ID) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		documentPath(specification: $specification, task: $task, component: $component)
+	}
+}
+
+# Task groups and tags (task-groups-and-tags.md §2-§3, task RD2-29).
+
+# A board's groups in display order, with what their tasks spent (a read of the board's usage).
+query AgentBoardGroupsProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUuid: $boardUuid) {
+	uuid
+	groups { uuid key name description order dependsOn defaultWorkLevel status createdAt progress { total done open complete } spentMicros }
+} }
+
+# The coordinator seat creates or edits a group by key; status CLOSED closes it.
+mutation AgentBoardGroupSetProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $group: TaskGroupInput!) {
+	agentBoardGroupSetProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid, group: $group) {
+	uuid key name description order dependsOn defaultWorkLevel status createdAt progress { total done open complete }
+} }
+
+# The coordinator seat moves a task into a group by key, or out of every group (group omitted is null).
+mutation AgentTaskSetGroupProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $group: String) {
+	agentTaskSetGroupProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, group: $group) {
+	key uuid status group { uuid key name } waitingOnGroups
+} }
+
+# The coordinator seat replaces a task's tags.
+mutation AgentTaskSetTagsProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $tags: [TagRecordInput!]!) {
+	agentTaskSetTagsProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, tags: $tags) {
+	key uuid tags { key value removable }
+} }
+
+# Who works the board (task RD3-5): every session that worked or polled it, with its state, last poll and
+# offer, completed tasks, spend and cache share in the window, and the staleness rules that name it.
+query AgentBoardAgentsProgrammatic ($boardUuid: ID!, $from: DateTime, $to: DateTime) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid name
+		agents(from: $from, to: $to) {
+			session agent agentName roles lastPollAt lastOfferAt lastActivityAt tasksCompleted costMicros cacheShare
+			state { kind taskUuid taskKey since closedBy { ...ActorFields } }
+			tokens { inputTokens outputTokens cacheReadTokens cacheWriteTokens requests turns reports }
+			stale { rule message }
+		}
+	}
+}
+
+# The board's spend in a window broken down so the parts add up to the total (task RD2-8): by role
+# (closed and open hops), by session, the coordinator seat's own rows and what no hop owns.
+query AgentBoardSpendBreakdownProgrammatic ($boardUuid: ID!, $from: DateTime, $to: DateTime) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		spendBreakdown(from: $from, to: $to) {
+			totalMicros costComplete coordinatorEstimateMicros unattributedMicros from to
+			byRole { role costMicros closedHops openHops tokens { inputTokens outputTokens cacheReadTokens cacheWriteTokens requests turns reports } }
+			bySession { session agent role costMicros tokens { inputTokens outputTokens cacheReadTokens cacheWriteTokens requests turns reports } }
+		}
+	}
+}

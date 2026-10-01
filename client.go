@@ -140,11 +140,14 @@ type authTransport struct {
 	bearer    string    // current access token
 	bearerExp time.Time // when to fetch a new one (a minute before the server's expiry)
 	session   *csrfSession
-	// browser-login session mode: no Basic credential, tokens come from the refresh token
-	refreshToken string
-	revokeURL    string
-	sessionExp   time.Time
-	persist      func(SessionTokens)
+	// browser-login session mode: no Basic credential, tokens come from the refresh token (none
+	// when the session ends inside its first token)
+	sessionMode    bool
+	refreshToken   string
+	revokeURL      string
+	sessionExp     time.Time
+	sessionHardExp time.Time
+	persist        func(SessionTokens)
 	// assertion mode: no Basic credential, tokens come from a fresh identity token each time
 	assertion AssertionSource
 	clientID  string
@@ -218,7 +221,7 @@ func (t *authTransport) isLegacy() bool { t.mu.Lock(); defer t.mu.Unlock(); retu
 func (t *authTransport) programmaticAbsent(status int) bool {
 	switch status {
 	case http.StatusNotFound, http.StatusUnauthorized, http.StatusForbidden:
-		return t.currentBearer() == "" && t.refreshToken == "" && t.assertion == nil
+		return t.currentBearer() == "" && !t.sessionMode && t.assertion == nil
 	}
 	return false
 }
@@ -239,8 +242,8 @@ func (t *authTransport) ensureToken(ctx context.Context) error {
 	if !need {
 		return nil
 	}
-	if t.refreshToken != "" {
-		return t.refreshAccessToken(ctx)
+	if t.sessionMode {
+		return t.ensureSessionToken(ctx, time.Now())
 	}
 	if t.assertion != nil {
 		return t.exchangeAssertion(ctx)
@@ -324,7 +327,7 @@ func (t *authTransport) send(req *http.Request, body []byte, sess *csrfSession) 
 	// the artifact download live on the browser chain, which takes the key as Basic. A session
 	// client has no Basic credential and sends its bearer everywhere.
 	graphQL := strings.HasSuffix(r.URL.Path, ProgrammaticPath) || strings.HasSuffix(r.URL.Path, LegacyPath)
-	if b := t.currentBearer(); b != "" && (t.refreshToken != "" || t.assertion != nil || (graphQL && !t.isLegacy())) {
+	if b := t.currentBearer(); b != "" && (t.sessionMode || t.assertion != nil || (graphQL && !t.isLegacy())) {
 		r.Header.Set("Authorization", "Bearer "+b)
 	} else if t.auth != "" {
 		r.Header.Set("Authorization", t.auth)

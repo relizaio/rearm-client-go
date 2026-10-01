@@ -1,4 +1,4 @@
-# Declarative configuration: Catalog and Branches slices.
+# Declarative configuration: Catalog, Branches, board and role-presets slices.
 
 fragment ChangeFields on DeclarativeChange {
   kind
@@ -6,6 +6,7 @@ fragment ChangeFields on DeclarativeChange {
   action
   fields
   message
+  warnings
 }
 
 fragment ApplyResultFields on DeclarativeApplyResult {
@@ -105,5 +106,105 @@ query ExportBranches($component: String!) {
         ...ProvenanceFields
       }
     }
+  }
+}
+
+mutation ApplyBoard($spec: BoardSpecInput!, $dryRun: Boolean, $source: DeclarativeSourceInput) {
+  applyBoardProgrammatic(spec: $spec, dryRun: $dryRun, source: $source) {
+    ...ApplyResultFields
+  }
+}
+
+mutation ApplyRolePresets($spec: RolePresetsSpecInput!, $dryRun: Boolean, $source: DeclarativeSourceInput) {
+  applyRolePresetsProgrammatic(spec: $spec, dryRun: $dryRun, source: $source) {
+    ...ApplyResultFields
+  }
+}
+
+fragment BoardRoleSpecFields on BoardRoleSpec {
+  name
+  prompt
+  orderIndex
+  wipLimit
+  requireDistinctAgent
+  active
+  kind
+  necessity
+  humanGate
+  requiredCapabilities
+  requiredInputs { kind specification scope component minLifecycle resolution }
+  producesOutputs { specification scope required }
+  commissions { roles intake defaultBudgetMicros review }
+  hopBudgetMicros
+  blindReview
+  strength {
+    requiredStrength
+    strengthHeadroom
+    strengthCategory
+    modelStrengths { model strength }
+  }
+}
+
+query ExportBoard($board: String!) {
+  exportBoardProgrammatic(board: $board) {
+    kind
+    version
+    name
+    description
+    target
+    defaultWorkLevel
+    defaultInputResolution
+    priorityType
+    perAgentWipLimit
+    sources
+    documentsRepo
+    documentPaths
+    elementFamilies
+    elementChecks { blocking mandatoryFields orphans coverage }
+    delivery { mode awaitDeclaration merge { by method atTestedHead requireDeclaration order } }
+    documents { prefix shared root }
+    perspectives
+    taskPrefix
+    coordinatorPrompt
+    coordinatorCapabilities
+    settings {
+      budgetMicros
+      softAlertPercent
+      cycleCap
+      noProgressRepeatsToStop
+      blockingPriority
+      completionPriority
+      humanQueueAgeMinutes
+      coordinatorStopLift
+      eventRetentionDays
+      staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes investigationOverdueMinutes }
+      ladder { levels { number name description } prompt }
+    }
+    groups { key name description dependsOn defaultWorkLevel status }
+    roles { ...BoardRoleSpecFields }
+  }
+}
+
+# A board's perspectives as the server holds them, behind the export's gate (task b9115d09, round 3):
+# uuid, name and product, in the board's order. The export writes a name several perspectives share
+# as the uuid; a client keeping a configured form maps it through these.
+query ExportBoardPerspectives($board: String!) {
+  exportBoardPerspectivesProgrammatic(board: $board) { uuid name product }
+}
+
+query ExportRolePresets {
+  agentRolePresetsSpecProgrammatic {
+    kind
+    version
+    authoritative
+    presets { ...BoardRoleSpecFields }
+  }
+}
+
+mutation ArchiveBoard($name: String!) {
+  archiveBoardProgrammatic(name: $name) {
+    uuid
+    name
+    status
   }
 }

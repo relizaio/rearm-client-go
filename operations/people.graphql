@@ -1,0 +1,126 @@
+# A person's board verbs -- the operations `rearm boards` sends. The same root fields the UI
+# calls, served on the programmatic endpoint to a personal key or a CLI login, which act as
+# their owner with the organization's admin permission. No session: people have none. An
+# organization key is refused on every one of these; agents use the *Programmatic twins in
+# boards.graphql.
+
+fragment PersonTaskFields on AgentTask {
+	key number uuid board externalRef title description status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups requireHumanReview requiredStrength
+	budgetMicros budgetSetBy { ...ActorFields } budgetSetAt
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt }
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	openReviewItems { id priority status title location { path line ref } resolvedBy resolution correction }
+	openQuestions { id priority status title location { path line ref } resolvedBy resolution }
+	createdDate completedAt
+}
+
+query AgentBoardsOfOrg ($orgUuid: ID!) { agentBoardsOfOrg(orgUuid: $orgUuid) {
+	uuid org name description status
+	pause { level reason pausedBy { ...ActorFields } pausedAt }
+	coordinatorSeat { session agent claimedAt }
+	createdDate
+} }
+
+# A person's read of one task by its key in an organization (task 3d1f9dd7); the CLI's fallback when
+# the login's key carries no AGENT function.
+query AgentTaskByKey ($orgUuid: ID!, $key: String!) { agentTaskByKey(orgUuid: $orgUuid, key: $key) { uuid key board } }
+
+query AgentTasksOfBoard ($boardUuid: ID!, $status: AgentTaskStatus, $group: String, $tag: [String]) {
+	agentTasksOfBoard(boardUuid: $boardUuid, status: $status, group: $group, tag: $tag) { ...PersonTaskFields }
+}
+
+mutation AgentTaskRegister ($boardUuid: ID!, $input: AgentTaskUserRegisterInput!) {
+	agentTaskRegister(boardUuid: $boardUuid, input: $input) { ...PersonTaskFields }
+}
+
+mutation AgentTaskAuthorize ($taskUuid: ID!, $role: String!, $orderIndex: Int, $dependsOn: [ID!], $producesComponent: ID, $workLevel: Int) {
+	agentTaskAuthorize(taskUuid: $taskUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn,
+		producesComponent: $producesComponent, workLevel: $workLevel) { ...PersonTaskFields }
+}
+
+mutation AgentTaskOrder ($taskUuid: ID!, $orderIndex: Int!) {
+	agentTaskOrder(taskUuid: $taskUuid, orderIndex: $orderIndex) { ...PersonTaskFields }
+}
+
+mutation AgentTaskComplete ($taskUuid: ID!, $note: String, $skipRequiredRoles: Boolean) {
+	agentTaskComplete(taskUuid: $taskUuid, note: $note, skipRequiredRoles: $skipRequiredRoles) { ...PersonTaskFields }
+}
+
+mutation AgentTaskCancel ($taskUuid: ID!, $note: String) {
+	agentTaskCancel(taskUuid: $taskUuid, note: $note) { ...PersonTaskFields }
+}
+
+mutation AgentTaskDecideReviewItems ($taskUuid: ID!, $specification: SpecificationType!, $decisions: [BoardReviewItemDecisionInput!]!, $about: BoardReviewItemsAboutInput) {
+	agentTaskDecideReviewItems(taskUuid: $taskUuid, specification: $specification, decisions: $decisions, about: $about) { ...PersonTaskFields }
+}
+
+mutation AgentTaskAnswer ($taskUuid: ID!, $answers: [BoardReviewItemAnswerInput!], $answerAll: String, $liftHold: Boolean) {
+	agentTaskAnswer(taskUuid: $taskUuid, answers: $answers, answerAll: $answerAll, liftHold: $liftHold) { ...PersonTaskFields }
+}
+
+mutation AgentTaskHumanReview ($taskUuid: ID!, $accept: Boolean!, $note: String, $reviewItems: [BoardReviewItemDecisionInput!], $about: BoardReviewItemsAboutInput) {
+	agentTaskHumanReview(taskUuid: $taskUuid, accept: $accept, note: $note, reviewItems: $reviewItems, about: $about) { ...PersonTaskFields }
+}
+
+mutation AgentTaskHumanSignOff ($taskUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String) {
+	agentTaskHumanSignOff(taskUuid: $taskUuid, outcome: $outcome, note: $note) { ...PersonTaskFields }
+}
+
+mutation AgentTaskOperatorHold ($taskUuid: ID!, $hold: Boolean!, $reason: String, $role: String) {
+	agentTaskOperatorHold(taskUuid: $taskUuid, hold: $hold, reason: $reason, role: $role) { ...PersonTaskFields }
+}
+
+# A person's declaration of a delivery unit (task 18c5c293). Org admin.
+mutation AgentTaskDeclareDelivery ($taskUuid: ID!, $unit: String!, $commit: String, $outcome: AgentDeliveryOutcome, $note: String) {
+	agentTaskDeclareDelivery(taskUuid: $taskUuid, unit: $unit, commit: $commit, outcome: $outcome, note: $note) { ...PersonTaskFields }
+}
+
+mutation AgentTaskRequireHumanReview ($taskUuid: ID!, $value: Boolean!) {
+	agentTaskRequireHumanReview(taskUuid: $taskUuid, value: $value) { ...PersonTaskFields }
+}
+
+mutation AgentTaskSetStrength ($taskUuid: ID!, $requiredStrength: Float) {
+	agentTaskSetStrength(taskUuid: $taskUuid, requiredStrength: $requiredStrength) { ...PersonTaskFields }
+}
+
+mutation AgentTaskSetBudget ($taskUuid: ID!, $budgetMicros: Long) {
+	agentTaskSetBudget(taskUuid: $taskUuid, budgetMicros: $budgetMicros) { ...PersonTaskFields }
+}
+
+# A person sets a task's work level, 0 to 9, or clears it (workLevel omitted is null: the board default; RD2-1).
+mutation AgentTaskSetWorkLevel ($taskUuid: ID!, $workLevel: Int) {
+	agentTaskSetWorkLevel(taskUuid: $taskUuid, workLevel: $workLevel) { ...PersonTaskFields }
+}
+
+# A person with BOARD_WRITE unassigns a stalled task back to the queue, with a reason (task RD3-4).
+mutation AgentTaskUnassign ($taskUuid: ID!, $reason: String!) {
+	agentTaskUnassign(taskUuid: $taskUuid, reason: $reason) { ...PersonTaskFields
+		unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason } }
+}
+
+mutation AgentBoardOperatorPause ($boardUuid: ID!, $pause: Boolean!, $reason: String) {
+	agentBoardOperatorPause(boardUuid: $boardUuid, pause: $pause, reason: $reason) {
+		uuid name status pause { level reason pausedBy { ...ActorFields } pausedAt }
+	}
+}
+
+# Task groups and tags for people (task RD2-29): board configuration (group set, delete) needs
+# CONFIGURATION_WRITE and BOARD_WRITE; moving a task and its tags need BOARD_WRITE.
+mutation AgentBoardGroupSet ($boardUuid: ID!, $group: TaskGroupInput!) {
+	agentBoardGroupSet(boardUuid: $boardUuid, group: $group) {
+		uuid key name description order dependsOn defaultWorkLevel status createdAt progress { total done open complete }
+	}
+}
+
+mutation AgentBoardGroupDelete ($boardUuid: ID!, $key: String!) {
+	agentBoardGroupDelete(boardUuid: $boardUuid, key: $key)
+}
+
+mutation AgentTaskSetGroup ($taskUuid: ID!, $group: String) {
+	agentTaskSetGroup(taskUuid: $taskUuid, group: $group) { ...PersonTaskFields }
+}
+
+mutation AgentTaskSetTags ($taskUuid: ID!, $tags: [TagRecordInput!]!) {
+	agentTaskSetTags(taskUuid: $taskUuid, tags: $tags) { ...PersonTaskFields }
+}
