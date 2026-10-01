@@ -93,7 +93,7 @@ func TestTheApiKeysExportAppliesAgainAsItIs(t *testing.T) {
 			"kind": "API_KEYS", "version": 1, "authoritative": true, "keys": []any{
 				map[string]any{"name": "ci-release", "type": "FREEFORM", "notes": nil, "status": "ACTIVE",
 					"permissions": map[string]any{"type": "READ_WRITE", "functions": []any{"BOARD_WRITE"}, "approvals": nil, "objects": nil},
-					"provenance": map[string]any{"specHash": "h"}},
+					"provenance":  map[string]any{"specHash": "h"}},
 			}}}})
 	}))
 	defer srv.Close()

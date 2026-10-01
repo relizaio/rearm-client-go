@@ -8,7 +8,7 @@ import (
 // Stale detection (task RD3-4): the board reads and the export carry the staleness block, the task
 // reads carry the released assignments, and both release operations exist.
 func TestStalenessAndReleaseOperations(t *testing.T) {
-	block := "staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes }"
+	block := "staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes investigationOverdueMinutes }"
 	for name, op := range map[string]string{
 		"board list": AgentBoardsProgrammatic_Operation, "board show": AgentBoardProgrammatic_Operation,
 		"export": ExportBoard_Operation,

@@ -31,7 +31,7 @@ query AgentBoardsProgrammatic { agentBoardsProgrammatic {
 	deliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
 	effectiveDeliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
 	eventRetentionDays effectiveEventRetentionDays
-	staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes }
+	staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes investigationOverdueMinutes }
 	ladder { levels { number name description } prompt }
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
@@ -66,7 +66,7 @@ query AgentBoardProgrammatic ($boardUuid: ID!) { agentBoardProgrammatic(boardUui
 	deliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
 	effectiveDeliveryPolicy { mode attest merge { by method atTestedHead requireAttestation order } }
 	eventRetentionDays effectiveEventRetentionDays
-	staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes }
+	staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes investigationOverdueMinutes }
 	ladder { levels { number name description } prompt }
 	declarative { specHash appliedAt source { repo path commit } }
 	createdDate
@@ -126,6 +126,7 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsP
 	blindReview
 	requiredInputs { kind specification scope minLifecycle resolution }
 	producesOutputs { specification scope required }
+	commissions { roles intake defaultBudgetMicros review }
 } }
 
 # The role part of a brief (task RD3-9): each role's served prompt and version, and what it reads and
@@ -148,6 +149,19 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+# Commission an investigation (task RD4-12): a new INVESTIGATION task for a role that produces
+# INVESTIGATION_REPORT. With sessionUuid, the session commissions from the task it holds (fromTask); without, the
+# key commissions as a person with BOARD_WRITE would. Its report comes back pinned on fromTask.
+mutation AgentTaskCommissionProgrammatic ($input: AgentTaskCommissionInput!) {
+	agentTaskCommissionProgrammatic(input: $input) {
+	key number uuid org board title description status role orderIndex level budgetMicros dependsOn
+	kind investigation { commissionedBy { role roleUuid session task by { ...ActorFields } } deliverable role roleUuid review reviewUuid deadline returnTo report completedAt }
+	reportsReturned { investigation investigationKey report session role at reoffered cancelled note }
+	requiredInputs { kind specification scope minLifecycle resolution release }
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	createdDate
 } }
 
 query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [String!]) {
@@ -457,9 +471,12 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 
 query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $taskUuid) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	kind investigation { commissionedBy { role roleUuid session task by { ...ActorFields } } deliverable role roleUuid review reviewUuid deadline returnTo report completedAt }
+	reportsReturned { investigation investigationKey report session role at reoffered cancelled note }
+	requiredInputs { kind specification scope minLifecycle resolution release }
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
-	assignment { session agent role assignedAt promptVersion }
+	assignment { session agent role assignedAt promptVersion resolvedInputs { kind specification release version lifecycle } }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros reviewedInputs { release specification round promotedTo } refusedPromotions { release specification round reason } }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
@@ -488,9 +505,12 @@ query AgentTaskByKeyProgrammatic ($key: String!) { agentTaskByKeyProgrammatic(ke
 
 query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgrammatic(taskUuids: $taskUuids) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	kind investigation { commissionedBy { role roleUuid session task by { ...ActorFields } } deliverable role roleUuid review reviewUuid deadline returnTo report completedAt }
+	reportsReturned { investigation investigationKey report session role at reoffered cancelled note }
+	requiredInputs { kind specification scope minLifecycle resolution release }
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
-	assignment { session agent role assignedAt promptVersion }
+	assignment { session agent role assignedAt promptVersion resolvedInputs { kind specification release version lifecycle } }
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros reviewedInputs { release specification round promotedTo } refusedPromotions { release specification round reason } }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	releasedAssignments { role session agent assignedAt releasedAt releasedBy { ...ActorFields } reason usage { ...HopUsageFields } }
@@ -514,6 +534,8 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgra
 query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $changedSince: DateTime, $group: String, $tag: [String]) {
 	agentTasksProgrammatic(boardUuid: $boardUuid, status: $status, changedSince: $changedSince, group: $group, tag: $tag) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex level effectiveLevel levelSetBy { ...ActorFields } levelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	kind investigation { commissionedBy { role roleUuid session task by { ...ActorFields } } deliverable role roleUuid review reviewUuid deadline returnTo report completedAt }
+	reportsReturned { investigation investigationKey report session role at reoffered cancelled note }
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
 	assignment { session agent role assignedAt promptVersion }
