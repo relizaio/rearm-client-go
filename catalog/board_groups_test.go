@@ -23,7 +23,7 @@ groups:
     name: The core
   - key: ui-work
     dependsOn: [core-work]
-    defaultLevel: null
+    defaultWorkLevel: null
 `))
 	if err != nil {
 		t.Fatal(err)
@@ -32,7 +32,7 @@ groups:
 	if len(groups) != 2 || groups[0].(map[string]any)["name"] != "The core" {
 		t.Fatalf("groups read as %v", groups)
 	}
-	if v, present := groups[1].(map[string]any)["defaultLevel"]; !present || v != nil {
+	if v, present := groups[1].(map[string]any)["defaultWorkLevel"]; !present || v != nil {
 		t.Errorf("a declared null must stay a present null, got %v (present %v)", v, present)
 	}
 }
@@ -40,7 +40,7 @@ groups:
 // The export selects the groups and keeps their order; the YAML leaves out a group's empty members.
 func TestTheBoardExportCarriesTheGroupsInOrder(t *testing.T) {
 	op := strings.Join(strings.Fields(rearm.ExportBoard_Operation), " ")
-	if !strings.Contains(op, "groups { key name description dependsOn defaultLevel status }") {
+	if !strings.Contains(op, "groups { key name description dependsOn defaultWorkLevel status }") {
 		t.Fatalf("the export does not select the groups: %s", op)
 	}
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

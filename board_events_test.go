@@ -43,7 +43,7 @@ func TestTheEventLogRetention(t *testing.T) {
 
 // The merge procedure (task 71a3dd22): the board reads, the export and the seat carry it.
 func TestTheMergeProcedureIsRead(t *testing.T) {
-	merge := "merge { by method atTestedHead requireAttestation order }"
+	merge := "merge { by method atTestedHead requireDeclaration order }"
 	for name, doc := range map[string]string{
 		"AgentBoardsProgrammatic": AgentBoardsProgrammatic_Operation,
 		"AgentBoardProgrammatic":  AgentBoardProgrammatic_Operation,

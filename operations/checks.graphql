@@ -1,33 +1,33 @@
 # Element checks (elements.md §7): the report the board cut for a document, and a re-run.
 # `rearm agent doc publish` reads the report after an element-bearing publish; `rearm agent doc
-# check` re-runs it. Both come back as the report's release, whose round says which report it is.
+# element-check` re-runs it. Both come back as the report's release, whose round says which report it is.
 
-fragment CheckReportFields on CheckReport {
+fragment ElementCheckReportFields on ElementCheckReport {
 	catalogueVersion grammarVersion digest
 	scope { task checked releases { release specification elementsDigest lifecycle } }
 	results { check result blocking reason offences { elementId release message } }
 }
 
-query AgentCheckReportProgrammatic ($releaseUuid: ID!) {
-	agentCheckReportProgrammatic(releaseUuid: $releaseUuid) {
-		uuid lifecycle document { round checks { ...CheckReportFields } }
+query AgentElementCheckReportProgrammatic ($releaseUuid: ID!) {
+	agentElementCheckReportProgrammatic(releaseUuid: $releaseUuid) {
+		uuid lifecycle document { round elementChecks { ...ElementCheckReportFields } }
 	}
 }
 
-mutation AgentCheckRunProgrammatic ($sessionUuid: ID!, $releaseUuid: ID!) {
-	agentCheckRunProgrammatic(sessionUuid: $sessionUuid, releaseUuid: $releaseUuid) {
-		uuid lifecycle document { round checks { ...CheckReportFields } }
+mutation AgentElementCheckRunProgrammatic ($sessionUuid: ID!, $releaseUuid: ID!) {
+	agentElementCheckRunProgrammatic(sessionUuid: $sessionUuid, releaseUuid: $releaseUuid) {
+		uuid lifecycle document { round elementChecks { ...ElementCheckReportFields } }
 	}
 }
 
 # What a publish of this element index would be checked for, in the task's current scope, with nothing
 # created (task RD4-6): `rearm agent doc publish --check`. elements is the index JSON exactly as the
 # publish sends it; the report's checked release is the nil uuid.
-query AgentCheckPreviewProgrammatic ($sessionUuid: ID!, $taskUuid: ID!, $specification: SpecificationType!,
+query AgentElementCheckPreviewProgrammatic ($sessionUuid: ID!, $taskUuid: ID!, $specification: SpecificationType!,
 		$elements: String!, $elementsDigest: String) {
-	agentCheckPreviewProgrammatic(sessionUuid: $sessionUuid, taskUuid: $taskUuid, specification: $specification,
+	agentElementCheckPreviewProgrammatic(sessionUuid: $sessionUuid, taskUuid: $taskUuid, specification: $specification,
 			elements: $elements, elementsDigest: $elementsDigest) {
-		...CheckReportFields
+		...ElementCheckReportFields
 	}
 }
 
@@ -38,18 +38,18 @@ query AgentBoardElementFamilyEntries ($boardUuid: ID!) {
 	agentBoardProgrammatic(boardUuid: $boardUuid) { uuid effectiveElementFamilyEntries { prefix family definedIn } }
 }
 
-# What `doc check --task` runs over: the task's documents that carry an element index.
-query AgentTaskCheckTargetsProgrammatic ($taskUuid: ID!) {
+# What `doc element-check --task` runs over: the task's documents that carry an element index.
+query AgentTaskElementCheckTargetsProgrammatic ($taskUuid: ID!) {
 	agentTaskProgrammatic(taskUuid: $taskUuid) {
 		uuid
 		documents { uuid lifecycle document { specification round task elements { digest } } }
 	}
 }
 
-# The check catalogue (elements.md §7): every fixed check, what it means and when it skips, and the
+# The element check catalogue (elements.md §7): every fixed check, what it means and when it skips, and the
 # coverage.<gate> pattern a board's own gates are named by.
-query CheckCatalogue {
-	checkCatalogue { name description skipsWhen }
+query ElementCheckCatalogue {
+	elementCheckCatalogue { name description skipsWhen }
 }
 
 # The rework point of an element (elements.md §8): what depends on it across the board, and which

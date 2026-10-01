@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// A board's coverage gates are part of its check policy: read where the policy is read, and carried
+// A board's coverage gates are part of its element check policy: read where the policy is read, and carried
 // by the exported file (elements.md §7.5).
 func TestThePolicyReadsAndTheExportCarryTheCoverageGates(t *testing.T) {
 	for name, op := range map[string]string{
@@ -18,8 +18,8 @@ func TestThePolicyReadsAndTheExportCarryTheCoverageGates(t *testing.T) {
 }
 
 func TestTheCatalogueIsReadable(t *testing.T) {
-	for _, want := range []string{"checkCatalogue", "name", "description", "skipsWhen"} {
-		if !strings.Contains(CheckCatalogue_Operation, want) {
+	for _, want := range []string{"elementCheckCatalogue", "name", "description", "skipsWhen"} {
+		if !strings.Contains(ElementCheckCatalogue_Operation, want) {
 			t.Errorf("the catalogue read lacks %q", want)
 		}
 	}

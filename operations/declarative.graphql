@@ -152,7 +152,7 @@ query ExportBoard($board: String!) {
     name
     description
     target
-    defaultTaskLevel
+    defaultWorkLevel
     defaultInputResolution
     priorityType
     perAgentWipLimit
@@ -160,8 +160,8 @@ query ExportBoard($board: String!) {
     documentsRepo
     documentPaths
     elementFamilies
-    checks { blocking mandatoryFields orphans coverage }
-    delivery { mode attest merge { by method atTestedHead requireAttestation order } }
+    elementChecks { blocking mandatoryFields orphans coverage }
+    delivery { mode awaitDeclaration merge { by method atTestedHead requireDeclaration order } }
     documents { prefix shared root }
     perspectives
     taskPrefix
@@ -175,12 +175,12 @@ query ExportBoard($board: String!) {
       blockingPriority
       completionPriority
       humanQueueAgeMinutes
-      coordinatorStopRelease
+      coordinatorStopLift
       eventRetentionDays
       staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes investigationOverdueMinutes }
       ladder { levels { number name description } prompt }
     }
-    groups { key name description dependsOn defaultLevel status }
+    groups { key name description dependsOn defaultWorkLevel status }
     roles { ...BoardRoleSpecFields }
   }
 }

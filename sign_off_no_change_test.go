@@ -28,7 +28,7 @@ func TestSignOffSendsNoChange(t *testing.T) {
 	}
 }
 
-// The sign-off reads back what it recorded: the statement, and the findings round the hop answered.
+// The sign-off reads back what it recorded: the statement, and the review items round the hop answered.
 func TestSignOffReadsNoChangeAndAnswered(t *testing.T) {
 	op := normalised(AgentTaskSignOffProgrammatic_Operation)
 	if !strings.Contains(op, "overAllowanceMicros noChange answered }") {

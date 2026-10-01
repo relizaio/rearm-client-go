@@ -17,7 +17,7 @@ func TestLadderOperations(t *testing.T) {
 		}
 	}
 	auth := norm(AgentTaskAuthorizeProgrammatic_Operation)
-	if !strings.Contains(auth, "$level: Int") || !strings.Contains(auth, "level: $level") {
-		t.Errorf("authorize does not carry the level: %s", auth)
+	if !strings.Contains(auth, "$workLevel: Int") || !strings.Contains(auth, "workLevel: $workLevel") {
+		t.Errorf("authorize does not carry the work level: %s", auth)
 	}
 }
