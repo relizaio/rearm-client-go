@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -45,6 +46,38 @@ func (e GraphQLErrors) Error() string {
 	return "rearm: " + strings.Join(msgs, "; ")
 }
 
+// maxResponseBytes is the largest answer exchange reads. The largest answers are merged release
+// SBOMs (releaseSbomExportProgrammatic): the server serves a document it read from rebom under a
+// 64 MiB limit (rearm-saas RebomService.REBOM_RESPONSE_LIMIT, task SCORE-19), and the answer
+// carries it as a JSON string, where escaping can double it (every quote and backslash of a JSON
+// document gains a backslash), plus the envelope and any support metadata the server adds. Four
+// times the server's limit holds all of that with room, and still bounds what a misbehaving server
+// can make the client buffer (task SCORE-24).
+const maxResponseBytes = 4 * (64 << 20)
+
+// ErrResponseTooLarge is the error of an answer longer than the client reads: it is refused whole,
+// never parsed truncated (which read as a malformed response).
+var ErrResponseTooLarge = errors.New("rearm: response too large")
+
+// readResponse reads the whole answer, or refuses one over maxResponseBytes.
+func readResponse(resp *http.Response) ([]byte, error) {
+	if resp.ContentLength > maxResponseBytes {
+		return nil, responseTooLarge()
+	}
+	raw, err := io.ReadAll(io.LimitReader(resp.Body, maxResponseBytes+1))
+	if err != nil {
+		return nil, err
+	}
+	if len(raw) > maxResponseBytes {
+		return nil, responseTooLarge()
+	}
+	return raw, nil
+}
+
+func responseTooLarge() error {
+	return fmt.Errorf("%w: the answer is over %d MiB, the most this client reads", ErrResponseTooLarge, maxResponseBytes>>20)
+}
+
 // exchange runs the request through the authenticated HTTP client and splits data from errors.
 func (c *Client) exchange(req *http.Request) (json.RawMessage, error) {
 	req.Header.Set("Accept", "application/json")
@@ -53,7 +86,7 @@ func (c *Client) exchange(req *http.Request) (json.RawMessage, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	raw, err := io.ReadAll(io.LimitReader(resp.Body, 64<<20))
+	raw, err := readResponse(resp)
 	if err != nil {
 		return nil, err
 	}

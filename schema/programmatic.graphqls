@@ -14,13 +14,15 @@ type Query {
   exportBranchesProgrammatic(
   component: String!): BranchesSpec
   """
-  Export one board of the key's organization as a board file, by name or uuid (CONFIGURATION_READ).
+  Export one board of the key's organization as a board file, by name or uuid: BOARD_READ and
+  CONFIGURATION_READ on the board, from a grant on it, on a perspective it is in, or at the
+  organization. A board the key holds nothing on is not found.
   """
   exportBoardProgrammatic(
   board: String!): BoardSpec
   """
-  One board's perspectives as the server holds them, by name or uuid (CONFIGURATION_READ, as its
-  export): uuid, name and product, in the board's order. The export writes a name several
+  One board's perspectives as the server holds them, by name or uuid (as its export): uuid, name
+  and product, in the board's order. The export writes a name several
   perspectives share as the uuid; a client keeping a configured form maps it through these.
   """
   exportBoardPerspectivesProgrammatic(
@@ -57,6 +59,25 @@ type Query {
   getReleaseByReleaseVersionProgrammatic(
   version: String!
   componentId: ID!): String
+  """
+  Readiness score of the merged release BOM, as releaseSbomScore scores it for a signed-in user (task
+  SCORE-24). The release is named as for releaseSbomExportProgrammatic, behind the same checks; the
+  other arguments are releaseSbomScore's. A failed score is one error with extensions.code
+  SBOM_SCORE_ERROR and extensions.reason, as releaseSbomScore answers.
+  """
+  releaseSbomScoreProgrammatic(
+  release: ID
+  componentId: ID
+  version: String
+  tldOnly: Boolean
+  ignoreDev: Boolean
+  structure: BomStructureType
+  belongsTo: ArtifactBelongsToEnum
+  excludeCoverageTypes: [ArtifactCoverageType]
+  includeSupportMetadata: Boolean
+  includeInternalMetadata: Boolean
+  excludeFileComponents: Boolean
+  profiles: [String!]!): String
   getLatestReleaseProgrammaticCdx(release: GetLatestReleaseInput!): String
   getLatestReleaseProgrammatic(release: GetLatestReleaseInput!): Release
   getInstanceRevisionCycloneDxExportProg(instanceUuid: ID, instanceUri: String, revision: Int!, namespace: String, stateType: InstanceStateType): String
@@ -274,9 +295,11 @@ type Mutation {
   dryRun: Boolean
   source: DeclarativeSourceInput): DeclarativeApplyResult
   """
-  Apply one board file (CONFIGURATION_WRITE with write access on the org). One transaction:
-  any problem refuses the whole file, and the result lists every problem found. A dry run returns
-  the change set the apply would and writes nothing.
+  Apply one board file. Updating a board needs BOARD_WRITE and CONFIGURATION_WRITE on it; each
+  perspective the file adds or removes needs both covering that perspective; a new board in no
+  perspective needs both at the organization. One transaction: any problem refuses the whole
+  file, and the result lists every problem found. A dry run returns the change set the apply
+  would and writes nothing.
   """
   applyBoardProgrammatic(
   spec: BoardSpecInput!
@@ -290,8 +313,9 @@ type Mutation {
   dryRun: Boolean
   source: DeclarativeSourceInput): DeclarativeApplyResult
   """
-  Archive a board by name (CONFIGURATION_WRITE): what deleting a Terraform board does. Tasks, roles
-  and history stay; the board takes no new work. Archiving an archived board changes nothing.
+  Archive a board by name (BOARD_WRITE and CONFIGURATION_WRITE on it): what deleting a Terraform
+  board does. Tasks, roles and history stay; the board takes no new work. Archiving an archived
+  board changes nothing.
   """
   archiveBoardProgrammatic(
   name: String!): AgentBoard
@@ -400,6 +424,27 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   synchronizeLiveBranches(synchronizeBranchInput: SynchronizeBranchInput!): Boolean
   probeSbomProgrammatic(sbom: String!, componentUuid: ID, branchUuid: ID): SbomProbingRun
   releasecompletionfinalizerProgrammatic(release: ID!): Boolean
+  """
+  The merged release SBOM as the Export Release BOM dialog downloads it (releaseSbomExport), for an
+  API key, an exchanged token or a CLI login (task SCORE-24). Name the release by release (uuid), or
+  by componentId (uuid, or with an organization-scoped key the unique name) and version; exactly one
+  of the two forms. Needs ARTIFACT_DOWNLOAD on the release; an unknown version is an error, never an
+  empty document. JSON and CSV come back as text, EXCEL as base64. Writes the merged BOM to the cache
+  on a miss and a download-log row, as the user export does.
+  """
+  releaseSbomExportProgrammatic(
+  release: ID
+  componentId: ID
+  version: String
+  tldOnly: Boolean
+  ignoreDev: Boolean
+  structure: BomStructureType
+  belongsTo: ArtifactBelongsToEnum
+  mediaType: BomMediaType
+  excludeCoverageTypes: [ArtifactCoverageType]
+  includeSupportMetadata: Boolean
+  includeInternalMetadata: Boolean
+  excludeFileComponents: Boolean): String
   instData(instance: InstanceDataInput!): Object
   instanceDeploymentEventsProgrammatic(events: [InstanceDeploymentEventInput!]!): Object
   setInstanceSealedSecretCert(sealedCert: String!): Boolean
@@ -1117,6 +1162,23 @@ NULL MEANS INHERIT, not empty. Read it through the resolution seam -- release
 type SbomProbingResult {
   status: SbomProbingStatus!
   metrics: DependencyTrackMetrics
+}
+
+enum BomStructureType {
+  FLAT
+  HIERARCHICAL
+}
+
+enum ArtifactBelongsToEnum {
+  DELIVERABLE
+  RELEASE
+  SCE
+}
+
+enum ArtifactCoverageType {
+  DEV
+  TEST
+  BUILD_TIME
 }
 
 input GetLatestReleaseInput {
@@ -2851,6 +2913,12 @@ input SynchronizeBranchInput {
 type SbomProbingRun {
   runId: String!
   status: SbomProbingStatus!
+}
+
+enum BomMediaType {
+  JSON
+  CSV
+  EXCEL
 }
 
 scalar Object
