@@ -47,7 +47,8 @@ type Options struct {
 	HTML401 bool
 	// Clock is the server's time (time.Now). Advance moves it forward on top of this.
 	Clock func() time.Time
-	// RefreshDelay holds every refresh answer this long after it was decided (a slow network).
+	// RefreshDelay holds every refresh answer this long after it was decided (a slow network), or until
+	// the client gives up on the request.
 	RefreshDelay time.Duration
 	// GraphQL answers accepted GraphQL requests with the whole response body; default {"data":{}}.
 	GraphQL func(opName string, vars json.RawMessage) json.RawMessage
@@ -296,7 +297,12 @@ func (s *Server) token(w http.ResponseWriter, r *http.Request) {
 	}
 	body := s.refresh(r.PostForm.Get("refresh_token"))
 	if s.opts.RefreshDelay > 0 {
-		time.Sleep(s.opts.RefreshDelay)
+		// the refresh is decided (and rotated) already; a client that gives up meanwhile loses the answer
+		select {
+		case <-time.After(s.opts.RefreshDelay):
+		case <-r.Context().Done():
+			return
+		}
 	}
 	_, _ = w.Write(body)
 }

@@ -112,8 +112,8 @@ const NoSessionDescription = "no browser-login session on file; run rearm login"
 var LockWait = 30 * time.Second
 
 // refreshWait bounds a refresh made while holding the store's lock, so a hung network cannot hold
-// the lock for the caller's whole client timeout.
-const refreshWait = 30 * time.Second
+// the lock for the caller's whole client timeout (a variable so tests can shorten it).
+var refreshWait = 30 * time.Second
 
 // WithSessionStore makes a session client renew through a store shared with other processes (see
 // SessionStore). Without one the client refreshes on its own, as before.
