@@ -335,7 +335,7 @@ func (s *Server) refresh(presented string) []byte {
 	return b
 }
 
-// accepted reads the bearer as the server's filter does.
+// acceptedLocked reads the bearer as the server's filter does.
 func (s *Server) acceptedLocked(auth string, now time.Time) bool {
 	tok, ok := strings.CutPrefix(auth, "Bearer ")
 	if !ok {

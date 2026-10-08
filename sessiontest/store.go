@@ -133,6 +133,16 @@ func (m *MemoryStore) Holds() []Hold {
 	return append([]Hold(nil), m.holds...)
 }
 
-// Loads and Saves count the calls (failed ones excluded for Saves).
-func (m *MemoryStore) Loads() int { m.mu.Lock(); defer m.mu.Unlock(); return m.loads }
-func (m *MemoryStore) Saves() int { m.mu.Lock(); defer m.mu.Unlock(); return m.saves }
+// Loads counts the Load calls.
+func (m *MemoryStore) Loads() int {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return m.loads
+}
+
+// Saves counts the Save calls that stored a set (failed ones excluded).
+func (m *MemoryStore) Saves() int {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return m.saves
+}
