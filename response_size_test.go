@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-// How much of an answer Raw reads (task SCORE-24, review item T-1 of run 1): a merged release SBOM
+// How much of an answer Raw reads (task SCORE-24, design 5.4): a merged release SBOM
 // the server serves under its 64 MiB rebom limit comes back whole, however much JSON escaping grows
 // the answer, and an answer over the client's limit is refused as too large, never read truncated
 // and reported as malformed.

@@ -88,7 +88,7 @@ func TestTheSchemaCarriesTheReleaseSbomFieldsAndEnums(t *testing.T) {
 }
 
 // Each operation the CLI sends hands every argument of its root field the variable of the same
-// name, declared with the schema's type, and leaves none out (review item T-3 of run 1): a rewired,
+// name, declared with the schema's type, and leaves none out (design T-6): a rewired,
 // dropped or extra argument would still send the right variables and get another document.
 func TestEachOperationArgumentIsItsOwnVariableAndTheSchemaFieldsArgumentsAreAllThere(t *testing.T) {
 	sdl, err := os.ReadFile("schema/programmatic.graphqls")
