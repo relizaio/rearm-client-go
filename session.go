@@ -3,6 +3,7 @@ package rearm
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -66,7 +67,8 @@ func NewWithSession(baseURL, refreshToken string, tokens SessionTokens, persist 
 	root := normalizeRoot(baseURL)
 	t := &authTransport{next: transportOf(base), userAgent: o.userAgent, tokenURL: root + TokenPath,
 		revokeURL: root + RevokePath, exchange: true, sessionMode: true, refreshToken: refreshToken, persist: persist,
-		bearer: tokens.AccessToken, sessionExp: tokens.SessionExpiry, sessionHardExp: tokens.SessionHardExpiry}
+		bearer: tokens.AccessToken, sessionExp: tokens.SessionExpiry, sessionHardExp: tokens.SessionHardExpiry,
+		store: o.store, renewing: make(chan struct{}, 1)}
 	if tokens.AccessToken != "" && !tokens.AccessTokenExpiry.IsZero() {
 		t.bearerExp = tokens.AccessTokenExpiry.Add(-time.Minute)
 	}
@@ -83,27 +85,224 @@ func normalizeRoot(baseURL string) string {
 	return root
 }
 
+// SessionStore is where every process sharing one login keeps its tokens (the CLI's credentials
+// file). With a store the client renews only while holding its lock: it re-reads the store first and
+// adopts a newer set another process saved instead of refreshing, and it saves a rotated refresh token
+// before giving the lock back. The server binds every access token to the session's current refresh
+// token and rotates that token on each refresh, so processes that refresh on their own kill each
+// other's tokens; a store is how they take turns.
+type SessionStore interface {
+	// Lock takes the cross-process lock, waiting until ctx ends; release gives it back.
+	Lock(ctx context.Context) (release func(), err error)
+	// Load reads the stored set. RefreshToken is the stored (current) refresh token, always set when
+	// the store holds one. A store with no session returns ErrNoSession.
+	Load() (SessionTokens, error)
+	// Save writes the whole set (RefreshToken is the current token). Called only between Lock and release.
+	Save(SessionTokens) error
+}
+
+// ErrNoSession is what SessionStore.Load returns when the store holds no browser-login session.
+var ErrNoSession = errors.New("rearm: no browser-login session in the store")
+
+// NoSessionDescription is the refusal a renewal gives when the store holds no session any more (the
+// user logged out, or logged in with a key).
+const NoSessionDescription = "no browser-login session on file; run rearm login"
+
+// LockWait bounds how long a renewal waits for the store's lock.
+var LockWait = 30 * time.Second
+
+// refreshWait bounds a refresh made while holding the store's lock, so a hung network cannot hold
+// the lock for the caller's whole client timeout (a variable so tests can shorten it).
+var refreshWait = 30 * time.Second
+
+// WithSessionStore makes a session client renew through a store shared with other processes (see
+// SessionStore). Without one the client refreshes on its own, as before.
+func WithSessionStore(s SessionStore) Option { return func(o *options) { o.store = s } }
+
 // ensureSessionToken refreshes when a refresh can still buy time: there is a refresh token, the
 // session's hard end (if any) has not come, and the current token does not already run to it.
 // Otherwise the current token is used to its real expiry, and after that the session has ended.
 func (t *authTransport) ensureSessionToken(ctx context.Context, now time.Time) error {
+	return t.renew(ctx, now, "")
+}
+
+// renew gets the client a token it can send. rejected is the bearer the server just refused with a
+// 401 ("" when the token is merely due): that token is dead whatever its expiry says. One renewal
+// runs at a time per client; a goroutine that waited for another one's renewal uses its result.
+func (t *authTransport) renew(ctx context.Context, now time.Time, rejected string) error {
+	if t.renewing != nil {
+		select {
+		case t.renewing <- struct{}{}:
+			defer func() { <-t.renewing }()
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
 	t.mu.Lock()
+	cur, fresh := t.bearer, t.bearer != "" && now.Before(t.bearerExp)
+	t.mu.Unlock()
+	if rejected != "" && cur != rejected {
+		return nil // renewed by another goroutine since the refused request went out
+	}
+	if rejected == "" && fresh {
+		return nil // renewed by another goroutine while this one waited
+	}
+	if t.store == nil {
+		return t.renewInPlace(ctx, now, rejected != "")
+	}
+	return t.renewThroughStore(ctx, now, rejected)
+}
+
+// decideLocked applies the session's rules to the tokens in memory: whether a refresh can buy time,
+// whether the current token is still within its real expiry, and when the session ends. A rejected
+// token buys nothing, so a refresh is worth making until the hard end even when the token ran to it.
+func (t *authTransport) decideLocked(now time.Time, rejected bool) (canRefresh, usable bool, end time.Time) {
 	tokenEnd := t.bearerExp.Add(time.Minute)
 	hard := t.sessionHardExp
-	canRefresh := t.refreshToken != "" && (hard.IsZero() || (now.Before(hard) && tokenEnd.Before(hard)))
-	usable := t.bearer != "" && now.Before(tokenEnd)
-	t.mu.Unlock()
-	if canRefresh {
-		return t.refreshAccessToken(ctx)
+	if rejected {
+		canRefresh = t.refreshToken != "" && (hard.IsZero() || now.Before(hard))
+	} else {
+		canRefresh = t.refreshToken != "" && (hard.IsZero() || (now.Before(hard) && tokenEnd.Before(hard)))
 	}
-	if usable {
-		return nil
-	}
-	end := hard
+	usable = t.bearer != "" && now.Before(tokenEnd)
+	end = hard
 	if end.IsZero() {
 		end = tokenEnd
 	}
+	return canRefresh, usable, end
+}
+
+// renewInPlace is the path without a store: refresh with the refresh token in memory.
+func (t *authTransport) renewInPlace(ctx context.Context, now time.Time, rejected bool) error {
+	t.mu.Lock()
+	canRefresh, usable, end := t.decideLocked(now, rejected)
+	t.mu.Unlock()
+	if canRefresh {
+		snap, err := t.refreshAccessToken(ctx)
+		if err != nil {
+			return err
+		}
+		t.report(snap)
+		return nil
+	}
+	if usable {
+		// due but nothing to refresh with: the token is used to its real end, and a refused one is
+		// sent again so the caller sees the server's answer
+		return nil
+	}
 	return &SessionError{Code: "invalid_grant", Description: SessionEndedDescription(end)}
+}
+
+// renewThroughStore: lock, re-read, adopt a newer set or refresh, save, release, then report.
+func (t *authTransport) renewThroughStore(ctx context.Context, now time.Time, rejected string) error {
+	lctx, cancel := context.WithTimeout(ctx, LockWait)
+	release, err := t.store.Lock(lctx)
+	timedOut := lctx.Err() == context.DeadlineExceeded
+	cancel()
+	if err != nil {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		if timedOut {
+			return fmt.Errorf("rearm: the credentials store has been locked by another process for %s", LockWait)
+		}
+		return fmt.Errorf("rearm: could not lock the credentials store: %w", err)
+	}
+	snap, err := t.renewLocked(ctx, now, rejected)
+	release()
+	if snap != nil {
+		t.report(*snap)
+	}
+	return err
+}
+
+// renewLocked runs while the store's lock is held. It returns the token set to report through
+// persist, if any, after the lock is released.
+func (t *authTransport) renewLocked(ctx context.Context, now time.Time, rejected string) (*SessionTokens, error) {
+	on, err := t.store.Load()
+	if errors.Is(err, ErrNoSession) {
+		return nil, &SessionError{Code: "invalid_grant", Description: NoSessionDescription}
+	}
+	if err != nil {
+		return nil, fmt.Errorf("rearm: could not read the credentials store: %w", err)
+	}
+	t.mu.Lock()
+	startRefresh := t.refreshToken
+	adopted := on.RefreshToken != t.refreshToken || on.AccessToken != t.bearer
+	if adopted {
+		// another process renewed: its set is the current one, and the refresh token held here is retired
+		t.refreshToken = on.RefreshToken
+		t.bearer = on.AccessToken
+		t.bearerExp = time.Time{}
+		if on.AccessToken != "" && !on.AccessTokenExpiry.IsZero() {
+			t.bearerExp = on.AccessTokenExpiry.Add(-time.Minute)
+		}
+		t.sessionExp = on.SessionExpiry
+		t.sessionHardExp = on.SessionHardExpiry
+		t.clampLocked()
+	}
+	rej := rejected != "" && t.bearer == rejected
+	fresh := !rej && t.bearer != "" && now.Before(t.bearerExp)
+	canRefresh, usable, end := t.decideLocked(now, rej)
+	t.mu.Unlock()
+	var adoptedSnap *SessionTokens
+	if adopted {
+		s := t.snapshot(startRefresh)
+		adoptedSnap = &s
+	}
+	if fresh {
+		return adoptedSnap, nil // the refresh was already made elsewhere: no server call
+	}
+	if canRefresh {
+		rctx, cancel := context.WithTimeout(ctx, refreshWait)
+		_, err := t.refreshAccessToken(rctx)
+		cancel()
+		if err != nil {
+			return adoptedSnap, err
+		}
+		// the rotated token goes to the store before the lock is given back, so a process waiting on
+		// the lock reads it and never refreshes with the token just retired
+		t.mu.Lock()
+		full := SessionTokens{AccessToken: t.bearer, AccessTokenExpiry: t.bearerExp.Add(time.Minute), RefreshToken: t.refreshToken,
+			SessionExpiry: t.sessionExp, SessionHardExpiry: t.sessionHardExp}
+		t.mu.Unlock()
+		if err := t.store.Save(full); err != nil {
+			return nil, fmt.Errorf("rearm: session refreshed but could not be stored: %w", err)
+		}
+		s := t.snapshot(startRefresh)
+		return &s, nil
+	}
+	if usable {
+		// due but nothing to refresh with: the token is used to its real end, and a refused one is sent
+		// again so the caller sees the server's answer
+		return adoptedSnap, nil
+	}
+	return adoptedSnap, &SessionError{Code: "invalid_grant", Description: SessionEndedDescription(end)}
+}
+
+// clampLocked keeps the planned token end at or before the session's hard end.
+func (t *authTransport) clampLocked() {
+	if !t.sessionHardExp.IsZero() && !t.bearerExp.IsZero() && t.bearerExp.Add(time.Minute).After(t.sessionHardExp) {
+		t.bearerExp = t.sessionHardExp.Add(-time.Minute)
+	}
+}
+
+// snapshot is the set handed to persist: RefreshToken only when it differs from before.
+func (t *authTransport) snapshot(before string) SessionTokens {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	rotated := ""
+	if t.refreshToken != before {
+		rotated = t.refreshToken
+	}
+	return SessionTokens{AccessToken: t.bearer, AccessTokenExpiry: t.bearerExp.Add(time.Minute), SessionExpiry: t.sessionExp,
+		SessionHardExpiry: t.sessionHardExp, RefreshToken: rotated}
+}
+
+func (t *authTransport) report(s SessionTokens) {
+	if t.persist != nil {
+		t.persist(s)
+	}
 }
 
 // SessionEndedDescription is the refusal the server gives a refresh after the hard end; the client
@@ -112,19 +311,23 @@ func SessionEndedDescription(end time.Time) string {
 	return "session ended at " + end.UTC().Format(time.RFC3339) + "; run rearm login"
 }
 
-// refreshAccessToken trades the refresh token for a new access token and reports the tokens.
-func (t *authTransport) refreshAccessToken(ctx context.Context) error {
-	form := url.Values{"grant_type": {"refresh_token"}, "refresh_token": {t.refreshToken}}
+// refreshAccessToken trades the refresh token for a new access token and keeps the new set; it
+// returns the set to report (RefreshToken only when rotated).
+func (t *authTransport) refreshAccessToken(ctx context.Context) (SessionTokens, error) {
+	t.mu.Lock()
+	before := t.refreshToken
+	t.mu.Unlock()
+	form := url.Values{"grant_type": {"refresh_token"}, "refresh_token": {before}}
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, t.tokenURL, strings.NewReader(form.Encode()))
 	if err != nil {
-		return err
+		return SessionTokens{}, err
 	}
 	req.Header.Set("User-Agent", t.userAgent)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json")
 	resp, err := t.next.RoundTrip(req)
 	if err != nil {
-		return fmt.Errorf("rearm: session refresh: %w", err)
+		return SessionTokens{}, fmt.Errorf("rearm: session refresh: %w", err)
 	}
 	defer resp.Body.Close()
 	raw, _ := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
@@ -141,9 +344,9 @@ func (t *authTransport) refreshAccessToken(ctx context.Context) error {
 	// outcomes arrive as 200 with an error member (the ingress in front of ReARM rewrites 4xx bodies)
 	if tok.Error != "" || resp.StatusCode != http.StatusOK || tok.AccessToken == "" {
 		if tok.Error == "" {
-			return fmt.Errorf("rearm: session refresh failed with status %d", resp.StatusCode)
+			return SessionTokens{}, fmt.Errorf("rearm: session refresh failed with status %d", resp.StatusCode)
 		}
-		return &SessionError{Code: tok.Error, Description: tok.Description}
+		return SessionTokens{}, &SessionError{Code: tok.Error, Description: tok.Description}
 	}
 	t.mu.Lock()
 	t.bearer = tok.AccessToken
@@ -159,23 +362,13 @@ func (t *authTransport) refreshAccessToken(ctx context.Context) error {
 		t.sessionHardExp = he
 	}
 	// the token lives no longer than the session: never plan to use it past the hard end
-	if !t.sessionHardExp.IsZero() && t.bearerExp.Add(time.Minute).After(t.sessionHardExp) {
-		t.bearerExp = t.sessionHardExp.Add(-time.Minute)
-	}
-	rotated := ""
-	if tok.RefreshToken != "" && tok.RefreshToken != t.refreshToken {
-		// rotation: from now on only the new token refreshes; the persist callback carries it to disk
+	t.clampLocked()
+	if tok.RefreshToken != "" {
+		// rotation: from now on only the new token refreshes; the store and the persist callback carry it to disk
 		t.refreshToken = tok.RefreshToken
-		rotated = tok.RefreshToken
 	}
-	snapshot := SessionTokens{AccessToken: t.bearer, AccessTokenExpiry: t.bearerExp.Add(time.Minute), SessionExpiry: t.sessionExp,
-		SessionHardExpiry: t.sessionHardExp, RefreshToken: rotated}
-	persist := t.persist
 	t.mu.Unlock()
-	if persist != nil {
-		persist(snapshot)
-	}
-	return nil
+	return t.snapshot(before), nil
 }
 
 // SessionError is a refused refresh: the session is gone, log in again. It reaches callers wrapped
