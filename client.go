@@ -59,6 +59,7 @@ type options struct {
 	userAgent  string
 	legacy     bool
 	noExchange bool
+	store      SessionStore
 }
 
 // WithHTTPClient sets the underlying HTTP client (timeouts, proxies, TLS).
@@ -148,6 +149,10 @@ type authTransport struct {
 	sessionExp     time.Time
 	sessionHardExp time.Time
 	persist        func(SessionTokens)
+	// store is shared with the other processes of one login (WithSessionStore); renewing holds the
+	// client's one renewal slot, so its goroutines never refresh side by side
+	store    SessionStore
+	renewing chan struct{}
 	// assertion mode: no Basic credential, tokens come from a fresh identity token each time
 	assertion AssertionSource
 	clientID  string
@@ -174,9 +179,22 @@ func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		if err := t.ensureToken(req.Context()); err != nil {
 			return nil, err
 		}
+		sent := t.currentBearer()
 		resp, err := t.send(req, body, nil)
 		if err != nil {
 			return nil, err
+		}
+		if t.sessionMode && resp.StatusCode == http.StatusUnauthorized {
+			// The server binds a session's access tokens to its current refresh token, so a refresh by
+			// another process (or the token's real expiry) kills this one before its planned end. Renew
+			// (adopt the store's newer set, else refresh) and send once more; that answer stands, 401
+			// included. The body is not read: an ingress replaces the JSON invalid_token with a page.
+			_, _ = io.Copy(io.Discard, io.LimitReader(resp.Body, 1<<20))
+			_ = resp.Body.Close()
+			if err := t.renew(req.Context(), time.Now(), sent); err != nil {
+				return nil, err
+			}
+			return t.send(req, body, nil)
 		}
 		if !t.programmaticAbsent(resp.StatusCode) {
 			return resp, nil

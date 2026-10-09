@@ -147,6 +147,17 @@ grace window covers a crash between receiving and persisting; reuse after it rev
 A refused refresh surfaces as `*rearm.SessionError` (unwrap with `errors.As`): log in again.
 `c.Revoke(ctx)` ends the session.
 
+The server binds every access token to the session's *current* refresh token, so when several
+processes share one login, a refresh by one of them kills the access tokens the others hold. Give
+such clients a shared store with `rearm.WithSessionStore(store)`: a `rearm.SessionStore` has `Lock`
+(a cross-process lock), `Load` (the stored set, `RefreshToken` included, or `rearm.ErrNoSession`)
+and `Save` (the whole set). The client renews only while holding the lock: it re-reads the store,
+adopts a newer set another process saved instead of refreshing, and saves a rotated token before it
+releases the lock, so no process ever presents a retired refresh token. A 401 on a session request
+is renewed the same way and retried once. `rearm.LockWait` (30 s) bounds the wait for the lock; the
+`persist` callback is still called after each renewal. Package `sessiontest` is a fake server with
+the real rotation, grace and reuse semantics, plus an in-memory store, for testing such callers.
+
 The interactive flow itself is two calls, `rearm.StartDeviceLogin` and `rearm.PollDeviceLogin`;
 printing the code, opening the browser and the polling loop belong to the caller.
 
