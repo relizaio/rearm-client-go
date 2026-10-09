@@ -48597,9 +48597,11 @@ func (v *ApplyBoardApplyBoardProgrammaticDeclarativeApplyResult) __premarshalJSO
 
 // ApplyBoardResponse is returned by ApplyBoard on success.
 type ApplyBoardResponse struct {
-	// Apply one board file (CONFIGURATION_WRITE with write access on the org). One transaction:
-	// any problem refuses the whole file, and the result lists every problem found. A dry run returns
-	// the change set the apply would and writes nothing.
+	// Apply one board file. Updating a board needs BOARD_WRITE and CONFIGURATION_WRITE on it; each
+	// perspective the file adds or removes needs both covering that perspective; a new board in no
+	// perspective needs both at the organization. One transaction: any problem refuses the whole
+	// file, and the result lists every problem found. A dry run returns the change set the apply
+	// would and writes nothing.
 	ApplyBoardProgrammatic *ApplyBoardApplyBoardProgrammaticDeclarativeApplyResult `json:"applyBoardProgrammatic"`
 }
 
@@ -49434,8 +49436,9 @@ func (v *ArchiveBoardArchiveBoardProgrammaticAgentBoard) GetStatus() *AgentBoard
 
 // ArchiveBoardResponse is returned by ArchiveBoard on success.
 type ArchiveBoardResponse struct {
-	// Archive a board by name (CONFIGURATION_WRITE): what deleting a Terraform board does. Tasks, roles
-	// and history stay; the board takes no new work. Archiving an archived board changes nothing.
+	// Archive a board by name (BOARD_WRITE and CONFIGURATION_WRITE on it): what deleting a Terraform
+	// board does. Tasks, roles and history stay; the board takes no new work. Archiving an archived
+	// board changes nothing.
 	ArchiveBoardProgrammatic *ArchiveBoardArchiveBoardProgrammaticAgentBoard `json:"archiveBoardProgrammatic"`
 }
 
@@ -49454,6 +49457,34 @@ const (
 var AllArtifactBelonging = []ArtifactBelonging{
 	ArtifactBelongingInternal,
 	ArtifactBelongingExternal,
+}
+
+type ArtifactBelongsToEnum string
+
+const (
+	ArtifactBelongsToEnumDeliverable ArtifactBelongsToEnum = "DELIVERABLE"
+	ArtifactBelongsToEnumRelease     ArtifactBelongsToEnum = "RELEASE"
+	ArtifactBelongsToEnumSce         ArtifactBelongsToEnum = "SCE"
+)
+
+var AllArtifactBelongsToEnum = []ArtifactBelongsToEnum{
+	ArtifactBelongsToEnumDeliverable,
+	ArtifactBelongsToEnumRelease,
+	ArtifactBelongsToEnumSce,
+}
+
+type ArtifactCoverageType string
+
+const (
+	ArtifactCoverageTypeDev       ArtifactCoverageType = "DEV"
+	ArtifactCoverageTypeTest      ArtifactCoverageType = "TEST"
+	ArtifactCoverageTypeBuildTime ArtifactCoverageType = "BUILD_TIME"
+)
+
+var AllArtifactCoverageType = []ArtifactCoverageType{
+	ArtifactCoverageTypeDev,
+	ArtifactCoverageTypeTest,
+	ArtifactCoverageTypeBuildTime,
 }
 
 type ArtifactInput struct {
@@ -50174,6 +50205,32 @@ const (
 var AllBomFormat = []BomFormat{
 	BomFormatCyclonedx,
 	BomFormatSpdx,
+}
+
+type BomMediaType string
+
+const (
+	BomMediaTypeJson  BomMediaType = "JSON"
+	BomMediaTypeCsv   BomMediaType = "CSV"
+	BomMediaTypeExcel BomMediaType = "EXCEL"
+)
+
+var AllBomMediaType = []BomMediaType{
+	BomMediaTypeJson,
+	BomMediaTypeCsv,
+	BomMediaTypeExcel,
+}
+
+type BomStructureType string
+
+const (
+	BomStructureTypeFlat         BomStructureType = "FLAT"
+	BomStructureTypeHierarchical BomStructureType = "HIERARCHICAL"
+)
+
+var AllBomStructureType = []BomStructureType{
+	BomStructureTypeFlat,
+	BomStructureTypeHierarchical,
 }
 
 type BranchSpecInput struct {
@@ -52613,8 +52670,8 @@ func (v *ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspect
 
 // ExportBoardPerspectivesResponse is returned by ExportBoardPerspectives on success.
 type ExportBoardPerspectivesResponse struct {
-	// One board's perspectives as the server holds them, by name or uuid (CONFIGURATION_READ, as its
-	// export): uuid, name and product, in the board's order. The export writes a name several
+	// One board's perspectives as the server holds them, by name or uuid (as its export): uuid, name
+	// and product, in the board's order. The export writes a name several
 	// perspectives share as the uuid; a client keeping a configured form maps it through these.
 	ExportBoardPerspectivesProgrammatic []*ExportBoardPerspectivesExportBoardPerspectivesProgrammaticBoardPerspectiveRef `json:"exportBoardPerspectivesProgrammatic"`
 }
@@ -52626,7 +52683,9 @@ func (v *ExportBoardPerspectivesResponse) GetExportBoardPerspectivesProgrammatic
 
 // ExportBoardResponse is returned by ExportBoard on success.
 type ExportBoardResponse struct {
-	// Export one board of the key's organization as a board file, by name or uuid (CONFIGURATION_READ).
+	// Export one board of the key's organization as a board file, by name or uuid: BOARD_READ and
+	// CONFIGURATION_READ on the board, from a grant on it, on a perspective it is in, or at the
+	// organization. A board the key holds nothing on is not found.
 	ExportBoardProgrammatic *ExportBoardExportBoardProgrammaticBoardSpec `json:"exportBoardProgrammatic"`
 }
 
@@ -56920,6 +56979,36 @@ func (v *ReleaseLockProgrammaticResponse) GetReleaseLockProgrammatic() *ReleaseL
 	return v.ReleaseLockProgrammatic
 }
 
+// ReleaseSbomExportProgrammaticResponse is returned by ReleaseSbomExportProgrammatic on success.
+type ReleaseSbomExportProgrammaticResponse struct {
+	// The merged release SBOM as the Export Release BOM dialog downloads it (releaseSbomExport), for an
+	// API key, an exchanged token or a CLI login (task SCORE-24). Name the release by release (uuid), or
+	// by componentId (uuid, or with an organization-scoped key the unique name) and version; exactly one
+	// of the two forms. Needs ARTIFACT_DOWNLOAD on the release; an unknown version is an error, never an
+	// empty document. JSON and CSV come back as text, EXCEL as base64. Writes the merged BOM to the cache
+	// on a miss and a download-log row, as the user export does.
+	ReleaseSbomExportProgrammatic *string `json:"releaseSbomExportProgrammatic"`
+}
+
+// GetReleaseSbomExportProgrammatic returns ReleaseSbomExportProgrammaticResponse.ReleaseSbomExportProgrammatic, and is useful for accessing the field via an interface.
+func (v *ReleaseSbomExportProgrammaticResponse) GetReleaseSbomExportProgrammatic() *string {
+	return v.ReleaseSbomExportProgrammatic
+}
+
+// ReleaseSbomScoreProgrammaticResponse is returned by ReleaseSbomScoreProgrammatic on success.
+type ReleaseSbomScoreProgrammaticResponse struct {
+	// Readiness score of the merged release BOM, as releaseSbomScore scores it for a signed-in user (task
+	// SCORE-24). The release is named as for releaseSbomExportProgrammatic, behind the same checks; the
+	// other arguments are releaseSbomScore's. A failed score is one error with extensions.code
+	// SBOM_SCORE_ERROR and extensions.reason, as releaseSbomScore answers.
+	ReleaseSbomScoreProgrammatic *string `json:"releaseSbomScoreProgrammatic"`
+}
+
+// GetReleaseSbomScoreProgrammatic returns ReleaseSbomScoreProgrammaticResponse.ReleaseSbomScoreProgrammatic, and is useful for accessing the field via an interface.
+func (v *ReleaseSbomScoreProgrammaticResponse) GetReleaseSbomScoreProgrammatic() *string {
+	return v.ReleaseSbomScoreProgrammatic
+}
+
 type ReleaseUpdateActionEnum string
 
 const (
@@ -61169,6 +61258,130 @@ func (v *__ReleaseLockProgrammaticInput) GetReason() string { return v.Reason }
 
 // GetSession returns __ReleaseLockProgrammaticInput.Session, and is useful for accessing the field via an interface.
 func (v *__ReleaseLockProgrammaticInput) GetSession() string { return v.Session }
+
+// __ReleaseSbomExportProgrammaticInput is used internally by genqlient
+type __ReleaseSbomExportProgrammaticInput struct {
+	Release                 *string                 `json:"release"`
+	ComponentId             *string                 `json:"componentId"`
+	Version                 *string                 `json:"version"`
+	TldOnly                 *bool                   `json:"tldOnly"`
+	IgnoreDev               *bool                   `json:"ignoreDev"`
+	Structure               *BomStructureType       `json:"structure"`
+	BelongsTo               *ArtifactBelongsToEnum  `json:"belongsTo"`
+	MediaType               *BomMediaType           `json:"mediaType"`
+	ExcludeCoverageTypes    []*ArtifactCoverageType `json:"excludeCoverageTypes"`
+	IncludeSupportMetadata  *bool                   `json:"includeSupportMetadata"`
+	IncludeInternalMetadata *bool                   `json:"includeInternalMetadata"`
+	ExcludeFileComponents   *bool                   `json:"excludeFileComponents"`
+}
+
+// GetRelease returns __ReleaseSbomExportProgrammaticInput.Release, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomExportProgrammaticInput) GetRelease() *string { return v.Release }
+
+// GetComponentId returns __ReleaseSbomExportProgrammaticInput.ComponentId, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomExportProgrammaticInput) GetComponentId() *string { return v.ComponentId }
+
+// GetVersion returns __ReleaseSbomExportProgrammaticInput.Version, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomExportProgrammaticInput) GetVersion() *string { return v.Version }
+
+// GetTldOnly returns __ReleaseSbomExportProgrammaticInput.TldOnly, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomExportProgrammaticInput) GetTldOnly() *bool { return v.TldOnly }
+
+// GetIgnoreDev returns __ReleaseSbomExportProgrammaticInput.IgnoreDev, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomExportProgrammaticInput) GetIgnoreDev() *bool { return v.IgnoreDev }
+
+// GetStructure returns __ReleaseSbomExportProgrammaticInput.Structure, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomExportProgrammaticInput) GetStructure() *BomStructureType { return v.Structure }
+
+// GetBelongsTo returns __ReleaseSbomExportProgrammaticInput.BelongsTo, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomExportProgrammaticInput) GetBelongsTo() *ArtifactBelongsToEnum {
+	return v.BelongsTo
+}
+
+// GetMediaType returns __ReleaseSbomExportProgrammaticInput.MediaType, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomExportProgrammaticInput) GetMediaType() *BomMediaType { return v.MediaType }
+
+// GetExcludeCoverageTypes returns __ReleaseSbomExportProgrammaticInput.ExcludeCoverageTypes, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomExportProgrammaticInput) GetExcludeCoverageTypes() []*ArtifactCoverageType {
+	return v.ExcludeCoverageTypes
+}
+
+// GetIncludeSupportMetadata returns __ReleaseSbomExportProgrammaticInput.IncludeSupportMetadata, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomExportProgrammaticInput) GetIncludeSupportMetadata() *bool {
+	return v.IncludeSupportMetadata
+}
+
+// GetIncludeInternalMetadata returns __ReleaseSbomExportProgrammaticInput.IncludeInternalMetadata, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomExportProgrammaticInput) GetIncludeInternalMetadata() *bool {
+	return v.IncludeInternalMetadata
+}
+
+// GetExcludeFileComponents returns __ReleaseSbomExportProgrammaticInput.ExcludeFileComponents, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomExportProgrammaticInput) GetExcludeFileComponents() *bool {
+	return v.ExcludeFileComponents
+}
+
+// __ReleaseSbomScoreProgrammaticInput is used internally by genqlient
+type __ReleaseSbomScoreProgrammaticInput struct {
+	Release                 *string                 `json:"release"`
+	ComponentId             *string                 `json:"componentId"`
+	Version                 *string                 `json:"version"`
+	TldOnly                 *bool                   `json:"tldOnly"`
+	IgnoreDev               *bool                   `json:"ignoreDev"`
+	Structure               *BomStructureType       `json:"structure"`
+	BelongsTo               *ArtifactBelongsToEnum  `json:"belongsTo"`
+	ExcludeCoverageTypes    []*ArtifactCoverageType `json:"excludeCoverageTypes"`
+	IncludeSupportMetadata  *bool                   `json:"includeSupportMetadata"`
+	IncludeInternalMetadata *bool                   `json:"includeInternalMetadata"`
+	ExcludeFileComponents   *bool                   `json:"excludeFileComponents"`
+	Profiles                []string                `json:"profiles"`
+}
+
+// GetRelease returns __ReleaseSbomScoreProgrammaticInput.Release, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomScoreProgrammaticInput) GetRelease() *string { return v.Release }
+
+// GetComponentId returns __ReleaseSbomScoreProgrammaticInput.ComponentId, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomScoreProgrammaticInput) GetComponentId() *string { return v.ComponentId }
+
+// GetVersion returns __ReleaseSbomScoreProgrammaticInput.Version, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomScoreProgrammaticInput) GetVersion() *string { return v.Version }
+
+// GetTldOnly returns __ReleaseSbomScoreProgrammaticInput.TldOnly, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomScoreProgrammaticInput) GetTldOnly() *bool { return v.TldOnly }
+
+// GetIgnoreDev returns __ReleaseSbomScoreProgrammaticInput.IgnoreDev, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomScoreProgrammaticInput) GetIgnoreDev() *bool { return v.IgnoreDev }
+
+// GetStructure returns __ReleaseSbomScoreProgrammaticInput.Structure, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomScoreProgrammaticInput) GetStructure() *BomStructureType { return v.Structure }
+
+// GetBelongsTo returns __ReleaseSbomScoreProgrammaticInput.BelongsTo, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomScoreProgrammaticInput) GetBelongsTo() *ArtifactBelongsToEnum {
+	return v.BelongsTo
+}
+
+// GetExcludeCoverageTypes returns __ReleaseSbomScoreProgrammaticInput.ExcludeCoverageTypes, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomScoreProgrammaticInput) GetExcludeCoverageTypes() []*ArtifactCoverageType {
+	return v.ExcludeCoverageTypes
+}
+
+// GetIncludeSupportMetadata returns __ReleaseSbomScoreProgrammaticInput.IncludeSupportMetadata, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomScoreProgrammaticInput) GetIncludeSupportMetadata() *bool {
+	return v.IncludeSupportMetadata
+}
+
+// GetIncludeInternalMetadata returns __ReleaseSbomScoreProgrammaticInput.IncludeInternalMetadata, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomScoreProgrammaticInput) GetIncludeInternalMetadata() *bool {
+	return v.IncludeInternalMetadata
+}
+
+// GetExcludeFileComponents returns __ReleaseSbomScoreProgrammaticInput.ExcludeFileComponents, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomScoreProgrammaticInput) GetExcludeFileComponents() *bool {
+	return v.ExcludeFileComponents
+}
+
+// GetProfiles returns __ReleaseSbomScoreProgrammaticInput.Profiles, and is useful for accessing the field via an interface.
+func (v *__ReleaseSbomScoreProgrammaticInput) GetProfiles() []string { return v.Profiles }
 
 // __ReleasecompletionfinalizerProgrammaticInput is used internally by genqlient
 type __ReleasecompletionfinalizerProgrammaticInput struct {
@@ -72856,6 +73069,119 @@ func ReleaseLockProgrammatic(
 	}
 
 	data_ = &ReleaseLockProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by ReleaseSbomExportProgrammatic.
+const ReleaseSbomExportProgrammatic_Operation = `
+mutation ReleaseSbomExportProgrammatic ($release: ID, $componentId: ID, $version: String, $tldOnly: Boolean, $ignoreDev: Boolean, $structure: BomStructureType, $belongsTo: ArtifactBelongsToEnum, $mediaType: BomMediaType, $excludeCoverageTypes: [ArtifactCoverageType], $includeSupportMetadata: Boolean, $includeInternalMetadata: Boolean, $excludeFileComponents: Boolean) {
+	releaseSbomExportProgrammatic(release: $release, componentId: $componentId, version: $version, tldOnly: $tldOnly, ignoreDev: $ignoreDev, structure: $structure, belongsTo: $belongsTo, mediaType: $mediaType, excludeCoverageTypes: $excludeCoverageTypes, includeSupportMetadata: $includeSupportMetadata, includeInternalMetadata: $includeInternalMetadata, excludeFileComponents: $excludeFileComponents)
+}
+`
+
+// from rearm-cli exportReleaseBom.go -- the merged release SBOM the Export Release BOM dialog
+// downloads, and its readiness score (task SCORE-24). The release is named by uuid, or by
+// component (uuid or unique name) and version; every option is a variable, so the command sends
+// the dialog's defaults explicitly.
+func ReleaseSbomExportProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	release *string,
+	componentId *string,
+	version *string,
+	tldOnly *bool,
+	ignoreDev *bool,
+	structure *BomStructureType,
+	belongsTo *ArtifactBelongsToEnum,
+	mediaType *BomMediaType,
+	excludeCoverageTypes []*ArtifactCoverageType,
+	includeSupportMetadata *bool,
+	includeInternalMetadata *bool,
+	excludeFileComponents *bool,
+) (data_ *ReleaseSbomExportProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ReleaseSbomExportProgrammatic",
+		Query:  ReleaseSbomExportProgrammatic_Operation,
+		Variables: &__ReleaseSbomExportProgrammaticInput{
+			Release:                 release,
+			ComponentId:             componentId,
+			Version:                 version,
+			TldOnly:                 tldOnly,
+			IgnoreDev:               ignoreDev,
+			Structure:               structure,
+			BelongsTo:               belongsTo,
+			MediaType:               mediaType,
+			ExcludeCoverageTypes:    excludeCoverageTypes,
+			IncludeSupportMetadata:  includeSupportMetadata,
+			IncludeInternalMetadata: includeInternalMetadata,
+			ExcludeFileComponents:   excludeFileComponents,
+		},
+	}
+
+	data_ = &ReleaseSbomExportProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by ReleaseSbomScoreProgrammatic.
+const ReleaseSbomScoreProgrammatic_Operation = `
+query ReleaseSbomScoreProgrammatic ($release: ID, $componentId: ID, $version: String, $tldOnly: Boolean, $ignoreDev: Boolean, $structure: BomStructureType, $belongsTo: ArtifactBelongsToEnum, $excludeCoverageTypes: [ArtifactCoverageType], $includeSupportMetadata: Boolean, $includeInternalMetadata: Boolean, $excludeFileComponents: Boolean, $profiles: [String!]!) {
+	releaseSbomScoreProgrammatic(release: $release, componentId: $componentId, version: $version, tldOnly: $tldOnly, ignoreDev: $ignoreDev, structure: $structure, belongsTo: $belongsTo, excludeCoverageTypes: $excludeCoverageTypes, includeSupportMetadata: $includeSupportMetadata, includeInternalMetadata: $includeInternalMetadata, excludeFileComponents: $excludeFileComponents, profiles: $profiles)
+}
+`
+
+// from rearm-cli exportReleaseBom.go
+func ReleaseSbomScoreProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	release *string,
+	componentId *string,
+	version *string,
+	tldOnly *bool,
+	ignoreDev *bool,
+	structure *BomStructureType,
+	belongsTo *ArtifactBelongsToEnum,
+	excludeCoverageTypes []*ArtifactCoverageType,
+	includeSupportMetadata *bool,
+	includeInternalMetadata *bool,
+	excludeFileComponents *bool,
+	profiles []string,
+) (data_ *ReleaseSbomScoreProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ReleaseSbomScoreProgrammatic",
+		Query:  ReleaseSbomScoreProgrammatic_Operation,
+		Variables: &__ReleaseSbomScoreProgrammaticInput{
+			Release:                 release,
+			ComponentId:             componentId,
+			Version:                 version,
+			TldOnly:                 tldOnly,
+			IgnoreDev:               ignoreDev,
+			Structure:               structure,
+			BelongsTo:               belongsTo,
+			ExcludeCoverageTypes:    excludeCoverageTypes,
+			IncludeSupportMetadata:  includeSupportMetadata,
+			IncludeInternalMetadata: includeInternalMetadata,
+			ExcludeFileComponents:   excludeFileComponents,
+			Profiles:                profiles,
+		},
+	}
+
+	data_ = &ReleaseSbomScoreProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

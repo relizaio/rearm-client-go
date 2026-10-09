@@ -667,3 +667,30 @@ mutation ReleaseLockProgrammatic($lockUuid: ID!, $reason: String!, $session: ID!
 		releaseAttestation
 	}
 }
+
+# from rearm-cli exportReleaseBom.go -- the merged release SBOM the Export Release BOM dialog
+# downloads, and its readiness score (task SCORE-24). The release is named by uuid, or by
+# component (uuid or unique name) and version; every option is a variable, so the command sends
+# the dialog's defaults explicitly.
+mutation ReleaseSbomExportProgrammatic($release: ID, $componentId: ID, $version: String, $tldOnly: Boolean,
+	$ignoreDev: Boolean, $structure: BomStructureType, $belongsTo: ArtifactBelongsToEnum, $mediaType: BomMediaType,
+	$excludeCoverageTypes: [ArtifactCoverageType], $includeSupportMetadata: Boolean,
+	$includeInternalMetadata: Boolean, $excludeFileComponents: Boolean) {
+	releaseSbomExportProgrammatic(release: $release, componentId: $componentId, version: $version,
+		tldOnly: $tldOnly, ignoreDev: $ignoreDev, structure: $structure, belongsTo: $belongsTo,
+		mediaType: $mediaType, excludeCoverageTypes: $excludeCoverageTypes,
+		includeSupportMetadata: $includeSupportMetadata, includeInternalMetadata: $includeInternalMetadata,
+		excludeFileComponents: $excludeFileComponents)
+}
+
+# from rearm-cli exportReleaseBom.go
+query ReleaseSbomScoreProgrammatic($release: ID, $componentId: ID, $version: String, $tldOnly: Boolean,
+	$ignoreDev: Boolean, $structure: BomStructureType, $belongsTo: ArtifactBelongsToEnum,
+	$excludeCoverageTypes: [ArtifactCoverageType], $includeSupportMetadata: Boolean,
+	$includeInternalMetadata: Boolean, $excludeFileComponents: Boolean, $profiles: [String!]!) {
+	releaseSbomScoreProgrammatic(release: $release, componentId: $componentId, version: $version,
+		tldOnly: $tldOnly, ignoreDev: $ignoreDev, structure: $structure, belongsTo: $belongsTo,
+		excludeCoverageTypes: $excludeCoverageTypes, includeSupportMetadata: $includeSupportMetadata,
+		includeInternalMetadata: $includeInternalMetadata, excludeFileComponents: $excludeFileComponents,
+		profiles: $profiles)
+}
