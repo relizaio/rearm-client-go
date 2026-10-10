@@ -518,6 +518,8 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
     recorded, the task returns to the status it was parked from, and the action then runs. Until then every task
     verb is refused for every session, except agentTaskLinkPrProgrammatic (`task linkpr`), which is accepted,
     recorded on the decision (hold.linked) and posted as an INFO; it does not answer the question (task RD4-19).
+    An unlink (agentTaskUnlinkPrProgrammatic, `task unlinkpr`, and the person's agentTaskUnlinkPr) is refused for
+    everyone, a person included: release the hold first (task t20261010-033523-18839).
     The delivery sweep leaves the task alone. A DELIVERING task is parked only this way.
   """
   agentTaskHoldProgrammatic(
@@ -542,7 +544,8 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   URL, or on a board delivering without PRs a branch or release; commit is the merged or pushed sha
   (required for DELIVERED). The coordinator seat, or a session that worked this task in a role that
   merges (PR_MERGE). A DELIVERING task then settles: completed once every unit is delivered, to the
-  coordinator when one is abandoned.
+  coordinator when one is abandoned. A PR declared superseded accepts no further declaration (task
+  t20261010-033522-23606): it is abandoned already, and its replacement is the unit to declare.
   """
   agentTaskDeclareDeliveryProgrammatic(
   taskUuid: ID!
@@ -562,6 +565,18 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   sessionUuid: ID!
   oldUrl: String!
   byUrl: String!
+  note: String): AgentTask
+  """
+  Unlink a PR that should never have counted (task t20261010-033523-18839): removed from the task's PRs, recorded
+  on unlinkedPrs (append-only), posted as an INFO. Refused for a merged or delivered PR, for the replacement another
+  PR was superseded by, on a task parked for the operator, and, past the pass (DELIVERING, a live tested pass, or at
+  the coordinator with every required role passed), when no PR would remain to deliver or (for a session) when the
+  PR is still open. Same gate as supersede. note is at most 4000 characters, on one line.
+  """
+  agentTaskUnlinkPrProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  prUrl: String!
   note: String): AgentTask
   """
   Hand a COORDINATOR-level hold to the operator (task c0a2134c): the level becomes OPERATOR, the
@@ -669,7 +684,9 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentDocumentPublishProgrammatic(input: AgentDocumentPublishInput!): Release
   agentTaskBindExternalRefProgrammatic(taskUuid: ID!, externalRef: String!, sourceUrl: String): AgentTask
   """
-  Attach a delivering pull-request URL. On a task the coordinator seat parked for the operator it is accepted too,
+  Attach a delivering pull-request URL. The reverse is agentTaskUnlinkPrProgrammatic; linking a PR the task unlinked
+  stamps its unlinkedPrs row (relinkedBy, relinkedAt), and it comes back with its newest declaration (task
+  t20261010-033523-18839). On a task the coordinator seat parked for the operator it is accepted too,
   recorded on the decision (hold.linked: the PR, the key's agent, the time) and posted as an INFO; it does not answer
   the question or lift the hold (task RD4-19).
   """
@@ -854,6 +871,14 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   taskUuid: ID!
   oldUrl: String!
   byUrl: String!
+  note: String): AgentTask
+  """
+  A person unlinks a PR, as agentTaskUnlinkPrProgrammatic (task t20261010-033523-18839). PERSON_WRITE on the task; a
+  person may also unlink an open PR past the pass, with an ALERT.
+  """
+  agentTaskUnlinkPr(
+  taskUuid: ID!
+  prUrl: String!
   note: String): AgentTask
   """
   Cancel a task from any state but COMPLETED. An agent working it finds it gone at its next call.
@@ -1872,6 +1897,10 @@ type AgentTask {
   A task completes when every one has merged; registered false means CI never reported the URL.
   """
   pullRequests: [AgentTaskPullRequest]
+  """
+  PRs taken off the task (task t20261010-033523-18839), oldest first; append-only, a relink stamps the row.
+  """
+  unlinkedPrs: [AgentTaskUnlinkedPr]
   """
   The PR heads the newest passing BOARD_TEST_REPORT round covered, one per linked PR (task 3b97ccfd): merge
   at these. A review's heads are informative and not read here (task 5ec48b02). Empty when no passing
@@ -4489,6 +4518,15 @@ type ReleaseUpdateEvent {
   wu: WhoUpdated
 }
 
+"""
+Security metrics of a release, artifact, source code entry or analytics period.
+
+The severity counts and vulnerabilities count OPEN findings of two kinds: dependency
+vulnerabilities (vulnerabilityDetails) and weaknesses, the code-scanning findings
+(weaknessDetails, for example CodeQL). weaknesses is the weakness share of them. Findings
+analysed as FALSE_POSITIVE, NOT_AFFECTED or RESOLVED are listed in the details but not
+counted, so a count can be lower than the rows it is computed from.
+"""
 type DependencyTrackMetrics {
   dependencyTrackFullUri: String
   dtrackSubmissionFailed: Boolean
@@ -4500,12 +4538,20 @@ type DependencyTrackMetrics {
   dtrackFetchSkipUntil: String
   lastScanned: DateTime
   firstScanned: DateTime
+  "Open CRITICAL vulnerabilities plus open CRITICAL weaknesses"
   critical: Int
+  "Open HIGH vulnerabilities plus open HIGH weaknesses"
   high: Int
+  "Open MEDIUM vulnerabilities plus open MEDIUM weaknesses"
   medium: Int
+  "Open LOW vulnerabilities plus open LOW weaknesses"
   low: Int
+  "Open UNASSIGNED vulnerabilities plus open UNASSIGNED weaknesses"
   unassigned: Int
+  "critical + high + medium + low + unassigned: open vulnerabilities AND open weaknesses. Open vulnerabilities alone are vulnerabilities - weaknesses"
   vulnerabilities: Int
+  "Open weaknesses (code-scanning findings, weaknessDetails), already included in the severity counts and in vulnerabilities"
+  weaknesses: Int
   vulnerableComponents: Int
   components: Int
   suppressed: Int
@@ -5408,6 +5454,34 @@ type AgentTaskPullRequest {
   The newest declaration for this PR, when one was recorded (task 18c5c293).
   """
   declaration: AgentTaskDelivery
+  """
+  How delivery counts this PR now (task t20261010-033522-23606): WAITING, DELIVERED, BLOCKED (closed unmerged or
+  declared abandoned) or SUPERSEDED. A passing test report names a head for each linked PR except a SUPERSEDED
+  one or one declared abandoned.
+  On a board whose delivery.mode is NONE, delivery does not wait on PRs at all; this is the PR's own reading.
+  """
+  unit: AgentDeliveryUnit
+}
+
+"""
+A linked PR taken off its task (task t20261010-033523-18839): a mistaken link, or the superseded half of a pair.
+"""
+type AgentTaskUnlinkedPr {
+  """
+  The PR as the task linked it.
+  """
+  url: String
+  by: AgentActor
+  at: DateTime
+  """
+  Why, on one line; null when none was given.
+  """
+  note: String
+  """
+  Who linked it again, as a link records it (the linking key's agent); null until relinked.
+  """
+  relinkedBy: String
+  relinkedAt: DateTime
 }
 
 """
@@ -8353,6 +8427,16 @@ type ElementDependent {
   1 for a direct dependent.
   """
   distance: Int
+}
+
+"""
+How delivery counts a linked PR (task t20261010-033522-23606); see AgentTaskPullRequest.unit.
+"""
+enum AgentDeliveryUnit {
+  DELIVERED
+  WAITING
+  BLOCKED
+  SUPERSEDED
 }
 
 """
