@@ -209,7 +209,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate baseMovedBy registered head }
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
@@ -295,6 +295,25 @@ mutation AgentTaskSupersedePullRequestProgrammatic ($taskUuid: ID!, $sessionUuid
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+# Unlink a PR that should never have counted (task t20261010-033523-18839): a mistaken link, or the superseded
+# half of a pair; recorded on unlinkedPrs. Refused for a merged or delivered PR, for the replacement of a
+# superseded PR, on a task parked for the operator, and past the pass when it would leave nothing to deliver.
+mutation AgentTaskUnlinkPrProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $prUrl: String!, $note: String) {
+	agentTaskUnlinkPrProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, prUrl: $prUrl, note: $note) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit }
+	unlinkedPrs { url by { ...ActorFields } at note relinkedBy relinkedAt }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
@@ -402,7 +421,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate baseMovedBy registered head }
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
@@ -432,7 +451,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate baseMovedBy registered head }
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -463,7 +482,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate baseMovedBy registered head }
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
@@ -481,10 +500,11 @@ query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate baseMovedBy registered head
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit
 		declaration { unit commit outcome by { ...ActorFields } at note supersededBy } }
 	testedHeads { pr head }
 	deliveries { unit commit outcome by { ...ActorFields } at note supersededBy }
+	unlinkedPrs { url by { ...ActorFields } at note relinkedBy relinkedAt }
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped updatedAt
@@ -515,10 +535,11 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgra
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
-	pullRequests { url state targetBranch mergedDate baseMovedBy registered head
+	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit
 		declaration { unit commit outcome by { ...ActorFields } at note supersededBy } }
 	testedHeads { pr head }
 	deliveries { unit commit outcome by { ...ActorFields } at note supersededBy }
+	unlinkedPrs { url by { ...ActorFields } at note relinkedBy relinkedAt }
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped updatedAt
