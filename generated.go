@@ -5899,9 +5899,11 @@ type AgentDocumentPathAgentBoardProgrammaticAgentBoard struct {
 	// The repository path a new document of this type would take, relative to the repository root,
 	// with every placeholder filled and the board's documentsRoot in front: {key} = the task's key
 	// (RD-42), {round} = the task's next round of this type, {type} = lower case, {component} = the
-	// component's name slugged. task is required for task-scoped types, component for
-	// component-scoped ones. The release records the path actually used; this is what the CLI uses
-	// when no --file is given.
+	// component's name slugged, {role} = the publishing role's name slugged. task is required for
+	// task-scoped types, component for component-scoped ones. role names the publishing role for a
+	// template with {role}, and must be one of the board's roles; without it {role} is the role of the
+	// session holding the task, so an advisory round names its role. The release records the path
+	// actually used; this is what the CLI uses when no --file is given.
 	DocumentPath *string `json:"documentPath"`
 }
 
@@ -5911,6 +5913,39 @@ func (v *AgentDocumentPathAgentBoardProgrammaticAgentBoard) GetUuid() *string { 
 // GetDocumentPath returns AgentDocumentPathAgentBoardProgrammaticAgentBoard.DocumentPath, and is useful for accessing the field via an interface.
 func (v *AgentDocumentPathAgentBoardProgrammaticAgentBoard) GetDocumentPath() *string {
 	return v.DocumentPath
+}
+
+// AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
+type AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard struct {
+	Uuid *string `json:"uuid"`
+	// The repository path a new document of this type would take, relative to the repository root,
+	// with every placeholder filled and the board's documentsRoot in front: {key} = the task's key
+	// (RD-42), {round} = the task's next round of this type, {type} = lower case, {component} = the
+	// component's name slugged, {role} = the publishing role's name slugged. task is required for
+	// task-scoped types, component for component-scoped ones. role names the publishing role for a
+	// template with {role}, and must be one of the board's roles; without it {role} is the role of the
+	// session holding the task, so an advisory round names its role. The release records the path
+	// actually used; this is what the CLI uses when no --file is given.
+	DocumentPath *string `json:"documentPath"`
+}
+
+// GetUuid returns AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard) GetUuid() *string { return v.Uuid }
+
+// GetDocumentPath returns AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard.DocumentPath, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard) GetDocumentPath() *string {
+	return v.DocumentPath
+}
+
+// AgentDocumentPathForRoleResponse is returned by AgentDocumentPathForRole on success.
+type AgentDocumentPathForRoleResponse struct {
+	// Agent-key auth: one board (includes coordinatorPrompt and pause state).
+	AgentBoardProgrammatic *AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard `json:"agentBoardProgrammatic"`
+}
+
+// GetAgentBoardProgrammatic returns AgentDocumentPathForRoleResponse.AgentBoardProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPathForRoleResponse) GetAgentBoardProgrammatic() *AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard {
+	return v.AgentBoardProgrammatic
 }
 
 // AgentDocumentPathResponse is returned by AgentDocumentPath on success.
@@ -47166,13 +47201,27 @@ func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDeta
 }
 
 // AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics includes the requested fields of the GraphQL type DependencyTrackMetrics.
+// The GraphQL type's documentation follows.
+//
+// Security metrics of a release, artifact, source code entry or analytics period.
+//
+// The severity counts and vulnerabilities count OPEN findings of two kinds: dependency
+// vulnerabilities (vulnerabilityDetails) and weaknesses, the code-scanning findings
+// (weaknessDetails, for example CodeQL). weaknesses is the weakness share of them. Findings
+// analysed as FALSE_POSITIVE, NOT_AFFECTED or RESOLVED are listed in the details but not
+// counted, so a count can be lower than the rows it is computed from.
 type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDetailsArtifactMetricsDependencyTrackMetrics struct {
-	FirstScanned                     *string                                                                                                                                             `json:"firstScanned"`
-	LastScanned                      *string                                                                                                                                             `json:"lastScanned"`
-	Critical                         *int                                                                                                                                                `json:"critical"`
-	High                             *int                                                                                                                                                `json:"high"`
-	Medium                           *int                                                                                                                                                `json:"medium"`
-	Low                              *int                                                                                                                                                `json:"low"`
+	FirstScanned *string `json:"firstScanned"`
+	LastScanned  *string `json:"lastScanned"`
+	// Open CRITICAL vulnerabilities plus open CRITICAL weaknesses
+	Critical *int `json:"critical"`
+	// Open HIGH vulnerabilities plus open HIGH weaknesses
+	High *int `json:"high"`
+	// Open MEDIUM vulnerabilities plus open MEDIUM weaknesses
+	Medium *int `json:"medium"`
+	// Open LOW vulnerabilities plus open LOW weaknesses
+	Low *int `json:"low"`
+	// Open UNASSIGNED vulnerabilities plus open UNASSIGNED weaknesses
 	Unassigned                       *int                                                                                                                                                `json:"unassigned"`
 	PolicyViolationsSecurityTotal    *int                                                                                                                                                `json:"policyViolationsSecurityTotal"`
 	PolicyViolationsLicenseTotal     *int                                                                                                                                                `json:"policyViolationsLicenseTotal"`
@@ -47320,13 +47369,27 @@ func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseArtifactDeta
 }
 
 // AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics includes the requested fields of the GraphQL type DependencyTrackMetrics.
+// The GraphQL type's documentation follows.
+//
+// Security metrics of a release, artifact, source code entry or analytics period.
+//
+// The severity counts and vulnerabilities count OPEN findings of two kinds: dependency
+// vulnerabilities (vulnerabilityDetails) and weaknesses, the code-scanning findings
+// (weaknessDetails, for example CodeQL). weaknesses is the weakness share of them. Findings
+// analysed as FALSE_POSITIVE, NOT_AFFECTED or RESOLVED are listed in the details but not
+// counted, so a count can be lower than the rows it is computed from.
 type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseMetricsDependencyTrackMetrics struct {
-	LastScanned                      *string                                                                                                                      `json:"lastScanned"`
-	FirstScanned                     *string                                                                                                                      `json:"firstScanned"`
-	Critical                         *int                                                                                                                         `json:"critical"`
-	High                             *int                                                                                                                         `json:"high"`
-	Medium                           *int                                                                                                                         `json:"medium"`
-	Low                              *int                                                                                                                         `json:"low"`
+	LastScanned  *string `json:"lastScanned"`
+	FirstScanned *string `json:"firstScanned"`
+	// Open CRITICAL vulnerabilities plus open CRITICAL weaknesses
+	Critical *int `json:"critical"`
+	// Open HIGH vulnerabilities plus open HIGH weaknesses
+	High *int `json:"high"`
+	// Open MEDIUM vulnerabilities plus open MEDIUM weaknesses
+	Medium *int `json:"medium"`
+	// Open LOW vulnerabilities plus open LOW weaknesses
+	Low *int `json:"low"`
+	// Open UNASSIGNED vulnerabilities plus open UNASSIGNED weaknesses
 	Unassigned                       *int                                                                                                                         `json:"unassigned"`
 	PolicyViolationsSecurityTotal    *int                                                                                                                         `json:"policyViolationsSecurityTotal"`
 	PolicyViolationsLicenseTotal     *int                                                                                                                         `json:"policyViolationsLicenseTotal"`
@@ -47552,13 +47615,27 @@ func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEn
 }
 
 // AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics includes the requested fields of the GraphQL type DependencyTrackMetrics.
+// The GraphQL type's documentation follows.
+//
+// Security metrics of a release, artifact, source code entry or analytics period.
+//
+// The severity counts and vulnerabilities count OPEN findings of two kinds: dependency
+// vulnerabilities (vulnerabilityDetails) and weaknesses, the code-scanning findings
+// (weaknessDetails, for example CodeQL). weaknesses is the weakness share of them. Findings
+// analysed as FALSE_POSITIVE, NOT_AFFECTED or RESOLVED are listed in the details but not
+// counted, so a count can be lower than the rows it is computed from.
 type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseSourceCodeEntryDetailsSourceCodeEntryArtifactDetailsArtifactMetricsDependencyTrackMetrics struct {
-	FirstScanned                     *string                                                                                                                                                                                  `json:"firstScanned"`
-	LastScanned                      *string                                                                                                                                                                                  `json:"lastScanned"`
-	Critical                         *int                                                                                                                                                                                     `json:"critical"`
-	High                             *int                                                                                                                                                                                     `json:"high"`
-	Medium                           *int                                                                                                                                                                                     `json:"medium"`
-	Low                              *int                                                                                                                                                                                     `json:"low"`
+	FirstScanned *string `json:"firstScanned"`
+	LastScanned  *string `json:"lastScanned"`
+	// Open CRITICAL vulnerabilities plus open CRITICAL weaknesses
+	Critical *int `json:"critical"`
+	// Open HIGH vulnerabilities plus open HIGH weaknesses
+	High *int `json:"high"`
+	// Open MEDIUM vulnerabilities plus open MEDIUM weaknesses
+	Medium *int `json:"medium"`
+	// Open LOW vulnerabilities plus open LOW weaknesses
+	Low *int `json:"low"`
+	// Open UNASSIGNED vulnerabilities plus open UNASSIGNED weaknesses
 	Unassigned                       *int                                                                                                                                                                                     `json:"unassigned"`
 	PolicyViolationsSecurityTotal    *int                                                                                                                                                                                     `json:"policyViolationsSecurityTotal"`
 	PolicyViolationsLicenseTotal     *int                                                                                                                                                                                     `json:"policyViolationsLicenseTotal"`
@@ -47869,13 +47946,27 @@ func (v *AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetai
 }
 
 // AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics includes the requested fields of the GraphQL type DependencyTrackMetrics.
+// The GraphQL type's documentation follows.
+//
+// Security metrics of a release, artifact, source code entry or analytics period.
+//
+// The severity counts and vulnerabilities count OPEN findings of two kinds: dependency
+// vulnerabilities (vulnerabilityDetails) and weaknesses, the code-scanning findings
+// (weaknessDetails, for example CodeQL). weaknesses is the weakness share of them. Findings
+// analysed as FALSE_POSITIVE, NOT_AFFECTED or RESOLVED are listed in the details but not
+// counted, so a count can be lower than the rows it is computed from.
 type AgenticReleaseProgrammaticAgenticReleaseProgrammaticReleaseVariantDetailsVariantOutboundDeliverableDetailsDeliverableArtifactDetailsArtifactMetricsDependencyTrackMetrics struct {
-	FirstScanned                     *string                                                                                                                                                                                                       `json:"firstScanned"`
-	LastScanned                      *string                                                                                                                                                                                                       `json:"lastScanned"`
-	Critical                         *int                                                                                                                                                                                                          `json:"critical"`
-	High                             *int                                                                                                                                                                                                          `json:"high"`
-	Medium                           *int                                                                                                                                                                                                          `json:"medium"`
-	Low                              *int                                                                                                                                                                                                          `json:"low"`
+	FirstScanned *string `json:"firstScanned"`
+	LastScanned  *string `json:"lastScanned"`
+	// Open CRITICAL vulnerabilities plus open CRITICAL weaknesses
+	Critical *int `json:"critical"`
+	// Open HIGH vulnerabilities plus open HIGH weaknesses
+	High *int `json:"high"`
+	// Open MEDIUM vulnerabilities plus open MEDIUM weaknesses
+	Medium *int `json:"medium"`
+	// Open LOW vulnerabilities plus open LOW weaknesses
+	Low *int `json:"low"`
+	// Open UNASSIGNED vulnerabilities plus open UNASSIGNED weaknesses
 	Unassigned                       *int                                                                                                                                                                                                          `json:"unassigned"`
 	PolicyViolationsSecurityTotal    *int                                                                                                                                                                                                          `json:"policyViolationsSecurityTotal"`
 	PolicyViolationsLicenseTotal     *int                                                                                                                                                                                                          `json:"policyViolationsLicenseTotal"`
@@ -54160,18 +54251,33 @@ func (v *GetSbomProbingResultGetSbomProbingResult) GetMetrics() *GetSbomProbingR
 }
 
 // GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics includes the requested fields of the GraphQL type DependencyTrackMetrics.
+// The GraphQL type's documentation follows.
+//
+// Security metrics of a release, artifact, source code entry or analytics period.
+//
+// The severity counts and vulnerabilities count OPEN findings of two kinds: dependency
+// vulnerabilities (vulnerabilityDetails) and weaknesses, the code-scanning findings
+// (weaknessDetails, for example CodeQL). weaknesses is the weakness share of them. Findings
+// analysed as FALSE_POSITIVE, NOT_AFFECTED or RESOLVED are listed in the details but not
+// counted, so a count can be lower than the rows it is computed from.
 type GetSbomProbingResultGetSbomProbingResultMetricsDependencyTrackMetrics struct {
-	DependencyTrackFullUri               *string                                                                                                   `json:"dependencyTrackFullUri"`
-	DtrackSubmissionFailed               *bool                                                                                                     `json:"dtrackSubmissionFailed"`
-	DtrackSubmissionAttempts             *int                                                                                                      `json:"dtrackSubmissionAttempts"`
-	DtrackSubmissionFailureReason        *string                                                                                                   `json:"dtrackSubmissionFailureReason"`
-	LastScanned                          *string                                                                                                   `json:"lastScanned"`
-	FirstScanned                         *string                                                                                                   `json:"firstScanned"`
-	Critical                             *int                                                                                                      `json:"critical"`
-	High                                 *int                                                                                                      `json:"high"`
-	Medium                               *int                                                                                                      `json:"medium"`
-	Low                                  *int                                                                                                      `json:"low"`
-	Unassigned                           *int                                                                                                      `json:"unassigned"`
+	DependencyTrackFullUri        *string `json:"dependencyTrackFullUri"`
+	DtrackSubmissionFailed        *bool   `json:"dtrackSubmissionFailed"`
+	DtrackSubmissionAttempts      *int    `json:"dtrackSubmissionAttempts"`
+	DtrackSubmissionFailureReason *string `json:"dtrackSubmissionFailureReason"`
+	LastScanned                   *string `json:"lastScanned"`
+	FirstScanned                  *string `json:"firstScanned"`
+	// Open CRITICAL vulnerabilities plus open CRITICAL weaknesses
+	Critical *int `json:"critical"`
+	// Open HIGH vulnerabilities plus open HIGH weaknesses
+	High *int `json:"high"`
+	// Open MEDIUM vulnerabilities plus open MEDIUM weaknesses
+	Medium *int `json:"medium"`
+	// Open LOW vulnerabilities plus open LOW weaknesses
+	Low *int `json:"low"`
+	// Open UNASSIGNED vulnerabilities plus open UNASSIGNED weaknesses
+	Unassigned *int `json:"unassigned"`
+	// critical + high + medium + low + unassigned: open vulnerabilities AND open weaknesses. Open vulnerabilities alone are vulnerabilities - weaknesses
 	Vulnerabilities                      *int                                                                                                      `json:"vulnerabilities"`
 	VulnerableComponents                 *int                                                                                                      `json:"vulnerableComponents"`
 	Components                           *int                                                                                                      `json:"components"`
@@ -59078,6 +59184,8 @@ const (
 	SpecificationTypeTestPlan         SpecificationType = "TEST_PLAN"
 	SpecificationTypeGlossary         SpecificationType = "GLOSSARY"
 	SpecificationTypeDecisionRecord   SpecificationType = "DECISION_RECORD"
+	// Threat model: the assets, trust boundaries and threats the system is designed against, and their mitigations.
+	SpecificationTypeThreatModel SpecificationType = "THREAT_MODEL"
 	// One review round of one task. Task-scoped: one component per board target holds every task's rounds.
 	SpecificationTypeBoardReviewItems SpecificationType = "BOARD_REVIEW_ITEMS"
 	// One test run of one task. Task-scoped, like BOARD_REVIEW_ITEMS.
@@ -59107,6 +59215,7 @@ var AllSpecificationType = []SpecificationType{
 	SpecificationTypeTestPlan,
 	SpecificationTypeGlossary,
 	SpecificationTypeDecisionRecord,
+	SpecificationTypeThreatModel,
 	SpecificationTypeBoardReviewItems,
 	SpecificationTypeBoardTestReport,
 	SpecificationTypeBoardQuestions,
@@ -59776,6 +59885,32 @@ type __AgentBoardsOfOrgInput struct {
 
 // GetOrgUuid returns __AgentBoardsOfOrgInput.OrgUuid, and is useful for accessing the field via an interface.
 func (v *__AgentBoardsOfOrgInput) GetOrgUuid() string { return v.OrgUuid }
+
+// __AgentDocumentPathForRoleInput is used internally by genqlient
+type __AgentDocumentPathForRoleInput struct {
+	BoardUuid     string            `json:"boardUuid"`
+	Specification SpecificationType `json:"specification"`
+	Task          *string           `json:"task"`
+	Component     *string           `json:"component"`
+	Role          string            `json:"role"`
+}
+
+// GetBoardUuid returns __AgentDocumentPathForRoleInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathForRoleInput) GetBoardUuid() string { return v.BoardUuid }
+
+// GetSpecification returns __AgentDocumentPathForRoleInput.Specification, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathForRoleInput) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetTask returns __AgentDocumentPathForRoleInput.Task, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathForRoleInput) GetTask() *string { return v.Task }
+
+// GetComponent returns __AgentDocumentPathForRoleInput.Component, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathForRoleInput) GetComponent() *string { return v.Component }
+
+// GetRole returns __AgentDocumentPathForRoleInput.Role, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathForRoleInput) GetRole() string { return v.Role }
 
 // __AgentDocumentPathInput is used internally by genqlient
 type __AgentDocumentPathInput struct {
@@ -62981,7 +63116,8 @@ query AgentDocumentPath ($boardUuid: ID!, $specification: SpecificationType!, $t
 `
 
 // Where a new document of a type would go on a board, every placeholder filled by the server:
-// what rearm agent doc publish uses when it is not given a file.
+// what rearm agent doc publish uses when it is not given a file. {role} is the role of the session
+// holding the task.
 func AgentDocumentPath(
 	ctx_ context.Context,
 	client_ graphql.Client,
@@ -63002,6 +63138,52 @@ func AgentDocumentPath(
 	}
 
 	data_ = &AgentDocumentPathResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentDocumentPathForRole.
+const AgentDocumentPathForRole_Operation = `
+query AgentDocumentPathForRole ($boardUuid: ID!, $specification: SpecificationType!, $task: ID, $component: ID, $role: String!) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		documentPath(specification: $specification, task: $task, component: $component, role: $role)
+	}
+}
+`
+
+// As AgentDocumentPath, naming the role that fills {role}: an advisory round's, whose author does not
+// hold the task. A separate operation so a server from before the role argument still answers the
+// plain one.
+func AgentDocumentPathForRole(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+	specification SpecificationType,
+	task *string,
+	component *string,
+	role string,
+) (data_ *AgentDocumentPathForRoleResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentDocumentPathForRole",
+		Query:  AgentDocumentPathForRole_Operation,
+		Variables: &__AgentDocumentPathForRoleInput{
+			BoardUuid:     boardUuid,
+			Specification: specification,
+			Task:          task,
+			Component:     component,
+			Role:          role,
+		},
+	}
+
+	data_ = &AgentDocumentPathForRoleResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

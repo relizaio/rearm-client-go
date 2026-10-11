@@ -574,11 +574,22 @@ query AgentBoardSnapshotProgrammatic($boardUuid: ID!) { agentBoardSnapshotProgra
 } }
 
 # Where a new document of a type would go on a board, every placeholder filled by the server:
-# what rearm agent doc publish uses when it is not given a file.
+# what rearm agent doc publish uses when it is not given a file. {role} is the role of the session
+# holding the task.
 query AgentDocumentPath ($boardUuid: ID!, $specification: SpecificationType!, $task: ID, $component: ID) {
 	agentBoardProgrammatic(boardUuid: $boardUuid) {
 		uuid
 		documentPath(specification: $specification, task: $task, component: $component)
+	}
+}
+
+# As AgentDocumentPath, naming the role that fills {role}: an advisory round's, whose author does not
+# hold the task. A separate operation so a server from before the role argument still answers the
+# plain one.
+query AgentDocumentPathForRole ($boardUuid: ID!, $specification: SpecificationType!, $task: ID, $component: ID, $role: String!) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		documentPath(specification: $specification, task: $task, component: $component, role: $role)
 	}
 }
 
