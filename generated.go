@@ -5915,6 +5915,39 @@ func (v *AgentDocumentPathAgentBoardProgrammaticAgentBoard) GetDocumentPath() *s
 	return v.DocumentPath
 }
 
+// AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
+type AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard struct {
+	Uuid *string `json:"uuid"`
+	// The repository path a new document of this type would take, relative to the repository root,
+	// with every placeholder filled and the board's documentsRoot in front: {key} = the task's key
+	// (RD-42), {round} = the task's next round of this type, {type} = lower case, {component} = the
+	// component's name slugged, {role} = the publishing role's name slugged. task is required for
+	// task-scoped types, component for component-scoped ones. role names the publishing role for a
+	// template with {role}, and must be one of the board's roles; without it {role} is the role of the
+	// session holding the task, so an advisory round names its role. The release records the path
+	// actually used; this is what the CLI uses when no --file is given.
+	DocumentPath *string `json:"documentPath"`
+}
+
+// GetUuid returns AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard) GetUuid() *string { return v.Uuid }
+
+// GetDocumentPath returns AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard.DocumentPath, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard) GetDocumentPath() *string {
+	return v.DocumentPath
+}
+
+// AgentDocumentPathForRoleResponse is returned by AgentDocumentPathForRole on success.
+type AgentDocumentPathForRoleResponse struct {
+	// Agent-key auth: one board (includes coordinatorPrompt and pause state).
+	AgentBoardProgrammatic *AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard `json:"agentBoardProgrammatic"`
+}
+
+// GetAgentBoardProgrammatic returns AgentDocumentPathForRoleResponse.AgentBoardProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentDocumentPathForRoleResponse) GetAgentBoardProgrammatic() *AgentDocumentPathForRoleAgentBoardProgrammaticAgentBoard {
+	return v.AgentBoardProgrammatic
+}
+
 // AgentDocumentPathResponse is returned by AgentDocumentPath on success.
 type AgentDocumentPathResponse struct {
 	// Agent-key auth: one board (includes coordinatorPrompt and pause state).
@@ -59853,13 +59886,38 @@ type __AgentBoardsOfOrgInput struct {
 // GetOrgUuid returns __AgentBoardsOfOrgInput.OrgUuid, and is useful for accessing the field via an interface.
 func (v *__AgentBoardsOfOrgInput) GetOrgUuid() string { return v.OrgUuid }
 
+// __AgentDocumentPathForRoleInput is used internally by genqlient
+type __AgentDocumentPathForRoleInput struct {
+	BoardUuid     string            `json:"boardUuid"`
+	Specification SpecificationType `json:"specification"`
+	Task          *string           `json:"task"`
+	Component     *string           `json:"component"`
+	Role          string            `json:"role"`
+}
+
+// GetBoardUuid returns __AgentDocumentPathForRoleInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathForRoleInput) GetBoardUuid() string { return v.BoardUuid }
+
+// GetSpecification returns __AgentDocumentPathForRoleInput.Specification, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathForRoleInput) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetTask returns __AgentDocumentPathForRoleInput.Task, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathForRoleInput) GetTask() *string { return v.Task }
+
+// GetComponent returns __AgentDocumentPathForRoleInput.Component, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathForRoleInput) GetComponent() *string { return v.Component }
+
+// GetRole returns __AgentDocumentPathForRoleInput.Role, and is useful for accessing the field via an interface.
+func (v *__AgentDocumentPathForRoleInput) GetRole() string { return v.Role }
+
 // __AgentDocumentPathInput is used internally by genqlient
 type __AgentDocumentPathInput struct {
 	BoardUuid     string            `json:"boardUuid"`
 	Specification SpecificationType `json:"specification"`
 	Task          *string           `json:"task"`
 	Component     *string           `json:"component"`
-	Role          *string           `json:"role"`
 }
 
 // GetBoardUuid returns __AgentDocumentPathInput.BoardUuid, and is useful for accessing the field via an interface.
@@ -59873,9 +59931,6 @@ func (v *__AgentDocumentPathInput) GetTask() *string { return v.Task }
 
 // GetComponent returns __AgentDocumentPathInput.Component, and is useful for accessing the field via an interface.
 func (v *__AgentDocumentPathInput) GetComponent() *string { return v.Component }
-
-// GetRole returns __AgentDocumentPathInput.Role, and is useful for accessing the field via an interface.
-func (v *__AgentDocumentPathInput) GetRole() *string { return v.Role }
 
 // __AgentDocumentPublishProgrammaticInput is used internally by genqlient
 type __AgentDocumentPublishProgrammaticInput struct {
@@ -63052,17 +63107,17 @@ func AgentBoardsProgrammatic(
 
 // The query executed by AgentDocumentPath.
 const AgentDocumentPath_Operation = `
-query AgentDocumentPath ($boardUuid: ID!, $specification: SpecificationType!, $task: ID, $component: ID, $role: String) {
+query AgentDocumentPath ($boardUuid: ID!, $specification: SpecificationType!, $task: ID, $component: ID) {
 	agentBoardProgrammatic(boardUuid: $boardUuid) {
 		uuid
-		documentPath(specification: $specification, task: $task, component: $component, role: $role)
+		documentPath(specification: $specification, task: $task, component: $component)
 	}
 }
 `
 
 // Where a new document of a type would go on a board, every placeholder filled by the server:
-// what rearm agent doc publish uses when it is not given a file. role fills {role}; without it the
-// server takes the role of the session holding the task.
+// what rearm agent doc publish uses when it is not given a file. {role} is the role of the session
+// holding the task.
 func AgentDocumentPath(
 	ctx_ context.Context,
 	client_ graphql.Client,
@@ -63070,7 +63125,6 @@ func AgentDocumentPath(
 	specification SpecificationType,
 	task *string,
 	component *string,
-	role *string,
 ) (data_ *AgentDocumentPathResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentDocumentPath",
@@ -63080,11 +63134,56 @@ func AgentDocumentPath(
 			Specification: specification,
 			Task:          task,
 			Component:     component,
-			Role:          role,
 		},
 	}
 
 	data_ = &AgentDocumentPathResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentDocumentPathForRole.
+const AgentDocumentPathForRole_Operation = `
+query AgentDocumentPathForRole ($boardUuid: ID!, $specification: SpecificationType!, $task: ID, $component: ID, $role: String!) {
+	agentBoardProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		documentPath(specification: $specification, task: $task, component: $component, role: $role)
+	}
+}
+`
+
+// As AgentDocumentPath, naming the role that fills {role}: an advisory round's, whose author does not
+// hold the task. A separate operation so a server from before the role argument still answers the
+// plain one.
+func AgentDocumentPathForRole(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+	specification SpecificationType,
+	task *string,
+	component *string,
+	role string,
+) (data_ *AgentDocumentPathForRoleResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentDocumentPathForRole",
+		Query:  AgentDocumentPathForRole_Operation,
+		Variables: &__AgentDocumentPathForRoleInput{
+			BoardUuid:     boardUuid,
+			Specification: specification,
+			Task:          task,
+			Component:     component,
+			Role:          role,
+		},
+	}
+
+	data_ = &AgentDocumentPathForRoleResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
