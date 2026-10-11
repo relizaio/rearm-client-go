@@ -1472,14 +1472,17 @@ type AgentBoard {
   The repository path a new document of this type would take, relative to the repository root,
   with every placeholder filled and the board's documentsRoot in front: {key} = the task's key
   (RD-42), {round} = the task's next round of this type, {type} = lower case, {component} = the
-  component's name slugged. task is required for task-scoped types, component for
-  component-scoped ones. The release records the path actually used; this is what the CLI uses
-  when no --file is given.
+  component's name slugged, {role} = the publishing role's name slugged. task is required for
+  task-scoped types, component for component-scoped ones. role names the publishing role for a
+  template with {role}, and must be one of the board's roles; without it {role} is the role of the
+  session holding the task, so an advisory round names its role. The release records the path
+  actually used; this is what the CLI uses when no --file is given.
   """
   documentPath(
   specification: SpecificationType!
   task: ID
-  component: ID): String
+  component: ID
+  role: String): String
   """
   Every type's template after overrides and scope defaults, without the root: the built-in index
   types per task; at TASK scope ARCHITECTURE under design/{key}/architecture-{round}.md,
@@ -2185,6 +2188,10 @@ enum SpecificationType {
   TEST_PLAN
   GLOSSARY
   DECISION_RECORD
+  """
+  Threat model: the assets, trust boundaries and threats the system is designed against, and their mitigations.
+  """
+  THREAT_MODEL
   """
   One review round of one task. Task-scoped: one component per board target holds every task's rounds.
   """
@@ -4489,6 +4496,15 @@ type ReleaseUpdateEvent {
   wu: WhoUpdated
 }
 
+"""
+Security metrics of a release, artifact, source code entry or analytics period.
+
+The severity counts and vulnerabilities count OPEN findings of two kinds: dependency
+vulnerabilities (vulnerabilityDetails) and weaknesses, the code-scanning findings
+(weaknessDetails, for example CodeQL). weaknesses is the weakness share of them. Findings
+analysed as FALSE_POSITIVE, NOT_AFFECTED or RESOLVED are listed in the details but not
+counted, so a count can be lower than the rows it is computed from.
+"""
 type DependencyTrackMetrics {
   dependencyTrackFullUri: String
   dtrackSubmissionFailed: Boolean
@@ -4500,12 +4516,20 @@ type DependencyTrackMetrics {
   dtrackFetchSkipUntil: String
   lastScanned: DateTime
   firstScanned: DateTime
+  "Open CRITICAL vulnerabilities plus open CRITICAL weaknesses"
   critical: Int
+  "Open HIGH vulnerabilities plus open HIGH weaknesses"
   high: Int
+  "Open MEDIUM vulnerabilities plus open MEDIUM weaknesses"
   medium: Int
+  "Open LOW vulnerabilities plus open LOW weaknesses"
   low: Int
+  "Open UNASSIGNED vulnerabilities plus open UNASSIGNED weaknesses"
   unassigned: Int
+  "critical + high + medium + low + unassigned: open vulnerabilities AND open weaknesses. Open vulnerabilities alone are vulnerabilities - weaknesses"
   vulnerabilities: Int
+  "Open weaknesses (code-scanning findings, weaknessDetails), already included in the severity counts and in vulnerabilities"
+  weaknesses: Int
   vulnerableComponents: Int
   components: Int
   suppressed: Int
