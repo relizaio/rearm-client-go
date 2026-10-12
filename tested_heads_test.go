@@ -21,7 +21,8 @@ func TestTheTaskReadCarriesTestedAndCurrentHeads(t *testing.T) {
 		"signoff": AgentTaskSignOffProgrammatic_Operation, "complete": AgentTaskCompleteProgrammatic_Operation,
 		"reopen": AgentTaskReopenProgrammatic_Operation, "linkpr": AgentTaskLinkPrProgrammatic_Operation,
 	} {
-		if !strings.Contains(normalised(op), "registered head }") {
+		// "registered head " rather than "registered head }": the delivery unit follows the head (unlink_test.go).
+		if !strings.Contains(normalised(op), "registered head ") {
 			t.Errorf("%s does not read the PR's current head", name)
 		}
 	}
