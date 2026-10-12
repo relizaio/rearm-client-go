@@ -169,6 +169,52 @@ func TestOlderServerAnswering401FallsBackToLegacy(t *testing.T) {
 	}
 }
 
+// TPF-29: a server that verifies Basic on /graphql answers a wrong key there with the programmatic
+// lane's invalid_token 401. The client refreshes the handshake once, sends once more, and reports
+// that second answer as an error naming the status; no client code is involved beyond the fallback.
+func TestLegacyEndpointRefusingTheKeyIsReportedAfterOneHandshakeRefresh(t *testing.T) {
+	var legacyCalls, csrfCalls int
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case TokenPath, ProgrammaticPath:
+			w.Header().Set("Content-Type", "text/html")
+			w.WriteHeader(http.StatusUnauthorized)
+			_, _ = w.Write([]byte("Your request has returned an error with the code: 401 (Unauthorized)."))
+		case "/api/manual/v1/fetchCsrf":
+			csrfCalls++
+			http.SetCookie(w, &http.Cookie{Name: "JSESSIONID", Value: "sess1"})
+			http.SetCookie(w, &http.Cookie{Name: "XSRF-TOKEN", Value: "tok1"})
+		case LegacyPath:
+			legacyCalls++
+			if !strings.HasPrefix(r.Header.Get("Authorization"), "Basic ") {
+				t.Errorf("legacy endpoint must receive the key as Basic, got %q", r.Header.Get("Authorization"))
+			}
+			w.Header().Set("WWW-Authenticate", `Bearer realm="rearm", error="invalid_token", error_description="The access token is invalid, expired or revoked"`)
+			w.Header().Set("Cache-Control", "no-store")
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnauthorized)
+			_, _ = w.Write([]byte(`{"error":"invalid_token","error_description":"The access token is invalid, expired or revoked"}`))
+		default:
+			t.Errorf("unexpected path %s", r.URL.Path)
+		}
+	}))
+	defer srv.Close()
+	c, err := New(srv.URL, "id", "wrong-secret")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var resp struct {
+		Typename string `json:"__typename"`
+	}
+	err = c.MakeRequest(context.Background(), &graphql.Request{Query: "{__typename}"}, &graphql.Response{Data: &resp})
+	if err == nil || !strings.Contains(err.Error(), "401") {
+		t.Fatalf("expected an error naming 401, got %v", err)
+	}
+	if legacyCalls != 2 || csrfCalls != 2 {
+		t.Fatalf("expected one handshake refresh: legacy=%d csrf=%d", legacyCalls, csrfCalls)
+	}
+}
+
 // When the token endpoint itself refuses the key with an OAuth error body, that is the error;
 // there is no fallback to guess around it.
 func TestTokenEndpointRefusalIsReported(t *testing.T) {
