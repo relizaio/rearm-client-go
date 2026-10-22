@@ -3,6 +3,7 @@ package rearm
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -321,5 +322,45 @@ func TestNotFoundWithATokenDoesNotDowngrade(t *testing.T) {
 	}
 	if csrfCalls != 0 || legacyCalls != 0 {
 		t.Fatalf("a token-bearing client must not fall back; got csrf=%d legacy=%d", csrfCalls, legacyCalls)
+	}
+}
+
+// TPF-67 C10: a key client without a token store whose bearer is refused once (a secret rotated
+// mid-process) exchanges once more and sends again instead of failing.
+func TestARefusedKeyBearerIsExchangedOnceWithoutAStore(t *testing.T) {
+	var posts, calls int
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case TokenPath:
+			posts++
+			_, _ = fmt.Fprintf(w, `{"access_token":"tok-%d","token_type":"Bearer","expires_in":3600}`, posts)
+		case ProgrammaticPath:
+			calls++
+			if calls == 1 {
+				w.Header().Set("WWW-Authenticate", `Bearer realm="rearm", error="invalid_token"`)
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			if r.Header.Get("Authorization") != "Bearer tok-2" {
+				t.Errorf("the resend carries the new token, got %q", r.Header.Get("Authorization"))
+			}
+			_, _ = w.Write([]byte(`{"data":{"__typename":"Query"}}`))
+		default:
+			t.Errorf("unexpected path %s", r.URL.Path)
+		}
+	}))
+	defer srv.Close()
+	c, err := New(srv.URL, "id", "secret")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var resp struct {
+		Typename string `json:"__typename"`
+	}
+	if err := c.MakeRequest(context.Background(), &graphql.Request{Query: "{__typename}"}, &graphql.Response{Data: &resp}); err != nil {
+		t.Fatal(err)
+	}
+	if posts != 2 || calls != 2 || resp.Typename != "Query" {
+		t.Fatalf("one re-exchange and one resend, got posts=%d calls=%d", posts, calls)
 	}
 }
