@@ -158,6 +158,13 @@ is renewed the same way and retried once. `rearm.LockWait` (30 s) bounds the wai
 `persist` callback is still called after each renewal. Package `sessiontest` is a fake server with
 the real rotation, grace and reuse semantics, plus an in-memory store, for testing such callers.
 
+A key client (`rearm.New`) can likewise keep its one-hour access token across processes with
+`rearm.WithTokenStore(store)`: a `rearm.TokenStore` has the same `Lock`, `Load` and `Save` over the
+key's token (`AccessToken`, `AccessTokenExpiry`; `rearm.ErrNoToken` when there is none), the client
+adopts a stored token until a minute before its expiry instead of exchanging the key, saves the token
+it exchanged, and a store that fails never fails a request; `sessiontest.MemoryTokenStore` is the
+in-memory one for tests.
+
 The interactive flow itself is two calls, `rearm.StartDeviceLogin` and `rearm.PollDeviceLogin`;
 printing the code, opening the browser and the polling loop belong to the caller.
 
