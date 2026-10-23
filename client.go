@@ -60,6 +60,7 @@ type options struct {
 	legacy     bool
 	noExchange bool
 	store      SessionStore
+	tokenStore TokenStore
 }
 
 // WithHTTPClient sets the underlying HTTP client (timeouts, proxies, TLS).
@@ -102,7 +103,8 @@ func New(baseURL, apiKeyID, apiKey string, opts ...Option) (*Client, error) {
 	auth := "Basic " + base64.StdEncoding.EncodeToString([]byte(apiKeyID+":"+apiKey))
 	t := &authTransport{next: transportOf(base), auth: auth, userAgent: o.userAgent,
 		csrfURL: root + "/api/manual/v1/fetchCsrf", legacyURL: root + LegacyPath, legacy: o.legacy,
-		tokenURL: root + TokenPath, exchange: !o.legacy && !o.noExchange}
+		tokenURL: root + TokenPath, exchange: !o.legacy && !o.noExchange, tokenStore: o.tokenStore,
+		renewing: make(chan struct{}, 1)}
 	hc := &http.Client{Timeout: base.Timeout, Transport: t}
 	endpoint := root + ProgrammaticPath
 	if o.legacy {
@@ -150,9 +152,12 @@ type authTransport struct {
 	sessionHardExp time.Time
 	persist        func(SessionTokens)
 	// store is shared with the other processes of one login (WithSessionStore); renewing holds the
-	// client's one renewal slot, so its goroutines never refresh side by side
+	// client's one renewal slot, so its goroutines never refresh (or, for a key client, exchange)
+	// side by side
 	store    SessionStore
 	renewing chan struct{}
+	// tokenStore is shared with the other processes of one API key (WithTokenStore)
+	tokenStore TokenStore
 	// assertion mode: no Basic credential, tokens come from a fresh identity token each time
 	assertion AssertionSource
 	clientID  string
@@ -179,8 +184,7 @@ func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		if err := t.ensureToken(req.Context()); err != nil {
 			return nil, err
 		}
-		sent := t.currentBearer()
-		resp, err := t.send(req, body, nil)
+		resp, sent, err := t.sendWithBearer(req, body, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -192,6 +196,18 @@ func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 			_, _ = io.Copy(io.Discard, io.LimitReader(resp.Body, 1<<20))
 			_ = resp.Body.Close()
 			if err := t.renew(req.Context(), time.Now(), sent); err != nil {
+				return nil, err
+			}
+			return t.send(req, body, nil)
+		}
+		if sent != "" && !t.sessionMode && t.assertion == nil && resp.StatusCode == http.StatusUnauthorized {
+			// A key client's bearer was refused: the secret it came from was retired or regenerated, the
+			// key deactivated, or a token adopted from a TokenStore died before its stored expiry. Exchange
+			// once more (or adopt the replacement another process stored) and send once more; that answer
+			// stands, 401 included, so this never loops. The body is not read, as above.
+			_, _ = io.Copy(io.Discard, io.LimitReader(resp.Body, 1<<20))
+			_ = resp.Body.Close()
+			if err := t.renewKey(req.Context(), time.Now(), sent); err != nil {
 				return nil, err
 			}
 			return t.send(req, body, nil)
@@ -266,10 +282,26 @@ func (t *authTransport) ensureToken(ctx context.Context) error {
 	if t.assertion != nil {
 		return t.exchangeAssertion(ctx)
 	}
+	return t.renewKey(ctx, time.Now(), "")
+}
+
+// keyExchange is how one exchange of the API key ended.
+type keyExchange int
+
+const (
+	keyIssued  keyExchange = iota // a token was issued and is now the client's bearer
+	keyAbsent                     // no token endpoint here (404 or a bodyless 4xx): Basic from now on
+	keyRefused                    // the token endpoint refused the key with an RFC 6749 error body
+	keyFailed                     // transport error, malformed answer or another status
+)
+
+// exchangeKey trades the API key for an access token (grant_type=client_credentials, the key as
+// Basic) and keeps it as the client's bearer.
+func (t *authTransport) exchangeKey(ctx context.Context) (keyExchange, error) {
 	form := strings.NewReader("grant_type=client_credentials")
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, t.tokenURL, form)
 	if err != nil {
-		return err
+		return keyFailed, err
 	}
 	req.Header.Set("Authorization", t.auth)
 	req.Header.Set("User-Agent", t.userAgent)
@@ -277,7 +309,7 @@ func (t *authTransport) ensureToken(ctx context.Context) error {
 	req.Header.Set("Accept", "application/json")
 	resp, err := t.next.RoundTrip(req)
 	if err != nil {
-		return fmt.Errorf("rearm: token exchange: %w", err)
+		return keyFailed, fmt.Errorf("rearm: token exchange: %w", err)
 	}
 	defer resp.Body.Close()
 	raw, _ := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
@@ -291,7 +323,7 @@ func (t *authTransport) ensureToken(ctx context.Context) error {
 			ExpiresIn   int64  `json:"expires_in"`
 		}
 		if err := json.Unmarshal(raw, &tok); err != nil || tok.AccessToken == "" {
-			return fmt.Errorf("rearm: token exchange: malformed token response")
+			return keyFailed, fmt.Errorf("rearm: token exchange: malformed token response")
 		}
 		t.bearer = tok.AccessToken
 		ttl := time.Duration(tok.ExpiresIn) * time.Second
@@ -299,10 +331,10 @@ func (t *authTransport) ensureToken(ctx context.Context) error {
 			ttl = 3 * time.Minute
 		}
 		t.bearerExp = time.Now().Add(ttl - time.Minute)
-		return nil
+		return keyIssued, nil
 	case http.StatusNotFound:
 		t.exchange = false // older server without the token endpoint: keep using Basic
-		return nil
+		return keyAbsent, nil
 	default:
 		var e struct {
 			Error       string `json:"error"`
@@ -311,7 +343,7 @@ func (t *authTransport) ensureToken(ctx context.Context) error {
 		_ = json.Unmarshal(raw, &e)
 		if e.Error != "" {
 			// the token endpoint itself refused the key (RFC 6749 error body)
-			return fmt.Errorf("rearm: token exchange failed: %s: %s", e.Error, e.Description)
+			return keyRefused, fmt.Errorf("rearm: token exchange failed: %s: %s", e.Error, e.Description)
 		}
 		if resp.StatusCode >= 400 && resp.StatusCode < 500 {
 			// No OAuth error body: a server older than the token endpoint answers the unknown path
@@ -319,19 +351,27 @@ func (t *authTransport) ensureToken(ctx context.Context) error {
 			// text page. Neither is a verdict on the key, so present it as Basic; the endpoint
 			// fallback in RoundTrip settles the rest, and a wrong key still fails there.
 			t.exchange = false
-			return nil
+			return keyAbsent, nil
 		}
-		return fmt.Errorf("rearm: token exchange failed with status %d", resp.StatusCode)
+		return keyFailed, fmt.Errorf("rearm: token exchange failed with status %d", resp.StatusCode)
 	}
 }
+
 func (t *authTransport) setLegacy() { t.mu.Lock(); defer t.mu.Unlock(); t.legacy = true }
 
 func (t *authTransport) send(req *http.Request, body []byte, sess *csrfSession) (*http.Response, error) {
+	resp, _, err := t.sendWithBearer(req, body, sess)
+	return resp, err
+}
+
+// sendWithBearer is send, also returning the bearer the request carried ("" when it went out with
+// the key as Basic, or with no credential).
+func (t *authTransport) sendWithBearer(req *http.Request, body []byte, sess *csrfSession) (*http.Response, string, error) {
 	r := req.Clone(req.Context())
 	if t.isLegacy() && strings.HasSuffix(r.URL.Path, ProgrammaticPath) {
 		u, err := url.Parse(t.legacyURL)
 		if err != nil {
-			return nil, err
+			return nil, "", err
 		}
 		r.URL = u
 		r.Host = u.Host
@@ -345,8 +385,10 @@ func (t *authTransport) send(req *http.Request, body []byte, sess *csrfSession) 
 	// the artifact download live on the browser chain, which takes the key as Basic. A session
 	// client has no Basic credential and sends its bearer everywhere.
 	graphQL := strings.HasSuffix(r.URL.Path, ProgrammaticPath) || strings.HasSuffix(r.URL.Path, LegacyPath)
+	sent := ""
 	if b := t.currentBearer(); b != "" && (t.sessionMode || t.assertion != nil || (graphQL && !t.isLegacy())) {
 		r.Header.Set("Authorization", "Bearer "+b)
+		sent = b
 	} else if t.auth != "" {
 		r.Header.Set("Authorization", t.auth)
 	}
@@ -356,7 +398,8 @@ func (t *authTransport) send(req *http.Request, body []byte, sess *csrfSession) 
 		r.Header.Set("X-XSRF-TOKEN", sess.xsrfToken)
 		r.Header.Set("Cookie", "JSESSIONID="+sess.jsessionID+"; XSRF-TOKEN="+sess.xsrfToken)
 	}
-	return t.next.RoundTrip(r)
+	resp, err := t.next.RoundTrip(r)
+	return resp, sent, err
 }
 
 // sessionFor returns the cached CSRF session, fetching it on first use or when refresh is set.
