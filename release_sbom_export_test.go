@@ -113,6 +113,7 @@ func TestEachOperationArgumentIsItsOwnVariableAndTheSchemaFieldsArgumentsAreAllT
 	for _, op := range []struct{ field, document string }{
 		{"releaseSbomExportProgrammatic", ReleaseSbomExportProgrammatic_Operation},
 		{"releaseSbomScoreProgrammatic", ReleaseSbomScoreProgrammatic_Operation},
+		{"getReleaseByCommitProgrammatic", GetReleaseByCommitProgrammatic_Operation},
 	} {
 		doc, gerr := parser.ParseQuery(&ast.Source{Input: op.document})
 		if gerr != nil {

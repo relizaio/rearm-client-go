@@ -613,8 +613,13 @@ func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoard
 }
 
 // AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStaleBoardAgentStaleMark includes the requested fields of the GraphQL type BoardAgentStaleMark.
+// The GraphQL type's documentation follows.
+//
+// A staleness mark (task RD3-4): the rule, when the measured span began, how many minutes it had run at the
+// read, and the ALERT text the sweep posts for it. On an agent row, the rules that name the session
+// (hopNoProgress, seatSilent, deliveryStuck); on a task, the task-keyed rules (TPF-69).
 type AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStaleBoardAgentStaleMark struct {
-	// The staleness rule: hopNoProgress, seatSilent or deliveryStuck.
+	// The staleness rule: hopNoProgress, seatSilent, deliveryStuck or investigationOverdue.
 	Rule    *string `json:"rule"`
 	Message *string `json:"message"`
 }
@@ -19736,8 +19741,8 @@ type AgentTaskHoldProgrammaticResponse struct {
 	// returns the task to the loop;
 	// - the session holding the task's current assignment, at OPERATOR level only (task RD4-5), with the question
 	// for the person as the reason: the task shows "awaiting the operator: <question>", the board's writers are
-	// told, and the hop stays assigned to the session. A person lifts the hold with the answer as the note, which
-	// is recorded on the task, and the hop resumes with its holder.
+	// told, and the hop ends (task TPF-66). A person lifts the hold with the answer as the note, which is
+	// recorded on the task, and the task is queued again for its role.
 	// - the coordinator seat, at OPERATOR level with the question as the reason (task RD4-17), on a task in
 	// PENDING_INTAKE, QUEUED, AWAITING_COORDINATOR or DELIVERING: the same record and notification. A person's
 	// release with the answer as the note, or anything else a person does on the task (answering its questions,
@@ -24491,7 +24496,8 @@ type AgentTaskOperatorHoldResponse struct {
 	// agentTaskHumanReview, not here. On a lift, role optionally names an active role to route to instead of the one
 	// routing would pick; lifting a no-progress or cycle-cap stop routes past that stop once (task 4c566d0d).
 	// A hop its holder parked for the operator (task RD4-5) is lifted with the answer as reason, which is required
-	// and recorded on the task (a status row and an INFO); it takes no role, and the hop resumes with its holder.
+	// and recorded on the task (a status row and an INFO); it takes no role: the hop ended at the park, and the task
+	// is queued again for its role (task TPF-66).
 	// A task the coordinator seat parked for the operator (task RD4-17) is lifted the same way, and returns to the
 	// status it was parked from (hold.returnTo).
 	AgentTaskOperatorHold *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask `json:"agentTaskOperatorHold"`
@@ -34676,7 +34682,7 @@ func (v *AgentTaskReturnProgrammaticResponse) GetAgentTaskReturnProgrammatic() *
 	return v.AgentTaskReturnProgrammatic
 }
 
-// Why an assigned agent handed the task back to the coordinator. SESSION_CLOSED is system-generated on any session-close path.
+// Why an assigned agent handed the task back to the coordinator. SESSION_CLOSED is system-generated on any session-close path; PARKED_FOR_OPERATOR is system-generated when the session working the task parks its hop for the operator, which ends the hop.
 type AgentTaskReturnReason string
 
 const (
@@ -34686,6 +34692,7 @@ const (
 	AgentTaskReturnReasonBlockedOnDependency AgentTaskReturnReason = "BLOCKED_ON_DEPENDENCY"
 	AgentTaskReturnReasonNeedsHuman          AgentTaskReturnReason = "NEEDS_HUMAN"
 	AgentTaskReturnReasonSessionClosed       AgentTaskReturnReason = "SESSION_CLOSED"
+	AgentTaskReturnReasonParkedForOperator   AgentTaskReturnReason = "PARKED_FOR_OPERATOR"
 	AgentTaskReturnReasonOther               AgentTaskReturnReason = "OTHER"
 )
 
@@ -34696,6 +34703,7 @@ var AllAgentTaskReturnReason = []AgentTaskReturnReason{
 	AgentTaskReturnReasonBlockedOnDependency,
 	AgentTaskReturnReasonNeedsHuman,
 	AgentTaskReturnReasonSessionClosed,
+	AgentTaskReturnReasonParkedForOperator,
 	AgentTaskReturnReasonOther,
 }
 
@@ -52568,6 +52576,22 @@ type CreateComponentInput struct {
 	// third-party dependency (EXTERNAL). Defaults to INTERNAL when null. EXTERNAL
 	// components never receive a platform-stamped sid PURL (D16).
 	IsInternal *BelongsToOrganization `json:"isInternal"`
+	// Declared licence (SCORE-39), omitted or empty for none.
+	// An SPDX licence expression: SPDX list ids (any case, stored in the list's casing, a
+	// trailing + allowed), LicenseRef-[A-Za-z0-9.-]+, the upper-case operators AND, OR and
+	// WITH (exception ids syntax-checked only) and parentheses; at most 512 characters.
+	// NOASSERTION, NONE, DocumentRef- and free-text names are refused.
+	LicenseExpression *string `json:"licenseExpression"`
+	// URL of licenseExpression (SCORE-39): an absolute http or https URL with a host, printable
+	// ASCII (punycode host), no user information, at most 2048 characters; needs licenseExpression.
+	LicenseUrl *string `json:"licenseUrl"`
+	// Supplier named on the SBOM nodes of the component's releases (SCORE-39): trimmed, at most
+	// 255 characters; no < or >, control, invisible formatting or bidi characters.
+	// Applies to the nodes ReARM makes at the next export and to SBOMs uploaded after it is set.
+	// A root uploaded earlier keeps the supplier recorded at its upload; a newly generated SBOM
+	// (a new serialNumber) uploaded to a release made after the change carries the new value in
+	// that release's export. An identical file is answered with the stored row, unchanged.
+	SupplierName *string `json:"supplierName"`
 }
 
 // GetOrg returns CreateComponentInput.Org, and is useful for accessing the field via an interface.
@@ -52632,6 +52656,15 @@ func (v *CreateComponentInput) GetSidAuthoritySegments() []string { return v.Sid
 
 // GetIsInternal returns CreateComponentInput.IsInternal, and is useful for accessing the field via an interface.
 func (v *CreateComponentInput) GetIsInternal() *BelongsToOrganization { return v.IsInternal }
+
+// GetLicenseExpression returns CreateComponentInput.LicenseExpression, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetLicenseExpression() *string { return v.LicenseExpression }
+
+// GetLicenseUrl returns CreateComponentInput.LicenseUrl, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetLicenseUrl() *string { return v.LicenseUrl }
+
+// GetSupplierName returns CreateComponentInput.SupplierName, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetSupplierName() *string { return v.SupplierName }
 
 // CreateComponentProgrammaticCreateComponentProgrammaticComponent includes the requested fields of the GraphQL type Component.
 type CreateComponentProgrammaticCreateComponentProgrammaticComponent struct {
@@ -52786,9 +52819,10 @@ type DeclaredApiKeyFields struct {
 	// The id a client presents with a secret (REARM_APIKEYID): stable across rotation, not itself a secret.
 	KeyId string `json:"keyId"`
 	// The declared name; null for a key nobody has declared.
-	Name              *string                                               `json:"name"`
-	Type              *ApiTypeEnum                                          `json:"type"`
-	Status            *ApiKeyStatus                                         `json:"status"`
+	Name   *string       `json:"name"`
+	Type   *ApiTypeEnum  `json:"type"`
+	Status *ApiKeyStatus `json:"status"`
+	// An org admin's kill switch holds the key off: only an org admin can re-activate it, not its owner, holder or an org writer
 	AdminDisabled     *bool                                                 `json:"adminDisabled"`
 	Notes             *string                                               `json:"notes"`
 	Permissions       *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec `json:"permissions"`
@@ -55928,6 +55962,24 @@ func (v *GetNewVersionProgrammaticWithLifecycleResponse) GetGetNewVersionProgram
 	return v.GetNewVersionProgrammatic
 }
 
+// GetReleaseByCommitProgrammaticResponse is returned by GetReleaseByCommitProgrammatic on success.
+type GetReleaseByCommitProgrammaticResponse struct {
+	// Exact head-commit lookup, the by-commit twin of getReleaseByReleaseVersionProgrammatic (task TPF-72).
+	// commit is compared as stored, whole and case-sensitively (no prefix, no tag, no branch); the entry
+	// is looked up in the component's organization and the match restricted to the component / product.
+	// Returns the OBOM (CycloneDX 1.6, as the by-version field) of the newest release by creation date
+	// whose head commit it is, or "{}" when no release of this component has that head commit, whether the
+	// commit is unknown, only in a release's changelog range, or recorded by another organization.
+	// componentId is resolved as for getReleaseByReleaseVersionProgrammatic. Lifecycle and approvals are
+	// not consulted. Several releases on one head commit (rebuilds): getReleasesByCommitProgrammatic lists them.
+	GetReleaseByCommitProgrammatic *string `json:"getReleaseByCommitProgrammatic"`
+}
+
+// GetGetReleaseByCommitProgrammatic returns GetReleaseByCommitProgrammaticResponse.GetReleaseByCommitProgrammatic, and is useful for accessing the field via an interface.
+func (v *GetReleaseByCommitProgrammaticResponse) GetGetReleaseByCommitProgrammatic() *string {
+	return v.GetReleaseByCommitProgrammatic
+}
+
 // GetReleaseByHashProgrammaticResponse is returned by GetReleaseByHashProgrammatic on success.
 type GetReleaseByHashProgrammaticResponse struct {
 	GetReleaseByHashProgrammatic *string `json:"getReleaseByHashProgrammatic"`
@@ -58624,6 +58676,13 @@ type ReleaseInputProg struct {
 	// release's SCE. The PR aggregator picks up the release on subsequent
 	// VALIDATE_PR firings. Ignored on calls that do not create a release.
 	PullRequest *PullRequestInfoInput `json:"pullRequest,omitempty"`
+	// Per-release override of the declared licence (SCORE-39), an SPDX expression: SPDX list ids
+	// (any case, stored in the list's casing, a trailing + allowed), LicenseRef-[A-Za-z0-9.-]+, the
+	// upper-case operators AND, OR and WITH (exception ids syntax-checked only) and parentheses; at
+	// most 512 characters. NOASSERTION, NONE, DocumentRef- and free-text names are refused.
+	// Omitted or empty for none: the release then inherits the component's licence, else the
+	// organization default.
+	LicenseExpression *string `json:"licenseExpression"`
 }
 
 // GetVersion returns ReleaseInputProg.Version, and is useful for accessing the field via an interface.
@@ -58709,6 +58768,9 @@ func (v *ReleaseInputProg) GetRebuildRelease() *bool { return v.RebuildRelease }
 
 // GetPullRequest returns ReleaseInputProg.PullRequest, and is useful for accessing the field via an interface.
 func (v *ReleaseInputProg) GetPullRequest() *PullRequestInfoInput { return v.PullRequest }
+
+// GetLicenseExpression returns ReleaseInputProg.LicenseExpression, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetLicenseExpression() *string { return v.LicenseExpression }
 
 type ReleaseLifecycleEnum string
 
@@ -58869,6 +58931,7 @@ const (
 	ReleaseUpdateScopeEnumApprovedEnvironment ReleaseUpdateScopeEnum = "APPROVED_ENVIRONMENT"
 	ReleaseUpdateScopeEnumSupportWindow       ReleaseUpdateScopeEnum = "SUPPORT_WINDOW"
 	ReleaseUpdateScopeEnumFdaNarrative        ReleaseUpdateScopeEnum = "FDA_NARRATIVE"
+	ReleaseUpdateScopeEnumDeclaredLicense     ReleaseUpdateScopeEnum = "DECLARED_LICENSE"
 )
 
 var AllReleaseUpdateScopeEnum = []ReleaseUpdateScopeEnum{
@@ -58890,6 +58953,7 @@ var AllReleaseUpdateScopeEnum = []ReleaseUpdateScopeEnum{
 	ReleaseUpdateScopeEnumApprovedEnvironment,
 	ReleaseUpdateScopeEnumSupportWindow,
 	ReleaseUpdateScopeEnumFdaNarrative,
+	ReleaseUpdateScopeEnumDeclaredLicense,
 }
 
 // ReleasecompletionfinalizerProgrammaticResponse is returned by ReleasecompletionfinalizerProgrammatic on success.
@@ -62986,6 +63050,18 @@ type __GetNewVersionProgrammaticWithLifecycleInput struct {
 func (v *__GetNewVersionProgrammaticWithLifecycleInput) GetGetNewVersionInput() *GetNewVersionInput {
 	return v.GetNewVersionInput
 }
+
+// __GetReleaseByCommitProgrammaticInput is used internally by genqlient
+type __GetReleaseByCommitProgrammaticInput struct {
+	Commit      string `json:"commit"`
+	ComponentId string `json:"componentId"`
+}
+
+// GetCommit returns __GetReleaseByCommitProgrammaticInput.Commit, and is useful for accessing the field via an interface.
+func (v *__GetReleaseByCommitProgrammaticInput) GetCommit() string { return v.Commit }
+
+// GetComponentId returns __GetReleaseByCommitProgrammaticInput.ComponentId, and is useful for accessing the field via an interface.
+func (v *__GetReleaseByCommitProgrammaticInput) GetComponentId() string { return v.ComponentId }
 
 // __GetReleaseByHashProgrammaticInput is used internally by genqlient
 type __GetReleaseByHashProgrammaticInput struct {
@@ -74642,6 +74718,41 @@ func GetNewVersionProgrammaticWithLifecycle(
 	}
 
 	data_ = &GetNewVersionProgrammaticWithLifecycleResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetReleaseByCommitProgrammatic.
+const GetReleaseByCommitProgrammatic_Operation = `
+query GetReleaseByCommitProgrammatic ($commit: String!, $componentId: ID!) {
+	getReleaseByCommitProgrammatic(commit: $commit, componentId: $componentId)
+}
+`
+
+// from rearm-cli cmd/releaseByCommit.go
+func GetReleaseByCommitProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	commit string,
+	componentId string,
+) (data_ *GetReleaseByCommitProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetReleaseByCommitProgrammatic",
+		Query:  GetReleaseByCommitProgrammatic_Operation,
+		Variables: &__GetReleaseByCommitProgrammaticInput{
+			Commit:      commit,
+			ComponentId: componentId,
+		},
+	}
+
+	data_ = &GetReleaseByCommitProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

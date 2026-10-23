@@ -606,6 +606,11 @@ query GetReleaseByReleaseVersionProgrammatic ($version: String!, $componentId: I
 				getReleaseByReleaseVersionProgrammatic(version: $version, componentId: $componentId)
 			}
 
+# from rearm-cli cmd/releaseByCommit.go
+query GetReleaseByCommitProgrammatic ($commit: String!, $componentId: ID!) {
+				getReleaseByCommitProgrammatic(commit: $commit, componentId: $componentId)
+			}
+
 # from rearm-cli root.go
 mutation ReleasecompletionfinalizerProgrammatic($release: ID!) { releasecompletionfinalizerProgrammatic(release: $release) }
 

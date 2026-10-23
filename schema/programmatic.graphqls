@@ -60,6 +60,27 @@ type Query {
   version: String!
   componentId: ID!): String
   """
+  Exact head-commit lookup, the by-commit twin of getReleaseByReleaseVersionProgrammatic (task TPF-72).
+  commit is compared as stored, whole and case-sensitively (no prefix, no tag, no branch); the entry
+  is looked up in the component's organization and the match restricted to the component / product.
+  Returns the OBOM (CycloneDX 1.6, as the by-version field) of the newest release by creation date
+  whose head commit it is, or "{}" when no release of this component has that head commit, whether the
+  commit is unknown, only in a release's changelog range, or recorded by another organization.
+  componentId is resolved as for getReleaseByReleaseVersionProgrammatic. Lifecycle and approvals are
+  not consulted. Several releases on one head commit (rebuilds): getReleasesByCommitProgrammatic lists them.
+  """
+  getReleaseByCommitProgrammatic(
+  commit: String!
+  componentId: ID!): String
+  """
+  Every release of the component / product whose head commit is exactly commit, newest by creation
+  date first; the same resolution and checks as getReleaseByCommitProgrammatic. Empty when that field
+  would answer "{}".
+  """
+  getReleasesByCommitProgrammatic(
+  commit: String!
+  componentId: ID!): [ReleaseByCommitMatch!]!
+  """
   Readiness score of the merged release BOM, as releaseSbomScore scores it for a signed-in user (task
   SCORE-24). The release is named as for releaseSbomExportProgrammatic, behind the same checks; the
   other arguments are releaseSbomScore's. A failed score is one error with extensions.code
@@ -509,8 +530,8 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
     returns the task to the loop;
   - the session holding the task's current assignment, at OPERATOR level only (task RD4-5), with the question
     for the person as the reason: the task shows "awaiting the operator: <question>", the board's writers are
-    told, and the hop stays assigned to the session. A person lifts the hold with the answer as the note, which
-    is recorded on the task, and the hop resumes with its holder.
+    told, and the hop ends (task TPF-66). A person lifts the hold with the answer as the note, which is
+    recorded on the task, and the task is queued again for its role.
   - the coordinator seat, at OPERATOR level with the question as the reason (task RD4-17), on a task in
     PENDING_INTAKE, QUEUED, AWAITING_COORDINATOR or DELIVERING: the same record and notification. A person's
     release with the answer as the note, or anything else a person does on the task (answering its questions,
@@ -742,7 +763,8 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskHumanReview, not here. On a lift, role optionally names an active role to route to instead of the one
   routing would pick; lifting a no-progress or cycle-cap stop routes past that stop once (task 4c566d0d).
   A hop its holder parked for the operator (task RD4-5) is lifted with the answer as reason, which is required
-  and recorded on the task (a status row and an INFO); it takes no role, and the hop resumes with its holder.
+  and recorded on the task (a status row and an INFO); it takes no role: the hop ended at the park, and the task
+  is queued again for its role (task TPF-66).
   A task the coordinator seat parked for the operator (task RD4-17) is lifted the same way, and returns to the
   status it was parked from (hold.returnTo).
   """
@@ -1046,8 +1068,13 @@ type DeclaredApiKey {
   name: String
   type: ApiTypeEnum
   status: ApiKeyStatus
+  "An org admin's kill switch holds the key off: only an org admin can re-activate it, not its owner, holder or an org writer"
   adminDisabled: Boolean
   notes: String
+  """
+  DENIED requests: the administrator's reason, empty when none; null otherwise and on requests denied before it existed.
+  """
+  deniedReason: String
   permissions: ApiKeyPermissionsSpec
   secretExpiresDays: Int
   sessionMaxMinutes: Int
@@ -1138,6 +1165,17 @@ NULL MEANS INHERIT, not empty. Read it through the resolution seam -- release
   """
   fdaAssessmentNarrative: String
   """
+  Per-release override of the declared licence (SCORE-39), a canonical SPDX expression. NULL
+  MEANS INHERIT: read effectiveLicense for what ReARM writes on the release's SBOM node.
+  """
+  licenseExpression: String
+  """
+  The licence ReARM declares for this release's node in a merged SBOM (SCORE-39): the
+  release override, else the component's licence, else the organization default; null when
+  no level declares one. The url comes only from the level that won (a release has none).
+  """
+  effectiveLicense: DeclaredLicense
+  """
   Provenance for the release's own eos/eol -- the CLE lifecycle projections, NOT
   the device support window -- DERIVED from the most recent SUPPORT_WINDOW update
   event rather than stored separately. Null on a
@@ -1187,6 +1225,15 @@ NULL MEANS INHERIT, not empty. Read it through the resolution seam -- release
 type SbomProbingResult {
   status: SbomProbingStatus!
   metrics: DependencyTrackMetrics
+}
+
+"""
+One release found by its head commit (TPF-72): enough to name it and to see why it sorted where it did.
+"""
+type ReleaseByCommitMatch {
+  uuid: ID!
+  version: String!
+  createdDate: DateTime!
 }
 
 enum BomStructureType {
@@ -1974,6 +2021,15 @@ type AgentTask {
   """
   requireHumanReview: Boolean
   assignment: AgentTaskWorkAssignment
+  """
+  The staleness rules this task breaches now, computed at the read from the board's staleness block
+  (TPF-69): hopNoProgress while ASSIGNED, deliveryStuck while DELIVERING, investigationOverdue for an
+  open investigation past its deadline. Empty when none; empty on a board without a staleness block.
+  Live, so a breach shows before and between the sweep's ALERTs; the sweep's repeat interval does not
+  apply here, and a board that is not ACTIVE still marks its tasks although the sweep skips it (as the
+  Agents tab does).
+  """
+  stale: [BoardAgentStaleMark]
   signOffs: [AgentTaskSignOff]
   returns: [AgentTaskReturn]
   """
@@ -2754,6 +2810,15 @@ input ReleaseInputProg {
   VALIDATE_PR firings. Ignored on calls that do not create a release.
   """
   pullRequest: PullRequestInfoInput
+  """
+  Per-release override of the declared licence (SCORE-39), an SPDX expression: SPDX list ids
+  (any case, stored in the list's casing, a trailing + allowed), LicenseRef-[A-Za-z0-9.-]+, the
+  upper-case operators AND, OR and WITH (exception ids syntax-checked only) and parentheses; at
+  most 512 characters. NOASSERTION, NONE, DocumentRef- and free-text names are refused.
+  Omitted or empty for none: the release then inherits the component's licence, else the
+  organization default.
+  """
+  licenseExpression: String
 }
 
 input AddODeliverableInput {
@@ -2783,6 +2848,13 @@ type Component {
   apiKey: String
   createdType: ProgrammaticType
   lastUpdatedBy: ID
+  """
+  The revision of the stored component: every save of the component row adds one (settings, locks,
+  perspectives, archive, declarative applies). The settings page sends the revision it read back as
+  UpdateComponentInput.expectedRevision, so a save from a page opened before another change is refused.
+  Null on a component object that was not read from its row.
+  """
+  revision: Int
   createdDate: DateTime
   defaultConfig: String
   visibilitySetting: VisibilitySetting
@@ -2827,6 +2899,26 @@ type Component {
   Internal/external classification (D16). Null on legacy rows is treated as INTERNAL.
   """
   isInternal: BelongsToOrganization
+  """
+  The component's declared licence (SCORE-39), a canonical SPDX expression; null when unset,
+  and then the organization default applies. Written on the SBOM nodes ReARM makes for the
+  component's releases unless a release overrides it.
+  """
+  licenseExpression: String
+  """
+  URL of licenseExpression (http or https); null when unset.
+  """
+  licenseUrl: String
+  """
+  Supplier named on the SBOM nodes ReARM makes for the component's releases when no
+  deliverable publisher names one (SCORE-39); null when unset, and then the organization is
+  named for its own (INTERNAL) software and none otherwise.
+  Applies to the nodes ReARM makes at the next export and to SBOMs uploaded after it is set.
+  A root uploaded earlier keeps the supplier recorded at its upload; a newly generated SBOM
+  (a new serialNumber) uploaded to a release made after the change carries the new value in
+  that release's export. An identical file is answered with the stored row, unchanged.
+  """
+  supplierName: String
   """
   Synthetic component-level lifecycle derived from the lifecycles of the
   component's releases:
@@ -2921,6 +3013,28 @@ input CreateComponentInput {
   components never receive a platform-stamped sid PURL (D16).
   """
   isInternal: BelongsToOrganization
+  """
+  Declared licence (SCORE-39), omitted or empty for none.
+  An SPDX licence expression: SPDX list ids (any case, stored in the list's casing, a
+  trailing + allowed), LicenseRef-[A-Za-z0-9.-]+, the upper-case operators AND, OR and
+  WITH (exception ids syntax-checked only) and parentheses; at most 512 characters.
+  NOASSERTION, NONE, DocumentRef- and free-text names are refused.
+  """
+  licenseExpression: String
+  """
+  URL of licenseExpression (SCORE-39): an absolute http or https URL with a host, printable
+  ASCII (punycode host), no user information, at most 2048 characters; needs licenseExpression.
+  """
+  licenseUrl: String
+  """
+  Supplier named on the SBOM nodes of the component's releases (SCORE-39): trimmed, at most
+  255 characters; no < or >, control, invisible formatting or bidi characters.
+  Applies to the nodes ReARM makes at the next export and to SBOMs uploaded after it is set.
+  A root uploaded earlier keeps the supplier recorded at its upload; a newly generated SBOM
+  (a new serialNumber) uploaded to a release made after the change carries the new value in
+  that release's export. An identical file is answered with the stored row, unchanged.
+  """
+  supplierName: String
 }
 
 input AddArtifactInput {
@@ -3191,9 +3305,7 @@ type Agent {
   """
   displayName: String
   """
-  Resolved label the UI should render. Precedence (strongest last):
-  name → first bound FREEFORM key note → displayName. I.e.
-  displayName if set, else the note on a bound FREEFORM key, else name.
+  Resolved label the UI should render: displayName if non-blank, else name.
   Read-only -- set displayName to override.
   """
   effectiveDisplayName: String
@@ -3263,6 +3375,8 @@ type Agent {
   FREEFORM API keys bound to this agent's identity
   (agent_identity_credentials of type REARM_API_KEY). These are the
   keys an agent runtime authenticates with to drive this agent.
+  Only uuid, org, type and declaredName are populated here; the full
+  record is apiKeys (org admin) or myApiKeys (own keys).
   """
   boundApiKeys: [ApiKey]
 }
@@ -3751,7 +3865,7 @@ enum AgentSignOffOutcome {
 }
 
 """
-Why an assigned agent handed the task back to the coordinator. SESSION_CLOSED is system-generated on any session-close path.
+Why an assigned agent handed the task back to the coordinator. SESSION_CLOSED is system-generated on any session-close path; PARKED_FOR_OPERATOR is system-generated when the session working the task parks its hop for the operator, which ends the hop.
 """
 enum AgentTaskReturnReason {
   TASK_UNCLEAR
@@ -3760,6 +3874,7 @@ enum AgentTaskReturnReason {
   BLOCKED_ON_DEPENDENCY
   NEEDS_HUMAN
   SESSION_CLOSED
+  PARKED_FOR_OPERATOR
   OTHER
 }
 
@@ -4674,6 +4789,24 @@ enum GudidStatus {
   NOT_SUBMITTED
   SUBMITTED
   PUBLISHED
+}
+
+"""
+A declared licence as resolved for a release (SCORE-39).
+"""
+type DeclaredLicense {
+  """
+  Canonical SPDX expression.
+  """
+  expression: String!
+  """
+  URL of the licence, from the level that declared it; null when it has none.
+  """
+  url: String
+  """
+  The level the licence was resolved from.
+  """
+  level: DeclaredLicenseLevel!
 }
 
 type ReleaseCollection {
@@ -5591,6 +5724,27 @@ type AgentTaskWorkAssignment {
   Versions this assignment is bound to work from.
   """
   resolvedInputs: [AgentTaskResolvedPrerequisite]
+}
+
+"""
+A staleness mark (task RD3-4): the rule, when the measured span began, how many minutes it had run at the
+read, and the ALERT text the sweep posts for it. On an agent row, the rules that name the session
+(hopNoProgress, seatSilent, deliveryStuck); on a task, the task-keyed rules (TPF-69).
+"""
+type BoardAgentStaleMark {
+  """
+  The staleness rule: hopNoProgress, seatSilent, deliveryStuck or investigationOverdue.
+  """
+  rule: String
+  """
+  When the span began: the assignment, the entry into DELIVERING, or the investigation's deadline.
+  """
+  since: DateTime
+  """
+  Minutes from since to the read, the figure the message rounds.
+  """
+  minutes: Int
+  message: String
 }
 
 """
@@ -6999,14 +7153,25 @@ type ApiKey {
   keyOrder: String
   lastUpdatedBy: ID
   createdBy: ID
+  """
+  When a credential of this key last verified (bearer, Basic or a client_credentials exchange); it lags by up
+  to one scheduler tick. A verified credential that a later permission check refuses still counts.
+  Null if never used.
+  """
   accessDate: DateTime
   createdDate: DateTime
   notes: String
+  """
+  The reason an administrator gave when denying this request: empty when none was given; null unless
+  status is DENIED; null on requests denied before this field existed, whose notes end in the legacy
+  'Denied' tail, with the reason after 'Denied: ' when one was given.
+  """
+  deniedReason: String
   status: ApiKeyStatus
   secrets: [ApiKeySecretInfo!]
   "FREEFORM keys: the user who requested the key and the only one who may mint or regenerate its secrets"
   holder: ID
-  "Deactivated by an org admin: the owner or holder cannot re-activate it, only an admin can"
+  "An org admin's kill switch holds the key off: only an org admin can re-activate it, not its owner, holder or an org writer"
   adminDisabled: Boolean
   "MANUAL, or CLI_SESSION for a personal key a CLI browser login created for its session (deleted with the session)"
   origin: ApiKeyOrigin
@@ -7555,6 +7720,16 @@ NULL MEANS DISABLED. The default is off: support properties do not appear in an
   """
   fdaRiskIncreasesNotice: String
   """
+  The organization's default declared licence (SCORE-39), a canonical SPDX expression: written
+  on the SBOM nodes ReARM makes for a release whose component and release declare none. Null
+  when unset.
+  """
+  defaultLicenseExpression: String
+  """
+  URL of defaultLicenseExpression (http or https); null when unset.
+  """
+  defaultLicenseUrl: String
+  """
   Org-wide default UI view (Security or DevOps) for users who have not
   picked one in their browser. Null means SECURITY.
   """
@@ -7941,6 +8116,7 @@ enum ReleaseUpdateScopeEnum {
   APPROVED_ENVIRONMENT
   SUPPORT_WINDOW
   FDA_NARRATIVE
+  DECLARED_LICENSE
 }
 
 enum ReleaseUpdateActionEnum {
@@ -8109,6 +8285,15 @@ type ElementIndex {
   in other document types. Empty before 1.2.
   """
   references: [ElementReference]
+}
+
+"""
+Where a release's declared licence comes from (SCORE-39).
+"""
+enum DeclaredLicenseLevel {
+  ORGANIZATION
+  COMPONENT
+  RELEASE
 }
 
 type ArtifactComparison {
@@ -8373,14 +8558,6 @@ type BoardAgentState {
   For CLOSED, who closed it.
   """
   closedBy: AgentActor
-}
-
-type BoardAgentStaleMark {
-  """
-  The staleness rule: hopNoProgress, seatSilent or deliveryStuck.
-  """
-  rule: String
-  message: String
 }
 
 """
