@@ -613,8 +613,13 @@ func (v *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoard
 }
 
 // AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStaleBoardAgentStaleMark includes the requested fields of the GraphQL type BoardAgentStaleMark.
+// The GraphQL type's documentation follows.
+//
+// A staleness mark (task RD3-4): the rule, when the measured span began, how many minutes it had run at the
+// read, and the ALERT text the sweep posts for it. On an agent row, the rules that name the session
+// (hopNoProgress, seatSilent, deliveryStuck); on a task, the task-keyed rules (TPF-69).
 type AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoardAgentsBoardAgentRowStaleBoardAgentStaleMark struct {
-	// The staleness rule: hopNoProgress, seatSilent or deliveryStuck.
+	// The staleness rule: hopNoProgress, seatSilent, deliveryStuck or investigationOverdue.
 	Rule    *string `json:"rule"`
 	Message *string `json:"message"`
 }
@@ -805,6 +810,412 @@ type AgentBoardAgentsProgrammaticResponse struct {
 // GetAgentBoardProgrammatic returns AgentBoardAgentsProgrammaticResponse.AgentBoardProgrammatic, and is useful for accessing the field via an interface.
 func (v *AgentBoardAgentsProgrammaticResponse) GetAgentBoardProgrammatic() *AgentBoardAgentsProgrammaticAgentBoardProgrammaticAgentBoard {
 	return v.AgentBoardProgrammatic
+}
+
+// AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
+type AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard struct {
+	Uuid        *string           `json:"uuid"`
+	Org         *string           `json:"org"`
+	Name        *string           `json:"name"`
+	Description *string           `json:"description"`
+	Status      *AgentBoardStatus `json:"status"`
+	// Wired tracker repos, e.g. github:owner/repo. Registration validates task refs against them.
+	Sources []*string `json:"sources"`
+	// Where this board's documents are written, as the repository row it resolves
+	// to. Set by passing a URI to agentBoardUpdate; the row is the identity, so a
+	// remote written as ssh on one machine and https on another is the same
+	// repository here.
+	DocumentsRepo *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository `json:"documentsRepo"`
+	// Per-type path templates inside documentsRepo, as overridden on this board; omitted types use the defaults by scope (effectiveDocumentPaths).
+	DocumentPaths *json.RawMessage `json:"documentPaths"`
+	// The coordinator seat's served prompt by version (TPF-97): servedCoordinatorPrompt answered against heldVersions.
+	CoordinatorPromptByVersion *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorPromptByVersionServedPrompt `json:"coordinatorPromptByVersion"`
+	// Delivery-minimum alert: capabilities covered neither by an active role nor by the coordinator (coordinatorCapabilities). The minimum is CODE_PUSH + PR_MERGE; the tracker verbs are always the coordinator's.
+	MissingCapabilities []*string `json:"missingCapabilities"`
+	// Append-only board notices, newest last (pauses and resumes auto-append; coordinator posts ALERT/INFO). Replaces the coordinating-issue concept.
+	Events          []*AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent             `json:"events"`
+	Pause           *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPause                               `json:"pause"`
+	CoordinatorSeat *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat `json:"coordinatorSeat"`
+	// Max concurrently ASSIGNED tasks per agent on this board (default 2).
+	PerAgentWipLimit *int `json:"perAgentWipLimit"`
+	// Whether coordinator priority is advisory (LAX, default) or enforced at assignment (STRICT).
+	PriorityType *AgentBoardPriorityType `json:"priorityType"`
+	CreatedDate  *string                 `json:"createdDate"`
+}
+
+// GetUuid returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetOrg returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.Org, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetOrg() *string {
+	return v.Org
+}
+
+// GetName returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetName() *string {
+	return v.Name
+}
+
+// GetDescription returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.Description, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetDescription() *string {
+	return v.Description
+}
+
+// GetStatus returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.Status, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetStatus() *AgentBoardStatus {
+	return v.Status
+}
+
+// GetSources returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.Sources, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetSources() []*string {
+	return v.Sources
+}
+
+// GetDocumentsRepo returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.DocumentsRepo, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetDocumentsRepo() *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository {
+	return v.DocumentsRepo
+}
+
+// GetDocumentPaths returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.DocumentPaths, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetDocumentPaths() *json.RawMessage {
+	return v.DocumentPaths
+}
+
+// GetCoordinatorPromptByVersion returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.CoordinatorPromptByVersion, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetCoordinatorPromptByVersion() *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorPromptByVersionServedPrompt {
+	return v.CoordinatorPromptByVersion
+}
+
+// GetMissingCapabilities returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.MissingCapabilities, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetMissingCapabilities() []*string {
+	return v.MissingCapabilities
+}
+
+// GetEvents returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.Events, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetEvents() []*AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent {
+	return v.Events
+}
+
+// GetPause returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.Pause, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetPause() *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPause {
+	return v.Pause
+}
+
+// GetCoordinatorSeat returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.CoordinatorSeat, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetCoordinatorSeat() *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat {
+	return v.CoordinatorSeat
+}
+
+// GetPerAgentWipLimit returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.PerAgentWipLimit, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetPerAgentWipLimit() *int {
+	return v.PerAgentWipLimit
+}
+
+// GetPriorityType returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.PriorityType, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetPriorityType() *AgentBoardPriorityType {
+	return v.PriorityType
+}
+
+// GetCreatedDate returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorPromptByVersionServedPrompt includes the requested fields of the GraphQL type ServedPrompt.
+// The GraphQL type's documentation follows.
+//
+// A served text answered to a caller that may already hold it (task TPF-97). version is the SHA-256 of the
+// exact text as served, hex, 64 characters: it covers the whole served text (prompt, routing rules, merge
+// procedure, ladder section), unlike promptVersion, which pins the operator's prompt alone on sign-offs.
+// Pass the versions you hold as heldVersions: when the current one is among them status is UNCHANGED and
+// text is null -- keep what you hold; otherwise status is SERVED and text is the whole served text. Without
+// heldVersions the answer is always SERVED.
+type AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorPromptByVersionServedPrompt struct {
+	Version string             `json:"version"`
+	Status  ServedPromptStatus `json:"status"`
+	Text    *string            `json:"text"`
+}
+
+// GetVersion returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorPromptByVersionServedPrompt.Version, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorPromptByVersionServedPrompt) GetVersion() string {
+	return v.Version
+}
+
+// GetStatus returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorPromptByVersionServedPrompt.Status, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorPromptByVersionServedPrompt) GetStatus() ServedPromptStatus {
+	return v.Status
+}
+
+// GetText returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorPromptByVersionServedPrompt.Text, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorPromptByVersionServedPrompt) GetText() *string {
+	return v.Text
+}
+
+// AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat includes the requested fields of the GraphQL type AgentCoordinatorSeat.
+// The GraphQL type's documentation follows.
+//
+// Singleton coordinator seat: one session per board, held until that session closes.
+type AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat struct {
+	Session   *string `json:"session"`
+	Agent     *string `json:"agent"`
+	ClaimedAt *string `json:"claimedAt"`
+}
+
+// GetSession returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.Session, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.Agent, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetAgent() *string {
+	return v.Agent
+}
+
+// GetClaimedAt returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat.ClaimedAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardCoordinatorSeatAgentCoordinatorSeat) GetClaimedAt() *string {
+	return v.ClaimedAt
+}
+
+// AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository includes the requested fields of the GraphQL type VcsRepository.
+type AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository struct {
+	Uuid *string `json:"uuid"`
+	Uri  *string `json:"uri"`
+}
+
+// GetUuid returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetUri returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository.Uri, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardDocumentsRepoVcsRepository) GetUri() *string {
+	return v.Uri
+}
+
+// AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent includes the requested fields of the GraphQL type AgentBoardEvent.
+type AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent struct {
+	Kind    *AgentBoardEventKind                                                                                               `json:"kind"`
+	Message *string                                                                                                            `json:"message"`
+	Actor   *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor `json:"actor"`
+	EventAt *string                                                                                                            `json:"eventAt"`
+}
+
+// GetKind returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent.Kind, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent) GetKind() *AgentBoardEventKind {
+	return v.Kind
+}
+
+// GetMessage returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent.Message, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent) GetMessage() *string {
+	return v.Message
+}
+
+// GetActor returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent.Actor, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent) GetActor() *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor {
+	return v.Actor
+}
+
+// GetEventAt returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent.EventAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEvent) GetEventAt() *string {
+	return v.EventAt
+}
+
+// AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor) __premarshalJSON() (*__premarshalAgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor, error) {
+	var retval __premarshalAgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardEventsAgentBoardEventActorAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPause includes the requested fields of the GraphQL type AgentBoardPause.
+type AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPause struct {
+	Level    *AgentBoardPauseLevel                                                                                 `json:"level"`
+	Reason   *string                                                                                               `json:"reason"`
+	PausedBy *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor `json:"pausedBy"`
+	PausedAt *string                                                                                               `json:"pausedAt"`
+}
+
+// GetLevel returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPause.Level, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPause) GetLevel() *AgentBoardPauseLevel {
+	return v.Level
+}
+
+// GetReason returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPause.Reason, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPause) GetReason() *string {
+	return v.Reason
+}
+
+// GetPausedBy returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPause.PausedBy, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPause) GetPausedBy() *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor {
+	return v.PausedBy
+}
+
+// GetPausedAt returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPause.PausedAt, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPause) GetPausedAt() *string {
+	return v.PausedAt
+}
+
+// AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor) __premarshalJSON() (*__premarshalAgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor, error) {
+	var retval __premarshalAgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoardPausePausedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentBoardCoordinateByPromptVersionResponse is returned by AgentBoardCoordinateByPromptVersion on success.
+type AgentBoardCoordinateByPromptVersionResponse struct {
+	AgentBoardCoordinateProgrammatic *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard `json:"agentBoardCoordinateProgrammatic"`
+}
+
+// GetAgentBoardCoordinateProgrammatic returns AgentBoardCoordinateByPromptVersionResponse.AgentBoardCoordinateProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentBoardCoordinateByPromptVersionResponse) GetAgentBoardCoordinateProgrammatic() *AgentBoardCoordinateByPromptVersionAgentBoardCoordinateProgrammaticAgentBoard {
+	return v.AgentBoardCoordinateProgrammatic
 }
 
 // AgentBoardCoordinateProgrammaticAgentBoardCoordinateProgrammaticAgentBoard includes the requested fields of the GraphQL type AgentBoard.
@@ -6668,6 +7079,167 @@ func (v *AgentProducedOutputInput) GetScope() *AgentInputScope { return v.Scope 
 // GetRequired returns AgentProducedOutputInput.Required, and is useful for accessing the field via an interface.
 func (v *AgentProducedOutputInput) GetRequired() *bool { return v.Required }
 
+// AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig includes the requested fields of the GraphQL type AgentTaskRoleConfig.
+// The GraphQL type's documentation follows.
+//
+// Board-scoped role definition. The coordinator is implicit and never a row here.
+type AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig struct {
+	Uuid *string `json:"uuid"`
+	Name *string `json:"name"`
+	// The version a sign-off pins: a hash of the operator's prompt (with the ladder section on a board that
+	// has one), never of the routing rules; promptByVersion.version covers the whole served text.
+	PromptVersion *string `json:"promptVersion"`
+	// Capabilities an assignee of this role must hold (declared, unverified in v1).
+	RequiredCapabilities []*AgentCapability `json:"requiredCapabilities"`
+	// The served prompt by version (TPF-97): servedPrompt answered against heldVersions; see ServedPrompt.
+	PromptByVersion *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigPromptByVersionServedPrompt `json:"promptByVersion"`
+	// What every task in this role must be able to read before it starts.
+	RequiredInputs []*AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite `json:"requiredInputs"`
+	// What a hop in this role must leave behind: the mirror of requiredInputs.
+	// Enforced at sign-off, not at assignment -- the hop has to run before it
+	// can produce anything.
+	ProducesOutputs []*AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput `json:"producesOutputs"`
+}
+
+// GetUuid returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetName returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.Name, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetName() *string {
+	return v.Name
+}
+
+// GetPromptVersion returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// GetRequiredCapabilities returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.RequiredCapabilities, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetRequiredCapabilities() []*AgentCapability {
+	return v.RequiredCapabilities
+}
+
+// GetPromptByVersion returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.PromptByVersion, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetPromptByVersion() *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigPromptByVersionServedPrompt {
+	return v.PromptByVersion
+}
+
+// GetRequiredInputs returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.RequiredInputs, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetRequiredInputs() []*AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite {
+	return v.RequiredInputs
+}
+
+// GetProducesOutputs returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.ProducesOutputs, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetProducesOutputs() []*AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput {
+	return v.ProducesOutputs
+}
+
+// AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput includes the requested fields of the GraphQL type AgentProducedOutput.
+// The GraphQL type's documentation follows.
+//
+// A document a role is expected to publish during its hop.
+type AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput struct {
+	Specification *SpecificationType `json:"specification"`
+	Scope         *AgentInputScope   `json:"scope"`
+	// False makes it advisory, for roles that sometimes have nothing to write.
+	Required *bool `json:"required"`
+}
+
+// GetSpecification returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput.Specification, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetScope returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput.Scope, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput) GetScope() *AgentInputScope {
+	return v.Scope
+}
+
+// GetRequired returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput.Required, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput) GetRequired() *bool {
+	return v.Required
+}
+
+// AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigPromptByVersionServedPrompt includes the requested fields of the GraphQL type ServedPrompt.
+// The GraphQL type's documentation follows.
+//
+// A served text answered to a caller that may already hold it (task TPF-97). version is the SHA-256 of the
+// exact text as served, hex, 64 characters: it covers the whole served text (prompt, routing rules, merge
+// procedure, ladder section), unlike promptVersion, which pins the operator's prompt alone on sign-offs.
+// Pass the versions you hold as heldVersions: when the current one is among them status is UNCHANGED and
+// text is null -- keep what you hold; otherwise status is SERVED and text is the whole served text. Without
+// heldVersions the answer is always SERVED.
+type AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigPromptByVersionServedPrompt struct {
+	Version string             `json:"version"`
+	Status  ServedPromptStatus `json:"status"`
+	Text    *string            `json:"text"`
+}
+
+// GetVersion returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigPromptByVersionServedPrompt.Version, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigPromptByVersionServedPrompt) GetVersion() string {
+	return v.Version
+}
+
+// GetStatus returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigPromptByVersionServedPrompt.Status, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigPromptByVersionServedPrompt) GetStatus() ServedPromptStatus {
+	return v.Status
+}
+
+// GetText returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigPromptByVersionServedPrompt.Text, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigPromptByVersionServedPrompt) GetText() *string {
+	return v.Text
+}
+
+// AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite includes the requested fields of the GraphQL type AgentTaskPrerequisite.
+type AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite struct {
+	Kind *AgentInputKind `json:"kind"`
+	// DOCUMENT only: which specification document, resolved against the board's target node.
+	Specification *SpecificationType `json:"specification"`
+	// RELEASE only.
+	Scope        *AgentInputScope      `json:"scope"`
+	MinLifecycle *ReleaseLifecycleEnum `json:"minLifecycle"`
+	// Null falls back to the board's defaultInputResolution.
+	Resolution *AgentInputResolution `json:"resolution"`
+}
+
+// GetKind returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite.Kind, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite) GetKind() *AgentInputKind {
+	return v.Kind
+}
+
+// GetSpecification returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite.Specification, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetScope returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite.Scope, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite) GetScope() *AgentInputScope {
+	return v.Scope
+}
+
+// GetMinLifecycle returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite.MinLifecycle, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite) GetMinLifecycle() *ReleaseLifecycleEnum {
+	return v.MinLifecycle
+}
+
+// GetResolution returns AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite.Resolution, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite) GetResolution() *AgentInputResolution {
+	return v.Resolution
+}
+
+// AgentRoleBriefByPromptVersionResponse is returned by AgentRoleBriefByPromptVersion on success.
+type AgentRoleBriefByPromptVersionResponse struct {
+	// Agent-key auth: a board's role configuration in order.
+	AgentTaskRoleConfigsProgrammatic []*AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig `json:"agentTaskRoleConfigsProgrammatic"`
+}
+
+// GetAgentTaskRoleConfigsProgrammatic returns AgentRoleBriefByPromptVersionResponse.AgentTaskRoleConfigsProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentRoleBriefByPromptVersionResponse) GetAgentTaskRoleConfigsProgrammatic() []*AgentRoleBriefByPromptVersionAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig {
+	return v.AgentTaskRoleConfigsProgrammatic
+}
+
 // AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig includes the requested fields of the GraphQL type AgentTaskRoleConfig.
 // The GraphQL type's documentation follows.
 //
@@ -6679,7 +7251,8 @@ type AgentRoleBriefProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConf
 	// routing rules composed from its settings and merge procedure -- what assign and task next hand over,
 	// readable without taking a task, so a fresh context can brief itself.
 	ServedPrompt *string `json:"servedPrompt"`
-	// The version the served prompt is pinned by on a sign-off: a hash of the prompt alone.
+	// The version a sign-off pins: a hash of the operator's prompt (with the ladder section on a board that
+	// has one), never of the routing rules; promptByVersion.version covers the whole served text.
 	PromptVersion *string `json:"promptVersion"`
 	// Capabilities an assignee of this role must hold (declared, unverified in v1).
 	RequiredCapabilities []*AgentCapability `json:"requiredCapabilities"`
@@ -7388,6 +7961,1333 @@ type AgentTaskAnswerResponse struct {
 // GetAgentTaskAnswer returns AgentTaskAnswerResponse.AgentTaskAnswer, and is useful for accessing the field via an interface.
 func (v *AgentTaskAnswerResponse) GetAgentTaskAnswer() *AgentTaskAnswerAgentTaskAnswerAgentTask {
 	return v.AgentTaskAnswer
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment includes the requested fields of the GraphQL type AgentTaskAssignment.
+// The GraphQL type's documentation follows.
+//
+// What a polling/assigned worker receives: the task, the role to assume and its served prompt.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment struct {
+	Task          *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask `json:"task"`
+	Role          *string                                                                                    `json:"role"`
+	PromptVersion *string                                                                                    `json:"promptVersion"`
+	// What this hop is expected to cost, in USD micros: the role's allowance. Not a cap -- a hop that
+	// will blow it should be returned (reason OTHER, saying so) rather than pressed on. Null when the
+	// role sets none.
+	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
+	// The served prompt by version (TPF-97): the same text as rolePrompt, answered against heldVersions.
+	// Select this instead of rolePrompt to receive the text only when it changed; rolePrompt keeps serving
+	// the text to every selection that asks for it.
+	PromptByVersion *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt `json:"promptByVersion"`
+}
+
+// GetTask returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment.Task, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment) GetTask() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask {
+	return v.Task
+}
+
+// GetRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment) GetRole() *string {
+	return v.Role
+}
+
+// GetPromptVersion returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// GetHopBudgetMicros returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment.HopBudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment) GetHopBudgetMicros() *int64 {
+	return v.HopBudgetMicros
+}
+
+// GetPromptByVersion returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment.PromptByVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment) GetPromptByVersion() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt {
+	return v.PromptByVersion
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt includes the requested fields of the GraphQL type ServedPrompt.
+// The GraphQL type's documentation follows.
+//
+// A served text answered to a caller that may already hold it (task TPF-97). version is the SHA-256 of the
+// exact text as served, hex, 64 characters: it covers the whole served text (prompt, routing rules, merge
+// procedure, ladder section), unlike promptVersion, which pins the operator's prompt alone on sign-offs.
+// Pass the versions you hold as heldVersions: when the current one is among them status is UNCHANGED and
+// text is null -- keep what you hold; otherwise status is SERVED and text is the whole served text. Without
+// heldVersions the answer is always SERVED.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt struct {
+	Version string             `json:"version"`
+	Status  ServedPromptStatus `json:"status"`
+	Text    *string            `json:"text"`
+}
+
+// GetVersion returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt.Version, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt) GetVersion() string {
+	return v.Version
+}
+
+// GetStatus returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt) GetStatus() ServedPromptStatus {
+	return v.Status
+}
+
+// GetText returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt.Text, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt) GetText() *string {
+	return v.Text
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
+	SourceUrl   *string          `json:"sourceUrl"`
+	Status      *AgentTaskStatus `json:"status"`
+	// Role the task is queued for / worked in; retained as last role until re-authorized.
+	Role *string `json:"role"`
+	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
+	OrderIndex *int `json:"orderIndex"`
+	// Declared work level, 0 to 9; null when not set, in which case the board's defaultWorkLevel
+	// applies (effectiveWorkLevel). The default is resolved on read, never written here (RD2-1).
+	WorkLevel *int `json:"workLevel"`
+	// The work level the board reads: workLevel, else the board's defaultWorkLevel, else null (RD2-1).
+	EffectiveWorkLevel *int `json:"effectiveWorkLevel"`
+	// Who last set or cleared the work level after registration, and when (RD2-1).
+	WorkLevelSetBy *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor `json:"workLevelSetBy"`
+	WorkLevelSetAt *string                                                                                                            `json:"workLevelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
+	DependsOn []*string `json:"dependsOn"`
+	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
+	RequireHumanReview *bool `json:"requireHumanReview"`
+	// Hold state while ON_HOLD; null otherwise.
+	Hold       *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold                              `json:"hold"`
+	Assignment *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
+	SignOffs   []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
+	Returns    []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn          `json:"returns"`
+	ParentTask *string                                                                                                                     `json:"parentTask"`
+	ChildTasks []*string                                                                                                                   `json:"childTasks"`
+	// Every session that ever held the assignment.
+	Sessions            []*string `json:"sessions"`
+	PrUrls              []*string `json:"prUrls"`
+	RegisteredBySession *string   `json:"registeredBySession"`
+	CreatedDate         *string   `json:"createdDate"`
+	CompletedAt         *string   `json:"completedAt"`
+	// Append-only status transition log, oldest first.
+	StatusHistory []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
+	// Who last set orderIndex, the coordinator or a person, and when.
+	OrderSetBy *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor `json:"orderSetBy"`
+	OrderSetAt *string                                                                                                        `json:"orderSetAt"`
+	// Required roles a person completed the task without, having said why in the completing status change.
+	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
+	QuestionStack []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+	// This task's document releases, newest first.
+	Documents []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease `json:"documents"`
+}
+
+// GetKey returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetNumber() *int {
+	return v.Number
+}
+
+// GetUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetOrg returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Org, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetOrg() *string {
+	return v.Org
+}
+
+// GetBoard returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Board, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetBoard() *string {
+	return v.Board
+}
+
+// GetExternalRef returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetExternalRef() *string {
+	return v.ExternalRef
+}
+
+// GetTitle returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetTitle() *string {
+	return v.Title
+}
+
+// GetDescription returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetDescription() *string {
+	return v.Description
+}
+
+// GetSourceUrl returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.SourceUrl, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetSourceUrl() *string {
+	return v.SourceUrl
+}
+
+// GetStatus returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetStatus() *AgentTaskStatus {
+	return v.Status
+}
+
+// GetRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetRole() *string {
+	return v.Role
+}
+
+// GetOrderIndex returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.OrderIndex, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetOrderIndex() *int {
+	return v.OrderIndex
+}
+
+// GetWorkLevel returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.WorkLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetWorkLevel() *int {
+	return v.WorkLevel
+}
+
+// GetEffectiveWorkLevel returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.EffectiveWorkLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetEffectiveWorkLevel() *int {
+	return v.EffectiveWorkLevel
+}
+
+// GetWorkLevelSetBy returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.WorkLevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetWorkLevelSetBy() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor {
+	return v.WorkLevelSetBy
+}
+
+// GetWorkLevelSetAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.WorkLevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetWorkLevelSetAt() *string {
+	return v.WorkLevelSetAt
+}
+
+// GetGroup returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetGroup() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetTags() []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
+}
+
+// GetDependsOn returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.DependsOn, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetDependsOn() []*string {
+	return v.DependsOn
+}
+
+// GetRequireHumanReview returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetRequireHumanReview() *bool {
+	return v.RequireHumanReview
+}
+
+// GetHold returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Hold, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetHold() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold {
+	return v.Hold
+}
+
+// GetAssignment returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Assignment, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetAssignment() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment {
+	return v.Assignment
+}
+
+// GetSignOffs returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.SignOffs, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetSignOffs() []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff {
+	return v.SignOffs
+}
+
+// GetReturns returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Returns, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetReturns() []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn {
+	return v.Returns
+}
+
+// GetParentTask returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetParentTask() *string {
+	return v.ParentTask
+}
+
+// GetChildTasks returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.ChildTasks, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetChildTasks() []*string {
+	return v.ChildTasks
+}
+
+// GetSessions returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Sessions, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetSessions() []*string {
+	return v.Sessions
+}
+
+// GetPrUrls returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.PrUrls, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetPrUrls() []*string {
+	return v.PrUrls
+}
+
+// GetRegisteredBySession returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.RegisteredBySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetRegisteredBySession() *string {
+	return v.RegisteredBySession
+}
+
+// GetCreatedDate returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetCompletedAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.CompletedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetCompletedAt() *string {
+	return v.CompletedAt
+}
+
+// GetStatusHistory returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.StatusHistory, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetStatusHistory() []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange {
+	return v.StatusHistory
+}
+
+// GetOrderSetBy returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.OrderSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetOrderSetBy() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor {
+	return v.OrderSetBy
+}
+
+// GetOrderSetAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.OrderSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetOrderSetAt() *string {
+	return v.OrderSetAt
+}
+
+// GetRequiredRolesSkipped returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetRequiredRolesSkipped() []*string {
+	return v.RequiredRolesSkipped
+}
+
+// GetQuestionStack returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.QuestionStack, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetQuestionStack() []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame {
+	return v.QuestionStack
+}
+
+// GetDocuments returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.Documents, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetDocuments() []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease {
+	return v.Documents
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment includes the requested fields of the GraphQL type AgentTaskWorkAssignment.
+// The GraphQL type's documentation follows.
+//
+// The single live assignment -- bound to session liveness, ended on any session close.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment struct {
+	Session       *string `json:"session"`
+	Agent         *string `json:"agent"`
+	Role          *string `json:"role"`
+	AssignedAt    *string `json:"assignedAt"`
+	PromptVersion *string `json:"promptVersion"`
+}
+
+// GetSession returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetAgent() *string {
+	return v.Agent
+}
+
+// GetRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetRole() *string {
+	return v.Role
+}
+
+// GetAssignedAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetPromptVersion returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease includes the requested fields of the GraphQL type Release.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease struct {
+	Uuid      *string               `json:"uuid"`
+	Version   *string               `json:"version"`
+	Lifecycle *ReleaseLifecycleEnum `json:"lifecycle"`
+	// Pointer to the document bytes this release publishes. Non-null only on releases of
+	// specification components -- an ordinary software release has no document.
+	Document *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef `json:"document"`
+}
+
+// GetUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetVersion returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease.Version, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease) GetVersion() *string {
+	return v.Version
+}
+
+// GetLifecycle returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease.Lifecycle, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease) GetLifecycle() *ReleaseLifecycleEnum {
+	return v.Lifecycle
+}
+
+// GetDocument returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease.Document, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease) GetDocument() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef {
+	return v.Document
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef includes the requested fields of the GraphQL type DocumentRef.
+// The GraphQL type's documentation follows.
+//
+// Pointer from a release to document bytes in a repository, present only on
+// releases of specification components. The commit and repository are NOT
+// repeated here: they come from the release's source code entry, so the
+// recognised-commit predicate and signature verification apply to a document
+// exactly as they do to code.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef struct {
+	Specification *SpecificationType `json:"specification"`
+	// Repo-relative path at the release's commit.
+	Path *string `json:"path"`
+	// 1-based count of this task's rounds of this type.
+	Round *int `json:"round"`
+	// The task this round belongs to, for TASK-scoped types.
+	Task *string `json:"task"`
+	// A round a role published on a task it did not hold (task e97fde56): assembled at publish, never
+	// a hop's output. False or absent on every other round.
+	Advisory *bool `json:"advisory"`
+	// The role the round was published as: the holding role, or for an advisory round the author's. Absent on older rounds.
+	PublishedByRole *string `json:"publishedByRole"`
+}
+
+// GetSpecification returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef) GetSpecification() *SpecificationType {
+	return v.Specification
+}
+
+// GetPath returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef) GetPath() *string {
+	return v.Path
+}
+
+// GetRound returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef) GetRound() *int {
+	return v.Round
+}
+
+// GetTask returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef.Task, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef) GetTask() *string {
+	return v.Task
+}
+
+// GetAdvisory returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef.Advisory, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef) GetAdvisory() *bool {
+	return v.Advisory
+}
+
+// GetPublishedByRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef.PublishedByRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsReleaseDocumentDocumentRef) GetPublishedByRole() *string {
+	return v.PublishedByRole
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold struct {
+	Level *AgentTaskHoldLevel `json:"level"`
+	Kind  *AgentTaskHoldKind  `json:"kind"`
+	// Role whose sign-off is under review; set when kind = HUMAN_GATE.
+	GateRole *string                                                                                                        `json:"gateRole"`
+	Reason   *string                                                                                                        `json:"reason"`
+	HeldBy   *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor `json:"heldBy"`
+	HeldAt   *string                                                                                                        `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to lift once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
+}
+
+// GetLevel returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetLevel() *AgentTaskHoldLevel {
+	return v.Level
+}
+
+// GetKind returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetKind() *AgentTaskHoldKind {
+	return v.Kind
+}
+
+// GetGateRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold.GateRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetGateRole() *string {
+	return v.GateRole
+}
+
+// GetReason returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetReason() *string {
+	return v.Reason
+}
+
+// GetHeldBy returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold.HeldBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetHeldBy() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor {
+	return v.HeldBy
+}
+
+// GetHeldAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetHeldAt() *string {
+	return v.HeldAt
+}
+
+// GetStop returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor, error) {
+	var retval __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor, error) {
+	var retval __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
+// The GraphQL type's documentation follows.
+//
+// One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame struct {
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
+	QuestionsRelease *string `json:"questionsRelease"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
+}
+
+// GetAskingRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame) GetAskingRole() *string {
+	return v.AskingRole
+}
+
+// GetAskingSession returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.AskingSession, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame) GetAskingSession() *string {
+	return v.AskingSession
+}
+
+// GetAskingAgent returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.AskingAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame) GetAskingAgent() *string {
+	return v.AskingAgent
+}
+
+// GetQuestionsRelease returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.QuestionsRelease, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame) GetQuestionsRelease() *string {
+	return v.QuestionsRelease
+}
+
+// GetAnsweringRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.AnsweringRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame) GetAnsweringRole() *string {
+	return v.AnsweringRole
+}
+
+// GetAskedAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.AskedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame) GetAskedAt() *string {
+	return v.AskedAt
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn includes the requested fields of the GraphQL type AgentTaskReturn.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn struct {
+	Role        *string                `json:"role"`
+	Agent       *string                `json:"agent"`
+	Session     *string                `json:"session"`
+	Reason      *AgentTaskReturnReason `json:"reason"`
+	Description *string                `json:"description"`
+	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetSession() *string {
+	return v.Session
+}
+
+// GetReason returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetReason() *AgentTaskReturnReason {
+	return v.Reason
+}
+
+// GetDescription returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetDescription() *string {
+	return v.Description
+}
+
+// GetReturnedAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.ReturnedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetReturnedAt() *string {
+	return v.ReturnedAt
+}
+
+// GetUsage returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
+// The GraphQL type's documentation follows.
+//
+// Append-only per-hop sign-off stored in ReARM; promptVersion pins the served prompt the agent assumed.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff struct {
+	Role          *string              `json:"role"`
+	Agent         *string              `json:"agent"`
+	Session       *string              `json:"session"`
+	AssignedAt    *string              `json:"assignedAt"`
+	SignedOffAt   *string              `json:"signedOffAt"`
+	Outcome       *AgentSignOffOutcome `json:"outcome"`
+	Note          *string              `json:"note"`
+	PromptVersion *string              `json:"promptVersion"`
+	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
+	ReviewedBy *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
+	Usage *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetSession() *string {
+	return v.Session
+}
+
+// GetAssignedAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetSignedOffAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetOutcome returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Outcome, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetOutcome() *AgentSignOffOutcome {
+	return v.Outcome
+}
+
+// GetNote returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetNote() *string {
+	return v.Note
+}
+
+// GetPromptVersion returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// GetReviewedBy returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
+// The GraphQL type's documentation follows.
+//
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange struct {
+	From    *AgentTaskStatus                                                                                                                            `json:"from"`
+	To      *AgentTaskStatus                                                                                                                            `json:"to"`
+	At      *string                                                                                                                                     `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                                         `json:"trigger"`
+	Actor   *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	// What the actor said: a completion's or cancellation's note, or routing's reason and the role it sent the task to (RD2-23). Null on changes recorded before notes were kept.
+	Note *string `json:"note"`
+}
+
+// GetFrom returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange) GetFrom() *AgentTaskStatus {
+	return v.From
+}
+
+// GetTo returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.To, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange) GetTo() *AgentTaskStatus {
+	return v.To
+}
+
+// GetAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange) GetAt() *string {
+	return v.At
+}
+
+// GetTrigger returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.Trigger, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange) GetTrigger() *AgentStatusTrigger {
+	return v.Trigger
+}
+
+// GetActor returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.Actor, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange) GetActor() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor {
+	return v.Actor
+}
+
+// GetNote returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor, error) {
+	var retval __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAssignByPromptVersionResponse is returned by AgentTaskAssignByPromptVersion on success.
+type AgentTaskAssignByPromptVersionResponse struct {
+	// roles: the roles this agent declared on agentTaskNextProgrammatic, if any. A task for any
+	// other role is refused, and on a STRICT board priority is enforced among these roles only.
+	AgentTaskAssignProgrammatic *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment `json:"agentTaskAssignProgrammatic"`
+}
+
+// GetAgentTaskAssignProgrammatic returns AgentTaskAssignByPromptVersionResponse.AgentTaskAssignProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionResponse) GetAgentTaskAssignProgrammatic() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment {
+	return v.AgentTaskAssignProgrammatic
 }
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignment includes the requested fields of the GraphQL type AgentTaskAssignment.
@@ -19736,8 +21636,8 @@ type AgentTaskHoldProgrammaticResponse struct {
 	// returns the task to the loop;
 	// - the session holding the task's current assignment, at OPERATOR level only (task RD4-5), with the question
 	// for the person as the reason: the task shows "awaiting the operator: <question>", the board's writers are
-	// told, and the hop stays assigned to the session. A person lifts the hold with the answer as the note, which
-	// is recorded on the task, and the hop resumes with its holder.
+	// told, and the hop ends (task TPF-66). A person lifts the hold with the answer as the note, which is
+	// recorded on the task, and the task is queued again for its role.
 	// - the coordinator seat, at OPERATOR level with the question as the reason (task RD4-17), on a task in
 	// PENDING_INTAKE, QUEUED, AWAITING_COORDINATOR or DELIVERING: the same record and notification. A person's
 	// release with the answer as the note, or anything else a person does on the task (answering its questions,
@@ -22994,6 +24894,1252 @@ func (v *AgentTaskLinkPrProgrammaticResponse) GetAgentTaskLinkPrProgrammatic() *
 	return v.AgentTaskLinkPrProgrammatic
 }
 
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment includes the requested fields of the GraphQL type AgentTaskAssignment.
+// The GraphQL type's documentation follows.
+//
+// What a polling/assigned worker receives: the task, the role to assume and its served prompt.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment struct {
+	Task          *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask `json:"task"`
+	Role          *string                                                                                `json:"role"`
+	PromptVersion *string                                                                                `json:"promptVersion"`
+	// What this hop is expected to cost, in USD micros: the role's allowance. Not a cap -- a hop that
+	// will blow it should be returned (reason OTHER, saying so) rather than pressed on. Null when the
+	// role sets none.
+	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
+	// The served prompt by version (TPF-97): the same text as rolePrompt, answered against heldVersions.
+	// Select this instead of rolePrompt to receive the text only when it changed; rolePrompt keeps serving
+	// the text to every selection that asks for it.
+	PromptByVersion *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt `json:"promptByVersion"`
+}
+
+// GetTask returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment.Task, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment) GetTask() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask {
+	return v.Task
+}
+
+// GetRole returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment) GetRole() *string {
+	return v.Role
+}
+
+// GetPromptVersion returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// GetHopBudgetMicros returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment.HopBudgetMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment) GetHopBudgetMicros() *int64 {
+	return v.HopBudgetMicros
+}
+
+// GetPromptByVersion returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment.PromptByVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment) GetPromptByVersion() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt {
+	return v.PromptByVersion
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt includes the requested fields of the GraphQL type ServedPrompt.
+// The GraphQL type's documentation follows.
+//
+// A served text answered to a caller that may already hold it (task TPF-97). version is the SHA-256 of the
+// exact text as served, hex, 64 characters: it covers the whole served text (prompt, routing rules, merge
+// procedure, ladder section), unlike promptVersion, which pins the operator's prompt alone on sign-offs.
+// Pass the versions you hold as heldVersions: when the current one is among them status is UNCHANGED and
+// text is null -- keep what you hold; otherwise status is SERVED and text is the whole served text. Without
+// heldVersions the answer is always SERVED.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt struct {
+	Version string             `json:"version"`
+	Status  ServedPromptStatus `json:"status"`
+	Text    *string            `json:"text"`
+}
+
+// GetVersion returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt.Version, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt) GetVersion() string {
+	return v.Version
+}
+
+// GetStatus returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt) GetStatus() ServedPromptStatus {
+	return v.Status
+}
+
+// GetText returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt.Text, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentPromptByVersionServedPrompt) GetText() *string {
+	return v.Text
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md §4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
+	SourceUrl   *string          `json:"sourceUrl"`
+	Status      *AgentTaskStatus `json:"status"`
+	// Role the task is queued for / worked in; retained as last role until re-authorized.
+	Role *string `json:"role"`
+	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
+	OrderIndex *int `json:"orderIndex"`
+	// Declared work level, 0 to 9; null when not set, in which case the board's defaultWorkLevel
+	// applies (effectiveWorkLevel). The default is resolved on read, never written here (RD2-1).
+	WorkLevel *int `json:"workLevel"`
+	// The work level the board reads: workLevel, else the board's defaultWorkLevel, else null (RD2-1).
+	EffectiveWorkLevel *int `json:"effectiveWorkLevel"`
+	// Who last set or cleared the work level after registration, and when (RD2-1).
+	WorkLevelSetBy *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor `json:"workLevelSetBy"`
+	WorkLevelSetAt *string                                                                                                        `json:"workLevelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
+	DependsOn []*string `json:"dependsOn"`
+	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
+	RequireHumanReview *bool `json:"requireHumanReview"`
+	// Hold state while ON_HOLD; null otherwise.
+	Hold       *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold                              `json:"hold"`
+	Assignment *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
+	SignOffs   []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
+	Returns    []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn          `json:"returns"`
+	ParentTask *string                                                                                                                 `json:"parentTask"`
+	ChildTasks []*string                                                                                                               `json:"childTasks"`
+	// Every session that ever held the assignment.
+	Sessions            []*string `json:"sessions"`
+	PrUrls              []*string `json:"prUrls"`
+	RegisteredBySession *string   `json:"registeredBySession"`
+	CreatedDate         *string   `json:"createdDate"`
+	CompletedAt         *string   `json:"completedAt"`
+	// Append-only status transition log, oldest first.
+	StatusHistory []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
+	// Who last set orderIndex, the coordinator or a person, and when.
+	OrderSetBy *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor `json:"orderSetBy"`
+	OrderSetAt *string                                                                                                    `json:"orderSetAt"`
+	// Required roles a person completed the task without, having said why in the completing status change.
+	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
+	QuestionStack []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetNumber() *int {
+	return v.Number
+}
+
+// GetUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetOrg returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Org, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetOrg() *string {
+	return v.Org
+}
+
+// GetBoard returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Board, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetBoard() *string {
+	return v.Board
+}
+
+// GetExternalRef returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetExternalRef() *string {
+	return v.ExternalRef
+}
+
+// GetTitle returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetTitle() *string {
+	return v.Title
+}
+
+// GetDescription returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetDescription() *string {
+	return v.Description
+}
+
+// GetSourceUrl returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.SourceUrl, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetSourceUrl() *string {
+	return v.SourceUrl
+}
+
+// GetStatus returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetStatus() *AgentTaskStatus {
+	return v.Status
+}
+
+// GetRole returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetRole() *string {
+	return v.Role
+}
+
+// GetOrderIndex returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.OrderIndex, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetOrderIndex() *int {
+	return v.OrderIndex
+}
+
+// GetWorkLevel returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.WorkLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetWorkLevel() *int {
+	return v.WorkLevel
+}
+
+// GetEffectiveWorkLevel returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.EffectiveWorkLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetEffectiveWorkLevel() *int {
+	return v.EffectiveWorkLevel
+}
+
+// GetWorkLevelSetBy returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.WorkLevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetWorkLevelSetBy() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor {
+	return v.WorkLevelSetBy
+}
+
+// GetWorkLevelSetAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.WorkLevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetWorkLevelSetAt() *string {
+	return v.WorkLevelSetAt
+}
+
+// GetGroup returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetGroup() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetTags() []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
+}
+
+// GetDependsOn returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.DependsOn, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetDependsOn() []*string {
+	return v.DependsOn
+}
+
+// GetRequireHumanReview returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetRequireHumanReview() *bool {
+	return v.RequireHumanReview
+}
+
+// GetHold returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Hold, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetHold() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold {
+	return v.Hold
+}
+
+// GetAssignment returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Assignment, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetAssignment() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment {
+	return v.Assignment
+}
+
+// GetSignOffs returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.SignOffs, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetSignOffs() []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff {
+	return v.SignOffs
+}
+
+// GetReturns returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Returns, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetReturns() []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn {
+	return v.Returns
+}
+
+// GetParentTask returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetParentTask() *string {
+	return v.ParentTask
+}
+
+// GetChildTasks returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.ChildTasks, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetChildTasks() []*string {
+	return v.ChildTasks
+}
+
+// GetSessions returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.Sessions, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetSessions() []*string {
+	return v.Sessions
+}
+
+// GetPrUrls returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.PrUrls, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetPrUrls() []*string {
+	return v.PrUrls
+}
+
+// GetRegisteredBySession returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.RegisteredBySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetRegisteredBySession() *string {
+	return v.RegisteredBySession
+}
+
+// GetCreatedDate returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetCompletedAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.CompletedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetCompletedAt() *string {
+	return v.CompletedAt
+}
+
+// GetStatusHistory returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.StatusHistory, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetStatusHistory() []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange {
+	return v.StatusHistory
+}
+
+// GetOrderSetBy returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.OrderSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetOrderSetBy() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor {
+	return v.OrderSetBy
+}
+
+// GetOrderSetAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.OrderSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetOrderSetAt() *string {
+	return v.OrderSetAt
+}
+
+// GetRequiredRolesSkipped returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetRequiredRolesSkipped() []*string {
+	return v.RequiredRolesSkipped
+}
+
+// GetQuestionStack returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.QuestionStack, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetQuestionStack() []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame {
+	return v.QuestionStack
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment includes the requested fields of the GraphQL type AgentTaskWorkAssignment.
+// The GraphQL type's documentation follows.
+//
+// The single live assignment -- bound to session liveness, ended on any session close.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment struct {
+	Session       *string `json:"session"`
+	Agent         *string `json:"agent"`
+	Role          *string `json:"role"`
+	AssignedAt    *string `json:"assignedAt"`
+	PromptVersion *string `json:"promptVersion"`
+}
+
+// GetSession returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetAgent() *string {
+	return v.Agent
+}
+
+// GetRole returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetRole() *string {
+	return v.Role
+}
+
+// GetAssignedAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetPromptVersion returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold struct {
+	Level *AgentTaskHoldLevel `json:"level"`
+	Kind  *AgentTaskHoldKind  `json:"kind"`
+	// Role whose sign-off is under review; set when kind = HUMAN_GATE.
+	GateRole *string                                                                                                    `json:"gateRole"`
+	Reason   *string                                                                                                    `json:"reason"`
+	HeldBy   *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor `json:"heldBy"`
+	HeldAt   *string                                                                                                    `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to lift once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
+}
+
+// GetLevel returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetLevel() *AgentTaskHoldLevel {
+	return v.Level
+}
+
+// GetKind returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetKind() *AgentTaskHoldKind {
+	return v.Kind
+}
+
+// GetGateRole returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold.GateRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetGateRole() *string {
+	return v.GateRole
+}
+
+// GetReason returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetReason() *string {
+	return v.Reason
+}
+
+// GetHeldBy returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold.HeldBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetHeldBy() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor {
+	return v.HeldBy
+}
+
+// GetHeldAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetHeldAt() *string {
+	return v.HeldAt
+}
+
+// GetStop returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor, error) {
+	var retval __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor, error) {
+	var retval __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskOrderSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
+// The GraphQL type's documentation follows.
+//
+// One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame struct {
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
+	QuestionsRelease *string `json:"questionsRelease"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
+}
+
+// GetAskingRole returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame) GetAskingRole() *string {
+	return v.AskingRole
+}
+
+// GetAskingSession returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.AskingSession, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame) GetAskingSession() *string {
+	return v.AskingSession
+}
+
+// GetAskingAgent returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.AskingAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame) GetAskingAgent() *string {
+	return v.AskingAgent
+}
+
+// GetQuestionsRelease returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.QuestionsRelease, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame) GetQuestionsRelease() *string {
+	return v.QuestionsRelease
+}
+
+// GetAnsweringRole returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.AnsweringRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame) GetAnsweringRole() *string {
+	return v.AnsweringRole
+}
+
+// GetAskedAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame.AskedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame) GetAskedAt() *string {
+	return v.AskedAt
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn includes the requested fields of the GraphQL type AgentTaskReturn.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn struct {
+	Role        *string                `json:"role"`
+	Agent       *string                `json:"agent"`
+	Session     *string                `json:"session"`
+	Reason      *AgentTaskReturnReason `json:"reason"`
+	Description *string                `json:"description"`
+	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetSession() *string {
+	return v.Session
+}
+
+// GetReason returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetReason() *AgentTaskReturnReason {
+	return v.Reason
+}
+
+// GetDescription returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetDescription() *string {
+	return v.Description
+}
+
+// GetReturnedAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.ReturnedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetReturnedAt() *string {
+	return v.ReturnedAt
+}
+
+// GetUsage returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
+// The GraphQL type's documentation follows.
+//
+// Append-only per-hop sign-off stored in ReARM; promptVersion pins the served prompt the agent assumed.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff struct {
+	Role          *string              `json:"role"`
+	Agent         *string              `json:"agent"`
+	Session       *string              `json:"session"`
+	AssignedAt    *string              `json:"assignedAt"`
+	SignedOffAt   *string              `json:"signedOffAt"`
+	Outcome       *AgentSignOffOutcome `json:"outcome"`
+	Note          *string              `json:"note"`
+	PromptVersion *string              `json:"promptVersion"`
+	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
+	ReviewedBy *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
+	Usage *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetSession() *string {
+	return v.Session
+}
+
+// GetAssignedAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetSignedOffAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetOutcome returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Outcome, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetOutcome() *AgentSignOffOutcome {
+	return v.Outcome
+}
+
+// GetNote returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetNote() *string {
+	return v.Note
+}
+
+// GetPromptVersion returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// GetReviewedBy returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
+// The GraphQL type's documentation follows.
+//
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange struct {
+	From    *AgentTaskStatus                                                                                                                        `json:"from"`
+	To      *AgentTaskStatus                                                                                                                        `json:"to"`
+	At      *string                                                                                                                                 `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                                     `json:"trigger"`
+	Actor   *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	// What the actor said: a completion's or cancellation's note, or routing's reason and the role it sent the task to (RD2-23). Null on changes recorded before notes were kept.
+	Note *string `json:"note"`
+}
+
+// GetFrom returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange) GetFrom() *AgentTaskStatus {
+	return v.From
+}
+
+// GetTo returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.To, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange) GetTo() *AgentTaskStatus {
+	return v.To
+}
+
+// GetAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange) GetAt() *string {
+	return v.At
+}
+
+// GetTrigger returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.Trigger, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange) GetTrigger() *AgentStatusTrigger {
+	return v.Trigger
+}
+
+// GetActor returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.Actor, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange) GetActor() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor {
+	return v.Actor
+}
+
+// GetNote returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChange) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor, error) {
+	var retval __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskWorkLevelSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskNextByPromptVersionResponse is returned by AgentTaskNextByPromptVersion on success.
+type AgentTaskNextByPromptVersionResponse struct {
+	// Worker poll: the lowest-ordered QUEUED task across the org's
+	// unpaused boards (or one board) whose constraints admit the calling
+	// session's agent (WIP limits, distinct-agent, seat exclusion).
+	// Returns the role to assume and its served prompt; the agent follows
+	// up with agentTaskAssignProgrammatic. Null = no work.
+	//
+	// roles: the roles this agent can take, each a role name on the board
+	// (case-insensitive) or a role config uuid. Omitted or empty, every
+	// role is considered. Given, only tasks for those roles are offered;
+	// when none match, or nothing is open for them, the answer is null.
+	// Pass the same roles to agentTaskAssignProgrammatic.
+	AgentTaskNextProgrammatic *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment `json:"agentTaskNextProgrammatic"`
+}
+
+// GetAgentTaskNextProgrammatic returns AgentTaskNextByPromptVersionResponse.AgentTaskNextProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionResponse) GetAgentTaskNextProgrammatic() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignment {
+	return v.AgentTaskNextProgrammatic
+}
+
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignment includes the requested fields of the GraphQL type AgentTaskAssignment.
 // The GraphQL type's documentation follows.
 //
@@ -24491,7 +27637,8 @@ type AgentTaskOperatorHoldResponse struct {
 	// agentTaskHumanReview, not here. On a lift, role optionally names an active role to route to instead of the one
 	// routing would pick; lifting a no-progress or cycle-cap stop routes past that stop once (task 4c566d0d).
 	// A hop its holder parked for the operator (task RD4-5) is lifted with the answer as reason, which is required
-	// and recorded on the task (a status row and an INFO); it takes no role, and the hop resumes with its holder.
+	// and recorded on the task (a status row and an INFO); it takes no role: the hop ended at the park, and the task
+	// is queued again for its role (task TPF-66).
 	// A task the coordinator seat parked for the operator (task RD4-17) is lifted the same way, and returns to the
 	// status it was parked from (hold.returnTo).
 	AgentTaskOperatorHold *AgentTaskOperatorHoldAgentTaskOperatorHoldAgentTask `json:"agentTaskOperatorHold"`
@@ -34676,7 +37823,7 @@ func (v *AgentTaskReturnProgrammaticResponse) GetAgentTaskReturnProgrammatic() *
 	return v.AgentTaskReturnProgrammatic
 }
 
-// Why an assigned agent handed the task back to the coordinator. SESSION_CLOSED is system-generated on any session-close path.
+// Why an assigned agent handed the task back to the coordinator. SESSION_CLOSED is system-generated on any session-close path; PARKED_FOR_OPERATOR is system-generated when the session working the task parks its hop for the operator, which ends the hop.
 type AgentTaskReturnReason string
 
 const (
@@ -34686,6 +37833,7 @@ const (
 	AgentTaskReturnReasonBlockedOnDependency AgentTaskReturnReason = "BLOCKED_ON_DEPENDENCY"
 	AgentTaskReturnReasonNeedsHuman          AgentTaskReturnReason = "NEEDS_HUMAN"
 	AgentTaskReturnReasonSessionClosed       AgentTaskReturnReason = "SESSION_CLOSED"
+	AgentTaskReturnReasonParkedForOperator   AgentTaskReturnReason = "PARKED_FOR_OPERATOR"
 	AgentTaskReturnReasonOther               AgentTaskReturnReason = "OTHER"
 )
 
@@ -34696,6 +37844,7 @@ var AllAgentTaskReturnReason = []AgentTaskReturnReason{
 	AgentTaskReturnReasonBlockedOnDependency,
 	AgentTaskReturnReasonNeedsHuman,
 	AgentTaskReturnReasonSessionClosed,
+	AgentTaskReturnReasonParkedForOperator,
 	AgentTaskReturnReasonOther,
 }
 
@@ -50142,6 +53291,8 @@ const (
 	ApiTypeEnumUser ApiTypeEnum = "USER"
 	// Identity row for one external repository trusted by the org's federated trust rules: no secret, permissions computed from the rules on every call
 	ApiTypeEnumFederated ApiTypeEnum = "FEDERATED"
+	// A key handed to a party outside the organization: exchanges at the TEA token endpoint only and reads what the organization published on TEA
+	ApiTypeEnumExternal ApiTypeEnum = "EXTERNAL"
 )
 
 var AllApiTypeEnum = []ApiTypeEnum{
@@ -50154,6 +53305,7 @@ var AllApiTypeEnum = []ApiTypeEnum{
 	ApiTypeEnumFreeform,
 	ApiTypeEnumUser,
 	ApiTypeEnumFederated,
+	ApiTypeEnumExternal,
 }
 
 // ApplyApiKeysApplyApiKeysProgrammaticDeclarativeApplyResult includes the requested fields of the GraphQL type DeclarativeApplyResult.
@@ -52568,6 +55720,22 @@ type CreateComponentInput struct {
 	// third-party dependency (EXTERNAL). Defaults to INTERNAL when null. EXTERNAL
 	// components never receive a platform-stamped sid PURL (D16).
 	IsInternal *BelongsToOrganization `json:"isInternal"`
+	// Declared licence (SCORE-39), omitted or empty for none.
+	// An SPDX licence expression: SPDX list ids (any case, stored in the list's casing, a
+	// trailing + allowed), LicenseRef-[A-Za-z0-9.-]+, the upper-case operators AND, OR and
+	// WITH (exception ids syntax-checked only) and parentheses; at most 512 characters.
+	// NOASSERTION, NONE, DocumentRef- and free-text names are refused.
+	LicenseExpression *string `json:"licenseExpression"`
+	// URL of licenseExpression (SCORE-39): an absolute http or https URL with a host, printable
+	// ASCII (punycode host), no user information, at most 2048 characters; needs licenseExpression.
+	LicenseUrl *string `json:"licenseUrl"`
+	// Supplier named on the SBOM nodes of the component's releases (SCORE-39): trimmed, at most
+	// 255 characters; no < or >, control, invisible formatting or bidi characters.
+	// Applies to the nodes ReARM makes at the next export and to SBOMs uploaded after it is set.
+	// A root uploaded earlier keeps the supplier recorded at its upload; a newly generated SBOM
+	// (a new serialNumber) uploaded to a release made after the change carries the new value in
+	// that release's export. An identical file is answered with the stored row, unchanged.
+	SupplierName *string `json:"supplierName"`
 }
 
 // GetOrg returns CreateComponentInput.Org, and is useful for accessing the field via an interface.
@@ -52632,6 +55800,15 @@ func (v *CreateComponentInput) GetSidAuthoritySegments() []string { return v.Sid
 
 // GetIsInternal returns CreateComponentInput.IsInternal, and is useful for accessing the field via an interface.
 func (v *CreateComponentInput) GetIsInternal() *BelongsToOrganization { return v.IsInternal }
+
+// GetLicenseExpression returns CreateComponentInput.LicenseExpression, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetLicenseExpression() *string { return v.LicenseExpression }
+
+// GetLicenseUrl returns CreateComponentInput.LicenseUrl, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetLicenseUrl() *string { return v.LicenseUrl }
+
+// GetSupplierName returns CreateComponentInput.SupplierName, and is useful for accessing the field via an interface.
+func (v *CreateComponentInput) GetSupplierName() *string { return v.SupplierName }
 
 // CreateComponentProgrammaticCreateComponentProgrammaticComponent includes the requested fields of the GraphQL type Component.
 type CreateComponentProgrammaticCreateComponentProgrammaticComponent struct {
@@ -52786,9 +55963,10 @@ type DeclaredApiKeyFields struct {
 	// The id a client presents with a secret (REARM_APIKEYID): stable across rotation, not itself a secret.
 	KeyId string `json:"keyId"`
 	// The declared name; null for a key nobody has declared.
-	Name              *string                                               `json:"name"`
-	Type              *ApiTypeEnum                                          `json:"type"`
-	Status            *ApiKeyStatus                                         `json:"status"`
+	Name   *string       `json:"name"`
+	Type   *ApiTypeEnum  `json:"type"`
+	Status *ApiKeyStatus `json:"status"`
+	// An org admin's kill switch holds the key off: only an org admin can re-activate it, not its owner, holder or an org writer
 	AdminDisabled     *bool                                                 `json:"adminDisabled"`
 	Notes             *string                                               `json:"notes"`
 	Permissions       *DeclaredApiKeyFieldsPermissionsApiKeyPermissionsSpec `json:"permissions"`
@@ -55928,6 +59106,24 @@ func (v *GetNewVersionProgrammaticWithLifecycleResponse) GetGetNewVersionProgram
 	return v.GetNewVersionProgrammatic
 }
 
+// GetReleaseByCommitProgrammaticResponse is returned by GetReleaseByCommitProgrammatic on success.
+type GetReleaseByCommitProgrammaticResponse struct {
+	// Exact head-commit lookup, the by-commit twin of getReleaseByReleaseVersionProgrammatic (task TPF-72).
+	// commit is compared as stored, whole and case-sensitively (no prefix, no tag, no branch); the entry
+	// is looked up in the component's organization and the match restricted to the component / product.
+	// Returns the OBOM (CycloneDX 1.6, as the by-version field) of the newest release by creation date
+	// whose head commit it is, or "{}" when no release of this component has that head commit, whether the
+	// commit is unknown, only in a release's changelog range, or recorded by another organization.
+	// componentId is resolved as for getReleaseByReleaseVersionProgrammatic. Lifecycle and approvals are
+	// not consulted. Several releases on one head commit (rebuilds): getReleasesByCommitProgrammatic lists them.
+	GetReleaseByCommitProgrammatic *string `json:"getReleaseByCommitProgrammatic"`
+}
+
+// GetGetReleaseByCommitProgrammatic returns GetReleaseByCommitProgrammaticResponse.GetReleaseByCommitProgrammatic, and is useful for accessing the field via an interface.
+func (v *GetReleaseByCommitProgrammaticResponse) GetGetReleaseByCommitProgrammatic() *string {
+	return v.GetReleaseByCommitProgrammatic
+}
+
 // GetReleaseByHashProgrammaticResponse is returned by GetReleaseByHashProgrammatic on success.
 type GetReleaseByHashProgrammaticResponse struct {
 	GetReleaseByHashProgrammatic *string `json:"getReleaseByHashProgrammatic"`
@@ -57484,6 +60680,10 @@ const (
 	PermissionFunctionBoardAgent PermissionFunction = "BOARD_AGENT"
 	// Run a board: register, authorize, seat, holds, decisions (READ_WRITE floor); implies BOARD_READ.
 	PermissionFunctionBoardWrite PermissionFunction = "BOARD_WRITE"
+	// Read what the organization published on TEA; the only function an EXTERNAL key carries.
+	PermissionFunctionTeaRead PermissionFunction = "TEA_READ"
+	// Publish, re-publish and hide releases on TEA (users and RBAC keys).
+	PermissionFunctionPublishExternally PermissionFunction = "PUBLISH_EXTERNALLY"
 )
 
 var AllPermissionFunction = []PermissionFunction{
@@ -57503,6 +60703,8 @@ var AllPermissionFunction = []PermissionFunction{
 	PermissionFunctionBoardRead,
 	PermissionFunctionBoardAgent,
 	PermissionFunctionBoardWrite,
+	PermissionFunctionTeaRead,
+	PermissionFunctionPublishExternally,
 }
 
 type PermissionScope string
@@ -58624,6 +61826,13 @@ type ReleaseInputProg struct {
 	// release's SCE. The PR aggregator picks up the release on subsequent
 	// VALIDATE_PR firings. Ignored on calls that do not create a release.
 	PullRequest *PullRequestInfoInput `json:"pullRequest,omitempty"`
+	// Per-release override of the declared licence (SCORE-39), an SPDX expression: SPDX list ids
+	// (any case, stored in the list's casing, a trailing + allowed), LicenseRef-[A-Za-z0-9.-]+, the
+	// upper-case operators AND, OR and WITH (exception ids syntax-checked only) and parentheses; at
+	// most 512 characters. NOASSERTION, NONE, DocumentRef- and free-text names are refused.
+	// Omitted or empty for none: the release then inherits the component's licence, else the
+	// organization default.
+	LicenseExpression *string `json:"licenseExpression"`
 }
 
 // GetVersion returns ReleaseInputProg.Version, and is useful for accessing the field via an interface.
@@ -58709,6 +61918,9 @@ func (v *ReleaseInputProg) GetRebuildRelease() *bool { return v.RebuildRelease }
 
 // GetPullRequest returns ReleaseInputProg.PullRequest, and is useful for accessing the field via an interface.
 func (v *ReleaseInputProg) GetPullRequest() *PullRequestInfoInput { return v.PullRequest }
+
+// GetLicenseExpression returns ReleaseInputProg.LicenseExpression, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetLicenseExpression() *string { return v.LicenseExpression }
 
 type ReleaseLifecycleEnum string
 
@@ -58869,6 +62081,10 @@ const (
 	ReleaseUpdateScopeEnumApprovedEnvironment ReleaseUpdateScopeEnum = "APPROVED_ENVIRONMENT"
 	ReleaseUpdateScopeEnumSupportWindow       ReleaseUpdateScopeEnum = "SUPPORT_WINDOW"
 	ReleaseUpdateScopeEnumFdaNarrative        ReleaseUpdateScopeEnum = "FDA_NARRATIVE"
+	ReleaseUpdateScopeEnumSyntheticArtifact   ReleaseUpdateScopeEnum = "SYNTHETIC_ARTIFACT"
+	ReleaseUpdateScopeEnumTeaPublication      ReleaseUpdateScopeEnum = "TEA_PUBLICATION"
+	ReleaseUpdateScopeEnumSubmission          ReleaseUpdateScopeEnum = "SUBMISSION"
+	ReleaseUpdateScopeEnumDeclaredLicense     ReleaseUpdateScopeEnum = "DECLARED_LICENSE"
 )
 
 var AllReleaseUpdateScopeEnum = []ReleaseUpdateScopeEnum{
@@ -58890,6 +62106,10 @@ var AllReleaseUpdateScopeEnum = []ReleaseUpdateScopeEnum{
 	ReleaseUpdateScopeEnumApprovedEnvironment,
 	ReleaseUpdateScopeEnumSupportWindow,
 	ReleaseUpdateScopeEnumFdaNarrative,
+	ReleaseUpdateScopeEnumSyntheticArtifact,
+	ReleaseUpdateScopeEnumTeaPublication,
+	ReleaseUpdateScopeEnumSubmission,
+	ReleaseUpdateScopeEnumDeclaredLicense,
 }
 
 // ReleasecompletionfinalizerProgrammaticResponse is returned by ReleasecompletionfinalizerProgrammatic on success.
@@ -58953,6 +62173,19 @@ func (v *SceArtifactInput) GetSce() string { return v.Sce }
 
 // GetArtifacts returns SceArtifactInput.Artifacts, and is useful for accessing the field via an interface.
 func (v *SceArtifactInput) GetArtifacts() []*ArtifactInput { return v.Artifacts }
+
+// SERVED: text carries the served text. UNCHANGED: the caller holds the current version; text is null.
+type ServedPromptStatus string
+
+const (
+	ServedPromptStatusServed    ServedPromptStatus = "SERVED"
+	ServedPromptStatusUnchanged ServedPromptStatus = "UNCHANGED"
+)
+
+var AllServedPromptStatus = []ServedPromptStatus{
+	ServedPromptStatusServed,
+	ServedPromptStatusUnchanged,
+}
 
 // Upload one or more artifacts and bind them to an agent session.
 // Each {@code ArtifactInput.file} is a separate multipart part on the
@@ -61421,6 +64654,24 @@ func (v *__AgentBoardAgentsProgrammaticInput) GetFrom() *string { return v.From 
 // GetTo returns __AgentBoardAgentsProgrammaticInput.To, and is useful for accessing the field via an interface.
 func (v *__AgentBoardAgentsProgrammaticInput) GetTo() *string { return v.To }
 
+// __AgentBoardCoordinateByPromptVersionInput is used internally by genqlient
+type __AgentBoardCoordinateByPromptVersionInput struct {
+	BoardUuid    string   `json:"boardUuid"`
+	SessionUuid  string   `json:"sessionUuid"`
+	HeldVersions []string `json:"heldVersions"`
+}
+
+// GetBoardUuid returns __AgentBoardCoordinateByPromptVersionInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentBoardCoordinateByPromptVersionInput) GetBoardUuid() string { return v.BoardUuid }
+
+// GetSessionUuid returns __AgentBoardCoordinateByPromptVersionInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__AgentBoardCoordinateByPromptVersionInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetHeldVersions returns __AgentBoardCoordinateByPromptVersionInput.HeldVersions, and is useful for accessing the field via an interface.
+func (v *__AgentBoardCoordinateByPromptVersionInput) GetHeldVersions() []string {
+	return v.HeldVersions
+}
+
 // __AgentBoardCoordinateProgrammaticInput is used internally by genqlient
 type __AgentBoardCoordinateProgrammaticInput struct {
 	BoardUuid   string `json:"boardUuid"`
@@ -61709,6 +64960,18 @@ func (v *__AgentElementCheckRunProgrammaticInput) GetSessionUuid() string { retu
 // GetReleaseUuid returns __AgentElementCheckRunProgrammaticInput.ReleaseUuid, and is useful for accessing the field via an interface.
 func (v *__AgentElementCheckRunProgrammaticInput) GetReleaseUuid() string { return v.ReleaseUuid }
 
+// __AgentRoleBriefByPromptVersionInput is used internally by genqlient
+type __AgentRoleBriefByPromptVersionInput struct {
+	BoardUuid    string   `json:"boardUuid"`
+	HeldVersions []string `json:"heldVersions"`
+}
+
+// GetBoardUuid returns __AgentRoleBriefByPromptVersionInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentRoleBriefByPromptVersionInput) GetBoardUuid() string { return v.BoardUuid }
+
+// GetHeldVersions returns __AgentRoleBriefByPromptVersionInput.HeldVersions, and is useful for accessing the field via an interface.
+func (v *__AgentRoleBriefByPromptVersionInput) GetHeldVersions() []string { return v.HeldVersions }
+
 // __AgentRoleBriefProgrammaticInput is used internally by genqlient
 type __AgentRoleBriefProgrammaticInput struct {
 	BoardUuid string `json:"boardUuid"`
@@ -61746,6 +65009,26 @@ func (v *__AgentTaskAnswerInput) GetAnswerAll() *string { return v.AnswerAll }
 
 // GetLiftHold returns __AgentTaskAnswerInput.LiftHold, and is useful for accessing the field via an interface.
 func (v *__AgentTaskAnswerInput) GetLiftHold() *bool { return v.LiftHold }
+
+// __AgentTaskAssignByPromptVersionInput is used internally by genqlient
+type __AgentTaskAssignByPromptVersionInput struct {
+	TaskUuid     string   `json:"taskUuid"`
+	SessionUuid  string   `json:"sessionUuid"`
+	Roles        []string `json:"roles"`
+	HeldVersions []string `json:"heldVersions"`
+}
+
+// GetTaskUuid returns __AgentTaskAssignByPromptVersionInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskAssignByPromptVersionInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetSessionUuid returns __AgentTaskAssignByPromptVersionInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskAssignByPromptVersionInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetRoles returns __AgentTaskAssignByPromptVersionInput.Roles, and is useful for accessing the field via an interface.
+func (v *__AgentTaskAssignByPromptVersionInput) GetRoles() []string { return v.Roles }
+
+// GetHeldVersions returns __AgentTaskAssignByPromptVersionInput.HeldVersions, and is useful for accessing the field via an interface.
+func (v *__AgentTaskAssignByPromptVersionInput) GetHeldVersions() []string { return v.HeldVersions }
 
 // __AgentTaskAssignProgrammaticInput is used internally by genqlient
 type __AgentTaskAssignProgrammaticInput struct {
@@ -62144,6 +65427,26 @@ func (v *__AgentTaskLinkPrProgrammaticInput) GetTaskUuid() string { return v.Tas
 
 // GetPrUrl returns __AgentTaskLinkPrProgrammaticInput.PrUrl, and is useful for accessing the field via an interface.
 func (v *__AgentTaskLinkPrProgrammaticInput) GetPrUrl() string { return v.PrUrl }
+
+// __AgentTaskNextByPromptVersionInput is used internally by genqlient
+type __AgentTaskNextByPromptVersionInput struct {
+	SessionUuid  string   `json:"sessionUuid"`
+	BoardUuid    *string  `json:"boardUuid"`
+	Roles        []string `json:"roles"`
+	HeldVersions []string `json:"heldVersions"`
+}
+
+// GetSessionUuid returns __AgentTaskNextByPromptVersionInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskNextByPromptVersionInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetBoardUuid returns __AgentTaskNextByPromptVersionInput.BoardUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskNextByPromptVersionInput) GetBoardUuid() *string { return v.BoardUuid }
+
+// GetRoles returns __AgentTaskNextByPromptVersionInput.Roles, and is useful for accessing the field via an interface.
+func (v *__AgentTaskNextByPromptVersionInput) GetRoles() []string { return v.Roles }
+
+// GetHeldVersions returns __AgentTaskNextByPromptVersionInput.HeldVersions, and is useful for accessing the field via an interface.
+func (v *__AgentTaskNextByPromptVersionInput) GetHeldVersions() []string { return v.HeldVersions }
 
 // __AgentTaskNextProgrammaticInput is used internally by genqlient
 type __AgentTaskNextProgrammaticInput struct {
@@ -62987,6 +66290,18 @@ func (v *__GetNewVersionProgrammaticWithLifecycleInput) GetGetNewVersionInput() 
 	return v.GetNewVersionInput
 }
 
+// __GetReleaseByCommitProgrammaticInput is used internally by genqlient
+type __GetReleaseByCommitProgrammaticInput struct {
+	Commit      string `json:"commit"`
+	ComponentId string `json:"componentId"`
+}
+
+// GetCommit returns __GetReleaseByCommitProgrammaticInput.Commit, and is useful for accessing the field via an interface.
+func (v *__GetReleaseByCommitProgrammaticInput) GetCommit() string { return v.Commit }
+
+// GetComponentId returns __GetReleaseByCommitProgrammaticInput.ComponentId, and is useful for accessing the field via an interface.
+func (v *__GetReleaseByCommitProgrammaticInput) GetComponentId() string { return v.ComponentId }
+
 // __GetReleaseByHashProgrammaticInput is used internally by genqlient
 type __GetReleaseByHashProgrammaticInput struct {
 	Hash        string  `json:"hash"`
@@ -63657,6 +66972,91 @@ func AgentBoardAgentsProgrammatic(
 	}
 
 	data_ = &AgentBoardAgentsProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AgentBoardCoordinateByPromptVersion.
+const AgentBoardCoordinateByPromptVersion_Operation = `
+mutation AgentBoardCoordinateByPromptVersion ($boardUuid: ID!, $sessionUuid: ID!, $heldVersions: [String!]) {
+	agentBoardCoordinateProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid) {
+		uuid
+		org
+		name
+		description
+		status
+		sources
+		documentsRepo {
+			uuid
+			uri
+		}
+		documentPaths
+		coordinatorPromptByVersion(heldVersions: $heldVersions) {
+			version
+			status
+			text
+		}
+		missingCapabilities
+		events {
+			kind
+			message
+			actor {
+				... ActorFields
+			}
+			eventAt
+		}
+		pause {
+			level
+			reason
+			pausedBy {
+				... ActorFields
+			}
+			pausedAt
+		}
+		coordinatorSeat {
+			session
+			agent
+			claimedAt
+		}
+		perAgentWipLimit
+		priorityType
+		createdDate
+	}
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+`
+
+// TPF-97 / TPF-110: the seat with the coordinator prompt by version. The CLI sends the versions its caller holds;
+// the stored coordinatorPrompt is not selected (the served text is the one to assume).
+func AgentBoardCoordinateByPromptVersion(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+	sessionUuid string,
+	heldVersions []string,
+) (data_ *AgentBoardCoordinateByPromptVersionResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentBoardCoordinateByPromptVersion",
+		Query:  AgentBoardCoordinateByPromptVersion_Operation,
+		Variables: &__AgentBoardCoordinateByPromptVersionInput{
+			BoardUuid:    boardUuid,
+			SessionUuid:  sessionUuid,
+			HeldVersions: heldVersions,
+		},
+	}
+
+	data_ = &AgentBoardCoordinateByPromptVersionResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -65178,6 +68578,63 @@ func AgentElementCheckRunProgrammatic(
 	return data_, err_
 }
 
+// The query executed by AgentRoleBriefByPromptVersion.
+const AgentRoleBriefByPromptVersion_Operation = `
+query AgentRoleBriefByPromptVersion ($boardUuid: ID!, $heldVersions: [String!]) {
+	agentTaskRoleConfigsProgrammatic(boardUuid: $boardUuid) {
+		uuid
+		name
+		promptVersion
+		requiredCapabilities
+		promptByVersion(heldVersions: $heldVersions) {
+			version
+			status
+			text
+		}
+		requiredInputs {
+			kind
+			specification
+			scope
+			minLifecycle
+			resolution
+		}
+		producesOutputs {
+			specification
+			scope
+			required
+		}
+	}
+}
+`
+
+// TPF-97 / TPF-110: the role part of a brief by version: AgentRoleBriefProgrammatic with servedPrompt replaced.
+func AgentRoleBriefByPromptVersion(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	boardUuid string,
+	heldVersions []string,
+) (data_ *AgentRoleBriefByPromptVersionResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentRoleBriefByPromptVersion",
+		Query:  AgentRoleBriefByPromptVersion_Operation,
+		Variables: &__AgentRoleBriefByPromptVersionInput{
+			BoardUuid:    boardUuid,
+			HeldVersions: heldVersions,
+		},
+	}
+
+	data_ = &AgentRoleBriefByPromptVersionResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The query executed by AgentRoleBriefProgrammatic.
 const AgentRoleBriefProgrammatic_Operation = `
 query AgentRoleBriefProgrammatic ($boardUuid: ID!) {
@@ -65404,6 +68861,187 @@ func AgentTaskAnswer(
 	}
 
 	data_ = &AgentTaskAnswerResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AgentTaskAssignByPromptVersion.
+const AgentTaskAssignByPromptVersion_Operation = `
+mutation AgentTaskAssignByPromptVersion ($taskUuid: ID!, $sessionUuid: ID!, $roles: [String!], $heldVersions: [String!]) {
+	agentTaskAssignProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, roles: $roles) {
+		task {
+			key
+			number
+			uuid
+			org
+			board
+			externalRef
+			title
+			description
+			sourceUrl
+			status
+			role
+			orderIndex
+			workLevel
+			effectiveWorkLevel
+			workLevelSetBy {
+				... ActorFields
+			}
+			workLevelSetAt
+			group {
+				uuid
+				key
+				name
+			}
+			tags {
+				key
+				value
+				removable
+			}
+			waitingOnGroups
+			dependsOn
+			requireHumanReview
+			hold {
+				level
+				kind
+				gateRole
+				reason
+				heldBy {
+					... ActorFields
+				}
+				heldAt
+				stop
+			}
+			assignment {
+				session
+				agent
+				role
+				assignedAt
+				promptVersion
+			}
+			signOffs {
+				role
+				agent
+				session
+				assignedAt
+				signedOffAt
+				outcome
+				note
+				promptVersion
+				reviewedBy {
+					... ActorFields
+				}
+				usage {
+					... HopUsageFields
+				}
+				overAllowanceMicros
+			}
+			returns {
+				role
+				agent
+				session
+				reason
+				description
+				returnedAt
+				usage {
+					... HopUsageFields
+				}
+				overAllowanceMicros
+			}
+			parentTask
+			childTasks
+			sessions
+			prUrls
+			registeredBySession
+			createdDate
+			completedAt
+			statusHistory {
+				from
+				to
+				at
+				trigger
+				actor {
+					... ActorFields
+				}
+				note
+			}
+			orderSetBy {
+				... ActorFields
+			}
+			orderSetAt
+			requiredRolesSkipped
+			questionStack {
+				askingRole
+				askingSession
+				askingAgent
+				questionsRelease
+				answeringRole
+				askedAt
+			}
+			documents {
+				uuid
+				version
+				lifecycle
+				document {
+					specification
+					path
+					round
+					task
+					advisory
+					publishedByRole
+				}
+			}
+		}
+		role
+		promptVersion
+		hopBudgetMicros
+		promptByVersion(heldVersions: $heldVersions) {
+			version
+			status
+			text
+		}
+	}
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
+}
+`
+
+// TPF-97 / TPF-110: the assignment with the prompt by version.
+func AgentTaskAssignByPromptVersion(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+	sessionUuid string,
+	roles []string,
+	heldVersions []string,
+) (data_ *AgentTaskAssignByPromptVersionResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskAssignByPromptVersion",
+		Query:  AgentTaskAssignByPromptVersion_Operation,
+		Variables: &__AgentTaskAssignByPromptVersionInput{
+			TaskUuid:     taskUuid,
+			SessionUuid:  sessionUuid,
+			Roles:        roles,
+			HeldVersions: heldVersions,
+		},
+	}
+
+	data_ = &AgentTaskAssignByPromptVersionResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -68309,6 +71947,174 @@ func AgentTaskLinkPrProgrammatic(
 	}
 
 	data_ = &AgentTaskLinkPrProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by AgentTaskNextByPromptVersion.
+const AgentTaskNextByPromptVersion_Operation = `
+query AgentTaskNextByPromptVersion ($sessionUuid: ID!, $boardUuid: ID, $roles: [String!], $heldVersions: [String!]) {
+	agentTaskNextProgrammatic(sessionUuid: $sessionUuid, boardUuid: $boardUuid, roles: $roles) {
+		task {
+			key
+			number
+			uuid
+			org
+			board
+			externalRef
+			title
+			description
+			sourceUrl
+			status
+			role
+			orderIndex
+			workLevel
+			effectiveWorkLevel
+			workLevelSetBy {
+				... ActorFields
+			}
+			workLevelSetAt
+			group {
+				uuid
+				key
+				name
+			}
+			tags {
+				key
+				value
+				removable
+			}
+			waitingOnGroups
+			dependsOn
+			requireHumanReview
+			hold {
+				level
+				kind
+				gateRole
+				reason
+				heldBy {
+					... ActorFields
+				}
+				heldAt
+				stop
+			}
+			assignment {
+				session
+				agent
+				role
+				assignedAt
+				promptVersion
+			}
+			signOffs {
+				role
+				agent
+				session
+				assignedAt
+				signedOffAt
+				outcome
+				note
+				promptVersion
+				reviewedBy {
+					... ActorFields
+				}
+				usage {
+					... HopUsageFields
+				}
+				overAllowanceMicros
+			}
+			returns {
+				role
+				agent
+				session
+				reason
+				description
+				returnedAt
+				usage {
+					... HopUsageFields
+				}
+				overAllowanceMicros
+			}
+			parentTask
+			childTasks
+			sessions
+			prUrls
+			registeredBySession
+			createdDate
+			completedAt
+			statusHistory {
+				from
+				to
+				at
+				trigger
+				actor {
+					... ActorFields
+				}
+				note
+			}
+			orderSetBy {
+				... ActorFields
+			}
+			orderSetAt
+			requiredRolesSkipped
+			questionStack {
+				askingRole
+				askingSession
+				askingAgent
+				questionsRelease
+				answeringRole
+				askedAt
+			}
+		}
+		role
+		promptVersion
+		hopBudgetMicros
+		promptByVersion(heldVersions: $heldVersions) {
+			version
+			status
+			text
+		}
+	}
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
+}
+`
+
+// TPF-97 / TPF-110: the offer with the prompt by version. The CLI sends the versions its caller holds.
+func AgentTaskNextByPromptVersion(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	sessionUuid string,
+	boardUuid *string,
+	roles []string,
+	heldVersions []string,
+) (data_ *AgentTaskNextByPromptVersionResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskNextByPromptVersion",
+		Query:  AgentTaskNextByPromptVersion_Operation,
+		Variables: &__AgentTaskNextByPromptVersionInput{
+			SessionUuid:  sessionUuid,
+			BoardUuid:    boardUuid,
+			Roles:        roles,
+			HeldVersions: heldVersions,
+		},
+	}
+
+	data_ = &AgentTaskNextByPromptVersionResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -74642,6 +78448,41 @@ func GetNewVersionProgrammaticWithLifecycle(
 	}
 
 	data_ = &GetNewVersionProgrammaticWithLifecycleResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetReleaseByCommitProgrammatic.
+const GetReleaseByCommitProgrammatic_Operation = `
+query GetReleaseByCommitProgrammatic ($commit: String!, $componentId: ID!) {
+	getReleaseByCommitProgrammatic(commit: $commit, componentId: $componentId)
+}
+`
+
+// from rearm-cli cmd/releaseByCommit.go
+func GetReleaseByCommitProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	commit string,
+	componentId string,
+) (data_ *GetReleaseByCommitProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetReleaseByCommitProgrammatic",
+		Query:  GetReleaseByCommitProgrammatic_Operation,
+		Variables: &__GetReleaseByCommitProgrammaticInput{
+			Commit:      commit,
+			ComponentId: componentId,
+		},
+	}
+
+	data_ = &GetReleaseByCommitProgrammaticResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

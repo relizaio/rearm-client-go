@@ -32,6 +32,47 @@ type Query {
   """
   agentRolePresetsSpecProgrammatic: RolePresetsSpec
   """
+  What publishing the release on TEA would do, and its publication and collections (a FREEFORM or USER key with READ on the release).
+  """
+  releaseTeaPublicationViewProgrammatic(
+  release: ID!): TeaPublishPreview!
+  """
+  The SBOM profile rows stored at a scope of the key's organization, by name (a FREEFORM or USER key with READ on the scope's object).
+  """
+  sbomProfilesProgrammatic(
+  scope: SettingsScope!
+  object: ID): [SbomProfile!]!
+  """
+  Which SBOM profile row a name resolves to at a scope of the key's organization, with no channel fallback (READ on the scope's object).
+  """
+  sbomProfileEffectiveProgrammatic(
+  scope: SettingsScope!
+  object: ID
+  name: String!): SbomProfileResolution!
+  """
+  The regulatory submissions of a release of the key's organization, every kind (a FREEFORM or USER key with READ on the release).
+  """
+  submissionsOfReleaseProgrammatic(
+  release: ID!): [Submission!]!
+  """
+  The regulatory submissions across a component's releases, newest act first (READ on the component).
+  """
+  submissionsOfComponentProgrammatic(
+  component: ID!
+  kind: PackageKind
+  state: SubmissionState): [Submission!]!
+  """
+  A regulatory submission of the key's organization by its uuid (READ on its release).
+  """
+  submissionProgrammatic(
+  uuid: ID!): Submission
+  """
+  One version of a regulatory submission of the key's organization (READ on its release).
+  """
+  submissionVersionProgrammatic(
+  submission: ID!
+  version: Int!): SubmissionVersion
+  """
   Export the organization's declared API keys as an API_KEYS file (CONFIGURATION_WRITE); with keys, only
   those names, and the file is not authoritative. No secret and no secret metadata is in it.
   """
@@ -59,6 +100,27 @@ type Query {
   getReleaseByReleaseVersionProgrammatic(
   version: String!
   componentId: ID!): String
+  """
+  Exact head-commit lookup, the by-commit twin of getReleaseByReleaseVersionProgrammatic (task TPF-72).
+  commit is compared as stored, whole and case-sensitively (no prefix, no tag, no branch); the entry
+  is looked up in the component's organization and the match restricted to the component / product.
+  Returns the OBOM (CycloneDX 1.6, as the by-version field) of the newest release by creation date
+  whose head commit it is, or "{}" when no release of this component has that head commit, whether the
+  commit is unknown, only in a release's changelog range, or recorded by another organization.
+  componentId is resolved as for getReleaseByReleaseVersionProgrammatic. Lifecycle and approvals are
+  not consulted. Several releases on one head commit (rebuilds): getReleasesByCommitProgrammatic lists them.
+  """
+  getReleaseByCommitProgrammatic(
+  commit: String!
+  componentId: ID!): String
+  """
+  Every release of the component / product whose head commit is exactly commit, newest by creation
+  date first; the same resolution and checks as getReleaseByCommitProgrammatic. Empty when that field
+  would answer "{}".
+  """
+  getReleasesByCommitProgrammatic(
+  commit: String!
+  componentId: ID!): [ReleaseByCommitMatch!]!
   """
   Readiness score of the merged release BOM, as releaseSbomScore scores it for a signed-in user (task
   SCORE-24). The release is named as for releaseSbomExportProgrammatic, behind the same checks; the
@@ -278,6 +340,24 @@ roles: the roles this agent can take, each a role name on the board
 }
 
 type Mutation {
+  """
+  Publish the release on TEA: PUBLISH_EXTERNALLY on the release's component, on a FREEFORM or USER key. Refused when already published.
+  """
+  publishReleaseOnTeaProgrammatic(
+  release: ID!
+  comment: String): TeaPublishResult!
+  """
+  Re-publish the release on TEA (PUBLISH_EXTERNALLY on a FREEFORM or USER key): a new collection version only when anything changed; a hidden publication becomes published again.
+  """
+  republishReleaseOnTeaProgrammatic(
+  release: ID!
+  comment: String): TeaPublishResult!
+  """
+  Hide the release from TEA (PUBLISH_EXTERNALLY on a FREEFORM or USER key); its collections stay.
+  """
+  hideReleaseOnTeaProgrammatic(
+  release: ID!
+  comment: String): TeaPublication!
   """
   Declarative apply of the Catalog slice (API key, write access on the org). Idempotent, keyed by
   component name. dryRun computes the change set without writing.
@@ -509,8 +589,8 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
     returns the task to the loop;
   - the session holding the task's current assignment, at OPERATOR level only (task RD4-5), with the question
     for the person as the reason: the task shows "awaiting the operator: <question>", the board's writers are
-    told, and the hop stays assigned to the session. A person lifts the hold with the answer as the note, which
-    is recorded on the task, and the hop resumes with its holder.
+    told, and the hop ends (task TPF-66). A person lifts the hold with the answer as the note, which is
+    recorded on the task, and the task is queued again for its role.
   - the coordinator seat, at OPERATOR level with the question as the reason (task RD4-17), on a task in
     PENDING_INTAKE, QUEUED, AWAITING_COORDINATOR or DELIVERING: the same record and notification. A person's
     release with the answer as the note, or anything else a person does on the task (answering its questions,
@@ -742,7 +822,8 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   agentTaskHumanReview, not here. On a lift, role optionally names an active role to route to instead of the one
   routing would pick; lifting a no-progress or cycle-cap stop routes past that stop once (task 4c566d0d).
   A hop its holder parked for the operator (task RD4-5) is lifted with the answer as reason, which is required
-  and recorded on the task (a status row and an INFO); it takes no role, and the hop resumes with its holder.
+  and recorded on the task (a status row and an INFO); it takes no role: the hop ended at the park, and the task
+  is queued again for its role (task TPF-66).
   A task the coordinator seat parked for the operator (task RD4-17) is lifted the same way, and returns to the
   status it was parked from (hold.returnTo).
   """
@@ -1021,6 +1102,141 @@ type RolePresetsSpec {
 }
 
 """
+What the release page needs to offer Publish, Re-publish and Hide, and to list the collections.
+"""
+type TeaPublishPreview {
+  release: ID!
+  kind: TeaCollectionBelongsToType!
+  canPublish: Boolean!
+  "ALREADY_PUBLISHED when a PUBLISHED publication exists: offer Re-publish"
+  refusal: TeaPublishRefusal
+  refusalMessage: String
+  effectiveVisibility: TeaVisibility
+  profileSource: TeaProfileSource
+  profileSourceObject: ID
+  apiBase: String
+  publicUrl: String
+  "True when the release is a product whose profile publishes its component releases with it"
+  cascades: Boolean!
+  "The number of component releases a cascade would publish"
+  cascadeChildren: Int!
+  profileRevision: Int
+  publication: TeaPublication
+  collections: [TeaPublishedCollection!]!
+  "The SBOM profile names a publish would generate an aggregate for, in order"
+  profiles: [String!]!
+}
+
+"""
+A named SBOM profile: the recipe of an aggregated SBOM at a scope. Channels name profiles; a lower scope overrides a higher one by defining the same name.
+"""
+type SbomProfile {
+  uuid: ID
+  org: ID
+  scope: SettingsScope
+  object: ID
+  name: String!
+  mode: ScopedSettingsMode
+  followedPerspective: ID
+  description: String
+  dependencyDepth: SbomDependencyDepth
+  optionalDependencies: SbomOptionalDependencies
+  structure: BomStructureType
+  sources: [SbomSourceKind!]
+  excludedCoverage: [ArtifactCoverageType!]
+  supportMetadata: SbomSupportMetadata
+  internalMetadata: SbomInternalMetadata
+  vulnerabilityDocuments: SbomVulnerabilityDocuments
+  revision: Int
+  createdDate: DateTime
+  lastUpdatedBy: ID
+}
+
+"""
+Where a scoped settings row lives: the organization, a perspective (ReARM Pro) or a component.
+"""
+enum SettingsScope {
+  ORGANIZATION
+  PERSPECTIVE
+  COMPONENT
+}
+
+"""
+Which SBOM profile row a name resolves to at a scope, with no channel fallback; profile is null on CONFLICT and NOT_FOUND.
+"""
+type SbomProfileResolution {
+  status: ScopedResolutionStatus!
+  source: ScopedSettingsSource
+  sourceObject: ID
+  profile: SbomProfile
+  conflictingPerspectives: [TeaPerspectiveRef!]!
+}
+
+"""
+The head of a regulatory submission: one per release and package kind, with its immutable versions.
+"""
+type Submission {
+  uuid: ID!
+  org: ID!
+  release: ID!
+  releaseVersion: String
+  component: ID!
+  componentType: ComponentType
+  kind: PackageKind!
+  state: SubmissionState!
+  latestVersion: Int!
+  createdDate: DateTime
+  createdBy: ID
+  lastActDate: DateTime
+  lastActBy: ID
+  lastActKind: SubmissionActOutcome
+  withdrawnDate: DateTime
+  withdrawnBy: ID
+  withdrawReason: String
+  settings: SubmissionSettingsRef
+  versions: [SubmissionVersion!]!
+  latest: SubmissionVersion
+}
+
+"""
+A regulatory package kind; each declares its ordered part list in code.
+"""
+enum PackageKind {
+  FDA_PREMARKET
+}
+
+"""
+The state of a regulatory submission head.
+"""
+enum SubmissionState {
+  ACTIVE
+  WITHDRAWN
+}
+
+"""
+One immutable version of a regulatory submission; manifest is the canonical JSON text manifestSha256 is the sha256 of.
+"""
+type SubmissionVersion {
+  submission: ID!
+  version: Int!
+  org: ID!
+  release: ID!
+  kind: PackageKind!
+  createdDate: DateTime
+  createdBy: ID
+  reason: String
+  settings: SubmissionSettingsRef
+  sbomProfile: SubmissionProfileRef
+  parts: [SubmissionPart!]!
+  manifestArtifact: ID
+  manifestArtifactVersion: String
+  manifestSha256: String!
+  manifest: String!
+  "Reserved for a manifest signature; null today."
+  signature: String
+}
+
+"""
 An API_KEYS file (task RD3-11): an organization's FREEFORM keys by declared name -- identity and settings,
 never a secret.
 """
@@ -1046,8 +1262,13 @@ type DeclaredApiKey {
   name: String
   type: ApiTypeEnum
   status: ApiKeyStatus
+  "An org admin's kill switch holds the key off: only an org admin can re-activate it, not its owner, holder or an org writer"
   adminDisabled: Boolean
   notes: String
+  """
+  DENIED requests: the administrator's reason, empty when none; null otherwise and on requests denied before it existed.
+  """
+  deniedReason: String
   permissions: ApiKeyPermissionsSpec
   secretExpiresDays: Int
   sessionMaxMinutes: Int
@@ -1089,6 +1310,17 @@ type Release {
   pullRequests: [PullRequest]
   artifacts: [ID]
   artifactDetails: [Artifact]
+  """
+  Artifacts ReARM generated for this release (a published aggregated SBOM, a VDR
+  snapshot). Never merge sources, never in the release collection, never scanned
+  as inventory, not editable: owned by the generator that wrote them.
+  """
+  syntheticArtifacts: [ID]
+  syntheticArtifactDetails: [Artifact]
+  "The release's TEA publication (task TEA-5), null when it was never published"
+  teaPublication: TeaPublication
+  "The release's regulatory submissions, every kind (task TEA-35); empty on an edition without submissions"
+  submissions: [Submission!]
   inboundDeliverables: [ID]
   inboundDeliverableDetails: [Deliverable]
   tickets: [ID]
@@ -1137,6 +1369,17 @@ NULL MEANS INHERIT, not empty. Read it through the resolution seam -- release
   every release that never set one, which is the overwhelming majority.
   """
   fdaAssessmentNarrative: String
+  """
+  Per-release override of the declared licence (SCORE-39), a canonical SPDX expression. NULL
+  MEANS INHERIT: read effectiveLicense for what ReARM writes on the release's SBOM node.
+  """
+  licenseExpression: String
+  """
+  The licence ReARM declares for this release's node in a merged SBOM (SCORE-39): the
+  release override, else the component's licence, else the organization default; null when
+  no level declares one. The url comes only from the level that won (a release has none).
+  """
+  effectiveLicense: DeclaredLicense
   """
   Provenance for the release's own eos/eol -- the CLE lifecycle projections, NOT
   the device support window -- DERIVED from the most recent SUPPORT_WINDOW update
@@ -1187,6 +1430,15 @@ NULL MEANS INHERIT, not empty. Read it through the resolution seam -- release
 type SbomProbingResult {
   status: SbomProbingStatus!
   metrics: DependencyTrackMetrics
+}
+
+"""
+One release found by its head commit (TPF-72): enough to name it and to see why it sorted where it did.
+"""
+type ReleaseByCommitMatch {
+  uuid: ID!
+  version: String!
+  createdDate: DateTime!
 }
 
 enum BomStructureType {
@@ -1625,6 +1877,11 @@ type AgentBoard {
   """
   servedCoordinatorPrompt: String
   """
+  The coordinator seat's served prompt by version (TPF-97): servedCoordinatorPrompt answered against heldVersions.
+  """
+  coordinatorPromptByVersion(
+  heldVersions: [String!]): ServedPrompt
+  """
   Verbs the coordinator seat performs itself on this board, e.g. PR_MERGE when it merges once
   the last required role has passed. Unverified, like a role's capabilities; the delivery-loop
   alert (missingCapabilities) counts them as covered.
@@ -1798,6 +2055,13 @@ type AgentTaskAssignment {
   roleUuid: ID
   rolePrompt: String
   promptVersion: String
+  """
+  The served prompt by version (TPF-97): the same text as rolePrompt, answered against heldVersions.
+  Select this instead of rolePrompt to receive the text only when it changed; rolePrompt keeps serving
+  the text to every selection that asks for it.
+  """
+  promptByVersion(
+  heldVersions: [String!]): ServedPrompt
   """
   Versions the agent is to work from, resolved at assignment.
   """
@@ -1974,6 +2238,15 @@ type AgentTask {
   """
   requireHumanReview: Boolean
   assignment: AgentTaskWorkAssignment
+  """
+  The staleness rules this task breaches now, computed at the read from the board's staleness block
+  (TPF-69): hopNoProgress while ASSIGNED, deliveryStuck while DELIVERING, investigationOverdue for an
+  open investigation past its deadline. Empty when none; empty on a board without a staleness block.
+  Live, so a breach shows before and between the sweep's ALERTs; the sweep's repeat interval does not
+  apply here, and a board that is not ACTIVE still marks its tasks although the sweep skips it (as the
+  Agents tab does).
+  """
+  stale: [BoardAgentStaleMark]
   signOffs: [AgentTaskSignOff]
   returns: [AgentTaskReturn]
   """
@@ -2122,9 +2395,15 @@ type AgentTaskRoleConfig {
   """
   servedPrompt: String
   """
-  The version the served prompt is pinned by on a sign-off: a hash of the prompt alone.
+  The version a sign-off pins: a hash of the operator's prompt (with the ladder section on a board that
+  has one), never of the routing rules; promptByVersion.version covers the whole served text.
   """
   promptVersion: String
+  """
+  The served prompt by version (TPF-97): servedPrompt answered against heldVersions; see ServedPrompt.
+  """
+  promptByVersion(
+  heldVersions: [String!]): ServedPrompt
   """
   Advisory routing order for the coordinator; routing is a per-hop decision, not a pipeline.
   """
@@ -2259,6 +2538,51 @@ type ElementCheckCatalogueEntry {
   When the check reports SKIP instead of a result; null when it always runs.
   """
   skipsWhen: String
+}
+
+type TeaPublishResult {
+  publication: TeaPublication!
+  "The collection version written, or the latest one when nothing changed"
+  collection: TeaPublishedCollection
+  outcome: TeaPublishOutcome!
+  artifacts: [TeaRideAlongOutcome!]!
+  children: [TeaChildPublishResult!]!
+}
+
+"""
+A release's publication on TEA (task TEA-5): the mutable head. Its uuid is the TEA release id and
+the TEA collection id.
+"""
+type TeaPublication {
+  uuid: ID!
+  org: ID!
+  release: ID!
+  component: ID!
+  componentType: ComponentType
+  state: TeaPublicationState!
+  latestVersion: Int!
+  profile: ID
+  profileRevision: Int
+  profileSource: TeaProfileSource
+  profileSourceObject: ID
+  "The product publication that published this release through its cascade; null for a direct publication"
+  cascadeOf: ID
+  "The generated aggregated SBOMs, one per SBOM profile, in the order published"
+  aggregateArtifacts: [TeaAggregateArtifact!]!
+  aggregateArtifact: ID @deprecated(reason: "Task TEA-28: one aggregate per SBOM profile; read aggregateArtifacts. Answers the default profile's artifact, else the first, else null.")
+  tei: String
+  firstPublishedDate: DateTime
+  lastPublishedDate: DateTime
+  lastHiddenDate: DateTime
+  lastPublishedBy: ID
+  "Live: what the publication is right now"
+  exposure: TeaExposureState!
+  "Why the exposure is CONCEALED, null otherwise"
+  concealedBecause: TeaConcealReason
+  "The product release this publication is published with (<component> <version>), null for a direct publication"
+  cascadeOfLabel: String
+  "The TEA URL of the release object under the organization's API base; null while the org has no TEA id"
+  publicUrl: String
 }
 
 type DeclarativeApplyResult {
@@ -2754,6 +3078,15 @@ input ReleaseInputProg {
   VALIDATE_PR firings. Ignored on calls that do not create a release.
   """
   pullRequest: PullRequestInfoInput
+  """
+  Per-release override of the declared licence (SCORE-39), an SPDX expression: SPDX list ids
+  (any case, stored in the list's casing, a trailing + allowed), LicenseRef-[A-Za-z0-9.-]+, the
+  upper-case operators AND, OR and WITH (exception ids syntax-checked only) and parentheses; at
+  most 512 characters. NOASSERTION, NONE, DocumentRef- and free-text names are refused.
+  Omitted or empty for none: the release then inherits the component's licence, else the
+  organization default.
+  """
+  licenseExpression: String
 }
 
 input AddODeliverableInput {
@@ -2783,6 +3116,13 @@ type Component {
   apiKey: String
   createdType: ProgrammaticType
   lastUpdatedBy: ID
+  """
+  The revision of the stored component: every save of the component row adds one (settings, locks,
+  perspectives, archive, declarative applies). The settings page sends the revision it read back as
+  UpdateComponentInput.expectedRevision, so a save from a page opened before another change is refused.
+  Null on a component object that was not read from its row.
+  """
+  revision: Int
   createdDate: DateTime
   defaultConfig: String
   visibilitySetting: VisibilitySetting
@@ -2827,6 +3167,31 @@ type Component {
   Internal/external classification (D16). Null on legacy rows is treated as INTERNAL.
   """
   isInternal: BelongsToOrganization
+  """
+  The component's TEA-facing id: minted by the server on its first TEA publication, never
+  editable. Nothing on the Transparency Exchange API carries the internal uuid.
+  """
+  teaUuid: ID
+  """
+  The component's declared licence (SCORE-39), a canonical SPDX expression; null when unset,
+  and then the organization default applies. Written on the SBOM nodes ReARM makes for the
+  component's releases unless a release overrides it.
+  """
+  licenseExpression: String
+  """
+  URL of licenseExpression (http or https); null when unset.
+  """
+  licenseUrl: String
+  """
+  Supplier named on the SBOM nodes ReARM makes for the component's releases when no
+  deliverable publisher names one (SCORE-39); null when unset, and then the organization is
+  named for its own (INTERNAL) software and none otherwise.
+  Applies to the nodes ReARM makes at the next export and to SBOMs uploaded after it is set.
+  A root uploaded earlier keeps the supplier recorded at its upload; a newly generated SBOM
+  (a new serialNumber) uploaded to a release made after the change carries the new value in
+  that release's export. An identical file is answered with the stored row, unchanged.
+  """
+  supplierName: String
   """
   Synthetic component-level lifecycle derived from the lifecycles of the
   component's releases:
@@ -2921,6 +3286,28 @@ input CreateComponentInput {
   components never receive a platform-stamped sid PURL (D16).
   """
   isInternal: BelongsToOrganization
+  """
+  Declared licence (SCORE-39), omitted or empty for none.
+  An SPDX licence expression: SPDX list ids (any case, stored in the list's casing, a
+  trailing + allowed), LicenseRef-[A-Za-z0-9.-]+, the upper-case operators AND, OR and
+  WITH (exception ids syntax-checked only) and parentheses; at most 512 characters.
+  NOASSERTION, NONE, DocumentRef- and free-text names are refused.
+  """
+  licenseExpression: String
+  """
+  URL of licenseExpression (SCORE-39): an absolute http or https URL with a host, printable
+  ASCII (punycode host), no user information, at most 2048 characters; needs licenseExpression.
+  """
+  licenseUrl: String
+  """
+  Supplier named on the SBOM nodes of the component's releases (SCORE-39): trimmed, at most
+  255 characters; no < or >, control, invisible formatting or bidi characters.
+  Applies to the nodes ReARM makes at the next export and to SBOMs uploaded after it is set.
+  A root uploaded earlier keeps the supplier recorded at its upload; a newly generated SBOM
+  (a new serialNumber) uploaded to a release made after the change carries the new value in
+  that release's export. An identical file is answered with the stored row, unchanged.
+  """
+  supplierName: String
 }
 
 input AddArtifactInput {
@@ -3191,9 +3578,7 @@ type Agent {
   """
   displayName: String
   """
-  Resolved label the UI should render. Precedence (strongest last):
-  name → first bound FREEFORM key note → displayName. I.e.
-  displayName if set, else the note on a bound FREEFORM key, else name.
+  Resolved label the UI should render: displayName if non-blank, else name.
   Read-only -- set displayName to override.
   """
   effectiveDisplayName: String
@@ -3263,6 +3648,8 @@ type Agent {
   FREEFORM API keys bound to this agent's identity
   (agent_identity_credentials of type REARM_API_KEY). These are the
   keys an agent runtime authenticates with to drive this agent.
+  Only uuid, org, type and declaredName are populated here; the full
+  record is apiKeys (org admin) or myApiKeys (own keys).
   """
   boundApiKeys: [ApiKey]
 }
@@ -3751,7 +4138,7 @@ enum AgentSignOffOutcome {
 }
 
 """
-Why an assigned agent handed the task back to the coordinator. SESSION_CLOSED is system-generated on any session-close path.
+Why an assigned agent handed the task back to the coordinator. SESSION_CLOSED is system-generated on any session-close path; PARKED_FOR_OPERATOR is system-generated when the session working the task parks its hop for the operator, which ends the hop.
 """
 enum AgentTaskReturnReason {
   TASK_UNCLEAR
@@ -3760,6 +4147,7 @@ enum AgentTaskReturnReason {
   BLOCKED_ON_DEPENDENCY
   NEEDS_HUMAN
   SESSION_CLOSED
+  PARKED_FOR_OPERATOR
   OTHER
 }
 
@@ -4108,6 +4496,191 @@ type BoardRoleSpec {
   strength: BoardStrengthSpec
 }
 
+"""
+Whether a TEA collection belongs to a component release or a product release.
+"""
+enum TeaCollectionBelongsToType {
+  COMPONENT_RELEASE
+  PRODUCT_RELEASE
+}
+
+"""
+Why a publish, re-publish or hide was refused.
+"""
+enum TeaPublishRefusal {
+  RELEASE_NOT_FOUND
+  RELEASE_ARCHIVED
+  COMPONENT_ARCHIVED
+  LIFECYCLE_TOO_LOW
+  PROFILE_CONFLICT
+  PROFILE_NOT_FOUND
+  PUBLISHING_DISABLED
+  ALREADY_PUBLISHED
+  NOT_PUBLISHED
+  NO_SBOM_ARTIFACTS
+  CHILD_MERGE_FAILED
+  GENERATION_FAILED
+  PUBLISH_IN_PROGRESS
+}
+
+"""
+Resolved at request time: switching it changes who can read what is already published.
+"""
+enum TeaVisibility {
+  PRIVATE
+  PUBLIC
+}
+
+"""
+Which rule produced a resolved TEA profile.
+"""
+enum TeaProfileSource {
+  COMPONENT
+  FOLLOWED_PERSPECTIVE
+  PERSPECTIVE
+  ORGANIZATION
+  DEFAULT
+}
+
+"""
+One immutable version of a release's TEA collection.
+"""
+type TeaPublishedCollection {
+  uuid: ID!
+  version: Int!
+  createdDate: DateTime
+  createdBy: ID
+  belongsTo: TeaCollectionBelongsToType!
+  updateReasonType: TeaCollectionUpdateReasonType!
+  updateReasonComment: String
+  profileRevision: Int
+  documentSha256: String!
+  "The canonical collection JSON exactly as TEA serves it"
+  document: String!
+  entries: [TeaPublishedEntry!]!
+}
+
+"""
+What a COMPONENT-scope scoped settings row does: carry its own settings, or follow one perspective's row.
+"""
+enum ScopedSettingsMode {
+  OVERRIDE
+  FOLLOW_PERSPECTIVE
+}
+
+enum SbomDependencyDepth {
+  FULL
+  TOP_LEVEL_ONLY
+}
+
+enum SbomOptionalDependencies {
+  INCLUDE
+  EXCLUDE
+}
+
+enum SbomSourceKind {
+  DELIVERABLE
+  RELEASE
+  SOURCE_CODE
+}
+
+enum SbomSupportMetadata {
+  INCLUDE
+  EXCLUDE
+}
+
+enum SbomInternalMetadata {
+  INCLUDE
+  EXCLUDE
+}
+
+"""
+Reserved: vulnerability documents are not part of an SBOM profile yet.
+"""
+enum SbomVulnerabilityDocuments {
+  NONE
+}
+
+"""
+The outcome of a scoped settings resolution; NOT_FOUND is a name no scope defines and no built-in answers.
+"""
+enum ScopedResolutionStatus {
+  RESOLVED
+  CONFLICT
+  NOT_FOUND
+}
+
+"""
+Which rule of the scoped settings walk produced a resolution.
+"""
+enum ScopedSettingsSource {
+  COMPONENT
+  FOLLOWED_PERSPECTIVE
+  PERSPECTIVE
+  ORGANIZATION
+  DEFAULT
+}
+
+type TeaPerspectiveRef {
+  uuid: ID!
+  name: String
+  type: PerspectiveType
+}
+
+enum ComponentType {
+  COMPONENT
+  PRODUCT
+  ANY
+}
+
+"""
+What a submission act did.
+"""
+enum SubmissionActOutcome {
+  CREATED
+  RESUBMITTED
+  WITHDRAWN
+  UNCHANGED
+}
+
+"""
+The package settings row a submission version applied; row is null and revision 0 for the built-in defaults.
+"""
+type SubmissionSettingsRef {
+  row: ID
+  revision: Int
+  source: ScopedSettingsSource
+  sourceObject: ID
+}
+
+"""
+The SBOM profile a submission version's aggregate applied; row is null and revision 0 for the built-in default.
+"""
+type SubmissionProfileRef {
+  name: String!
+  row: ID
+  revision: Int
+  source: ScopedSettingsSource
+  sourceObject: ID
+}
+
+"""
+One part of a submission version, in manifest order; download a PRODUCED or REFERENCED artifact through the artifact rawdownload endpoints with artifactVersion.
+"""
+type SubmissionPart {
+  part: PackagePart!
+  requirement: PackagePartRequirement!
+  outcome: SubmissionPartOutcome!
+  artifact: ID
+  artifactVersion: String
+  fileName: String
+  mediaType: String
+  size: Long
+  sha256: String
+  skipReason: PartSkipReason
+  detail: String
+}
+
 type ApiKeySpec {
   name: String!
   """
@@ -4137,6 +4710,8 @@ enum ApiTypeEnum {
   USER
   "Identity row for one external repository trusted by the org's federated trust rules: no secret, permissions computed from the rules on every call"
   FEDERATED
+  "A key handed to a party outside the organization: exchanges at the TEA token endpoint only and reads what the organization published on TEA"
+  EXTERNAL
 }
 
 enum ApiKeyStatus {
@@ -4254,6 +4829,11 @@ type Organization {
   List order is the priority order -- first match wins.
   """
   globalTeamAssignmentRules: [GlobalTeamAssignmentRule]
+  """
+  The organization's TEA-facing id: minted by the server on the first ENABLED TEA profile save,
+  never editable. The organization's TEA API base is <host>/tea/<teaUuid>.
+  """
+  teaUuid: ID
 }
 
 type ParentRelease {
@@ -4379,6 +4959,8 @@ type Artifact {
   artifactDetails: [Artifact]
   enrichmentStatus: EnrichmentStatus
   vexImportSummary: VexImportSummary
+  "The artifact's TEA id, minted when a TEA publication first names it; read-only"
+  teaUuid: ID
 }
 
 type Deliverable {
@@ -4674,6 +5256,24 @@ enum GudidStatus {
   NOT_SUBMITTED
   SUBMITTED
   PUBLISHED
+}
+
+"""
+A declared licence as resolved for a release (SCORE-39).
+"""
+type DeclaredLicense {
+  """
+  Canonical SPDX expression.
+  """
+  expression: String!
+  """
+  URL of the licence, from the level that declared it; null when it has none.
+  """
+  url: String
+  """
+  The level the licence was resolved from.
+  """
+  level: DeclaredLicenseLevel!
 }
 
 type ReleaseCollection {
@@ -5030,6 +5630,14 @@ enum PermissionFunction {
   Run a board: register, authorize, seat, holds, decisions (READ_WRITE floor); implies BOARD_READ.
   """
   BOARD_WRITE
+  """
+  Read what the organization published on TEA; the only function an EXTERNAL key carries.
+  """
+  TEA_READ
+  """
+  Publish, re-publish and hide releases on TEA (users and RBAC keys).
+  """
+  PUBLISH_EXTERNALLY
 }
 
 """
@@ -5093,6 +5701,20 @@ A board function no key can exercise on a board, and the line the board panel sh
 type BoardCoverageGap {
   function: PermissionFunction!
   message: String!
+}
+
+"""
+A served text answered to a caller that may already hold it (task TPF-97). version is the SHA-256 of the
+exact text as served, hex, 64 characters: it covers the whole served text (prompt, routing rules, merge
+procedure, ladder section), unlike promptVersion, which pins the operator's prompt alone on sign-offs.
+Pass the versions you hold as heldVersions: when the current one is among them status is UNCHANGED and
+text is null -- keep what you hold; otherwise status is SERVED and text is the whole served text. Without
+heldVersions the answer is always SERVED.
+"""
+type ServedPrompt {
+  version: String!
+  status: ServedPromptStatus!
+  text: String
 }
 
 type AgentBoardPause {
@@ -5594,6 +6216,27 @@ type AgentTaskWorkAssignment {
 }
 
 """
+A staleness mark (task RD3-4): the rule, when the measured span began, how many minutes it had run at the
+read, and the ALERT text the sweep posts for it. On an agent row, the rules that name the session
+(hopNoProgress, seatSilent, deliveryStuck); on a task, the task-keyed rules (TPF-69).
+"""
+type BoardAgentStaleMark {
+  """
+  The staleness rule: hopNoProgress, seatSilent, deliveryStuck or investigationOverdue.
+  """
+  rule: String
+  """
+  When the span began: the assignment, the entry into DELIVERING, or the investigation's deadline.
+  """
+  since: DateTime
+  """
+  Minutes from since to the read, the figure the message rounds.
+  """
+  minutes: Int
+  message: String
+}
+
+"""
 Append-only per-hop sign-off stored in ReARM; promptVersion pins the served prompt the agent assumed.
 """
 type AgentTaskSignOff {
@@ -5941,6 +6584,71 @@ type ElementCheckResult {
   """
   reason: String
   offences: [ElementCheckOffence]
+}
+
+"""
+What a publish act did: PUBLISHED wrote the first collection version, REPUBLISHED a later one, UNCHANGED none.
+"""
+enum TeaPublishOutcome {
+  PUBLISHED
+  REPUBLISHED
+  UNCHANGED
+}
+
+type TeaRideAlongOutcome {
+  artifact: ID!
+  status: TeaRideAlongStatus!
+  detail: String
+}
+
+type TeaChildPublishResult {
+  release: ID!
+  componentName: String
+  version: String
+  outcome: TeaChildOutcome!
+  refusal: TeaPublishRefusal
+  detail: String
+  publication: ID
+}
+
+"""
+What a TEA publication is now: PUBLISHED is served on TEA, HIDDEN is not; nothing is ever deleted.
+"""
+enum TeaPublicationState {
+  PUBLISHED
+  HIDDEN
+}
+
+"""
+One named aggregate of a publication: the SBOM profile and the generated artifact row (task TEA-28).
+"""
+type TeaAggregateArtifact {
+  profileName: String!
+  artifact: ID!
+}
+
+"""
+Live: what a publication is right now. CONCEALED is hidden, disabled, conflicting or missing.
+"""
+enum TeaExposureState {
+  PUBLIC
+  PRIVATE
+  CONCEALED
+}
+
+"""
+Why a publication's exposure is CONCEALED right now.
+"""
+enum TeaConcealReason {
+  HIDDEN
+  RELEASE_MISSING
+  RELEASE_ARCHIVED
+  LIFECYCLE_BELOW_ASSEMBLED
+  COMPONENT_MISSING
+  PROFILE_CONFLICT
+  PUBLISHING_DISABLED
+  PRODUCT_MISSING
+  PRODUCT_CONCEALED
 }
 
 type DeclarativeChange {
@@ -6366,12 +7074,6 @@ input GudidRecordInput {
   sterile: Boolean
   singleUse: Boolean
   mriSafety: Boolean
-}
-
-enum ComponentType {
-  COMPONENT
-  PRODUCT
-  ANY
 }
 
 enum ComponentKind {
@@ -6999,14 +7701,25 @@ type ApiKey {
   keyOrder: String
   lastUpdatedBy: ID
   createdBy: ID
+  """
+  When a credential of this key last verified (bearer, Basic or a client_credentials exchange); it lags by up
+  to one scheduler tick. A verified credential that a later permission check refuses still counts.
+  Null if never used.
+  """
   accessDate: DateTime
   createdDate: DateTime
   notes: String
+  """
+  The reason an administrator gave when denying this request: empty when none was given; null unless
+  status is DENIED; null on requests denied before this field existed, whose notes end in the legacy
+  'Denied' tail, with the reason after 'Denied: ' when one was given.
+  """
+  deniedReason: String
   status: ApiKeyStatus
   secrets: [ApiKeySecretInfo!]
   "FREEFORM keys: the user who requested the key and the only one who may mint or regenerate its secrets"
   holder: ID
-  "Deactivated by an org admin: the owner or holder cannot re-activate it, only an admin can"
+  "An org admin's kill switch holds the key off: only an org admin can re-activate it, not its owner, holder or an org writer"
   adminDisabled: Boolean
   "MANUAL, or CLI_SESSION for a personal key a CLI browser login created for its session (deleted with the session)"
   origin: ApiKeyOrigin
@@ -7031,6 +7744,12 @@ type ApiKey {
   Days a secret minted through the declarative mint lives; null for no expiry.
   """
   secretExpiresDays: Int
+  "The id a client presents: TYPE__object[__ord__order], or EXTERNAL__<org TEA id>__ord__<order>"
+  keyId: String
+  "EXTERNAL keys: the outside party that holds the key"
+  holderName: String
+  "EXTERNAL keys: the organization's TEA id the key id carries"
+  teaOrg: ID
   """
   Root agents this key is bound to via the agent-identity it
   resolves to (agent_identity_credentials). Empty until an agent
@@ -7444,6 +8163,84 @@ type BoardStrengthSpec {
   modelStrengths: [BoardModelStrengthSpec]
 }
 
+"""
+The reason a TEA collection version was written, per the TEA 1.0.0 precedence rule.
+"""
+enum TeaCollectionUpdateReasonType {
+  INITIAL_RELEASE
+  VEX_UPDATED
+  ARTIFACT_UPDATED
+  ARTIFACT_ADDED
+  ARTIFACT_REMOVED
+}
+
+"""
+One frozen artifact of a TEA collection version.
+"""
+type TeaPublishedEntry {
+  artifact: ID!
+  teaUuid: ID!
+  revision: Int!
+  origin: TeaArtifactOrigin!
+  type: TeaArtifactType
+  name: String
+  mediaType: String
+  "Set for an externally stored artifact; a ReARM-hosted one is served from the TEA artifact endpoint"
+  url: String
+  checksums: [TeaPublishedChecksum!]!
+  signatureArtifact: ID
+  signatureRevision: Int
+  "The SBOM profile this revision of a generated artifact was shaped by; null on an uploaded artifact and on a revision published before task TEA-28"
+  sbomProfileName: String
+  sbomProfileUuid: ID
+  sbomProfileRevision: Int
+}
+
+enum PerspectiveType {
+  PERSPECTIVE
+  PRODUCT
+}
+
+"""
+A document kind a package part generator produces from a release, in document order.
+"""
+enum PackagePart {
+  AGGREGATE_SBOM
+  VDR
+  VEX
+  SUPPORT_ADDENDUM
+  DEVICE_SUPPORT_STATEMENT
+  NARRATIVE
+  CLE
+  RAW_ARTIFACTS
+}
+
+"""
+Whether a package kind requires a part; a REQUIRED part is always included.
+"""
+enum PackagePartRequirement {
+  REQUIRED
+  OPTIONAL
+}
+
+"""
+What one part of a submission version holds.
+"""
+enum SubmissionPartOutcome {
+  PRODUCED
+  REFERENCED
+  SKIPPED
+}
+
+"""
+Why a package part generator produced nothing for a release.
+"""
+enum PartSkipReason {
+  NOT_APPLICABLE
+  NO_CONTENT
+  EXCLUDED_BY_SETTINGS
+}
+
 enum PermissionType {
   ADMIN
   READ_ONLY
@@ -7554,6 +8351,16 @@ NULL MEANS DISABLED. The default is off: support properties do not appear in an
   time.
   """
   fdaRiskIncreasesNotice: String
+  """
+  The organization's default declared licence (SCORE-39), a canonical SPDX expression: written
+  on the SBOM nodes ReARM makes for a release whose component and release declare none. Null
+  when unset.
+  """
+  defaultLicenseExpression: String
+  """
+  URL of defaultLicenseExpression (http or https); null when unset.
+  """
+  defaultLicenseUrl: String
   """
   Org-wide default UI view (Security or DevOps) for users who have not
   picked one in their browser. Null means SECURITY.
@@ -7941,6 +8748,10 @@ enum ReleaseUpdateScopeEnum {
   APPROVED_ENVIRONMENT
   SUPPORT_WINDOW
   FDA_NARRATIVE
+  SYNTHETIC_ARTIFACT
+  TEA_PUBLICATION
+  SUBMISSION
+  DECLARED_LICENSE
 }
 
 enum ReleaseUpdateActionEnum {
@@ -8109,6 +8920,15 @@ type ElementIndex {
   in other document types. Empty before 1.2.
   """
   references: [ElementReference]
+}
+
+"""
+Where a release's declared licence comes from (SCORE-39).
+"""
+enum DeclaredLicenseLevel {
+  ORGANIZATION
+  COMPONENT
+  RELEASE
 }
 
 type ArtifactComparison {
@@ -8319,6 +9139,14 @@ type AgentBoardElementCheckCounts {
 }
 
 """
+SERVED: text carries the served text. UNCHANGED: the caller holds the current version; text is null.
+"""
+enum ServedPromptStatus {
+  SERVED
+  UNCHANGED
+}
+
+"""
 A pause stops NEW assignments only; the coordinator cannot lift or override an OPERATOR pause.
 """
 enum AgentBoardPauseLevel {
@@ -8373,14 +9201,6 @@ type BoardAgentState {
   For CLOSED, who closed it.
   """
   closedBy: AgentActor
-}
-
-type BoardAgentStaleMark {
-  """
-  The staleness rule: hopNoProgress, seatSilent or deliveryStuck.
-  """
-  rule: String
-  message: String
 }
 
 """
@@ -8620,6 +9440,35 @@ type ElementCheckOffence {
   elementId: String
   release: ID
   message: String
+}
+
+"""
+Why a release artifact did or did not ride along with a publication.
+"""
+enum TeaRideAlongStatus {
+  PUBLISHED
+  SKIPPED_NO_RAW_BYTES
+  SKIPPED_NO_CHECKSUM
+  SKIPPED_VERSION_NOT_INTEGER
+  SKIPPED_SIGNATURE_TYPE
+  SKIPPED_NO_DOWNLOAD_LINK
+  """
+  the first download link is not an absolute http or https URI of at most 4096 octets, or carries user information.
+  """
+  SKIPPED_LINK_NOT_HTTP_URL
+}
+
+"""
+What a product publish did to one of its component releases.
+"""
+enum TeaChildOutcome {
+  PUBLISHED
+  REPUBLISHED
+  UNCHANGED
+  SKIPPED_DIRECT
+  SKIPPED_HIDDEN
+  SKIPPED_OTHER_PRODUCT
+  REFUSED
 }
 
 enum DeclarativeAction {
@@ -8863,6 +9712,10 @@ enum EventType {
   by pushing another commit on top of it.
   """
   LOCK
+  "Publish the release on TEA with its effective TEA profile, after the rule's pass, on the TEA act queue (repeats on every matching change, never on a re-evaluation)."
+  TEA_PUBLISH
+  "Hide the release's TEA publication, after the rule's pass, on the TEA act queue (fires once)."
+  TEA_HIDE
 }
 
 """
@@ -8912,11 +9765,6 @@ type DeviceSupportWindow {
   How it arrived: a human in the UI, an API caller, an automation.
   """
   source: ProgrammaticType
-}
-
-enum PerspectiveType {
-  PERSPECTIVE
-  PRODUCT
 }
 
 type Permissions {
@@ -9182,6 +10030,36 @@ type BoardModelStrengthSpec {
   """
   model: String
   strength: Float
+}
+
+"""
+Where a published TEA artifact came from: REAL is an uploaded release artifact, SYNTHETIC one ReARM generated.
+"""
+enum TeaArtifactOrigin {
+  REAL
+  SYNTHETIC
+}
+
+"""
+The TEA 1.0.0 artifact type.
+"""
+enum TeaArtifactType {
+  ATTESTATION
+  BOM
+  BUILD_META
+  CERTIFICATION
+  FORMULATION
+  LICENSE
+  RELEASE_NOTES
+  SECURITY_TXT
+  THREAT_MODEL
+  VULNERABILITIES
+  OTHER
+}
+
+type TeaPublishedChecksum {
+  algType: String!
+  algValue: String!
 }
 
 enum PermissionScope {

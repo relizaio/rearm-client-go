@@ -83,6 +83,19 @@ mutation AgentBoardCoordinateProgrammatic ($boardUuid: ID!, $sessionUuid: ID!) {
 	perAgentWipLimit priorityType createdDate
 } }
 
+# TPF-97 / TPF-110: the seat with the coordinator prompt by version. The CLI sends the versions its caller holds;
+# the stored coordinatorPrompt is not selected (the served text is the one to assume).
+mutation AgentBoardCoordinateByPromptVersion ($boardUuid: ID!, $sessionUuid: ID!, $heldVersions: [String!]) {
+	agentBoardCoordinateProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid) {
+	uuid org name description status sources
+	documentsRepo { uuid uri } documentPaths
+	coordinatorPromptByVersion(heldVersions: $heldVersions) { version status text } missingCapabilities
+	events { kind message actor { ...ActorFields } eventAt }
+	pause { level reason pausedBy { ...ActorFields } pausedAt }
+	coordinatorSeat { session agent claimedAt }
+	perAgentWipLimit priorityType createdDate
+} }
+
 mutation AgentBoardCoordinatorPauseProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $pause: Boolean!, $reason: String) {
 	agentBoardCoordinatorPauseProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid, pause: $pause, reason: $reason) {
 	uuid org name description status sources
@@ -137,6 +150,14 @@ query AgentRoleBriefProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsProgram
 	producesOutputs { specification scope required }
 } }
 
+# TPF-97 / TPF-110: the role part of a brief by version: AgentRoleBriefProgrammatic with servedPrompt replaced.
+query AgentRoleBriefByPromptVersion ($boardUuid: ID!, $heldVersions: [String!]) { agentTaskRoleConfigsProgrammatic(boardUuid: $boardUuid) {
+	uuid name promptVersion requiredCapabilities
+	promptByVersion(heldVersions: $heldVersions) { version status text }
+	requiredInputs { kind specification scope minLifecycle resolution }
+	producesOutputs { specification scope required }
+} }
+
 mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 	agentTaskRegisterProgrammatic(input: $input) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
@@ -181,6 +202,25 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 	role rolePrompt promptVersion hopBudgetMicros
 } }
 
+# TPF-97 / TPF-110: the offer with the prompt by version. The CLI sends the versions its caller holds.
+query AgentTaskNextByPromptVersion ($sessionUuid: ID!, $boardUuid: ID, $roles: [String!], $heldVersions: [String!]) {
+	agentTaskNextProgrammatic(sessionUuid: $sessionUuid, boardUuid: $boardUuid, roles: $roles) {
+	task {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+ }
+	role promptVersion hopBudgetMicros
+	promptByVersion(heldVersions: $heldVersions) { version status text }
+} }
+
 mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles: [String!]) {
 	agentTaskAssignProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, roles: $roles) {
 	task {
@@ -197,6 +237,26 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 	documents { uuid version lifecycle document { specification path round task advisory publishedByRole } }
  }
 	role rolePrompt promptVersion hopBudgetMicros
+} }
+
+# TPF-97 / TPF-110: the assignment with the prompt by version.
+mutation AgentTaskAssignByPromptVersion ($taskUuid: ID!, $sessionUuid: ID!, $roles: [String!], $heldVersions: [String!]) {
+	agentTaskAssignProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, roles: $roles) {
+	task {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+	documents { uuid version lifecycle document { specification path round task advisory publishedByRole } }
+ }
+	role promptVersion hopBudgetMicros
+	promptByVersion(heldVersions: $heldVersions) { version status text }
 } }
 
 mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!], $noChange: Boolean, $noCode: Boolean) {
