@@ -19,7 +19,7 @@ func TestRoleReadsSelectCoordinatorCheckpoint(t *testing.T) {
 	}
 }
 
-// Every task selection that reads returns { … } reads the record too, so whatever verb printed the task can name
+// Every task selection that reads returns { ... } reads the record too, so whatever verb printed the task can name
 // the checkpoint. A selection dropped from one operation fails by that operation's name.
 func TestTaskSelectionsReadTheDesignCheckpoint(t *testing.T) {
 	// genqlient writes the spread as "... ActorFields" in the generated text.
