@@ -137,6 +137,7 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
   commissions { roles intake defaultBudgetMicros review }
   hopBudgetMicros
   blindReview
+  coordinatorCheckpoint
   strength {
     requiredStrength
     strengthHeadroom

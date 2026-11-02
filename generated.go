@@ -8078,8 +8078,10 @@ type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmen
 	Assignment *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                                                     `json:"parentTask"`
-	ChildTasks []*string                                                                                                                   `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                                                    `json:"parentTask"`
+	ChildTasks       []*string                                                                                                  `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -8224,6 +8226,11 @@ func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssig
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetDesignCheckpoint() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -8324,6 +8331,147 @@ func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssig
 // GetPromptVersion returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                                       `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease includes the requested fields of the GraphQL type Release.
@@ -9372,8 +9520,10 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	Assignment *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                                                  `json:"parentTask"`
-	ChildTasks []*string                                                                                                                `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                                                 `json:"parentTask"`
+	ChildTasks       []*string                                                                                               `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -9518,6 +9668,11 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetDesignCheckpoint() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -9618,6 +9773,147 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                                    `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease includes the requested fields of the GraphQL type Release.
@@ -10911,8 +11207,10 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	Assignment *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                                 `json:"parentTask"`
-	ChildTasks []*string                                                                                               `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                                `json:"parentTask"`
+	ChildTasks       []*string                                                                              `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -11073,6 +11371,11 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) 
 // GetReturns returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.Returns, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetReturns() []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturn {
 	return v.Returns
+}
+
+// GetDesignCheckpoint returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
 }
 
 // GetParentTask returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
@@ -11244,6 +11547,147 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBu
 
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor, error) {
 	var retval __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBudgetSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                   `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -12188,8 +12632,10 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	Assignment *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                                             `json:"parentTask"`
-	ChildTasks []*string                                                                                                           `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                                            `json:"parentTask"`
+	ChildTasks       []*string                                                                                          `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -12332,6 +12778,11 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -12427,6 +12878,147 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // GetPromptVersion returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                               `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -13680,8 +14272,10 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask struct {
 	Assignment *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                           `json:"parentTask"`
-	ChildTasks []*string                                                                                         `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                          `json:"parentTask"`
+	ChildTasks       []*string                                                                        `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -13824,6 +14418,11 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetRet
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -13919,6 +14518,147 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                             `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -15778,6 +16518,8 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask struct 
 	Assignment *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
 	Unassignments []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment `json:"unassignments"`
 	ParentTask    *string                                                                                                  `json:"parentTask"`
@@ -15927,6 +16669,11 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) Ge
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetUnassignments returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.Unassignments, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetUnassignments() []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment {
 	return v.Unassignments
@@ -16032,6 +16779,147 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskAssi
 // GetPromptVersion returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                 `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -17814,8 +18702,10 @@ type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAge
 	Assignment *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                                             `json:"parentTask"`
-	ChildTasks []*string                                                                                                           `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                                            `json:"parentTask"`
+	ChildTasks       []*string                                                                                          `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -17958,6 +18848,11 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -18053,6 +18948,147 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 // GetPromptVersion returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                               `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -18951,6 +19987,21 @@ func (v *AgentTaskDeclareDeliveryResponse) GetAgentTaskDeclareDelivery() *AgentT
 	return v.AgentTaskDeclareDelivery
 }
 
+// Where a task's design checkpoint stands (task SPLIT-5): waiting on the coordinator, sent on, or split.
+type AgentTaskDesignCheckpointState string
+
+const (
+	AgentTaskDesignCheckpointStatePending AgentTaskDesignCheckpointState = "PENDING"
+	AgentTaskDesignCheckpointStateSentOn  AgentTaskDesignCheckpointState = "SENT_ON"
+	AgentTaskDesignCheckpointStateSplit   AgentTaskDesignCheckpointState = "SPLIT"
+)
+
+var AllAgentTaskDesignCheckpointState = []AgentTaskDesignCheckpointState{
+	AgentTaskDesignCheckpointStatePending,
+	AgentTaskDesignCheckpointStateSentOn,
+	AgentTaskDesignCheckpointStateSplit,
+}
+
 // AgentTaskElementCheckTargetsProgrammaticAgentTaskProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskElementCheckTargetsProgrammaticAgentTaskProgrammaticAgentTask struct {
 	Uuid *string `json:"uuid"`
@@ -19313,8 +20364,10 @@ type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask
 	Assignment *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                                       `json:"parentTask"`
-	ChildTasks []*string                                                                                                     `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                                      `json:"parentTask"`
+	ChildTasks       []*string                                                                                    `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -19457,6 +20510,11 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -19552,6 +20610,147 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // GetPromptVersion returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                         `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -20522,8 +21721,10 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask struct {
 	Assignment *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                       `json:"parentTask"`
-	ChildTasks []*string                                                                                     `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                      `json:"parentTask"`
+	ChildTasks       []*string                                                                    `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -20662,6 +21863,11 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetReturns
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -20757,6 +21963,147 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskAssignmentAg
 // GetPromptVersion returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                         `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -22311,8 +23658,10 @@ type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask struct 
 	Assignment *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                               `json:"parentTask"`
-	ChildTasks []*string                                                                                             `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                              `json:"parentTask"`
+	ChildTasks       []*string                                                                            `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -22455,6 +23804,11 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask) Ge
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -22550,6 +23904,147 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskAssi
 // GetPromptVersion returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                 `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -23478,6 +24973,8 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask struct {
 	Assignment *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
 	Unassignments []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment `json:"unassignments"`
 	ParentTask    *string                                                                                              `json:"parentTask"`
@@ -23627,6 +25124,11 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetRet
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetUnassignments returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.Unassignments, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetUnassignments() []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment {
 	return v.Unassignments
@@ -23732,6 +25234,147 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                             `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -25009,8 +26652,10 @@ type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTas
 	Assignment *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                                                 `json:"parentTask"`
-	ChildTasks []*string                                                                                                               `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                                                `json:"parentTask"`
+	ChildTasks       []*string                                                                                              `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -25153,6 +26798,11 @@ func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmen
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetDesignCheckpoint() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -25248,6 +26898,147 @@ func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmen
 // GetPromptVersion returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                                   `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -26222,8 +28013,10 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	Assignment *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                                              `json:"parentTask"`
-	ChildTasks []*string                                                                                                            `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                                             `json:"parentTask"`
+	ChildTasks       []*string                                                                                           `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -26366,6 +28159,11 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetDesignCheckpoint() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -26461,6 +28259,147 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // GetPromptVersion returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                                `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -27957,8 +29896,10 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask struct {
 	Assignment *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                         `json:"parentTask"`
-	ChildTasks []*string                                                                                       `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                        `json:"parentTask"`
+	ChildTasks       []*string                                                                      `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -28101,6 +30042,11 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetRetur
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -28196,6 +30142,147 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskAssignment
 // GetPromptVersion returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                           `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -29165,6 +31252,8 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	Assignment *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
 	Unassignments []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment `json:"unassignments"`
 	ParentTask    *string                                                                                  `json:"parentTask"`
@@ -29355,6 +31444,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetSignOffs() []*A
 // GetReturns returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Returns, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetReturns() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturn {
 	return v.Returns
+}
+
+// GetDesignCheckpoint returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
 }
 
 // GetUnassignments returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Unassignments, and is useful for accessing the field via an interface.
@@ -29696,6 +31790,147 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDeliveriesAgentTaskD
 
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDeliveriesAgentTaskDeliveryByAgentActor) __premarshalJSON() (*__premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDeliveriesAgentTaskDeliveryByAgentActor, error) {
 	var retval __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDeliveriesAgentTaskDeliveryByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                 `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -32482,8 +34717,10 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask struct 
 	Assignment *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                               `json:"parentTask"`
-	ChildTasks []*string                                                                                             `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                              `json:"parentTask"`
+	ChildTasks       []*string                                                                            `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -32626,6 +34863,11 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) Ge
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -32721,6 +34963,147 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskAssi
 // GetPromptVersion returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                 `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -33657,6 +36040,8 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask struct {
 	Assignment *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
 	Unassignments []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment `json:"unassignments"`
 	ParentTask    *string                                                                                              `json:"parentTask"`
@@ -33812,6 +36197,11 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetRet
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetUnassignments returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.Unassignments, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetUnassignments() []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment {
 	return v.Unassignments
@@ -33932,6 +36322,147 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                             `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -35529,8 +38060,10 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	Assignment *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                                                   `json:"parentTask"`
-	ChildTasks []*string                                                                                                                 `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                                                  `json:"parentTask"`
+	ChildTasks       []*string                                                                                                `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -35673,6 +38206,11 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -35768,6 +38306,147 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // GetPromptVersion returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                                     `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -36703,8 +39382,10 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask struct {
 	Assignment *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                           `json:"parentTask"`
-	ChildTasks []*string                                                                                         `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                          `json:"parentTask"`
+	ChildTasks       []*string                                                                        `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -36847,6 +39528,11 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetRet
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -36942,6 +39628,147 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                             `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -37855,9 +40682,11 @@ type AgentTaskRoleConfigInput struct {
 	WipLimit             *int    `json:"wipLimit"`
 	RequireDistinctAgent *bool   `json:"requireDistinctAgent"`
 	// Operator-only; rejected on the coordinator-seat path.
-	BlindReview          *bool             `json:"blindReview"`
-	Active               *bool             `json:"active"`
-	RequiredCapabilities []AgentCapability `json:"requiredCapabilities"`
+	BlindReview *bool `json:"blindReview"`
+	// Operator-only; rejected on the coordinator-seat path. Before this role is queued on a task's design the task stops at the coordinator (task SPLIT-5). Null leaves it; at most one active role per board.
+	CoordinatorCheckpoint *bool             `json:"coordinatorCheckpoint"`
+	Active                *bool             `json:"active"`
+	RequiredCapabilities  []AgentCapability `json:"requiredCapabilities"`
 	// Operator-only; rejected on the coordinator-seat path.
 	Kind *AgentRoleKind `json:"kind"`
 	// Operator-only; rejected on the coordinator-seat path.
@@ -37901,6 +40730,9 @@ func (v *AgentTaskRoleConfigInput) GetRequireDistinctAgent() *bool { return v.Re
 
 // GetBlindReview returns AgentTaskRoleConfigInput.BlindReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigInput) GetBlindReview() *bool { return v.BlindReview }
+
+// GetCoordinatorCheckpoint returns AgentTaskRoleConfigInput.CoordinatorCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetCoordinatorCheckpoint() *bool { return v.CoordinatorCheckpoint }
 
 // GetActive returns AgentTaskRoleConfigInput.Active, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigInput) GetActive() *bool { return v.Active }
@@ -38093,6 +40925,8 @@ type AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRo
 	HopBudgetMicros *int64 `json:"hopBudgetMicros"`
 	// A session assigned in this role reads its task without earlier hops' note, session, agent and return description; documents are untouched.
 	BlindReview *bool `json:"blindReview"`
+	// Before this role is queued on a task's design the task stops at the coordinator, which splits it or sends it on (task SPLIT-5). At most one active role per board.
+	CoordinatorCheckpoint bool `json:"coordinatorCheckpoint"`
 	// What every task in this role must be able to read before it starts.
 	RequiredInputs []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite `json:"requiredInputs"`
 	// What a hop in this role must leave behind: the mirror of requiredInputs.
@@ -38196,6 +41030,11 @@ func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTa
 // GetBlindReview returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.BlindReview, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetBlindReview() *bool {
 	return v.BlindReview
+}
+
+// GetCoordinatorCheckpoint returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.CoordinatorCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetCoordinatorCheckpoint() bool {
+	return v.CoordinatorCheckpoint
 }
 
 // GetRequiredInputs returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.RequiredInputs, and is useful for accessing the field via an interface.
@@ -39942,8 +42781,10 @@ type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask
 	Assignment *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                                       `json:"parentTask"`
-	ChildTasks []*string                                                                                                     `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                                      `json:"parentTask"`
+	ChildTasks       []*string                                                                                    `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -40086,6 +42927,11 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -40181,6 +43027,147 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 // GetPromptVersion returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                         `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -41117,6 +44104,8 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask struct {
 	Assignment *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
 	Unassignments []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment `json:"unassignments"`
 	ParentTask    *string                                                                                                `json:"parentTask"`
@@ -41266,6 +44255,11 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetR
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetUnassignments returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.Unassignments, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetUnassignments() []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment {
 	return v.Unassignments
@@ -41371,6 +44365,147 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskAssign
 // GetPromptVersion returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                               `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -42647,8 +45782,10 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask struct {
 	Assignment *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                         `json:"parentTask"`
-	ChildTasks []*string                                                                                       `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                        `json:"parentTask"`
+	ChildTasks       []*string                                                                      `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -42791,6 +45928,11 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetRetur
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -42886,6 +46028,147 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskAssignment
 // GetPromptVersion returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                           `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -43836,8 +47119,10 @@ type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgr
 	Assignment *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                                                       `json:"parentTask"`
-	ChildTasks []*string                                                                                                                     `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                                                      `json:"parentTask"`
+	ChildTasks       []*string                                                                                                    `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -43980,6 +47265,11 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -44075,6 +47365,147 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 // GetPromptVersion returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                                         `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -45610,8 +49041,10 @@ type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask struct 
 	Assignment *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                               `json:"parentTask"`
-	ChildTasks []*string                                                                                             `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                              `json:"parentTask"`
+	ChildTasks       []*string                                                                            `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -45759,6 +49192,11 @@ func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask) Ge
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -45864,6 +49302,147 @@ func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskAssi
 // GetPromptVersion returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                 `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -47041,6 +50620,8 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
 	Assignment *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
 	Unassignments []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment `json:"unassignments"`
 	ParentTask    *string                                                                                                `json:"parentTask"`
@@ -47249,6 +50830,11 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetS
 // GetReturns returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Returns, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetReturns() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn {
 	return v.Returns
+}
+
+// GetDesignCheckpoint returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetDesignCheckpoint() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
 }
 
 // GetUnassignments returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Unassignments, and is useful for accessing the field via an interface.
@@ -47592,6 +51178,147 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDelive
 
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDeliveriesAgentTaskDeliveryByAgentActor) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDeliveriesAgentTaskDeliveryByAgentActor, error) {
 	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDeliveriesAgentTaskDeliveryByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                               `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
 
 	retval.Kind = v.ActorFields.Kind
 	retval.Uuid = v.ActorFields.Uuid
@@ -50339,8 +54066,10 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTask struct {
 	Assignment *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
 	SignOffs   []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
 	Returns    []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
-	ParentTask *string                                                                                 `json:"parentTask"`
-	ChildTasks []*string                                                                               `json:"childTasks"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	ParentTask       *string                                                                `json:"parentTask"`
+	ChildTasks       []*string                                                              `json:"childTasks"`
 	// Every session that ever held the assignment.
 	Sessions            []*string `json:"sessions"`
 	PrUrls              []*string `json:"prUrls"`
@@ -50493,6 +54222,11 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetReturns() []*
 	return v.Returns
 }
 
+// GetDesignCheckpoint returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetDesignCheckpoint() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
 // GetParentTask returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetParentTask() *string {
 	return v.ParentTask
@@ -50608,6 +54342,147 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskAssignmentAgentTas
 // GetPromptVersion returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                   `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -51858,7 +55733,8 @@ type AgentTasksProgrammaticResponse struct {
 	// Agent-key auth: tasks of a board, optionally by status. With changedSince, only the tasks that
 	// changed at or after it (updatedAt), oldest change first: take the last one's updatedAt as the next
 	// changedSince. The board's events carry what needs a person; this is how a follower sees every
-	// other movement -- forward hand-overs, authorizes and assignments post no event (task 9540d3b6).
+	// other movement -- forward hand-overs, authorizes and assignments post no event (task 9540d3b6), except the
+	// design checkpoint, which alerts the coordinator (task SPLIT-5).
 	AgentTasksProgrammatic []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTask `json:"agentTasksProgrammatic"`
 }
 
@@ -51923,7 +55799,8 @@ type AgentWaitDeliveringProgrammaticResponse struct {
 	// Agent-key auth: tasks of a board, optionally by status. With changedSince, only the tasks that
 	// changed at or after it (updatedAt), oldest change first: take the last one's updatedAt as the next
 	// changedSince. The board's events carry what needs a person; this is how a follower sees every
-	// other movement -- forward hand-overs, authorizes and assignments post no event (task 9540d3b6).
+	// other movement -- forward hand-overs, authorizes and assignments post no event (task 9540d3b6), except the
+	// design checkpoint, which alerts the coordinator (task SPLIT-5).
 	AgentTasksProgrammatic []*AgentWaitDeliveringProgrammaticAgentTasksProgrammaticAgentTask `json:"agentTasksProgrammatic"`
 }
 
@@ -54951,9 +58828,10 @@ type BoardRoleSpecFields struct {
 	// Who the role may commission for a report (task RD4-12); null commissions nobody.
 	Commissions *BoardRoleSpecFieldsCommissionsAgentRoleCommissions `json:"commissions"`
 	// Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported.
-	HopBudgetMicros *int64                                        `json:"hopBudgetMicros"`
-	BlindReview     *bool                                         `json:"blindReview"`
-	Strength        *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
+	HopBudgetMicros       *int64                                        `json:"hopBudgetMicros"`
+	BlindReview           *bool                                         `json:"blindReview"`
+	CoordinatorCheckpoint *bool                                         `json:"coordinatorCheckpoint"`
+	Strength              *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
 
 // GetName returns BoardRoleSpecFields.Name, and is useful for accessing the field via an interface.
@@ -55006,6 +58884,9 @@ func (v *BoardRoleSpecFields) GetHopBudgetMicros() *int64 { return v.HopBudgetMi
 
 // GetBlindReview returns BoardRoleSpecFields.BlindReview, and is useful for accessing the field via an interface.
 func (v *BoardRoleSpecFields) GetBlindReview() *bool { return v.BlindReview }
+
+// GetCoordinatorCheckpoint returns BoardRoleSpecFields.CoordinatorCheckpoint, and is useful for accessing the field via an interface.
+func (v *BoardRoleSpecFields) GetCoordinatorCheckpoint() *bool { return v.CoordinatorCheckpoint }
 
 // GetStrength returns BoardRoleSpecFields.Strength, and is useful for accessing the field via an interface.
 func (v *BoardRoleSpecFields) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
@@ -57364,6 +61245,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetBlind
 	return v.BoardRoleSpecFields.BlindReview
 }
 
+// GetCoordinatorCheckpoint returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.CoordinatorCheckpoint, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetCoordinatorCheckpoint() *bool {
+	return v.BoardRoleSpecFields.CoordinatorCheckpoint
+}
+
 // GetStrength returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.Strength, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
 	return v.BoardRoleSpecFields.Strength
@@ -57425,6 +61311,8 @@ type __premarshalExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec s
 
 	BlindReview *bool `json:"blindReview"`
 
+	CoordinatorCheckpoint *bool `json:"coordinatorCheckpoint"`
+
 	Strength *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
 
@@ -57454,6 +61342,7 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) __premar
 	retval.Commissions = v.BoardRoleSpecFields.Commissions
 	retval.HopBudgetMicros = v.BoardRoleSpecFields.HopBudgetMicros
 	retval.BlindReview = v.BoardRoleSpecFields.BlindReview
+	retval.CoordinatorCheckpoint = v.BoardRoleSpecFields.CoordinatorCheckpoint
 	retval.Strength = v.BoardRoleSpecFields.Strength
 	return &retval, nil
 }
@@ -58247,6 +62136,11 @@ func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresets
 	return v.BoardRoleSpecFields.BlindReview
 }
 
+// GetCoordinatorCheckpoint returns ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec.CoordinatorCheckpoint, and is useful for accessing the field via an interface.
+func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec) GetCoordinatorCheckpoint() *bool {
+	return v.BoardRoleSpecFields.CoordinatorCheckpoint
+}
+
 // GetStrength returns ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec.Strength, and is useful for accessing the field via an interface.
 func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
 	return v.BoardRoleSpecFields.Strength
@@ -58308,6 +62202,8 @@ type __premarshalExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpe
 
 	BlindReview *bool `json:"blindReview"`
 
+	CoordinatorCheckpoint *bool `json:"coordinatorCheckpoint"`
+
 	Strength *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
 
@@ -58337,6 +62233,7 @@ func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresets
 	retval.Commissions = v.BoardRoleSpecFields.Commissions
 	retval.HopBudgetMicros = v.BoardRoleSpecFields.HopBudgetMicros
 	retval.BlindReview = v.BoardRoleSpecFields.BlindReview
+	retval.CoordinatorCheckpoint = v.BoardRoleSpecFields.CoordinatorCheckpoint
 	retval.Strength = v.BoardRoleSpecFields.Strength
 	return &retval, nil
 }
@@ -68955,6 +72852,18 @@ mutation AgentTaskAssignByPromptVersion ($taskUuid: ID!, $sessionUuid: ID!, $rol
 				}
 				overAllowanceMicros
 			}
+			designCheckpoint {
+				reachedAt
+				afterRole
+				beforeRole
+				design
+				state
+				settledBy {
+					... ActorFields
+				}
+				settledAt
+				note
+			}
 			parentTask
 			childTasks
 			sessions
@@ -69135,6 +73044,18 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 					... HopUsageFields
 				}
 				overAllowanceMicros
+			}
+			designCheckpoint {
+				reachedAt
+				afterRole
+				beforeRole
+				design
+				state
+				settledBy {
+					... ActorFields
+				}
+				settledAt
+				note
 			}
 			parentTask
 			childTasks
@@ -69456,6 +73377,18 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 			}
 			overAllowanceMicros
 		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
 		parentTask
 		childTasks
 		sessions
@@ -69620,6 +73553,18 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 				... HopUsageFields
 			}
 			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
 		}
 		parentTask
 		childTasks
@@ -69988,6 +73933,18 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 				... HopUsageFields
 			}
 			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
 		}
 		parentTask
 		childTasks
@@ -70383,6 +74340,18 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 				... HopUsageFields
 			}
 			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
 		}
 		unassignments {
 			role
@@ -70840,6 +74809,18 @@ mutation AgentTaskDeclareDeliveryProgrammatic ($taskUuid: ID!, $sessionUuid: ID!
 			}
 			overAllowanceMicros
 		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
 		parentTask
 		childTasks
 		sessions
@@ -71120,6 +75101,18 @@ mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 			}
 			overAllowanceMicros
 		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
 		parentTask
 		childTasks
 		sessions
@@ -71274,6 +75267,18 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 				... HopUsageFields
 			}
 			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
 		}
 		parentTask
 		childTasks
@@ -71706,6 +75711,18 @@ mutation AgentTaskLiftHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role
 			}
 			overAllowanceMicros
 		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
 		parentTask
 		childTasks
 		sessions
@@ -71862,6 +75879,18 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 				... HopUsageFields
 			}
 			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
 		}
 		unassignments {
 			role
@@ -72041,6 +76070,18 @@ query AgentTaskNextByPromptVersion ($sessionUuid: ID!, $boardUuid: ID, $roles: [
 				}
 				overAllowanceMicros
 			}
+			designCheckpoint {
+				reachedAt
+				afterRole
+				beforeRole
+				design
+				state
+				settledBy {
+					... ActorFields
+				}
+				settledAt
+				note
+			}
 			parentTask
 			childTasks
 			sessions
@@ -72208,6 +76249,18 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 					... HopUsageFields
 				}
 				overAllowanceMicros
+			}
+			designCheckpoint {
+				reachedAt
+				afterRole
+				beforeRole
+				design
+				state
+				settledBy {
+					... ActorFields
+				}
+				settledAt
+				note
 			}
 			parentTask
 			childTasks
@@ -72639,6 +76692,18 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 			}
 			overAllowanceMicros
 		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
 		parentTask
 		childTasks
 		sessions
@@ -72852,6 +76917,18 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 				... HopUsageFields
 			}
 			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
 		}
 		unassignments {
 			role
@@ -73283,6 +77360,18 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 			}
 			overAllowanceMicros
 		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
 		parentTask
 		childTasks
 		sessions
@@ -73433,6 +77522,18 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 				... HopUsageFields
 			}
 			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
 		}
 		unassignments {
 			role
@@ -73759,6 +77860,18 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 			}
 			overAllowanceMicros
 		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
 		parentTask
 		childTasks
 		sessions
@@ -73911,6 +78024,18 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 				... HopUsageFields
 			}
 			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
 		}
 		parentTask
 		childTasks
@@ -74067,6 +78192,7 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) {
 		}
 		hopBudgetMicros
 		blindReview
+		coordinatorCheckpoint
 		requiredInputs {
 			kind
 			specification
@@ -74954,6 +79080,18 @@ mutation AgentTaskSetWorkLevelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 			}
 			overAllowanceMicros
 		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
 		parentTask
 		childTasks
 		sessions
@@ -75112,6 +79250,18 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 				... HopUsageFields
 			}
 			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
 		}
 		unassignments {
 			role
@@ -75302,6 +79452,18 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 			}
 			overAllowanceMicros
 		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
 		parentTask
 		childTasks
 		sessions
@@ -75456,6 +79618,18 @@ mutation AgentTaskSupersedePullRequestProgrammatic ($taskUuid: ID!, $sessionUuid
 				... HopUsageFields
 			}
 			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
 		}
 		parentTask
 		childTasks
@@ -75822,6 +79996,18 @@ mutation AgentTaskUnlinkPrProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $prUr
 			}
 			overAllowanceMicros
 		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
 		parentTask
 		childTasks
 		sessions
@@ -76060,6 +80246,18 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 				... HopUsageFields
 			}
 			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
 		}
 		unassignments {
 			role
@@ -76526,6 +80724,18 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $change
 				... HopUsageFields
 			}
 			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
 		}
 		parentTask
 		childTasks
@@ -77863,6 +82073,7 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
 	}
 	hopBudgetMicros
 	blindReview
+	coordinatorCheckpoint
 	strength {
 		requiredStrength
 		strengthHeadroom
@@ -78121,6 +82332,7 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
 	}
 	hopBudgetMicros
 	blindReview
+	coordinatorCheckpoint
 	strength {
 		requiredStrength
 		strengthHeadroom

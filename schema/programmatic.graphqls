@@ -246,7 +246,8 @@ roles: the roles this agent can take, each a role name on the board
   Agent-key auth: tasks of a board, optionally by status. With changedSince, only the tasks that
   changed at or after it (updatedAt), oldest change first: take the last one's updatedAt as the next
   changedSince. The board's events carry what needs a person; this is how a follower sees every
-  other movement -- forward hand-overs, authorizes and assignments post no event (task 9540d3b6).
+  other movement -- forward hand-overs, authorizes and assignments post no event (task 9540d3b6), except the
+  design checkpoint, which alerts the coordinator (task SPLIT-5).
   """
   agentTasksProgrammatic(
   boardUuid: ID!
@@ -1125,6 +1126,8 @@ type TeaPublishPreview {
   collections: [TeaPublishedCollection!]!
   "The SBOM profile names a publish would generate an aggregate for, in order"
   profiles: [String!]!
+  "The effective publishing switch of the profile the release resolves to; null when the release is unknown"
+  publishing: TeaPublishing
 }
 
 """
@@ -1425,6 +1428,8 @@ NULL MEANS INHERIT, not empty. Read it through the resolution seam -- release
   no commits carry agent attribution.
   """
   sessions: [Session]
+  "The regulatory package kinds this release offers: those switched on for its component, plus any it holds a submission of; empty on ReARM CE"
+  regulatoryPackageKinds: [PackageKind!]!
 }
 
 type SbomProbingResult {
@@ -2250,6 +2255,10 @@ type AgentTask {
   signOffs: [AgentTaskSignOff]
   returns: [AgentTaskReturn]
   """
+  The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+  """
+  designCheckpoint: AgentTaskDesignCheckpoint
+  """
   Assignments a person ended by unassigning the task, oldest first (task RD3-4).
   """
   unassignments: [AgentTaskUnassignment]
@@ -2420,6 +2429,10 @@ type AgentTaskRoleConfig {
   A session assigned in this role reads its task without earlier hops' note, session, agent and return description; documents are untouched.
   """
   blindReview: Boolean
+  """
+  Before this role is queued on a task's design the task stops at the coordinator, which splits it or sends it on (task SPLIT-5). At most one active role per board.
+  """
+  coordinatorCheckpoint: Boolean!
   active: Boolean
   """
   Capabilities an assignee of this role must hold (declared, unverified in v1).
@@ -3888,6 +3901,10 @@ input AgentTaskRoleConfigInput {
   Operator-only; rejected on the coordinator-seat path.
   """
   blindReview: Boolean
+  """
+  Operator-only; rejected on the coordinator-seat path. Before this role is queued on a task's design the task stops at the coordinator (task SPLIT-5). Null leaves it; at most one active role per board.
+  """
+  coordinatorCheckpoint: Boolean
   active: Boolean
   requiredCapabilities: [AgentCapability!]
   """
@@ -4478,6 +4495,7 @@ type BoardRoleSpec {
   wipLimit: Int
   requireDistinctAgent: Boolean
   blindReview: Boolean
+  coordinatorCheckpoint: Boolean
   active: Boolean
   kind: AgentRoleKind
   necessity: AgentRoleNecessity
@@ -4558,6 +4576,14 @@ type TeaPublishedCollection {
   "The canonical collection JSON exactly as TEA serves it"
   document: String!
   entries: [TeaPublishedEntry!]!
+}
+
+"""
+DISABLED at any scope conceals everything resolving there and blocks new publishes.
+"""
+enum TeaPublishing {
+  ENABLED
+  DISABLED
 }
 
 """
@@ -6321,6 +6347,39 @@ type AgentTaskReturn {
 }
 
 """
+The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+"""
+type AgentTaskDesignCheckpoint {
+  """
+  When routing first stopped the task here; kept while the record stays PENDING.
+  """
+  reachedAt: DateTime!
+  """
+  The role of the task's last hop when it was reached.
+  """
+  afterRole: String
+  """
+  The flagged role the checkpoint precedes.
+  """
+  beforeRole: String!
+  """
+  The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+  """
+  design: [ID!]!
+  state: AgentTaskDesignCheckpointState!
+  """
+  Who sent it on or split it; null while PENDING.
+  """
+  settledBy: AgentActor
+  settledAt: DateTime
+  """
+  Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+  """
+  note: String
+}
+
+"""
 An assignment a person ended by unassigning the task (task RD3-4); the unassigned session's later sign-off, publish or question is refused.
 """
 type AgentTaskUnassignment {
@@ -6802,6 +6861,10 @@ input BoardRoleSpecInput {
   Operator-only. The role reads its task without earlier hops' notes, sessions and agents (task 0192a587).
   """
   blindReview: Boolean
+  """
+  Operator-only: changed only from a person's apply (the UI, or a personal key). Before this role is queued on a task's design the task stops at the coordinator (task SPLIT-5). Absent: unchanged; null: false. Not on a preset.
+  """
+  coordinatorCheckpoint: Boolean
   """
   Absent: true -- declaring a role is what reactivates it.
   """
@@ -9331,6 +9394,15 @@ type AgentTaskRefusedPromotion {
   The guard's words.
   """
   reason: String
+}
+
+"""
+Where a task's design checkpoint stands (task SPLIT-5): waiting on the coordinator, sent on, or split.
+"""
+enum AgentTaskDesignCheckpointState {
+  PENDING
+  SENT_ON
+  SPLIT
 }
 
 """
