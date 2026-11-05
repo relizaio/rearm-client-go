@@ -168,6 +168,7 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -197,6 +198,7 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -216,6 +218,7 @@ query AgentTaskNextByPromptVersion ($sessionUuid: ID!, $boardUuid: ID, $roles: [
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -235,6 +238,7 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -255,6 +259,7 @@ mutation AgentTaskAssignByPromptVersion ($taskUuid: ID!, $sessionUuid: ID!, $rol
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -274,6 +279,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } noCode overAllowanceMicros noChange answered }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit }
@@ -282,8 +288,13 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
-mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: AgentTaskReturnReason!, $description: String, $outputs: [ID!]) {
-	agentTaskReturnProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason, description: $description, outputs: $outputs) {
+mutation AgentTaskReturnProgrammatic (
+	$taskUuid: ID!, $sessionUuid: ID!, $reason: AgentTaskReturnReason!, $description: String, $outputs: [ID!],
+	# The children a SPLIT return proposes (task SPLIT-12); the server refuses the list with any other reason, an
+	# empty one included, so a typed caller passing nil must omit it rather than send null or [].
+	# @genqlient(omitempty: true)
+	$proposedChildren: [AgentTaskSplitChildInput!]) {
+	agentTaskReturnProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, reason: $reason, description: $description, outputs: $outputs, proposedChildren: $proposedChildren) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
 	dependsOn requireHumanReview
 	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
@@ -291,6 +302,7 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -307,8 +319,12 @@ mutation AgentTaskAuthorizeProgrammatic (
 	$budgetMicros: Long,
 	# The task's work level on the board's ladder (task RD3-6); left out, the task keeps its own or the default.
 	# @genqlient(omitempty: true)
-	$workLevel: Int) {
-	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength, budgetMicros: $budgetMicros, workLevel: $workLevel) {
+	$workLevel: Int,
+	# With a split request on the task: why it is sent on rather than split (task SPLIT-12); left out, the server
+	# declines the request with its default note.
+	# @genqlient(omitempty: true)
+	$note: String) {
+	agentTaskAuthorizeProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, role: $role, orderIndex: $orderIndex, dependsOn: $dependsOn, requiredStrength: $requiredStrength, budgetMicros: $budgetMicros, workLevel: $workLevel, note: $note) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups requiredStrength
 	budgetMicros budgetSetBy { ...ActorFields } budgetSetAt
 	dependsOn requireHumanReview
@@ -317,6 +333,7 @@ mutation AgentTaskAuthorizeProgrammatic (
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -332,6 +349,7 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -349,6 +367,7 @@ mutation AgentTaskDeclareDeliveryProgrammatic ($taskUuid: ID!, $sessionUuid: ID!
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -366,6 +385,7 @@ mutation AgentTaskSupersedePullRequestProgrammatic ($taskUuid: ID!, $sessionUuid
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -384,6 +404,7 @@ mutation AgentTaskUnlinkPrProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $prUr
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit }
 	unlinkedPrs { url by { ...ActorFields } at note relinkedBy relinkedAt }
@@ -401,6 +422,7 @@ mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -416,6 +438,7 @@ mutation AgentTaskLiftHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -431,6 +454,7 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -446,6 +470,7 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -462,6 +487,7 @@ mutation AgentTaskSetWorkLevelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -484,6 +510,7 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -499,6 +526,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit }
@@ -516,6 +544,7 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -531,6 +560,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit }
@@ -549,6 +579,7 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
@@ -564,6 +595,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit }
@@ -583,6 +615,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros reviewedInputs { release specification round promotedTo } refusedPromotions { release specification round reason } }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit
@@ -619,6 +652,7 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgra
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros reviewedInputs { release specification round promotedTo } refusedPromotions { release specification round reason } }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit
@@ -649,6 +683,7 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $change
 	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
 	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
 	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } } state settledBy { ...ActorFields } settledAt note }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
