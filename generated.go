@@ -3234,6 +3234,11 @@ type AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard struct {
 	CoordinatorStopLift *bool `json:"coordinatorStopLift"`
 	// coordinatorStopLift with its default resolved.
 	EffectiveCoordinatorStopLift *bool `json:"effectiveCoordinatorStopLift"`
+	// Whether an architect's --no-split sign-off waives the design checkpoint on this board (task TPF-152). As set:
+	// null is the default, on; false keeps every design at the coordinator. Operator-only.
+	ArchitectCheckpointWaiver *bool `json:"architectCheckpointWaiver"`
+	// architectCheckpointWaiver with its default resolved.
+	EffectiveArchitectCheckpointWaiver *bool `json:"effectiveArchitectCheckpointWaiver"`
 	// How a task on this board proves it was delivered, as set; null is the default (task 18c5c293).
 	DeliveryPolicy *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicy `json:"deliveryPolicy"`
 	// deliveryPolicy with its defaults resolved.
@@ -3458,6 +3463,16 @@ func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetCoordinatorS
 // GetEffectiveCoordinatorStopLift returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.EffectiveCoordinatorStopLift, and is useful for accessing the field via an interface.
 func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetEffectiveCoordinatorStopLift() *bool {
 	return v.EffectiveCoordinatorStopLift
+}
+
+// GetArchitectCheckpointWaiver returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.ArchitectCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetArchitectCheckpointWaiver() *bool {
+	return v.ArchitectCheckpointWaiver
+}
+
+// GetEffectiveArchitectCheckpointWaiver returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.EffectiveArchitectCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard) GetEffectiveArchitectCheckpointWaiver() *bool {
+	return v.EffectiveArchitectCheckpointWaiver
 }
 
 // GetDeliveryPolicy returns AgentBoardProgrammaticAgentBoardProgrammaticAgentBoard.DeliveryPolicy, and is useful for accessing the field via an interface.
@@ -5320,6 +5335,11 @@ type AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard struct {
 	CoordinatorStopLift *bool `json:"coordinatorStopLift"`
 	// coordinatorStopLift with its default resolved.
 	EffectiveCoordinatorStopLift *bool `json:"effectiveCoordinatorStopLift"`
+	// Whether an architect's --no-split sign-off waives the design checkpoint on this board (task TPF-152). As set:
+	// null is the default, on; false keeps every design at the coordinator. Operator-only.
+	ArchitectCheckpointWaiver *bool `json:"architectCheckpointWaiver"`
+	// architectCheckpointWaiver with its default resolved.
+	EffectiveArchitectCheckpointWaiver *bool `json:"effectiveArchitectCheckpointWaiver"`
 	// How a task on this board proves it was delivered, as set; null is the default (task 18c5c293).
 	DeliveryPolicy *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoardDeliveryPolicyAgentDeliveryPolicy `json:"deliveryPolicy"`
 	// deliveryPolicy with its defaults resolved.
@@ -5536,6 +5556,16 @@ func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetCoordinato
 // GetEffectiveCoordinatorStopLift returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.EffectiveCoordinatorStopLift, and is useful for accessing the field via an interface.
 func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetEffectiveCoordinatorStopLift() *bool {
 	return v.EffectiveCoordinatorStopLift
+}
+
+// GetArchitectCheckpointWaiver returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.ArchitectCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetArchitectCheckpointWaiver() *bool {
+	return v.ArchitectCheckpointWaiver
+}
+
+// GetEffectiveArchitectCheckpointWaiver returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.EffectiveArchitectCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard) GetEffectiveArchitectCheckpointWaiver() *bool {
+	return v.EffectiveArchitectCheckpointWaiver
 }
 
 // GetDeliveryPolicy returns AgentBoardsProgrammaticAgentBoardsProgrammaticAgentBoard.DeliveryPolicy, and is useful for accessing the field via an interface.
@@ -8080,6 +8110,8 @@ type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmen
 	Returns    []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                                `json:"parentTask"`
@@ -8231,6 +8263,11 @@ func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssig
 // GetDesignCheckpoint returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetDesignCheckpoint() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetDesignCheckpointWaiver() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -8479,6 +8516,68 @@ func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssig
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease includes the requested fields of the GraphQL type Release.
@@ -9760,6 +9859,8 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	Returns    []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                             `json:"parentTask"`
@@ -9911,6 +10012,11 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetDesignCheckpoint returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetDesignCheckpoint() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetDesignCheckpointWaiver() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -10159,6 +10265,68 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDocumentsRelease includes the requested fields of the GraphQL type Release.
@@ -11685,6 +11853,8 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	Returns    []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                            `json:"parentTask"`
@@ -11854,6 +12024,11 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) 
 // GetDesignCheckpoint returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -12176,6 +12351,68 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDe
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -13350,6 +13587,8 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	Returns    []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                        `json:"parentTask"`
@@ -13499,6 +13738,11 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // GetDesignCheckpoint returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -13742,6 +13986,68 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -15228,6 +15534,8 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask struct {
 	Returns    []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                      `json:"parentTask"`
@@ -15377,6 +15685,11 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetRet
 // GetDesignCheckpoint returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -15620,6 +15933,68 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCh
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -17712,6 +18087,8 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask struct 
 	Returns    []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
@@ -17866,6 +18243,11 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) Ge
 // GetDesignCheckpoint returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -18119,6 +18501,68 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesi
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -20134,6 +20578,8 @@ type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAge
 	Returns    []*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                        `json:"parentTask"`
@@ -20283,6 +20729,11 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 // GetDesignCheckpoint returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -20526,6 +20977,68 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -22034,6 +22547,8 @@ type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask
 	Returns    []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                  `json:"parentTask"`
@@ -22183,6 +22698,11 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // GetDesignCheckpoint returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -22426,6 +22946,68 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -23629,6 +24211,8 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask struct {
 	Returns    []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                  `json:"parentTask"`
@@ -23774,6 +24358,11 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetReturns
 // GetDesignCheckpoint returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -24017,6 +24606,68 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckp
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -25804,6 +26455,8 @@ type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask struct 
 	Returns    []*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                          `json:"parentTask"`
@@ -25953,6 +26606,11 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask) Ge
 // GetDesignCheckpoint returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -26196,6 +26854,68 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesi
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -27357,6 +28077,8 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask struct {
 	Returns    []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
@@ -27511,6 +28233,11 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetRet
 // GetDesignCheckpoint returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -27764,6 +28491,68 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCh
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -29274,6 +30063,8 @@ type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTas
 	Returns    []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                            `json:"parentTask"`
@@ -29423,6 +30214,11 @@ func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmen
 // GetDesignCheckpoint returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetDesignCheckpoint() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetDesignCheckpointWaiver() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -29666,6 +30462,68 @@ func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmen
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -30873,6 +31731,8 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	Returns    []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                         `json:"parentTask"`
@@ -31022,6 +31882,11 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // GetDesignCheckpoint returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetDesignCheckpoint() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetDesignCheckpointWaiver() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -31265,6 +32130,68 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -32994,6 +33921,8 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask struct {
 	Returns    []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                    `json:"parentTask"`
@@ -33143,6 +34072,11 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetRetur
 // GetDesignCheckpoint returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -33386,6 +34320,68 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignChec
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -34588,6 +35584,8 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	Returns    []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
@@ -34785,6 +35783,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetReturns() []*Ag
 // GetDesignCheckpoint returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -35277,6 +36280,68 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointSett
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDocumentsRelease includes the requested fields of the GraphQL type Release.
@@ -38291,6 +39356,8 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask struct 
 	Returns    []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                          `json:"parentTask"`
@@ -38440,6 +39507,11 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) Ge
 // GetDesignCheckpoint returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -38683,6 +39755,68 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesi
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -39852,6 +40986,8 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask struct {
 	Returns    []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
@@ -40012,6 +41148,11 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetRet
 // GetDesignCheckpoint returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -40280,6 +41421,68 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCh
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -42110,6 +43313,8 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	Returns    []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                              `json:"parentTask"`
@@ -42259,6 +43464,11 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // GetDesignCheckpoint returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -42502,6 +43712,68 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -43670,6 +44942,8 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask struct {
 	Returns    []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                      `json:"parentTask"`
@@ -43819,6 +45093,11 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetRet
 // GetDesignCheckpoint returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -44062,6 +45341,68 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCh
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -47309,6 +48650,8 @@ type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask
 	Returns    []*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                  `json:"parentTask"`
@@ -47458,6 +48801,11 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 // GetDesignCheckpoint returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -47701,6 +49049,68 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -48870,6 +50280,8 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask struct {
 	Returns    []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
@@ -49024,6 +50436,11 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetR
 // GetDesignCheckpoint returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -49277,6 +50694,68 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesign
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -49772,6 +51251,8 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAg
 	ReviewedBy *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
 	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
 	Usage *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// True when the hop said the design fits one coder pass (sign-off noSplit, task TPF-152); null otherwise.
+	NoSplit *bool `json:"noSplit"`
 	// True when the hop said its round changed no code (sign-off noCode, task RD4-2); null otherwise.
 	NoCode *bool `json:"noCode"`
 	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
@@ -49830,6 +51311,11 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOf
 // GetUsage returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
 	return v.Usage
+}
+
+// GetNoSplit returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.NoSplit, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetNoSplit() *bool {
+	return v.NoSplit
 }
 
 // GetNoCode returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSignOffsAgentTaskSignOff.NoCode, and is useful for accessing the field via an interface.
@@ -50687,6 +52173,10 @@ type AgentTaskSignOffProgrammaticResponse struct {
 	// noCode (task RD4-2): the round changed no code (a note-only round). A PASSED sign-off by a role holding
 	// CODE_PUSH is refused when no linked PR in play moved since the assignment ("no linked PR moved since your
 	// assignment"); noCode passes it and is recorded on the sign-off. Refused on REJECTED.
+	// noSplit (task TPF-152): on a PASSED by the role that produced the design, the design fits one coder pass, so a
+	// coordinatorCheckpoint before the next building role does not stop the task; recorded on the sign-off and as the
+	// task's designCheckpointWaiver for that ARCHITECTURE round, and ignored where the board's architectCheckpointWaiver
+	// is off. Refused on REJECTED and on a sign-off by any other role.
 	AgentTaskSignOffProgrammatic *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask `json:"agentTaskSignOffProgrammatic"`
 }
 
@@ -50786,6 +52276,8 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask struct {
 	Returns    []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                    `json:"parentTask"`
@@ -50935,6 +52427,11 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetRetur
 // GetDesignCheckpoint returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -51178,6 +52675,68 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignChec
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -52378,6 +53937,8 @@ type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgr
 	Returns    []*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                                  `json:"parentTask"`
@@ -52527,6 +54088,11 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 // GetDesignCheckpoint returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -52770,6 +54336,68 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -54538,6 +56166,8 @@ type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask struct 
 	Returns    []*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                          `json:"parentTask"`
@@ -54692,6 +56322,11 @@ func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask) Ge
 // GetDesignCheckpoint returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -54945,6 +56580,68 @@ func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesi
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -56355,6 +58052,8 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
 	Returns    []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
@@ -56570,6 +58269,11 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetR
 // GetDesignCheckpoint returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetDesignCheckpoint() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -57064,6 +58768,68 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesign
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDocumentsRelease includes the requested fields of the GraphQL type Release.
@@ -60039,6 +61805,8 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTask struct {
 	Returns    []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
 	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
 	DesignCheckpoint *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                            `json:"parentTask"`
@@ -60198,6 +61966,11 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetReturns() []*
 // GetDesignCheckpoint returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetDesignCheckpoint() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint {
 	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
 }
 
 // GetSplitRequest returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -60461,6 +62234,68 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointSe
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
 }
 
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
@@ -64636,7 +66471,9 @@ const (
 	ArtifactTypeRiskAssessment      ArtifactType = "RISK_ASSESSMENT"
 	// AI-agent self-reported artifact attached to an AgentSession -- orientation briefs, mid-session checkpoints, end-of-session summaries. Used as the data source for agentic policies.
 	ArtifactTypeAgenticReport ArtifactType = "AGENTIC_REPORT"
-	ArtifactTypeOther         ArtifactType = "OTHER"
+	// A document generated for a regulatory submission (an FDA premarket package): the assessment narrative, the device support statement, the support addendum, the CLE and the package manifest. Its submissionKind and submissionPart tags name the submission and the part.
+	ArtifactTypeRegulatoryDocument ArtifactType = "REGULATORY_DOCUMENT"
+	ArtifactTypeOther              ArtifactType = "OTHER"
 )
 
 var AllArtifactType = []ArtifactType{
@@ -64666,6 +66503,7 @@ var AllArtifactType = []ArtifactType{
 	ArtifactTypeCertificatePgp,
 	ArtifactTypeRiskAssessment,
 	ArtifactTypeAgenticReport,
+	ArtifactTypeRegulatoryDocument,
 	ArtifactTypeOther,
 }
 
@@ -67570,6 +69408,8 @@ type ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec struct
 	HumanQueueAgeMinutes *int `json:"humanQueueAgeMinutes"`
 	// Whether a no-progress or cycle-cap stop parks for the coordinator first; null means the default, on.
 	CoordinatorStopLift *bool `json:"coordinatorStopLift"`
+	// Whether an architect's --no-split waives the design checkpoint (task TPF-152); null is the default, on. Operator-only: a declarative apply changes it only from a person.
+	ArchitectCheckpointWaiver *bool `json:"architectCheckpointWaiver"`
 	// Days the event log keeps an event; null means the default, 15, and 0 keeps everything.
 	EventRetentionDays *int `json:"eventRetentionDays"`
 	// Staleness thresholds that post ALERTs (task RD3-4); null when every rule is off.
@@ -67616,6 +69456,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) G
 // GetCoordinatorStopLift returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.CoordinatorStopLift, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetCoordinatorStopLift() *bool {
 	return v.CoordinatorStopLift
+}
+
+// GetArchitectCheckpointWaiver returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.ArchitectCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec) GetArchitectCheckpointWaiver() *bool {
+	return v.ArchitectCheckpointWaiver
 }
 
 // GetEventRetentionDays returns ExportBoardExportBoardProgrammaticBoardSpecSettingsBoardSettingsSpec.EventRetentionDays, and is useful for accessing the field via an interface.
@@ -75870,6 +77715,7 @@ type __AgentTaskSignOffProgrammaticInput struct {
 	SeenInputs  []string            `json:"seenInputs"`
 	NoChange    *bool               `json:"noChange"`
 	NoCode      *bool               `json:"noCode"`
+	NoSplit     *bool               `json:"noSplit"`
 }
 
 // GetTaskUuid returns __AgentTaskSignOffProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
@@ -75895,6 +77741,9 @@ func (v *__AgentTaskSignOffProgrammaticInput) GetNoChange() *bool { return v.NoC
 
 // GetNoCode returns __AgentTaskSignOffProgrammaticInput.NoCode, and is useful for accessing the field via an interface.
 func (v *__AgentTaskSignOffProgrammaticInput) GetNoCode() *bool { return v.NoCode }
+
+// GetNoSplit returns __AgentTaskSignOffProgrammaticInput.NoSplit, and is useful for accessing the field via an interface.
+func (v *__AgentTaskSignOffProgrammaticInput) GetNoSplit() *bool { return v.NoSplit }
 
 // __AgentTaskSplitProgrammaticInput is used internally by genqlient
 type __AgentTaskSplitProgrammaticInput struct {
@@ -77876,6 +79725,8 @@ query AgentBoardProgrammatic ($boardUuid: ID!) {
 		humanQueueAgeMinutes
 		coordinatorStopLift
 		effectiveCoordinatorStopLift
+		architectCheckpointWaiver
+		effectiveArchitectCheckpointWaiver
 		deliveryPolicy {
 			mode
 			awaitDeclaration
@@ -78280,6 +80131,8 @@ query AgentBoardsProgrammatic {
 		humanQueueAgeMinutes
 		coordinatorStopLift
 		effectiveCoordinatorStopLift
+		architectCheckpointWaiver
+		effectiveArchitectCheckpointWaiver
 		deliveryPolicy {
 			mode
 			awaitDeclaration
@@ -79083,6 +80936,16 @@ mutation AgentTaskAssignByPromptVersion ($taskUuid: ID!, $sessionUuid: ID!, $rol
 				settledAt
 				note
 			}
+			designCheckpointWaiver {
+				bySession
+				byAgent
+				role
+				roleUuid
+				at
+				designRound
+				note
+				standing
+			}
 			splitRequest {
 				requestedAt
 				role
@@ -79302,6 +81165,16 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 				}
 				settledAt
 				note
+			}
+			designCheckpointWaiver {
+				bySession
+				byAgent
+				role
+				roleUuid
+				at
+				designRound
+				note
+				standing
 			}
 			splitRequest {
 				requestedAt
@@ -79662,6 +81535,16 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 			settledAt
 			note
 		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -79867,6 +81750,16 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 			}
 			settledAt
 			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
 		}
 		splitRequest {
 			requestedAt
@@ -80274,6 +82167,16 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 			}
 			settledAt
 			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
 		}
 		splitRequest {
 			requestedAt
@@ -80708,6 +82611,16 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 			}
 			settledAt
 			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
 		}
 		splitRequest {
 			requestedAt
@@ -81204,6 +83117,16 @@ mutation AgentTaskDeclareDeliveryProgrammatic ($taskUuid: ID!, $sessionUuid: ID!
 			settledAt
 			note
 		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -81523,6 +83446,16 @@ mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 			settledAt
 			note
 		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -81716,6 +83649,16 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 			}
 			settledAt
 			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
 		}
 		splitRequest {
 			requestedAt
@@ -82187,6 +84130,16 @@ mutation AgentTaskLiftHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role
 			settledAt
 			note
 		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -82382,6 +84335,16 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 			}
 			settledAt
 			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
 		}
 		splitRequest {
 			requestedAt
@@ -82600,6 +84563,16 @@ query AgentTaskNextByPromptVersion ($sessionUuid: ID!, $boardUuid: ID, $roles: [
 				settledAt
 				note
 			}
+			designCheckpointWaiver {
+				bySession
+				byAgent
+				role
+				roleUuid
+				at
+				designRound
+				note
+				standing
+			}
 			splitRequest {
 				requestedAt
 				role
@@ -82806,6 +84779,16 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 				}
 				settledAt
 				note
+			}
+			designCheckpointWaiver {
+				bySession
+				byAgent
+				role
+				roleUuid
+				at
+				designRound
+				note
+				standing
 			}
 			splitRequest {
 				requestedAt
@@ -83276,6 +85259,16 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 			settledAt
 			note
 		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -83528,6 +85521,16 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 			}
 			settledAt
 			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
 		}
 		splitRequest {
 			requestedAt
@@ -83998,6 +86001,16 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 			settledAt
 			note
 		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -84187,6 +86200,16 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 			}
 			settledAt
 			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
 		}
 		splitRequest {
 			requestedAt
@@ -84552,6 +86575,16 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 			settledAt
 			note
 		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -84743,6 +86776,16 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 			}
 			settledAt
 			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
 		}
 		splitRequest {
 			requestedAt
@@ -85828,6 +87871,16 @@ mutation AgentTaskSetWorkLevelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 			settledAt
 			note
 		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -85931,8 +87984,8 @@ func AgentTaskSetWorkLevelProgrammatic(
 
 // The mutation executed by AgentTaskSignOffProgrammatic.
 const AgentTaskSignOffProgrammatic_Operation = `
-mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!], $noChange: Boolean, $noCode: Boolean) {
-	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs, seenInputs: $seenInputs, noChange: $noChange, noCode: $noCode) {
+mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outcome: AgentSignOffOutcome!, $note: String, $outputs: [ID!], $seenInputs: [ID!], $noChange: Boolean, $noCode: Boolean, $noSplit: Boolean) {
+	agentTaskSignOffProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, outcome: $outcome, note: $note, outputs: $outputs, seenInputs: $seenInputs, noChange: $noChange, noCode: $noCode, noSplit: $noSplit) {
 		key
 		number
 		uuid
@@ -85997,6 +88050,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 			usage {
 				... HopUsageFields
 			}
+			noSplit
 			noCode
 			overAllowanceMicros
 			noChange
@@ -86025,6 +88079,16 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 			}
 			settledAt
 			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
 		}
 		splitRequest {
 			requestedAt
@@ -86132,6 +88196,7 @@ func AgentTaskSignOffProgrammatic(
 	seenInputs []string,
 	noChange *bool,
 	noCode *bool,
+	noSplit *bool,
 ) (data_ *AgentTaskSignOffProgrammaticResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "AgentTaskSignOffProgrammatic",
@@ -86145,6 +88210,7 @@ func AgentTaskSignOffProgrammatic(
 			SeenInputs:  seenInputs,
 			NoChange:    noChange,
 			NoCode:      noCode,
+			NoSplit:     noSplit,
 		},
 	}
 
@@ -86253,6 +88319,16 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 			}
 			settledAt
 			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
 		}
 		splitRequest {
 			requestedAt
@@ -86447,6 +88523,16 @@ mutation AgentTaskSupersedePullRequestProgrammatic ($taskUuid: ID!, $sessionUuid
 			}
 			settledAt
 			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
 		}
 		splitRequest {
 			requestedAt
@@ -86852,6 +88938,16 @@ mutation AgentTaskUnlinkPrProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $prUr
 			settledAt
 			note
 		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -87129,6 +89225,16 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 			}
 			settledAt
 			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
 		}
 		splitRequest {
 			requestedAt
@@ -87634,6 +89740,16 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $change
 			}
 			settledAt
 			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
 		}
 		splitRequest {
 			requestedAt
@@ -88935,6 +91051,7 @@ query ExportBoard ($board: String!) {
 			completionPriority
 			humanQueueAgeMinutes
 			coordinatorStopLift
+			architectCheckpointWaiver
 			eventRetentionDays
 			staleness {
 				roleUnstaffedMinutes
