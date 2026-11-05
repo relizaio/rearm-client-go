@@ -1196,9 +1196,20 @@ type Submission {
   lastActDate: DateTime
   lastActBy: ID
   lastActKind: SubmissionActOutcome
+  "Legacy, read-only: the withdrawal of a head from before the FINAL/CANCELLED migration; written by no act."
   withdrawnDate: DateTime
+  "Legacy, read-only."
   withdrawnBy: ID
+  "Legacy, read-only."
   withdrawReason: String
+  "The state the head held before the FINAL/CANCELLED migration; null on a head created since."
+  legacyState: SubmissionLegacyState
+  "The version recorded as sent; null while none is."
+  currentSentVersion: Int
+  "Each version's state, in version order."
+  versionStates: [SubmissionVersionState!]!
+  "The head's act record, oldest first."
+  acts: [SubmissionAct!]!
   settings: SubmissionSettingsRef
   versions: [SubmissionVersion!]!
   latest: SubmissionVersion
@@ -1212,11 +1223,15 @@ enum PackageKind {
 }
 
 """
-The state of a regulatory submission head.
+The state of one regulatory submission version, derived from its acts; a head's state is its latest version's. FINAL and CANCELLED replace ACTIVE and WITHDRAWN.
 """
 enum SubmissionState {
-  ACTIVE
+  FINAL
+  SENT
+  AMENDED
+  SUPERSEDED
   WITHDRAWN
+  CANCELLED
 }
 
 """
@@ -4668,13 +4683,51 @@ enum ComponentType {
 }
 
 """
-What a submission act did.
+What a submission act did; a withdrawal of a FINAL head answers CANCELLED (WITHDRAWN is the outcome of acts recorded before the FINAL/CANCELLED migration).
 """
 enum SubmissionActOutcome {
   CREATED
   RESUBMITTED
   WITHDRAWN
   UNCHANGED
+  CANCELLED
+}
+
+"""
+The state a submission head held before the FINAL/CANCELLED migration; null on every head created since.
+"""
+enum SubmissionLegacyState {
+  ACTIVE
+  WITHDRAWN
+}
+
+"""
+One version's state; byVersion is the version that superseded or amended it.
+"""
+type SubmissionVersionState {
+  version: Int!
+  state: SubmissionState!
+  byVersion: Int
+}
+
+"""
+One row of a submission's append-only act record. Only a USER act names a person: actor, actorName and actorEmail (the name and organization e-mail when the act was written) are null on SYSTEM and MIGRATION acts.
+"""
+type SubmissionAct {
+  uuid: ID!
+  submission: ID
+  draft: ID
+  release: ID!
+  version: Int
+  kind: SubmissionActKind!
+  cause: ActCause!
+  causedBy: ID
+  actor: ID
+  actorName: String
+  actorEmail: String
+  capacity: ConfirmationCapacity
+  actedAt: DateTime!
+  reasonText: String
 }
 
 """
@@ -8330,6 +8383,42 @@ enum PerspectiveType {
 }
 
 """
+The kind of one row of a submission's append-only act record.
+"""
+enum SubmissionActKind {
+  START_DRAFT
+  DISCARD_DRAFT
+  RETURN_TO_DRAFT
+  CONFIRM
+  FINALIZE
+  RECORD_SENT
+  FDA_NUMBER_ADDED
+  TIMELINE_ENTRY
+  AMENDED
+  SUPERSEDED
+  WITHDRAW
+  CANCEL
+  MIGRATED
+}
+
+"""
+Why a submission act row exists: a person did it (USER, the only cause that names an actor), it followed another act (SYSTEM), or a data migration wrote it (MIGRATION).
+"""
+enum ActCause {
+  USER
+  SYSTEM
+  MIGRATION
+}
+
+"""
+In which capacity a person acted on a submission.
+"""
+enum ConfirmationCapacity {
+  AUTHOR
+  SECOND_CONFIRMER
+}
+
+"""
 A document kind a package part generator produces from a release, in document order.
 """
 enum PackagePart {
@@ -8693,6 +8782,10 @@ enum ArtifactType {
   AI-agent self-reported artifact attached to an AgentSession -- orientation briefs, mid-session checkpoints, end-of-session summaries. Used as the data source for agentic policies.
   """
   AGENTIC_REPORT
+  """
+  A document generated for a regulatory submission (an FDA premarket package): the assessment narrative, the device support statement, the support addendum, the CLE and the package manifest. Its submissionKind and submissionPart tags name the submission and the part.
+  """
+  REGULATORY_DOCUMENT
   OTHER
 }
 

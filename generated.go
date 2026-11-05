@@ -64636,7 +64636,9 @@ const (
 	ArtifactTypeRiskAssessment      ArtifactType = "RISK_ASSESSMENT"
 	// AI-agent self-reported artifact attached to an AgentSession -- orientation briefs, mid-session checkpoints, end-of-session summaries. Used as the data source for agentic policies.
 	ArtifactTypeAgenticReport ArtifactType = "AGENTIC_REPORT"
-	ArtifactTypeOther         ArtifactType = "OTHER"
+	// A document generated for a regulatory submission (an FDA premarket package): the assessment narrative, the device support statement, the support addendum, the CLE and the package manifest. Its submissionKind and submissionPart tags name the submission and the part.
+	ArtifactTypeRegulatoryDocument ArtifactType = "REGULATORY_DOCUMENT"
+	ArtifactTypeOther              ArtifactType = "OTHER"
 )
 
 var AllArtifactType = []ArtifactType{
@@ -64666,6 +64668,7 @@ var AllArtifactType = []ArtifactType{
 	ArtifactTypeCertificatePgp,
 	ArtifactTypeRiskAssessment,
 	ArtifactTypeAgenticReport,
+	ArtifactTypeRegulatoryDocument,
 	ArtifactTypeOther,
 }
 
