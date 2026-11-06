@@ -19,12 +19,9 @@ func TestRoleReadsSelectCoordinatorCheckpoint(t *testing.T) {
 	}
 }
 
-// Every task selection that reads returns { ... } reads the record too, so whatever verb printed the task can name
-// the checkpoint. A selection dropped from one operation fails by that operation's name.
-func TestTaskSelectionsReadTheDesignCheckpoint(t *testing.T) {
-	// genqlient writes the spread as "... ActorFields" in the generated text.
-	const want = "designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ... ActorFields } settledAt note }"
-	ops := map[string]string{
+// taskReadOperations lists the 26 operations that select a task whole (returns { ... } and the records beside it).
+func taskReadOperations() map[string]string {
+	return map[string]string{
 		"AgentTaskRegisterProgrammatic":             AgentTaskRegisterProgrammatic_Operation,
 		"AgentTaskNextProgrammatic":                 AgentTaskNextProgrammatic_Operation,
 		"AgentTaskNextByPromptVersion":              AgentTaskNextByPromptVersion_Operation,
@@ -52,12 +49,51 @@ func TestTaskSelectionsReadTheDesignCheckpoint(t *testing.T) {
 		"AgentTasksByUuidProgrammatic":              AgentTasksByUuidProgrammatic_Operation,
 		"AgentTasksProgrammatic":                    AgentTasksProgrammatic_Operation,
 	}
+}
+
+// Every task selection that reads returns { ... } reads the record too, so whatever verb printed the task can name
+// the checkpoint. A selection dropped from one operation fails by that operation's name.
+func TestTaskSelectionsReadTheDesignCheckpoint(t *testing.T) {
+	// genqlient writes the spread as "... ActorFields" in the generated text.
+	const want = "designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ... ActorFields } settledAt note }"
+	ops := taskReadOperations()
 	if len(ops) != 26 {
 		t.Fatalf("%d operations listed, want the 26 that select returns", len(ops))
 	}
 	for name, op := range ops {
 		if !strings.Contains(normalised(op), want) {
 			t.Errorf("%s does not select the design checkpoint", name)
+		}
+	}
+}
+
+// TPF-153 T-1: every task read selects the design checkpoint waiver beside the record, so the verb that printed
+// the task can say who waived which round and whether the waiver stands. A dropped selection fails by name.
+func TestTaskSelectionsReadTheWaiver(t *testing.T) {
+	const want = "designCheckpointWaiver { bySession byAgent role roleUuid at designRound note standing }"
+	ops := taskReadOperations()
+	if len(ops) != 26 {
+		t.Fatalf("%d operations listed, want the 26 that select returns", len(ops))
+	}
+	for name, op := range ops {
+		if !strings.Contains(normalised(op), want) {
+			t.Errorf("%s does not select the design checkpoint waiver", name)
+		}
+	}
+}
+
+// TPF-156 T-101: every task read selects the roles routing passed over by their runWhen condition (backend
+// TPF-155), with the server-resolved live, so the verb that printed the task can name them. A dropped selection
+// fails by name.
+func TestTaskSelectionsReadTheConditionSkips(t *testing.T) {
+	const want = "rolesSkippedByCondition { role roleUuid reason at by { ... ActorFields } waives live }"
+	ops := taskReadOperations()
+	if len(ops) != 26 {
+		t.Fatalf("%d operations listed, want the 26 that select returns", len(ops))
+	}
+	for name, op := range ops {
+		if !strings.Contains(normalised(op), want) {
+			t.Errorf("%s does not select the condition skips", name)
 		}
 	}
 }

@@ -138,6 +138,7 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
   hopBudgetMicros
   blindReview
   coordinatorCheckpoint
+  runWhen { taggedAny taggedNone }
   strength {
     requiredStrength
     strengthHeadroom
@@ -177,6 +178,7 @@ query ExportBoard($board: String!) {
       completionPriority
       humanQueueAgeMinutes
       coordinatorStopLift
+      architectCheckpointWaiver
       eventRetentionDays
       staleness { roleUnstaffedMinutes hopNoProgressMinutes deliveryStuckMinutes seatSilentMinutes repeatMinutes investigationOverdueMinutes }
       ladder { levels { number name description } prompt }

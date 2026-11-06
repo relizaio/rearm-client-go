@@ -754,6 +754,10 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   noCode (task RD4-2): the round changed no code (a note-only round). A PASSED sign-off by a role holding
   CODE_PUSH is refused when no linked PR in play moved since the assignment ("no linked PR moved since your
   assignment"); noCode passes it and is recorded on the sign-off. Refused on REJECTED.
+  noSplit (task TPF-152): on a PASSED by the role that produced the design, the design fits one coder pass, so a
+  coordinatorCheckpoint before the next building role does not stop the task; recorded on the sign-off and as the
+  task's designCheckpointWaiver for that ARCHITECTURE round, and ignored where the board's architectCheckpointWaiver
+  is off. Refused on REJECTED and on a sign-off by any other role.
   """
   agentTaskSignOffProgrammatic(
   taskUuid: ID!
@@ -763,7 +767,8 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   outputs: [ID!]
   seenInputs: [ID!]
   noChange: Boolean
-  noCode: Boolean): AgentTask
+  noCode: Boolean
+  noSplit: Boolean): AgentTask
   agentTaskReturnProgrammatic(taskUuid: ID!, sessionUuid: ID!, reason: AgentTaskReturnReason!, description: String, outputs: [ID!], proposedChildren: [AgentTaskSplitChildInput!]): AgentTask
   agentDocumentPublishProgrammatic(input: AgentDocumentPublishInput!): Release
   agentTaskBindExternalRefProgrammatic(taskUuid: ID!, externalRef: String!, sourceUrl: String): AgentTask
@@ -1953,6 +1958,15 @@ type AgentBoard {
   """
   effectiveCoordinatorStopLift: Boolean
   """
+  Whether an architect's --no-split sign-off waives the design checkpoint on this board (task TPF-152). As set:
+  null is the default, on; false keeps every design at the coordinator. Operator-only.
+  """
+  architectCheckpointWaiver: Boolean
+  """
+  architectCheckpointWaiver with its default resolved.
+  """
+  effectiveArchitectCheckpointWaiver: Boolean
+  """
   Days the event log keeps an event before the daily sweep deletes it (task 04dedcc5). As set: null
   is the default, 15; 0 keeps everything.
   """
@@ -2234,6 +2248,11 @@ type AgentTask {
   """
   requiredRolesSkipped: [String]
   """
+  OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+  later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+  """
+  rolesSkippedByCondition: [AgentTaskConditionSkip]
+  """
   Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
   """
   dependsOn: [ID]
@@ -2265,6 +2284,10 @@ type AgentTask {
   The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
   """
   splitRequest: AgentTaskSplitRequest
+  """
+  The waiver the design's author put on its newest round (task TPF-152); null when none.
+  """
+  designCheckpointWaiver: AgentTaskDesignCheckpointWaiver
   """
   Assignments a person ended by unassigning the task, oldest first (task RD3-4).
   """
@@ -2471,6 +2494,12 @@ type AgentTaskRoleConfig {
   Who this role may commission for a report (task RD4-12); null when it commissions nobody. Operator-only.
   """
   commissions: AgentRoleCommissions
+  """
+  When routing's own walk queues this role (task TPF-155): on a task carrying any key of taggedAny (when it names any)
+  and none of taggedNone (when it names any). Tag keys, values never read. OPTIONAL roles only; null runs it on every task.
+  An explicit authorize, liftHold or reopen naming the role runs it whatever the tags. Settable by the coordinator seat.
+  """
+  runWhen: AgentRoleRunWhen
 }
 
 """
@@ -3939,6 +3968,10 @@ input AgentTaskRoleConfigInput {
   """
   commissions: AgentRoleCommissionsInput
   """
+  Settable by the coordinator seat on an existing OPTIONAL role; refused on a REQUIRED role. Left out, unchanged; sent as null, or naming no key, cleared (task TPF-155).
+  """
+  runWhen: AgentRoleRunWhenInput
+  """
   Operator-only. The floor a model must meet for this role, at most two decimal places. Left
   out, unchanged; sent as null, the floor is removed.
   """
@@ -4465,6 +4498,10 @@ type BoardSettingsSpec {
   """
   coordinatorStopLift: Boolean
   """
+  Whether an architect's --no-split waives the design checkpoint (task TPF-152); null is the default, on. Operator-only: a declarative apply changes it only from a person.
+  """
+  architectCheckpointWaiver: Boolean
+  """
   Days the event log keeps an event; null means the default, 15, and 0 keeps everything.
   """
   eventRetentionDays: Int
@@ -4519,6 +4556,10 @@ type BoardRoleSpec {
   Who the role may commission for a report (task RD4-12); null commissions nobody.
   """
   commissions: AgentRoleCommissions
+  """
+  When routing's own walk queues the role, by task tag (task TPF-155). Absent: unchanged; null: cleared (D15).
+  """
+  runWhen: AgentRoleRunWhen
   strength: BoardStrengthSpec
 }
 
@@ -6222,6 +6263,31 @@ type AgentQuestionFrame {
   askedAt: DateTime
 }
 
+"""
+One pass-over of a conditional role by routing (task TPF-155).
+"""
+type AgentTaskConditionSkip {
+  role: String!
+  roleUuid: ID
+  """
+  Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+  """
+  reason: String!
+  at: DateTime!
+  """
+  Always routing.
+  """
+  by: AgentActor
+  """
+  Document types a later role may start without, because only this role produces them.
+  """
+  waives: [SpecificationType!]!
+  """
+  Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+  """
+  live: Boolean!
+}
+
 type AgentTaskHold {
   level: AgentTaskHoldLevel
   kind: AgentTaskHoldKind
@@ -6348,6 +6414,10 @@ type AgentTaskSignOff {
   True when the hop said its round changed no code (sign-off noCode, task RD4-2); null otherwise.
   """
   noCode: Boolean
+  """
+  True when the hop said the design fits one coder pass (sign-off noSplit, task TPF-152); null otherwise.
+  """
+  noSplit: Boolean
 }
 
 type AgentTaskReturn {
@@ -6440,6 +6510,31 @@ type AgentTaskSplitRequest {
   The coordinator's note, the split's "n children: keys", or the verb that lapsed it.
   """
   note: String
+}
+
+"""
+The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+"""
+type AgentTaskDesignCheckpointWaiver {
+  bySession: ID
+  byAgent: ID
+  role: String!
+  roleUuid: ID
+  at: DateTime!
+  """
+  The ARCHITECTURE release the waiver names.
+  """
+  designRound: ID!
+  note: String
+  """
+  Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+  designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+  design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+  """
+  standing: Boolean!
 }
 
 """
@@ -6676,6 +6771,14 @@ type AgentRoleCommissions {
   review: String
 }
 
+"""
+A role's tag condition (task TPF-155): both lists are tag keys; an empty list is no condition on that side.
+"""
+type AgentRoleRunWhen {
+  taggedAny: [String!]!
+  taggedNone: [String!]!
+}
+
 type ElementCheckScope {
   """
   The task the report was cut on.
@@ -6883,6 +6986,10 @@ input BoardSettingsSpecInput {
   """
   coordinatorStopLift: Boolean
   """
+  Whether an architect's --no-split waives the design checkpoint (task TPF-152); null is the default, on. Operator-only: a declarative apply changes it only from a person.
+  """
+  architectCheckpointWaiver: Boolean
+  """
   Days the event log keeps an event; null restores the default, 15, 0 keeps everything, and a negative number is refused.
   """
   eventRetentionDays: Int
@@ -6946,6 +7053,10 @@ input BoardRoleSpecInput {
   Who the role may commission for a report (task RD4-12); null commissions nobody.
   """
   commissions: AgentRoleCommissionsInput
+  """
+  When routing's own walk queues the role, by task tag (task TPF-155). Absent: unchanged; null: cleared (D15).
+  """
+  runWhen: AgentRoleRunWhenInput
   strength: BoardStrengthSpecInput
 }
 
@@ -8110,6 +8221,14 @@ input AgentRoleCommissionsInput {
 }
 
 """
+A role's tag condition as input (task TPF-155). Left out: unchanged. Sent as null, or naming no key: the role runs on every task.
+"""
+input AgentRoleRunWhenInput {
+  taggedAny: [String!]
+  taggedNone: [String!]
+}
+
+"""
 One model's strength for one role, overriding what the catalogue says about the model.
 """
 input RoleModelStrengthInput {
@@ -8693,6 +8812,10 @@ enum ArtifactType {
   AI-agent self-reported artifact attached to an AgentSession -- orientation briefs, mid-session checkpoints, end-of-session summaries. Used as the data source for agentic policies.
   """
   AGENTIC_REPORT
+  """
+  A document generated for a regulatory submission (an FDA premarket package): the assessment narrative, the device support statement, the support addendum, the CLE and the package manifest. Its submissionKind and submissionPart tags name the submission and the part.
+  """
+  REGULATORY_DOCUMENT
   OTHER
 }
 
