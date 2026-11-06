@@ -82,6 +82,22 @@ func TestTaskSelectionsReadTheWaiver(t *testing.T) {
 	}
 }
 
+// TPF-156 T-101: every task read selects the roles routing passed over by their runWhen condition (backend
+// TPF-155), with the server-resolved live, so the verb that printed the task can name them. A dropped selection
+// fails by name.
+func TestTaskSelectionsReadTheConditionSkips(t *testing.T) {
+	const want = "rolesSkippedByCondition { role roleUuid reason at by { ... ActorFields } waives live }"
+	ops := taskReadOperations()
+	if len(ops) != 26 {
+		t.Fatalf("%d operations listed, want the 26 that select returns", len(ops))
+	}
+	for name, op := range ops {
+		if !strings.Contains(normalised(op), want) {
+			t.Errorf("%s does not select the condition skips", name)
+		}
+	}
+}
+
 // The record is nullable: a task that never reached a checkpoint unmarshals to nil, a full record to the generated type.
 func TestTheDesignCheckpointUnmarshals(t *testing.T) {
 	var none AgentTaskProgrammaticAgentTaskProgrammaticAgentTask
