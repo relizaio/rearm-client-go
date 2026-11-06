@@ -126,11 +126,13 @@ mutation AgentBoardPostEventProgrammatic ($boardUuid: ID!, $sessionUuid: ID!, $k
 # @genqlient(for: "AgentTaskRoleConfigInput.strengthHeadroom", omitempty: true)
 # @genqlient(for: "AgentTaskRoleConfigInput.strengthCategory", omitempty: true)
 # @genqlient(for: "AgentTaskRoleConfigInput.modelStrengths", omitempty: true)
+# @genqlient(for: "AgentTaskRoleConfigInput.runWhen", omitempty: true)
 mutation AgentTaskRoleConfigSetProgrammatic (
 	$boardUuid: ID!, $sessionUuid: ID!, $input: AgentTaskRoleConfigInput!) {
 	agentTaskRoleConfigSetProgrammatic(boardUuid: $boardUuid, sessionUuid: $sessionUuid, input: $input) {
 	uuid board org name prompt orderIndex wipLimit requireDistinctAgent active requiredCapabilities
 	kind necessity humanGate
+	runWhen { taggedAny taggedNone }
 } }
 
 query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsProgrammatic(boardUuid: $boardUuid) {
@@ -143,6 +145,7 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) { agentTaskRoleConfigsP
 	requiredInputs { kind specification scope minLifecycle resolution }
 	producesOutputs { specification scope required }
 	commissions { roles intake defaultBudgetMicros review }
+	runWhen { taggedAny taggedNone }
 } }
 
 # The role part of a brief (task RD3-9): each role's served prompt and version, and what it reads and
@@ -175,6 +178,7 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -206,6 +210,7 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
  }
 	role rolePrompt promptVersion hopBudgetMicros
@@ -227,6 +232,7 @@ query AgentTaskNextByPromptVersion ($sessionUuid: ID!, $boardUuid: ID, $roles: [
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
  }
 	role promptVersion hopBudgetMicros
@@ -248,6 +254,7 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 	documents { uuid version lifecycle document { specification path round task advisory publishedByRole } }
  }
@@ -270,6 +277,7 @@ mutation AgentTaskAssignByPromptVersion ($taskUuid: ID!, $sessionUuid: ID!, $rol
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 	documents { uuid version lifecycle document { specification path round task advisory publishedByRole } }
  }
@@ -293,6 +301,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -315,6 +324,7 @@ mutation AgentTaskReturnProgrammatic (
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -347,6 +357,7 @@ mutation AgentTaskAuthorizeProgrammatic (
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -364,6 +375,7 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -383,6 +395,7 @@ mutation AgentTaskDeclareDeliveryProgrammatic ($taskUuid: ID!, $sessionUuid: ID!
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -402,6 +415,7 @@ mutation AgentTaskSupersedePullRequestProgrammatic ($taskUuid: ID!, $sessionUuid
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -424,6 +438,7 @@ mutation AgentTaskUnlinkPrProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $prUr
 	unlinkedPrs { url by { ...ActorFields } at note relinkedBy relinkedAt }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -441,6 +456,7 @@ mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -458,6 +474,7 @@ mutation AgentTaskLiftHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -475,6 +492,7 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -492,6 +510,7 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -510,6 +529,7 @@ mutation AgentTaskSetWorkLevelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -534,6 +554,7 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -553,6 +574,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -570,6 +592,7 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -590,6 +613,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -607,6 +631,7 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -626,6 +651,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
@@ -652,6 +678,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped updatedAt
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	budgetMicros coordinatorEstimateMicros spentMicros
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 	documents { uuid version lifecycle document { specification path round task advisory publishedByRole
@@ -690,6 +717,7 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgra
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped updatedAt
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	budgetMicros coordinatorEstimateMicros spentMicros
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 	documents { uuid version lifecycle document { specification path round task advisory publishedByRole
@@ -716,6 +744,7 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $change
 	reopenedAt reopenCount reopens { role roleUuid at by { ...ActorFields } reason }
 	statusHistory { from to at trigger actor { ...ActorFields } note }
 	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped updatedAt
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 

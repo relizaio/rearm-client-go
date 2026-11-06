@@ -2248,6 +2248,11 @@ type AgentTask {
   """
   requiredRolesSkipped: [String]
   """
+  OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+  later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+  """
+  rolesSkippedByCondition: [AgentTaskConditionSkip]
+  """
   Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
   """
   dependsOn: [ID]
@@ -2489,6 +2494,12 @@ type AgentTaskRoleConfig {
   Who this role may commission for a report (task RD4-12); null when it commissions nobody. Operator-only.
   """
   commissions: AgentRoleCommissions
+  """
+  When routing's own walk queues this role (task TPF-155): on a task carrying any key of taggedAny (when it names any)
+  and none of taggedNone (when it names any). Tag keys, values never read. OPTIONAL roles only; null runs it on every task.
+  An explicit authorize, liftHold or reopen naming the role runs it whatever the tags. Settable by the coordinator seat.
+  """
+  runWhen: AgentRoleRunWhen
 }
 
 """
@@ -3957,6 +3968,10 @@ input AgentTaskRoleConfigInput {
   """
   commissions: AgentRoleCommissionsInput
   """
+  Settable by the coordinator seat on an existing OPTIONAL role; refused on a REQUIRED role. Left out, unchanged; sent as null, or naming no key, cleared (task TPF-155).
+  """
+  runWhen: AgentRoleRunWhenInput
+  """
   Operator-only. The floor a model must meet for this role, at most two decimal places. Left
   out, unchanged; sent as null, the floor is removed.
   """
@@ -4541,6 +4556,10 @@ type BoardRoleSpec {
   Who the role may commission for a report (task RD4-12); null commissions nobody.
   """
   commissions: AgentRoleCommissions
+  """
+  When routing's own walk queues the role, by task tag (task TPF-155). Absent: unchanged; null: cleared (D15).
+  """
+  runWhen: AgentRoleRunWhen
   strength: BoardStrengthSpec
 }
 
@@ -6244,6 +6263,31 @@ type AgentQuestionFrame {
   askedAt: DateTime
 }
 
+"""
+One pass-over of a conditional role by routing (task TPF-155).
+"""
+type AgentTaskConditionSkip {
+  role: String!
+  roleUuid: ID
+  """
+  Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+  """
+  reason: String!
+  at: DateTime!
+  """
+  Always routing.
+  """
+  by: AgentActor
+  """
+  Document types a later role may start without, because only this role produces them.
+  """
+  waives: [SpecificationType!]!
+  """
+  Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+  """
+  live: Boolean!
+}
+
 type AgentTaskHold {
   level: AgentTaskHoldLevel
   kind: AgentTaskHoldKind
@@ -6727,6 +6771,14 @@ type AgentRoleCommissions {
   review: String
 }
 
+"""
+A role's tag condition (task TPF-155): both lists are tag keys; an empty list is no condition on that side.
+"""
+type AgentRoleRunWhen {
+  taggedAny: [String!]!
+  taggedNone: [String!]!
+}
+
 type ElementCheckScope {
   """
   The task the report was cut on.
@@ -7001,6 +7053,10 @@ input BoardRoleSpecInput {
   Who the role may commission for a report (task RD4-12); null commissions nobody.
   """
   commissions: AgentRoleCommissionsInput
+  """
+  When routing's own walk queues the role, by task tag (task TPF-155). Absent: unchanged; null: cleared (D15).
+  """
+  runWhen: AgentRoleRunWhenInput
   strength: BoardStrengthSpecInput
 }
 
@@ -8162,6 +8218,14 @@ input AgentRoleCommissionsInput {
   intake: AgentCommissionIntake
   defaultBudgetMicros: Long
   review: String
+}
+
+"""
+A role's tag condition as input (task TPF-155). Left out: unchanged. Sent as null, or naming no key: the role runs on every task.
+"""
+input AgentRoleRunWhenInput {
+  taggedAny: [String!]
+  taggedNone: [String!]
 }
 
 """

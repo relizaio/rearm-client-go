@@ -7449,6 +7449,18 @@ var AllAgentRoleNecessity = []AgentRoleNecessity{
 	AgentRoleNecessityRequired,
 }
 
+// A role's tag condition as input (task TPF-155). Left out: unchanged. Sent as null, or naming no key: the role runs on every task.
+type AgentRoleRunWhenInput struct {
+	TaggedAny  []string `json:"taggedAny"`
+	TaggedNone []string `json:"taggedNone"`
+}
+
+// GetTaggedAny returns AgentRoleRunWhenInput.TaggedAny, and is useful for accessing the field via an interface.
+func (v *AgentRoleRunWhenInput) GetTaggedAny() []string { return v.TaggedAny }
+
+// GetTaggedNone returns AgentRoleRunWhenInput.TaggedNone, and is useful for accessing the field via an interface.
+func (v *AgentRoleRunWhenInput) GetTaggedNone() []string { return v.TaggedNone }
+
 type AgentSessionInboxInput struct {
 	SessionUuid string `json:"sessionUuid"`
 	// Opaque cursor from a prior poll. Null = "from session start".
@@ -8129,6 +8141,9 @@ type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmen
 	OrderSetAt *string                                                                                                        `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 	// This task's document releases, newest first.
@@ -8328,6 +8343,11 @@ func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssig
 // GetRequiredRolesSkipped returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetRolesSkippedByCondition() []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -9070,6 +9090,138 @@ func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssig
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -9878,6 +10030,9 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	OrderSetAt *string                                                                                                     `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 	// This task's document releases, newest first.
@@ -10077,6 +10232,11 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetRequiredRolesSkipped returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetRolesSkippedByCondition() []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -10819,6 +10979,138 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -11872,6 +12164,9 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	OrderSetAt *string                                                                                    `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -12089,6 +12384,11 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) 
 // GetRequiredRolesSkipped returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -12822,6 +13122,138 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRe
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -13606,6 +14038,9 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	OrderSetAt *string                                                                                                `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -13803,6 +14238,11 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // GetRequiredRolesSkipped returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -14457,6 +14897,138 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -15553,6 +16125,9 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask struct {
 	OrderSetAt *string                                                                              `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -15750,6 +16325,11 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetOrd
 // GetRequiredRolesSkipped returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -16404,6 +16984,138 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskReturnsA
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -18111,6 +18823,9 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask struct 
 	OrderSetAt *string                                                                                  `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -18318,6 +19033,11 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) Ge
 // GetRequiredRolesSkipped returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -19038,6 +19758,138 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRetu
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -20597,6 +21449,9 @@ type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAge
 	OrderSetAt *string                                                                                                `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -20794,6 +21649,11 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 // GetRequiredRolesSkipped returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -21448,6 +22308,138 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -22566,6 +23558,9 @@ type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask
 	OrderSetAt *string                                                                                          `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -22763,6 +23758,11 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // GetRequiredRolesSkipped returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -23417,6 +24417,138 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -24230,6 +25362,9 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask struct {
 	OrderSetAt *string                                                                          `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -24423,6 +25558,11 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetOrderSe
 // GetRequiredRolesSkipped returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -25077,6 +26217,138 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskReturnsAgent
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -26474,6 +27746,9 @@ type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask struct 
 	OrderSetAt *string                                                                                  `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -26671,6 +27946,11 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask) Ge
 // GetRequiredRolesSkipped returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -27325,6 +28605,138 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRetu
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -28101,6 +29513,9 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask struct {
 	OrderSetAt *string                                                                              `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -28308,6 +29723,11 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetOrd
 // GetRequiredRolesSkipped returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -29028,6 +30448,138 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskReturnsA
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -30082,6 +31634,9 @@ type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTas
 	OrderSetAt *string                                                                                                    `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -30279,6 +31834,11 @@ func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmen
 // GetRequiredRolesSkipped returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetRolesSkippedByCondition() []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -30933,6 +32493,138 @@ func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmen
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -31750,6 +33442,9 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	OrderSetAt *string                                                                                                 `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -31947,6 +33642,11 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // GetRequiredRolesSkipped returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetRolesSkippedByCondition() []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -32601,6 +34301,138 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -33940,6 +35772,9 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask struct {
 	OrderSetAt *string                                                                            `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -34137,6 +35972,11 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetOrder
 // GetRequiredRolesSkipped returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -34791,6 +36631,138 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskReturnsAge
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -35625,6 +37597,9 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	// When the task last changed: any save, a transition, an assignment, a sign-off, a return, a hold, a
 	// budget or a PR link. The cursor of agentTasksProgrammatic(changedSince:) (task 9540d3b6).
 	UpdatedAt *string `json:"updatedAt"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// What this task may spend, in USD micros; null means only the board's limit applies.
 	BudgetMicros *int64 `json:"budgetMicros"`
 	// Coordinator spend apportioned to this task (D16): each coordinator usage delta
@@ -35891,6 +37866,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetRequiredRolesSk
 // GetUpdatedAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.UpdatedAt, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetUpdatedAt() *string {
 	return v.UpdatedAt
+}
+
+// GetRolesSkippedByCondition returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetBudgetMicros returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
@@ -37837,6 +39817,138 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskReturnsAgentTaskRetu
 	return &retval, nil
 }
 
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -39375,6 +41487,9 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask struct 
 	OrderSetAt *string                                                                                  `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -39572,6 +41687,11 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) Ge
 // GetRequiredRolesSkipped returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -40226,6 +42346,138 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRetu
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -41016,6 +43268,9 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask struct {
 	OrderSetAt *string                                                                              `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -41238,6 +43493,11 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetOrd
 // GetRequiredRolesSkipped returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -42074,6 +44334,138 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskReturnsA
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -43332,6 +45724,9 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	OrderSetAt *string                                                                                                      `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -43529,6 +45924,11 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // GetRequiredRolesSkipped returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -44183,6 +46583,138 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -44961,6 +47493,9 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask struct {
 	OrderSetAt *string                                                                              `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -45158,6 +47693,11 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetOrd
 // GetRequiredRolesSkipped returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -45812,6 +48352,138 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskReturnsA
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -46566,6 +49238,8 @@ type AgentTaskRoleConfigInput struct {
 	ProducesOutputs []*AgentProducedOutputInput `json:"producesOutputs,omitempty"`
 	// Operator-only (task RD4-12). Left out, unchanged; sent as null, or naming no role, the role commissions nobody.
 	Commissions *AgentRoleCommissionsInput `json:"commissions,omitempty"`
+	// Settable by the coordinator seat on an existing OPTIONAL role; refused on a REQUIRED role. Left out, unchanged; sent as null, or naming no key, cleared (task TPF-155).
+	RunWhen *AgentRoleRunWhenInput `json:"runWhen,omitempty"`
 	// Operator-only. The floor a model must meet for this role, at most two decimal places. Left
 	// out, unchanged; sent as null, the floor is removed.
 	RequiredStrength *float64 `json:"requiredStrength,omitempty"`
@@ -46631,6 +49305,9 @@ func (v *AgentTaskRoleConfigInput) GetProducesOutputs() []*AgentProducedOutputIn
 // GetCommissions returns AgentTaskRoleConfigInput.Commissions, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigInput) GetCommissions() *AgentRoleCommissionsInput { return v.Commissions }
 
+// GetRunWhen returns AgentTaskRoleConfigInput.RunWhen, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigInput) GetRunWhen() *AgentRoleRunWhenInput { return v.RunWhen }
+
 // GetRequiredStrength returns AgentTaskRoleConfigInput.RequiredStrength, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigInput) GetRequiredStrength() *float64 { return v.RequiredStrength }
 
@@ -46675,6 +49352,10 @@ type AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTa
 	Necessity *AgentRoleNecessity `json:"necessity"`
 	// Operator-only: conditional human review of this role's sign-offs (default NONE; AGENTIC roles only).
 	HumanGate *AgentHumanGate `json:"humanGate"`
+	// When routing's own walk queues this role (task TPF-155): on a task carrying any key of taggedAny (when it names any)
+	// and none of taggedNone (when it names any). Tag keys, values never read. OPTIONAL roles only; null runs it on every task.
+	// An explicit authorize, liftHold or reopen naming the role runs it whatever the tags. Settable by the coordinator seat.
+	RunWhen *AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen `json:"runWhen"`
 }
 
 // GetUuid returns AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfig.Uuid, and is useful for accessing the field via an interface.
@@ -46742,6 +49423,30 @@ func (v *AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAge
 	return v.HumanGate
 }
 
+// GetRunWhen returns AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfig.RunWhen, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfig) GetRunWhen() *AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen {
+	return v.RunWhen
+}
+
+// AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen includes the requested fields of the GraphQL type AgentRoleRunWhen.
+// The GraphQL type's documentation follows.
+//
+// A role's tag condition (task TPF-155): both lists are tag keys; an empty list is no condition on that side.
+type AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen struct {
+	TaggedAny  []string `json:"taggedAny"`
+	TaggedNone []string `json:"taggedNone"`
+}
+
+// GetTaggedAny returns AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen.TaggedAny, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen) GetTaggedAny() []string {
+	return v.TaggedAny
+}
+
+// GetTaggedNone returns AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen.TaggedNone, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen) GetTaggedNone() []string {
+	return v.TaggedNone
+}
+
 // AgentTaskRoleConfigSetProgrammaticResponse is returned by AgentTaskRoleConfigSetProgrammatic on success.
 type AgentTaskRoleConfigSetProgrammaticResponse struct {
 	AgentTaskRoleConfigSetProgrammatic *AgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfigSetProgrammaticAgentTaskRoleConfig `json:"agentTaskRoleConfigSetProgrammatic"`
@@ -46802,6 +49507,10 @@ type AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRo
 	ProducesOutputs []*AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigProducesOutputsAgentProducedOutput `json:"producesOutputs"`
 	// Who this role may commission for a report (task RD4-12); null when it commissions nobody. Operator-only.
 	Commissions *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigCommissionsAgentRoleCommissions `json:"commissions"`
+	// When routing's own walk queues this role (task TPF-155): on a task carrying any key of taggedAny (when it names any)
+	// and none of taggedNone (when it names any). Tag keys, values never read. OPTIONAL roles only; null runs it on every task.
+	// An explicit authorize, liftHold or reopen naming the role runs it whatever the tags. Settable by the coordinator seat.
+	RunWhen *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen `json:"runWhen"`
 }
 
 // GetUuid returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.Uuid, and is useful for accessing the field via an interface.
@@ -46917,6 +49626,11 @@ func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTa
 // GetCommissions returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.Commissions, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetCommissions() *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigCommissionsAgentRoleCommissions {
 	return v.Commissions
+}
+
+// GetRunWhen returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig.RunWhen, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfig) GetRunWhen() *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen {
+	return v.RunWhen
 }
 
 // AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigCommissionsAgentRoleCommissions includes the requested fields of the GraphQL type AgentRoleCommissions.
@@ -47035,6 +49749,25 @@ func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTa
 // GetResolution returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite.Resolution, and is useful for accessing the field via an interface.
 func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRequiredInputsAgentTaskPrerequisite) GetResolution() *AgentInputResolution {
 	return v.Resolution
+}
+
+// AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen includes the requested fields of the GraphQL type AgentRoleRunWhen.
+// The GraphQL type's documentation follows.
+//
+// A role's tag condition (task TPF-155): both lists are tag keys; an empty list is no condition on that side.
+type AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen struct {
+	TaggedAny  []string `json:"taggedAny"`
+	TaggedNone []string `json:"taggedNone"`
+}
+
+// GetTaggedAny returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen.TaggedAny, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen) GetTaggedAny() []string {
+	return v.TaggedAny
+}
+
+// GetTaggedNone returns AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen.TaggedNone, and is useful for accessing the field via an interface.
+func (v *AgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigsProgrammaticAgentTaskRoleConfigRunWhenAgentRoleRunWhen) GetTaggedNone() []string {
+	return v.TaggedNone
 }
 
 // AgentTaskRoleConfigsProgrammaticResponse is returned by AgentTaskRoleConfigsProgrammatic on success.
@@ -48669,6 +51402,9 @@ type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask
 	OrderSetAt *string                                                                                          `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -48866,6 +51602,11 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 // GetRequiredRolesSkipped returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -49520,6 +52261,138 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -50304,6 +53177,9 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask struct {
 	OrderSetAt *string                                                                                `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -50511,6 +53387,11 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetO
 // GetRequiredRolesSkipped returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -51231,6 +54112,138 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskReturn
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -52295,6 +55308,9 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask struct {
 	OrderSetAt *string                                                                            `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -52492,6 +55508,11 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetOrder
 // GetRequiredRolesSkipped returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -53146,6 +56167,138 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskReturnsAge
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -53956,6 +57109,9 @@ type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgr
 	OrderSetAt *string                                                                                                          `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -54153,6 +57309,11 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 // GetRequiredRolesSkipped returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -54807,6 +57968,138 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -56190,6 +59483,9 @@ type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask struct 
 	OrderSetAt *string                                                                                  `json:"orderSetAt"`
 	// Required roles a person completed the task without, having said why in the completing status change.
 	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -56397,6 +59693,11 @@ func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask) Ge
 // GetRequiredRolesSkipped returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
 func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
 	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -57117,6 +60418,138 @@ func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRetu
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -58093,6 +61526,9 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
 	// When the task last changed: any save, a transition, an assignment, a sign-off, a return, a hold, a
 	// budget or a PR link. The cursor of agentTasksProgrammatic(changedSince:) (task 9540d3b6).
 	UpdatedAt *string `json:"updatedAt"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// What this task may spend, in USD micros; null means only the board's limit applies.
 	BudgetMicros *int64 `json:"budgetMicros"`
 	// Coordinator spend apportioned to this task (D16): each coordinator usage delta
@@ -58379,6 +61815,11 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetR
 // GetUpdatedAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.UpdatedAt, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetUpdatedAt() *string {
 	return v.UpdatedAt
+}
+
+// GetRolesSkippedByCondition returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetBudgetMicros returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.BudgetMicros, and is useful for accessing the field via an interface.
@@ -60325,6 +63766,138 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskReturn
 	return &retval, nil
 }
 
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
 // The GraphQL type's documentation follows.
 //
@@ -61833,6 +65406,9 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTask struct {
 	// When the task last changed: any save, a transition, an assignment, a sign-off, a return, a hold, a
 	// budget or a PR link. The cursor of agentTasksProgrammatic(changedSince:) (task 9540d3b6).
 	UpdatedAt *string `json:"updatedAt"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
 	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
 	QuestionStack []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
 }
@@ -62051,6 +65627,11 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetRequiredRoles
 // GetUpdatedAt returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.UpdatedAt, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetUpdatedAt() *string {
 	return v.UpdatedAt
+}
+
+// GetRolesSkippedByCondition returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
 }
 
 // GetQuestionStack returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
@@ -63079,6 +66660,138 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskReturnsAgentTaskRe
 	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
 	retval.CostComplete = v.HopUsageFields.CostComplete
 	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
 	return &retval, nil
 }
 
@@ -66875,10 +70588,12 @@ type BoardRoleSpecFields struct {
 	// Who the role may commission for a report (task RD4-12); null commissions nobody.
 	Commissions *BoardRoleSpecFieldsCommissionsAgentRoleCommissions `json:"commissions"`
 	// Allowance for one assignment of this role, in USD micros: the projection's estimate when the board has no history for the role, told to the worker at assignment, and flagged on the hop and the board when a hop exceeds it. Not enforced mid-hop -- agents pull, and the server learns the cost when it is reported.
-	HopBudgetMicros       *int64                                        `json:"hopBudgetMicros"`
-	BlindReview           *bool                                         `json:"blindReview"`
-	CoordinatorCheckpoint *bool                                         `json:"coordinatorCheckpoint"`
-	Strength              *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
+	HopBudgetMicros       *int64 `json:"hopBudgetMicros"`
+	BlindReview           *bool  `json:"blindReview"`
+	CoordinatorCheckpoint *bool  `json:"coordinatorCheckpoint"`
+	// When routing's own walk queues the role, by task tag (task TPF-155). Absent: unchanged; null: cleared (D15).
+	RunWhen  *BoardRoleSpecFieldsRunWhenAgentRoleRunWhen   `json:"runWhen"`
+	Strength *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
 
 // GetName returns BoardRoleSpecFields.Name, and is useful for accessing the field via an interface.
@@ -66934,6 +70649,11 @@ func (v *BoardRoleSpecFields) GetBlindReview() *bool { return v.BlindReview }
 
 // GetCoordinatorCheckpoint returns BoardRoleSpecFields.CoordinatorCheckpoint, and is useful for accessing the field via an interface.
 func (v *BoardRoleSpecFields) GetCoordinatorCheckpoint() *bool { return v.CoordinatorCheckpoint }
+
+// GetRunWhen returns BoardRoleSpecFields.RunWhen, and is useful for accessing the field via an interface.
+func (v *BoardRoleSpecFields) GetRunWhen() *BoardRoleSpecFieldsRunWhenAgentRoleRunWhen {
+	return v.RunWhen
+}
 
 // GetStrength returns BoardRoleSpecFields.Strength, and is useful for accessing the field via an interface.
 func (v *BoardRoleSpecFields) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
@@ -67036,6 +70756,21 @@ func (v *BoardRoleSpecFieldsRequiredInputsBoardRequiredInputSpec) GetMinLifecycl
 func (v *BoardRoleSpecFieldsRequiredInputsBoardRequiredInputSpec) GetResolution() *AgentInputResolution {
 	return v.Resolution
 }
+
+// BoardRoleSpecFieldsRunWhenAgentRoleRunWhen includes the requested fields of the GraphQL type AgentRoleRunWhen.
+// The GraphQL type's documentation follows.
+//
+// A role's tag condition (task TPF-155): both lists are tag keys; an empty list is no condition on that side.
+type BoardRoleSpecFieldsRunWhenAgentRoleRunWhen struct {
+	TaggedAny  []string `json:"taggedAny"`
+	TaggedNone []string `json:"taggedNone"`
+}
+
+// GetTaggedAny returns BoardRoleSpecFieldsRunWhenAgentRoleRunWhen.TaggedAny, and is useful for accessing the field via an interface.
+func (v *BoardRoleSpecFieldsRunWhenAgentRoleRunWhen) GetTaggedAny() []string { return v.TaggedAny }
+
+// GetTaggedNone returns BoardRoleSpecFieldsRunWhenAgentRoleRunWhen.TaggedNone, and is useful for accessing the field via an interface.
+func (v *BoardRoleSpecFieldsRunWhenAgentRoleRunWhen) GetTaggedNone() []string { return v.TaggedNone }
 
 // BoardRoleSpecFieldsStrengthBoardStrengthSpec includes the requested fields of the GraphQL type BoardStrengthSpec.
 // The GraphQL type's documentation follows.
@@ -69297,6 +73032,11 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetCoord
 	return v.BoardRoleSpecFields.CoordinatorCheckpoint
 }
 
+// GetRunWhen returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.RunWhen, and is useful for accessing the field via an interface.
+func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetRunWhen() *BoardRoleSpecFieldsRunWhenAgentRoleRunWhen {
+	return v.BoardRoleSpecFields.RunWhen
+}
+
 // GetStrength returns ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec.Strength, and is useful for accessing the field via an interface.
 func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
 	return v.BoardRoleSpecFields.Strength
@@ -69360,6 +73100,8 @@ type __premarshalExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec s
 
 	CoordinatorCheckpoint *bool `json:"coordinatorCheckpoint"`
 
+	RunWhen *BoardRoleSpecFieldsRunWhenAgentRoleRunWhen `json:"runWhen"`
+
 	Strength *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
 
@@ -69390,6 +73132,7 @@ func (v *ExportBoardExportBoardProgrammaticBoardSpecRolesBoardRoleSpec) __premar
 	retval.HopBudgetMicros = v.BoardRoleSpecFields.HopBudgetMicros
 	retval.BlindReview = v.BoardRoleSpecFields.BlindReview
 	retval.CoordinatorCheckpoint = v.BoardRoleSpecFields.CoordinatorCheckpoint
+	retval.RunWhen = v.BoardRoleSpecFields.RunWhen
 	retval.Strength = v.BoardRoleSpecFields.Strength
 	return &retval, nil
 }
@@ -70195,6 +73938,11 @@ func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresets
 	return v.BoardRoleSpecFields.CoordinatorCheckpoint
 }
 
+// GetRunWhen returns ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec.RunWhen, and is useful for accessing the field via an interface.
+func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec) GetRunWhen() *BoardRoleSpecFieldsRunWhenAgentRoleRunWhen {
+	return v.BoardRoleSpecFields.RunWhen
+}
+
 // GetStrength returns ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec.Strength, and is useful for accessing the field via an interface.
 func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresetsBoardRoleSpec) GetStrength() *BoardRoleSpecFieldsStrengthBoardStrengthSpec {
 	return v.BoardRoleSpecFields.Strength
@@ -70258,6 +74006,8 @@ type __premarshalExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpe
 
 	CoordinatorCheckpoint *bool `json:"coordinatorCheckpoint"`
 
+	RunWhen *BoardRoleSpecFieldsRunWhenAgentRoleRunWhen `json:"runWhen"`
+
 	Strength *BoardRoleSpecFieldsStrengthBoardStrengthSpec `json:"strength"`
 }
 
@@ -70288,6 +74038,7 @@ func (v *ExportRolePresetsAgentRolePresetsSpecProgrammaticRolePresetsSpecPresets
 	retval.HopBudgetMicros = v.BoardRoleSpecFields.HopBudgetMicros
 	retval.BlindReview = v.BoardRoleSpecFields.BlindReview
 	retval.CoordinatorCheckpoint = v.BoardRoleSpecFields.CoordinatorCheckpoint
+	retval.RunWhen = v.BoardRoleSpecFields.RunWhen
 	retval.Strength = v.BoardRoleSpecFields.Strength
 	return &retval, nil
 }
@@ -80995,6 +84746,17 @@ mutation AgentTaskAssignByPromptVersion ($taskUuid: ID!, $sessionUuid: ID!, $rol
 			}
 			orderSetAt
 			requiredRolesSkipped
+			rolesSkippedByCondition {
+				role
+				roleUuid
+				reason
+				at
+				by {
+					... ActorFields
+				}
+				waives
+				live
+			}
 			questionStack {
 				askingRole
 				askingSession
@@ -81225,6 +84987,17 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 			}
 			orderSetAt
 			requiredRolesSkipped
+			rolesSkippedByCondition {
+				role
+				roleUuid
+				reason
+				at
+				by {
+					... ActorFields
+				}
+				waives
+				live
+			}
 			questionStack {
 				askingRole
 				askingSession
@@ -81594,6 +85367,17 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -81810,6 +85594,17 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -82227,6 +86022,17 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -82695,6 +86501,17 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -83176,6 +86993,17 @@ mutation AgentTaskDeclareDeliveryProgrammatic ($taskUuid: ID!, $sessionUuid: ID!
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -83505,6 +87333,17 @@ mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -83709,6 +87548,17 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -84189,6 +88039,17 @@ mutation AgentTaskLiftHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -84419,6 +88280,17 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -84622,6 +88494,17 @@ query AgentTaskNextByPromptVersion ($sessionUuid: ID!, $boardUuid: ID, $roles: [
 			}
 			orderSetAt
 			requiredRolesSkipped
+			rolesSkippedByCondition {
+				role
+				roleUuid
+				reason
+				at
+				by {
+					... ActorFields
+				}
+				waives
+				live
+			}
 			questionStack {
 				askingRole
 				askingSession
@@ -84839,6 +88722,17 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 			}
 			orderSetAt
 			requiredRolesSkipped
+			rolesSkippedByCondition {
+				role
+				roleUuid
+				reason
+				at
+				by {
+					... ActorFields
+				}
+				waives
+				live
+			}
 			questionStack {
 				askingRole
 				askingSession
@@ -85318,6 +89212,17 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -85653,6 +89558,17 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 		orderSetAt
 		requiredRolesSkipped
 		updatedAt
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		budgetMicros
 		coordinatorEstimateMicros
 		spentMicros
@@ -86060,6 +89976,17 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -86295,6 +90222,17 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -86634,6 +90572,17 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -86836,6 +90785,17 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -86910,6 +90870,10 @@ mutation AgentTaskRoleConfigSetProgrammatic ($boardUuid: ID!, $sessionUuid: ID!,
 		kind
 		necessity
 		humanGate
+		runWhen {
+			taggedAny
+			taggedNone
+		}
 	}
 }
 `
@@ -86989,6 +90953,10 @@ query AgentTaskRoleConfigsProgrammatic ($boardUuid: ID!) {
 			intake
 			defaultBudgetMicros
 			review
+		}
+		runWhen {
+			taggedAny
+			taggedNone
 		}
 	}
 }
@@ -87930,6 +91898,17 @@ mutation AgentTaskSetWorkLevelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -88163,6 +92142,17 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -88379,6 +92369,17 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -88583,6 +92584,17 @@ mutation AgentTaskSupersedePullRequestProgrammatic ($taskUuid: ID!, $sessionUuid
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -89017,6 +93029,17 @@ mutation AgentTaskUnlinkPrProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $prUr
 		}
 		orderSetAt
 		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -89357,6 +93380,17 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 		orderSetAt
 		requiredRolesSkipped
 		updatedAt
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		budgetMicros
 		coordinatorEstimateMicros
 		spentMicros
@@ -89812,6 +93846,17 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $change
 		orderSetAt
 		requiredRolesSkipped
 		updatedAt
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
 		questionStack {
 			askingRole
 			askingSession
@@ -91116,6 +95161,10 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
 	hopBudgetMicros
 	blindReview
 	coordinatorCheckpoint
+	runWhen {
+		taggedAny
+		taggedNone
+	}
 	strength {
 		requiredStrength
 		strengthHeadroom
@@ -91375,6 +95424,10 @@ fragment BoardRoleSpecFields on BoardRoleSpec {
 	hopBudgetMicros
 	blindReview
 	coordinatorCheckpoint
+	runWhen {
+		taggedAny
+		taggedNone
+	}
 	strength {
 		requiredStrength
 		strengthHeadroom
