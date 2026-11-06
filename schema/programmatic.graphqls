@@ -1196,9 +1196,20 @@ type Submission {
   lastActDate: DateTime
   lastActBy: ID
   lastActKind: SubmissionActOutcome
+  "Legacy, read-only: the withdrawal of a head from before the FINAL/CANCELLED migration; written by no act."
   withdrawnDate: DateTime
+  "Legacy, read-only."
   withdrawnBy: ID
+  "Legacy, read-only."
   withdrawReason: String
+  "The state the head held before the FINAL/CANCELLED migration; null on a head created since."
+  legacyState: SubmissionLegacyState
+  "The version recorded as sent; null while none is."
+  currentSentVersion: Int
+  "Each version's state, in version order."
+  versionStates: [SubmissionVersionState!]!
+  "The head's act record, oldest first."
+  acts: [SubmissionAct!]!
   settings: SubmissionSettingsRef
   versions: [SubmissionVersion!]!
   latest: SubmissionVersion
@@ -1212,11 +1223,15 @@ enum PackageKind {
 }
 
 """
-The state of a regulatory submission head.
+The state of one regulatory submission version, derived from its acts; a head's state is its latest version's. FINAL and CANCELLED replace ACTIVE and WITHDRAWN.
 """
 enum SubmissionState {
-  ACTIVE
+  FINAL
+  SENT
+  AMENDED
+  SUPERSEDED
   WITHDRAWN
+  CANCELLED
 }
 
 """
@@ -4668,13 +4683,51 @@ enum ComponentType {
 }
 
 """
-What a submission act did.
+What a submission act did; a withdrawal of a FINAL head answers CANCELLED (WITHDRAWN is the outcome of acts recorded before the FINAL/CANCELLED migration).
 """
 enum SubmissionActOutcome {
   CREATED
   RESUBMITTED
   WITHDRAWN
   UNCHANGED
+  CANCELLED
+}
+
+"""
+The state a submission head held before the FINAL/CANCELLED migration; null on every head created since.
+"""
+enum SubmissionLegacyState {
+  ACTIVE
+  WITHDRAWN
+}
+
+"""
+One version's state; byVersion is the version that superseded or amended it.
+"""
+type SubmissionVersionState {
+  version: Int!
+  state: SubmissionState!
+  byVersion: Int
+}
+
+"""
+One row of a submission's append-only act record. Only a USER act names a person: actor, actorName and actorEmail (the name and organization e-mail when the act was written) are null on SYSTEM and MIGRATION acts.
+"""
+type SubmissionAct {
+  uuid: ID!
+  submission: ID
+  draft: ID
+  release: ID!
+  version: Int
+  kind: SubmissionActKind!
+  cause: ActCause!
+  causedBy: ID
+  actor: ID
+  actorName: String
+  actorEmail: String
+  capacity: ConfirmationCapacity
+  actedAt: DateTime!
+  reasonText: String
 }
 
 """
@@ -7364,7 +7417,9 @@ type MedicalProfile {
   
 Null means NOT DECLARED, which is a fact in its own right rather than an unknown to
   fill in. This is the DEVICE window; it is not Release.eos/eol, which are release
-  lifecycle for TEA/CLE and are unrelated to a support commitment.
+  lifecycle for TEA/CLE and are unrelated to a support commitment. Its eol (end of life)
+  is the last sale date and its eos (end of support) the last security update; eol
+  normally precedes eos.
   """
   deviceSupportWindow: DeviceSupportWindow
 }
@@ -8330,6 +8385,42 @@ enum PerspectiveType {
 }
 
 """
+The kind of one row of a submission's append-only act record.
+"""
+enum SubmissionActKind {
+  START_DRAFT
+  DISCARD_DRAFT
+  RETURN_TO_DRAFT
+  CONFIRM
+  FINALIZE
+  RECORD_SENT
+  FDA_NUMBER_ADDED
+  TIMELINE_ENTRY
+  AMENDED
+  SUPERSEDED
+  WITHDRAW
+  CANCEL
+  MIGRATED
+}
+
+"""
+Why a submission act row exists: a person did it (USER, the only cause that names an actor), it followed another act (SYSTEM), or a data migration wrote it (MIGRATION).
+"""
+enum ActCause {
+  USER
+  SYSTEM
+  MIGRATION
+}
+
+"""
+In which capacity a person acted on a submission.
+"""
+enum ConfirmationCapacity {
+  AUTHOR
+  SECOND_CONFIRMER
+}
+
+"""
 A document kind a package part generator produces from a release, in document order.
 """
 enum PackagePart {
@@ -8693,6 +8784,10 @@ enum ArtifactType {
   AI-agent self-reported artifact attached to an AgentSession -- orientation briefs, mid-session checkpoints, end-of-session summaries. Used as the data source for agentic policies.
   """
   AGENTIC_REPORT
+  """
+  A document generated for a regulatory submission (an FDA premarket package): the assessment narrative, the device support statement, the support addendum, the CLE and the package manifest. Its submissionKind and submissionPart tags name the submission and the part.
+  """
+  REGULATORY_DOCUMENT
   OTHER
 }
 
@@ -9927,16 +10022,17 @@ A manufacturer's declared section 524B support window for a device (decision D7)
 
 Declared on the PRODUCT COMPONENT (the device model), optionally overridden per
 ShippedProduct (a batch), and evaluated per Device (a unit). `eos` and `eol` are SEPARATE
-FACTS and are never merged: under D5, `eol` means END OF SALE, which is not a support
-horizon -- only `eos` is.
+FACTS and are never merged: `eol` is end of life, the last sale date (IMDRF N70, CycloneDX,
+D5), which is not a support horizon; `eos` is end of support, the last security update, and
+only it is. `eol` normally precedes `eos`.
 """
 type DeviceSupportWindow {
   """
-  Section 524B end of support: the device horizon. Null = not declared.
+  End of support (last security update), section 524B: the device horizon. Null = not declared.
   """
   eos: String
   """
-  End of SALE per CycloneDX and D5, NOT a support horizon. Null = not declared.
+  End of life (last sale date) per IMDRF N70, CycloneDX and D5, NOT a support horizon. Null = not declared.
   """
   eol: String
   """
@@ -9951,6 +10047,13 @@ type DeviceSupportWindow {
   How it arrived: a human in the UI, an API caller, an automation.
   """
   source: ProgrammaticType
+  """
+  Derived on read, never stored: what is unusual about the declared dates. Empty when
+  nothing is. EOS_BEFORE_EOL: end of support precedes end of life (last sale), so units
+  would be sold after the last security update. A warning returned with the save, never a
+  refusal (FDAW-3, B3).
+  """
+  warnings: [DeviceWindowWarning!]
 }
 
 type Permissions {
@@ -10740,6 +10843,14 @@ type ApprovalRequirement {
   permittedNumberOfDisapprovals: Int
 }
 
+"""
+One derived observation about a declared device window.
+"""
+type DeviceWindowWarning {
+  code: DeviceWindowWarningCode
+  message: String
+}
+
 type UserPermission {
   org: ID
   scope: PermissionScope
@@ -10912,6 +11023,16 @@ input PartyContactInput {
 input OriginShareInput {
   originCode: String
   percentage: Float
+}
+
+"""
+What can be unusual about a declared device window.
+"""
+enum DeviceWindowWarningCode {
+  """
+  End of support precedes end of life (last sale date): units sold after the last security update.
+  """
+  EOS_BEFORE_EOL
 }
 
 type Coords {
