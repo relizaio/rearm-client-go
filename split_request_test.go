@@ -12,7 +12,7 @@ import (
 func TestTaskSelectionsReadTheSplitRequest(t *testing.T) {
 	// genqlient writes the spread as "... ActorFields" in the generated text.
 	const want = "splitRequest { requestedAt role roleUuid session description proposedChildren { title description" +
-		" externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } }" +
+		" externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } designFromParent }" +
 		" state settledBy { ... ActorFields } settledAt note }"
 	ops := map[string]string{
 		"AgentTaskRegisterProgrammatic":             AgentTaskRegisterProgrammatic_Operation,

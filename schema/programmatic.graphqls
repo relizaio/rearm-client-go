@@ -2289,6 +2289,10 @@ type AgentTask {
   """
   designCheckpointWaiver: AgentTaskDesignCheckpointWaiver
   """
+  Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+  """
+  carriedDesign: AgentTaskCarriedDesign
+  """
   Assignments a person ended by unassigning the task, oldest first (task RD3-4).
   """
   unassignments: [AgentTaskUnassignment]
@@ -4187,6 +4191,10 @@ input AgentTaskSplitChildInput {
   Omitted children inherit the parent's tags (D9).
   """
   tags: [TagRecordInput]
+  """
+  Build this child from the parent's reviewed design: its design-stage roles are recorded as passed through the carried rounds and it goes to the build role. Default false.
+  """
+  designFromParent: Boolean
 }
 
 enum AgentSignOffOutcome {
@@ -6533,6 +6541,22 @@ type AgentTaskDesignCheckpointWaiver {
   Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
   designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
   design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+  """
+  standing: Boolean!
+}
+
+"""
+The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+"""
+type AgentTaskCarriedDesign {
+  parentTask: ID!
+  parentKey: String!
+  rounds: [AgentTaskCarriedRound!]!
+  roles: [AgentTaskCarriedRole!]!
+  at: DateTime!
+  by: AgentActor
+  """
+  Server-resolved: every carried role is live.
   """
   standing: Boolean!
 }
@@ -9630,6 +9654,10 @@ type AgentTaskSplitChild {
   workLevel: Int
   group: String
   tags: [TagRecord]
+  """
+  The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+  """
+  designFromParent: Boolean
 }
 
 """
@@ -9640,6 +9668,41 @@ enum AgentTaskSplitRequestState {
   SPLIT
   DECLINED
   LAPSED
+}
+
+"""
+One parent round a split child carries as its design (task TPF-161).
+"""
+type AgentTaskCarriedRound {
+  specification: SpecificationType!
+  release: ID!
+  round: Int
+  path: String
+}
+
+"""
+One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+"""
+type AgentTaskCarriedRole {
+  role: String!
+  roleUuid: ID
+  """
+  The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+  """
+  signedOffAt: DateTime
+  """
+  The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+  """
+  session: ID
+  reviewedBy: AgentActor
+  """
+  True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+  """
+  decidedOver: Boolean!
+  """
+  Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+  """
+  live: Boolean!
 }
 
 """

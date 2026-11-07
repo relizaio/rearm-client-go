@@ -8124,6 +8124,8 @@ type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmen
 	DesignCheckpoint *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                                `json:"parentTask"`
@@ -8285,6 +8287,11 @@ func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssig
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetCarriedDesign() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetSplitRequest() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -8395,6 +8402,298 @@ func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssig
 // GetPromptVersion returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                                               `json:"parentTask"`
+	ParentKey  string                                                                                                                               `json:"parentKey"`
+	Rounds     []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                                               `json:"at"`
+	By         *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetRounds() []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetRoles() []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetBy() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                                              `json:"session"`
+	ReviewedBy *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -9544,6 +9843,8 @@ type AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmen
 	WorkLevel               *int                                                                                                                                                     `json:"workLevel"`
 	Group                   *string                                                                                                                                                  `json:"group"`
 	Tags                    []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -9589,6 +9890,11 @@ func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssig
 // GetTags returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -10013,6 +10319,8 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	DesignCheckpoint *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                             `json:"parentTask"`
@@ -10174,6 +10482,11 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetCarriedDesign() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTask) GetSplitRequest() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -10284,6 +10597,298 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                                            `json:"parentTask"`
+	ParentKey  string                                                                                                                            `json:"parentKey"`
+	Rounds     []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                                            `json:"at"`
+	By         *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetRounds() []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetRoles() []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetBy() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                                           `json:"session"`
+	ReviewedBy *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -11433,6 +12038,8 @@ type AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTa
 	WorkLevel               *int                                                                                                                                                  `json:"workLevel"`
 	Group                   *string                                                                                                                                               `json:"group"`
 	Tags                    []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -11478,6 +12085,11 @@ func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignme
 // GetTags returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskAssignProgrammaticAgentTaskAssignProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -12147,6 +12759,8 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask struc
 	DesignCheckpoint *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                            `json:"parentTask"`
@@ -12324,6 +12938,11 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) 
 // GetDesignCheckpointWaiver returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpointWaiver {
 	return v.DesignCheckpointWaiver
+}
+
+// GetCarriedDesign returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask) GetCarriedDesign() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
 }
 
 // GetSplitRequest returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -12510,6 +13129,298 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskBu
 	retval.Uuid = v.ActorFields.Uuid
 	retval.Name = v.ActorFields.Name
 	return &retval, nil
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                           `json:"parentTask"`
+	ParentKey  string                                                                                                           `json:"parentKey"`
+	Rounds     []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                           `json:"at"`
+	By         *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                          `json:"session"`
+	ReviewedBy *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -13576,6 +14487,8 @@ type AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSplitR
 	WorkLevel               *int                                                                                                                                 `json:"workLevel"`
 	Group                   *string                                                                                                                              `json:"group"`
 	Tags                    []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -13621,6 +14534,11 @@ func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSp
 // GetTags returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskAuthorizeProgrammaticAgentTaskAuthorizeProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -14021,6 +14939,8 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	DesignCheckpoint *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                        `json:"parentTask"`
@@ -14180,6 +15100,11 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetCarriedDesign() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTask) GetSplitRequest() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -14285,6 +15210,298 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // GetPromptVersion returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                                       `json:"parentTask"`
+	ParentKey  string                                                                                                                       `json:"parentKey"`
+	Rounds     []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                                       `json:"at"`
+	By         *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                                      `json:"session"`
+	ReviewedBy *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -15351,6 +16568,8 @@ type AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAge
 	WorkLevel               *int                                                                                                                                             `json:"workLevel"`
 	Group                   *string                                                                                                                                          `json:"group"`
 	Tags                    []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -15396,6 +16615,11 @@ func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammati
 // GetTags returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskBindExternalRefProgrammaticAgentTaskBindExternalRefProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -16108,6 +17332,8 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask struct {
 	DesignCheckpoint *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                      `json:"parentTask"`
@@ -16267,6 +17493,11 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetDes
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetCarriedDesign() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTask) GetSplitRequest() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -16372,6 +17603,298 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                     `json:"parentTask"`
+	ParentKey  string                                                                                                     `json:"parentKey"`
+	Rounds     []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                     `json:"at"`
+	By         *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                    `json:"session"`
+	ReviewedBy *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -17438,6 +18961,8 @@ type AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSplitRequest
 	WorkLevel               *int                                                                                                                           `json:"workLevel"`
 	Group                   *string                                                                                                                        `json:"group"`
 	Tags                    []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -17483,6 +19008,11 @@ func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSplitReq
 // GetTags returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskCancelProgrammaticAgentTaskCancelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -18801,6 +20331,8 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask struct 
 	DesignCheckpoint *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
@@ -18965,6 +20497,11 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) Ge
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetCarriedDesign() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTask) GetSplitRequest() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -19080,6 +20617,298 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskAssi
 // GetPromptVersion returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                         `json:"parentTask"`
+	ParentKey  string                                                                                                         `json:"parentKey"`
+	Rounds     []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                         `json:"at"`
+	By         *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                        `json:"session"`
+	ReviewedBy *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -20212,6 +22041,8 @@ type AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSplitReq
 	WorkLevel               *int                                                                                                                               `json:"workLevel"`
 	Group                   *string                                                                                                                            `json:"group"`
 	Tags                    []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -20257,6 +22088,11 @@ func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSpli
 // GetTags returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskCompleteProgrammaticAgentTaskCompleteProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -21432,6 +23268,8 @@ type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAge
 	DesignCheckpoint *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                        `json:"parentTask"`
@@ -21591,6 +23429,11 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask) GetCarriedDesign() *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTask) GetSplitRequest() *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -21696,6 +23539,298 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 // GetPromptVersion returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                                       `json:"parentTask"`
+	ParentKey  string                                                                                                                       `json:"parentKey"`
+	Rounds     []*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                                       `json:"at"`
+	By         *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                                      `json:"session"`
+	ReviewedBy *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -22762,6 +24897,8 @@ type AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAge
 	WorkLevel               *int                                                                                                                                             `json:"workLevel"`
 	Group                   *string                                                                                                                                          `json:"group"`
 	Tags                    []*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -22807,6 +24944,11 @@ func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammati
 // GetTags returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskDeclareDeliveryProgrammaticAgentTaskDeclareDeliveryProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -23541,6 +25683,8 @@ type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask
 	DesignCheckpoint *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                  `json:"parentTask"`
@@ -23700,6 +25844,11 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetCarriedDesign() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask) GetSplitRequest() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -23805,6 +25954,298 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // GetPromptVersion returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                                 `json:"parentTask"`
+	ParentKey  string                                                                                                                 `json:"parentKey"`
+	Rounds     []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                                 `json:"at"`
+	By         *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                                `json:"session"`
+	ReviewedBy *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -24871,6 +27312,8 @@ type AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTask
 	WorkLevel               *int                                                                                                                                       `json:"workLevel"`
 	Group                   *string                                                                                                                                    `json:"group"`
 	Tags                    []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -24916,6 +27359,11 @@ func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgent
 // GetTags returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskEscalateHoldProgrammaticAgentTaskEscalateHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -25345,6 +27793,8 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask struct {
 	DesignCheckpoint *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                  `json:"parentTask"`
@@ -25500,6 +27950,11 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetDesignC
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetCarriedDesign() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTask) GetSplitRequest() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -25605,6 +28060,298 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskAssignmentAg
 // GetPromptVersion returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                 `json:"parentTask"`
+	ParentKey  string                                                                                                 `json:"parentKey"`
+	Rounds     []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                 `json:"at"`
+	By         *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                `json:"session"`
+	ReviewedBy *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -26671,6 +29418,8 @@ type AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSplitRequestProp
 	WorkLevel               *int                                                                                                                       `json:"workLevel"`
 	Group                   *string                                                                                                                    `json:"group"`
 	Tags                    []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -26716,6 +29465,11 @@ func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSplitRequest
 // GetTags returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskHoldProgrammaticAgentTaskHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -27729,6 +30483,8 @@ type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask struct 
 	DesignCheckpoint *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                          `json:"parentTask"`
@@ -27888,6 +30644,11 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask) Ge
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask) GetCarriedDesign() *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTask) GetSplitRequest() *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -27993,6 +30754,298 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskAssi
 // GetPromptVersion returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                         `json:"parentTask"`
+	ParentKey  string                                                                                                         `json:"parentKey"`
+	Rounds     []*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                         `json:"at"`
+	By         *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                        `json:"session"`
+	ReviewedBy *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -29059,6 +32112,8 @@ type AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSplitReq
 	WorkLevel               *int                                                                                                                               `json:"workLevel"`
 	Group                   *string                                                                                                                            `json:"group"`
 	Tags                    []*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -29104,6 +32159,11 @@ func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSpli
 // GetTags returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskLiftHoldProgrammaticAgentTaskLiftHoldProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -29491,6 +32551,8 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask struct {
 	DesignCheckpoint *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
@@ -29655,6 +32717,11 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetDes
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetCarriedDesign() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTask) GetSplitRequest() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -29770,6 +32837,298 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                     `json:"parentTask"`
+	ParentKey  string                                                                                                     `json:"parentKey"`
+	Rounds     []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                     `json:"at"`
+	By         *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                    `json:"session"`
+	ReviewedBy *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -30902,6 +34261,8 @@ type AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSplitRequest
 	WorkLevel               *int                                                                                                                           `json:"workLevel"`
 	Group                   *string                                                                                                                        `json:"group"`
 	Tags                    []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -30947,6 +34308,11 @@ func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSplitReq
 // GetTags returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskLinkPrProgrammaticAgentTaskLinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -31617,6 +34983,8 @@ type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTas
 	DesignCheckpoint *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                            `json:"parentTask"`
@@ -31776,6 +35144,11 @@ func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmen
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetCarriedDesign() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetSplitRequest() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -31881,6 +35254,298 @@ func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmen
 // GetPromptVersion returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                                           `json:"parentTask"`
+	ParentKey  string                                                                                                                           `json:"parentKey"`
+	Rounds     []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                                           `json:"at"`
+	By         *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetRounds() []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetRoles() []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetBy() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                                          `json:"session"`
+	ReviewedBy *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -32947,6 +36612,8 @@ type AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTas
 	WorkLevel               *int                                                                                                                                                 `json:"workLevel"`
 	Group                   *string                                                                                                                                              `json:"group"`
 	Tags                    []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -32992,6 +36659,11 @@ func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmen
 // GetTags returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskNextByPromptVersionAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -33425,6 +37097,8 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	DesignCheckpoint *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                         `json:"parentTask"`
@@ -33584,6 +37258,11 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetCarriedDesign() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTask) GetSplitRequest() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -33689,6 +37368,298 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // GetPromptVersion returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                                        `json:"parentTask"`
+	ParentKey  string                                                                                                                        `json:"parentKey"`
+	Rounds     []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                                        `json:"at"`
+	By         *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetRounds() []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetRoles() []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetBy() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                                       `json:"session"`
+	ReviewedBy *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -34755,6 +38726,8 @@ type AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAg
 	WorkLevel               *int                                                                                                                                              `json:"workLevel"`
 	Group                   *string                                                                                                                                           `json:"group"`
 	Tags                    []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -34800,6 +38773,11 @@ func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTa
 // GetTags returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskNextProgrammaticAgentTaskNextProgrammaticAgentTaskAssignmentTaskAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -35755,6 +39733,8 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask struct {
 	DesignCheckpoint *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                    `json:"parentTask"`
@@ -35914,6 +39894,11 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetDesig
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetCarriedDesign() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTask) GetSplitRequest() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -36019,6 +40004,298 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskAssignment
 // GetPromptVersion returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                   `json:"parentTask"`
+	ParentKey  string                                                                                                   `json:"parentKey"`
+	Rounds     []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                   `json:"at"`
+	By         *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                  `json:"session"`
+	ReviewedBy *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -37085,6 +41362,8 @@ type AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSplitRequestPr
 	WorkLevel               *int                                                                                                                         `json:"workLevel"`
 	Group                   *string                                                                                                                      `json:"group"`
 	Tags                    []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -37130,6 +41409,11 @@ func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSplitReque
 // GetTags returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskOrderProgrammaticAgentTaskOrderProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -37558,6 +41842,8 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	DesignCheckpoint *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
@@ -37763,6 +42049,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetDesignCheckpoin
 // GetDesignCheckpointWaiver returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDesignCheckpointWaiver {
 	return v.DesignCheckpointWaiver
+}
+
+// GetCarriedDesign returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetCarriedDesign() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
 }
 
 // GetSplitRequest returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -37988,6 +42279,298 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskW
 // GetLifecycle returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskWorkAssignmentResolvedInputsAgentTaskResolvedPrerequisite.Lifecycle, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskWorkAssignmentResolvedInputsAgentTaskResolvedPrerequisite) GetLifecycle() *ReleaseLifecycleEnum {
 	return v.Lifecycle
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                         `json:"parentTask"`
+	ParentKey  string                                                                                         `json:"parentKey"`
+	Rounds     []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                         `json:"at"`
+	By         *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                        `json:"session"`
+	ReviewedBy *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskDeliveriesAgentTaskDelivery includes the requested fields of the GraphQL type AgentTaskDelivery.
@@ -40353,6 +44936,8 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSplitRequestProposedChil
 	WorkLevel               *int                                                                                                               `json:"workLevel"`
 	Group                   *string                                                                                                            `json:"group"`
 	Tags                    []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -40398,6 +44983,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSplitRequestProposed
 // GetTags returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -41470,6 +46060,8 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask struct 
 	DesignCheckpoint *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                          `json:"parentTask"`
@@ -41629,6 +46221,11 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) Ge
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetCarriedDesign() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTask) GetSplitRequest() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -41734,6 +46331,298 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskAssi
 // GetPromptVersion returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                         `json:"parentTask"`
+	ParentKey  string                                                                                                         `json:"parentKey"`
+	Rounds     []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                         `json:"at"`
+	By         *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                        `json:"session"`
+	ReviewedBy *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -42800,6 +47689,8 @@ type AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSplitReq
 	WorkLevel               *int                                                                                                                               `json:"workLevel"`
 	Group                   *string                                                                                                                            `json:"group"`
 	Tags                    []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -42845,6 +47736,11 @@ func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSpli
 // GetTags returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskRegisterProgrammaticAgentTaskRegisterProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -43240,6 +48136,8 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask struct {
 	DesignCheckpoint *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
@@ -43410,6 +48308,11 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetDes
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetCarriedDesign() *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTask) GetSplitRequest() *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -43540,6 +48443,298 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                     `json:"parentTask"`
+	ParentKey  string                                                                                                     `json:"parentKey"`
+	Rounds     []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                     `json:"at"`
+	By         *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                    `json:"session"`
+	ReviewedBy *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -44788,6 +49983,8 @@ type AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSplitRequest
 	WorkLevel               *int                                                                                                                           `json:"workLevel"`
 	Group                   *string                                                                                                                        `json:"group"`
 	Tags                    []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -44833,6 +50030,11 @@ func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSplitReq
 // GetTags returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskReopenProgrammaticAgentTaskReopenProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -45707,6 +50909,8 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	DesignCheckpoint *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                              `json:"parentTask"`
@@ -45866,6 +51070,11 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetCarriedDesign() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTask) GetSplitRequest() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -45971,6 +51180,298 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // GetPromptVersion returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                                             `json:"parentTask"`
+	ParentKey  string                                                                                                                             `json:"parentKey"`
+	Rounds     []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                                             `json:"at"`
+	By         *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                                            `json:"session"`
+	ReviewedBy *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -47037,6 +52538,8 @@ type AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgramma
 	WorkLevel               *int                                                                                                                                                   `json:"workLevel"`
 	Group                   *string                                                                                                                                                `json:"group"`
 	Tags                    []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -47082,6 +52585,11 @@ func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgr
 // GetTags returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskRequireHumanReviewProgrammaticAgentTaskRequireHumanReviewProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -47476,6 +52984,8 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask struct {
 	DesignCheckpoint *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                      `json:"parentTask"`
@@ -47635,6 +53145,11 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetDes
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetCarriedDesign() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTask) GetSplitRequest() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -47740,6 +53255,298 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskAssignme
 // GetPromptVersion returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                     `json:"parentTask"`
+	ParentKey  string                                                                                                     `json:"parentKey"`
+	Rounds     []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                     `json:"at"`
+	By         *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                    `json:"session"`
+	ReviewedBy *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -48806,6 +54613,8 @@ type AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSplitRequest
 	WorkLevel               *int                                                                                                                           `json:"workLevel"`
 	Group                   *string                                                                                                                        `json:"group"`
 	Tags                    []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -48851,6 +54660,11 @@ func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSplitReq
 // GetTags returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskReturnProgrammaticAgentTaskReturnProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -51385,6 +57199,8 @@ type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask
 	DesignCheckpoint *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                  `json:"parentTask"`
@@ -51544,6 +57360,11 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask) GetCarriedDesign() *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask) GetSplitRequest() *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -51649,6 +57470,298 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 // GetPromptVersion returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                                 `json:"parentTask"`
+	ParentKey  string                                                                                                                 `json:"parentKey"`
+	Rounds     []*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                                 `json:"at"`
+	By         *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                                `json:"session"`
+	ReviewedBy *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -52715,6 +58828,8 @@ type AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTask
 	WorkLevel               *int                                                                                                                                       `json:"workLevel"`
 	Group                   *string                                                                                                                                    `json:"group"`
 	Tags                    []*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -52760,6 +58875,11 @@ func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgent
 // GetTags returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskSetWorkLevelProgrammaticAgentTaskSetWorkLevelProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -53155,6 +59275,8 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask struct {
 	DesignCheckpoint *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
@@ -53319,6 +59441,11 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetD
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetCarriedDesign() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTask) GetSplitRequest() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -53434,6 +59561,298 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskAssign
 // GetPromptVersion returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                       `json:"parentTask"`
+	ParentKey  string                                                                                                       `json:"parentKey"`
+	Rounds     []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                       `json:"at"`
+	By         *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                      `json:"session"`
+	ReviewedBy *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -54594,6 +61013,8 @@ type AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSplitReque
 	WorkLevel               *int                                                                                                                             `json:"workLevel"`
 	Group                   *string                                                                                                                          `json:"group"`
 	Tags                    []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -54639,6 +61060,11 @@ func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSplitR
 // GetTags returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskSignOffProgrammaticAgentTaskSignOffProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -55214,6 +61640,8 @@ type AgentTaskSplitChildInput struct {
 	Group *string `json:"group"`
 	// Omitted children inherit the parent's tags (D9).
 	Tags []*TagRecordInput `json:"tags,omitempty"`
+	// Build this child from the parent's reviewed design: its design-stage roles are recorded as passed through the carried rounds and it goes to the build role. Default false.
+	DesignFromParent *bool `json:"designFromParent,omitempty"`
 }
 
 // GetExternalRef returns AgentTaskSplitChildInput.ExternalRef, and is useful for accessing the field via an interface.
@@ -55244,6 +61672,9 @@ func (v *AgentTaskSplitChildInput) GetGroup() *string { return v.Group }
 
 // GetTags returns AgentTaskSplitChildInput.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitChildInput) GetTags() []*TagRecordInput { return v.Tags }
+
+// GetDesignFromParent returns AgentTaskSplitChildInput.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitChildInput) GetDesignFromParent() *bool { return v.DesignFromParent }
 
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
 type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask struct {
@@ -55291,6 +61722,8 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask struct {
 	DesignCheckpoint *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                    `json:"parentTask"`
@@ -55450,6 +61883,11 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetDesig
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetCarriedDesign() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTask) GetSplitRequest() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -55555,6 +61993,298 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskAssignment
 // GetPromptVersion returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                   `json:"parentTask"`
+	ParentKey  string                                                                                                   `json:"parentKey"`
+	Rounds     []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                   `json:"at"`
+	By         *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                  `json:"session"`
+	ReviewedBy *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -56621,6 +63351,8 @@ type AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSplitRequestPr
 	WorkLevel               *int                                                                                                                         `json:"workLevel"`
 	Group                   *string                                                                                                                      `json:"group"`
 	Tags                    []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -56666,6 +63398,11 @@ func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSplitReque
 // GetTags returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskSplitProgrammaticAgentTaskSplitProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -57092,6 +63829,8 @@ type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgr
 	DesignCheckpoint *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                                                  `json:"parentTask"`
@@ -57251,6 +63990,11 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask) GetCarriedDesign() *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTask) GetSplitRequest() *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -57356,6 +64100,298 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 // GetPromptVersion returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                                                 `json:"parentTask"`
+	ParentKey  string                                                                                                                                 `json:"parentKey"`
+	Rounds     []*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                                                 `json:"at"`
+	By         *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                                                `json:"session"`
+	ReviewedBy *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -58422,6 +65458,8 @@ type AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgr
 	WorkLevel               *int                                                                                                                                                       `json:"workLevel"`
 	Group                   *string                                                                                                                                                    `json:"group"`
 	Tags                    []*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -58467,6 +65505,11 @@ func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestP
 // GetTags returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskSupersedePullRequestProgrammaticAgentTaskSupersedePullRequestProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -59461,6 +66504,8 @@ type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask struct 
 	DesignCheckpoint *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                                          `json:"parentTask"`
@@ -59625,6 +66670,11 @@ func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask) Ge
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask) GetCarriedDesign() *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTask) GetSplitRequest() *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -59740,6 +66790,298 @@ func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskAssi
 // GetPromptVersion returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                         `json:"parentTask"`
+	ParentKey  string                                                                                                         `json:"parentKey"`
+	Rounds     []*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                         `json:"at"`
+	By         *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                        `json:"session"`
+	ReviewedBy *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -60872,6 +68214,8 @@ type AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSplitReq
 	WorkLevel               *int                                                                                                                               `json:"workLevel"`
 	Group                   *string                                                                                                                            `json:"group"`
 	Tags                    []*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -60917,6 +68261,11 @@ func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSpli
 // GetTags returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTaskUnlinkPrProgrammaticAgentTaskUnlinkPrProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -61487,6 +68836,8 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
 	DesignCheckpoint *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
@@ -61710,6 +69061,11 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetD
 // GetDesignCheckpointWaiver returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDesignCheckpointWaiver {
 	return v.DesignCheckpointWaiver
+}
+
+// GetCarriedDesign returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetCarriedDesign() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
 }
 
 // GetSplitRequest returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
@@ -61937,6 +69293,298 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssign
 // GetLifecycle returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignmentResolvedInputsAgentTaskResolvedPrerequisite.Lifecycle, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignmentResolvedInputsAgentTaskResolvedPrerequisite) GetLifecycle() *ReleaseLifecycleEnum {
 	return v.Lifecycle
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                       `json:"parentTask"`
+	ParentKey  string                                                                                                       `json:"parentKey"`
+	Rounds     []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                       `json:"at"`
+	By         *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                      `json:"session"`
+	ReviewedBy *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskDeliveriesAgentTaskDelivery includes the requested fields of the GraphQL type AgentTaskDelivery.
@@ -64302,6 +71950,8 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSplitReque
 	WorkLevel               *int                                                                                                                             `json:"workLevel"`
 	Group                   *string                                                                                                                          `json:"group"`
 	Tags                    []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -64347,6 +71997,11 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSplitR
 // GetTags returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -65380,6 +73035,8 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTask struct {
 	DesignCheckpoint *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
 	// The waiver the design's author put on its newest round (task TPF-152); null when none.
 	DesignCheckpointWaiver *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
 	ParentTask   *string                                                            `json:"parentTask"`
@@ -65549,6 +73206,11 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetDesignCheckpo
 	return v.DesignCheckpointWaiver
 }
 
+// GetCarriedDesign returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetCarriedDesign() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
 // GetSplitRequest returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTask) GetSplitRequest() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSplitRequest {
 	return v.SplitRequest
@@ -65674,6 +73336,298 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskAssignmentAgentTas
 // GetPromptVersion returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
 	return v.PromptVersion
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                           `json:"parentTask"`
+	ParentKey  string                                                                                           `json:"parentKey"`
+	Rounds     []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                           `json:"at"`
+	By         *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                          `json:"session"`
+	ReviewedBy *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
 }
 
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
@@ -67114,6 +75068,8 @@ type AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSplitRequestProposedCh
 	WorkLevel               *int                                                                                                                 `json:"workLevel"`
 	Group                   *string                                                                                                              `json:"group"`
 	Tags                    []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
 }
 
 // GetTitle returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
@@ -67159,6 +75115,11 @@ func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSplitRequestPropos
 // GetTags returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
 func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
 	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
 }
 
 // AgentTasksProgrammaticAgentTasksProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
@@ -84697,6 +92658,32 @@ mutation AgentTaskAssignByPromptVersion ($taskUuid: ID!, $sessionUuid: ID!, $rol
 				note
 				standing
 			}
+			carriedDesign {
+				parentTask
+				parentKey
+				rounds {
+					specification
+					release
+					round
+					path
+				}
+				roles {
+					role
+					roleUuid
+					signedOffAt
+					session
+					reviewedBy {
+						... ActorFields
+					}
+					decidedOver
+					live
+				}
+				at
+				by {
+					... ActorFields
+				}
+				standing
+			}
 			splitRequest {
 				requestedAt
 				role
@@ -84716,6 +92703,7 @@ mutation AgentTaskAssignByPromptVersion ($taskUuid: ID!, $sessionUuid: ID!, $rol
 						key
 						value
 					}
+					designFromParent
 				}
 				state
 				settledBy {
@@ -84938,6 +92926,32 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 				note
 				standing
 			}
+			carriedDesign {
+				parentTask
+				parentKey
+				rounds {
+					specification
+					release
+					round
+					path
+				}
+				roles {
+					role
+					roleUuid
+					signedOffAt
+					session
+					reviewedBy {
+						... ActorFields
+					}
+					decidedOver
+					live
+				}
+				at
+				by {
+					... ActorFields
+				}
+				standing
+			}
 			splitRequest {
 				requestedAt
 				role
@@ -84957,6 +92971,7 @@ mutation AgentTaskAssignProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $roles:
 						key
 						value
 					}
+					designFromParent
 				}
 				state
 				settledBy {
@@ -85318,6 +93333,32 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -85337,6 +93378,7 @@ mutation AgentTaskAuthorizeProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $rol
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -85545,6 +93587,32 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -85564,6 +93632,7 @@ mutation AgentTaskBindExternalRefProgrammatic ($taskUuid: ID!, $externalRef: Str
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -85973,6 +94042,32 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -85992,6 +94087,7 @@ mutation AgentTaskCancelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note: 
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -86428,6 +94524,32 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -86447,6 +94569,7 @@ mutation AgentTaskCompleteProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $note
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -86944,6 +95067,32 @@ mutation AgentTaskDeclareDeliveryProgrammatic ($taskUuid: ID!, $sessionUuid: ID!
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -86963,6 +95112,7 @@ mutation AgentTaskDeclareDeliveryProgrammatic ($taskUuid: ID!, $sessionUuid: ID!
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -87284,6 +95434,32 @@ mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -87303,6 +95479,7 @@ mutation AgentTaskEscalateHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -87499,6 +95676,32 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -87518,6 +95721,7 @@ mutation AgentTaskHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason: 
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -87990,6 +96194,32 @@ mutation AgentTaskLiftHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -88009,6 +96239,7 @@ mutation AgentTaskLiftHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -88207,6 +96438,32 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -88226,6 +96483,7 @@ mutation AgentTaskLinkPrProgrammatic ($taskUuid: ID!, $prUrl: String!) {
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -88445,6 +96703,32 @@ query AgentTaskNextByPromptVersion ($sessionUuid: ID!, $boardUuid: ID, $roles: [
 				note
 				standing
 			}
+			carriedDesign {
+				parentTask
+				parentKey
+				rounds {
+					specification
+					release
+					round
+					path
+				}
+				roles {
+					role
+					roleUuid
+					signedOffAt
+					session
+					reviewedBy {
+						... ActorFields
+					}
+					decidedOver
+					live
+				}
+				at
+				by {
+					... ActorFields
+				}
+				standing
+			}
 			splitRequest {
 				requestedAt
 				role
@@ -88464,6 +96748,7 @@ query AgentTaskNextByPromptVersion ($sessionUuid: ID!, $boardUuid: ID, $roles: [
 						key
 						value
 					}
+					designFromParent
 				}
 				state
 				settledBy {
@@ -88673,6 +96958,32 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 				note
 				standing
 			}
+			carriedDesign {
+				parentTask
+				parentKey
+				rounds {
+					specification
+					release
+					round
+					path
+				}
+				roles {
+					role
+					roleUuid
+					signedOffAt
+					session
+					reviewedBy {
+						... ActorFields
+					}
+					decidedOver
+					live
+				}
+				at
+				by {
+					... ActorFields
+				}
+				standing
+			}
 			splitRequest {
 				requestedAt
 				role
@@ -88692,6 +97003,7 @@ query AgentTaskNextProgrammatic ($sessionUuid: ID!, $boardUuid: ID, $roles: [Str
 						key
 						value
 					}
+					designFromParent
 				}
 				state
 				settledBy {
@@ -89163,6 +97475,32 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -89182,6 +97520,7 @@ mutation AgentTaskOrderProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $orderIn
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -89437,6 +97776,32 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -89456,6 +97821,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -89927,6 +98293,32 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -89946,6 +98338,7 @@ mutation AgentTaskRegisterProgrammatic ($input: AgentTaskRegisterInput!) {
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -90138,6 +98531,32 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -90157,6 +98576,7 @@ mutation AgentTaskReopenProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role: 
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -90523,6 +98943,32 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -90542,6 +98988,7 @@ mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: 
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -90736,6 +99183,32 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -90755,6 +99228,7 @@ mutation AgentTaskReturnProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $reason
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -90818,6 +99292,8 @@ fragment HopUsageFields on HopUsage {
 }
 `
 
+// A child left unflagged omits designFromParent rather than sending null, so a typed caller that never sets it
+// reads as before on a server that predates the field (task TPF-163).
 func AgentTaskReturnProgrammatic(
 	ctx_ context.Context,
 	client_ graphql.Client,
@@ -91849,6 +100325,32 @@ mutation AgentTaskSetWorkLevelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -91868,6 +100370,7 @@ mutation AgentTaskSetWorkLevelProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -92069,6 +100572,32 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -92088,6 +100617,7 @@ mutation AgentTaskSignOffProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $outco
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -92320,6 +100850,32 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -92339,6 +100895,7 @@ mutation AgentTaskSplitProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $childre
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -92402,6 +100959,8 @@ fragment HopUsageFields on HopUsage {
 }
 `
 
+// A child left unflagged omits designFromParent rather than sending null, so a typed caller that never sets it
+// reads as before on a server that predates the field (task TPF-163).
 func AgentTaskSplitProgrammatic(
 	ctx_ context.Context,
 	client_ graphql.Client,
@@ -92535,6 +101094,32 @@ mutation AgentTaskSupersedePullRequestProgrammatic ($taskUuid: ID!, $sessionUuid
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -92554,6 +101139,7 @@ mutation AgentTaskSupersedePullRequestProgrammatic ($taskUuid: ID!, $sessionUuid
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -92960,6 +101546,32 @@ mutation AgentTaskUnlinkPrProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $prUr
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -92979,6 +101591,7 @@ mutation AgentTaskUnlinkPrProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $prUr
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -93259,6 +101872,32 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -93278,6 +101917,7 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
@@ -93785,6 +102425,32 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $change
 			note
 			standing
 		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
 		splitRequest {
 			requestedAt
 			role
@@ -93804,6 +102470,7 @@ query AgentTasksProgrammatic ($boardUuid: ID!, $status: AgentTaskStatus, $change
 					key
 					value
 				}
+				designFromParent
 			}
 			state
 			settledBy {
