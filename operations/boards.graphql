@@ -495,6 +495,50 @@ mutation AgentTaskLiftHoldProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $role
 	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
 } }
 
+# The coordinator seat's verdict on an answer signed off --no-change (task TPF-171): CONFIRMED keeps the
+# earlier passes, REFUSED reviews the rounds as a change.
+mutation AgentTaskConfirmAnswerProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $verdict: AgentTaskAnswerVerdict!, $note: String) {
+	agentTaskConfirmAnswerProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, verdict: $verdict, note: $note) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	designCheckpointWaiver { bySession byAgent role roleUuid at designRound note standing }
+	carriedDesign { parentTask parentKey rounds { specification release round path } roles { role roleUuid signedOffAt session reviewedBy { ...ActorFields } decidedOver live } at by { ...ActorFields } standing }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } designFromParent } state settledBy { ...ActorFields } settledAt note }
+	answerConfirmations { answeredAt role roleUuid session agent askingRole questionsRelease rounds { release specification round version path previous previousRound previousVersion previousPath } state settledBy { ...ActorFields } settledAt note }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
+# A person's verdict on the same (task TPF-171); CONFIRMED is refused with a personal key of the user
+# whose key the answering agent runs on.
+mutation AgentTaskConfirmAnswer ($taskUuid: ID!, $verdict: AgentTaskAnswerVerdict!, $note: String) {
+	agentTaskConfirmAnswer(taskUuid: $taskUuid, verdict: $verdict, note: $note) {
+	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
+	dependsOn requireHumanReview
+	hold { level kind gateRole reason heldBy { ...ActorFields } heldAt stop }
+	assignment { session agent role assignedAt promptVersion }
+	signOffs { role agent session assignedAt signedOffAt outcome note promptVersion reviewedBy { ...ActorFields } usage { ...HopUsageFields } overAllowanceMicros }
+	returns { role agent session reason description returnedAt usage { ...HopUsageFields } overAllowanceMicros }
+	designCheckpoint { reachedAt afterRole beforeRole design state settledBy { ...ActorFields } settledAt note }
+	designCheckpointWaiver { bySession byAgent role roleUuid at designRound note standing }
+	carriedDesign { parentTask parentKey rounds { specification release round path } roles { role roleUuid signedOffAt session reviewedBy { ...ActorFields } decidedOver live } at by { ...ActorFields } standing }
+	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } designFromParent } state settledBy { ...ActorFields } settledAt note }
+	answerConfirmations { answeredAt role roleUuid session agent askingRole questionsRelease rounds { release specification round version path previous previousRound previousVersion previousPath } state settledBy { ...ActorFields } settledAt note }
+	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
+	statusHistory { from to at trigger actor { ...ActorFields } note }
+	orderSetBy { ...ActorFields } orderSetAt requiredRolesSkipped
+	rolesSkippedByCondition { role roleUuid reason at by { ...ActorFields } waives live }
+	questionStack { askingRole askingSession askingAgent questionsRelease answeringRole askedAt }
+} }
+
 mutation AgentTaskRequireHumanReviewProgrammatic ($taskUuid: ID!, $sessionUuid: ID!) {
 	agentTaskRequireHumanReviewProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid) {
 	key number uuid org board externalRef title description sourceUrl status role orderIndex workLevel effectiveWorkLevel workLevelSetBy { ...ActorFields } workLevelSetAt group { uuid key name } tags { key value removable } waitingOnGroups
@@ -699,6 +743,7 @@ query AgentTaskProgrammatic ($taskUuid: ID!) { agentTaskProgrammatic(taskUuid: $
 	designCheckpointWaiver { bySession byAgent role roleUuid at designRound note standing }
 	carriedDesign { parentTask parentKey rounds { specification release round path } roles { role roleUuid signedOffAt session reviewedBy { ...ActorFields } decidedOver live } at by { ...ActorFields } standing }
 	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } designFromParent } state settledBy { ...ActorFields } settledAt note }
+	answerConfirmations { answeredAt role roleUuid session agent askingRole questionsRelease rounds { release specification round version path previous previousRound previousVersion previousPath } state settledBy { ...ActorFields } settledAt note }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit
@@ -739,6 +784,7 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) { agentTasksByUuidProgra
 	designCheckpointWaiver { bySession byAgent role roleUuid at designRound note standing }
 	carriedDesign { parentTask parentKey rounds { specification release round path } roles { role roleUuid signedOffAt session reviewedBy { ...ActorFields } decidedOver live } at by { ...ActorFields } standing }
 	splitRequest { requestedAt role roleUuid session description proposedChildren { title description externalRef sourceUrl dependsOnSiblingIndexes producesComponent workLevel group tags { key value } designFromParent } state settledBy { ...ActorFields } settledAt note }
+	answerConfirmations { answeredAt role roleUuid session agent askingRole questionsRelease rounds { release specification round version path previous previousRound previousVersion previousPath } state settledBy { ...ActorFields } settledAt note }
 	unassignments { role session agent assignedAt unassignedAt unassignedBy { ...ActorFields } reason usage { ...HopUsageFields } }
 	parentTask childTasks sessions prUrls registeredBySession createdDate completedAt
 	pullRequests { url state targetBranch mergedDate baseMovedBy registered head unit

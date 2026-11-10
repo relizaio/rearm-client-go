@@ -624,6 +624,19 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   role: String
   note: String): AgentTask
   """
+  The coordinator seat's verdict on an answer signed off --no-change (task TPF-171), while the task waits on the
+  coordinator with a PENDING answerConfirmations entry. CONFIRMED: the answer rounds change nothing, the earlier
+  passes stand, and the task goes on to the first role without a current pass (the asker, unless another pass is
+  stale, which is reviewed first). REFUSED: the rounds are reviewed as a change. Both are recorded on the entry and
+  as a status-history row before routing. CONFIRMED is refused when the seat's agent gave the answer, and when the
+  asker could not read its inputs. note, optionally: kept on the entry.
+  """
+  agentTaskConfirmAnswerProgrammatic(
+  taskUuid: ID!
+  sessionUuid: ID!
+  verdict: AgentTaskAnswerVerdict!
+  note: String): AgentTask
+  """
   Declare that a delivery unit of a task landed, or never will (task 18c5c293): unit is a linked PR's
   URL, or on a board delivering without PRs a branch or release; commit is the merged or pushed sha
   (required for DELIVERED). The coordinator seat, or a session that worked this task in a role that
@@ -750,7 +763,9 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   skips the check.
   noChange (task RD4-13): on a PASSED that answers a review item about the signing role's own document, the new
   round changes nothing to build, so the task goes back to the filer rather than to the role that builds
-  from the round. Recorded on the sign-off; refused on REJECTED.
+  from the round. On a PASSED that answers a question (task TPF-171), the answer changes nothing: the task stops at
+  the coordinator for confirmation instead of going through the roles whose pass the round would make stale; absent,
+  the answer is treated as a change. Recorded on the sign-off; refused on REJECTED.
   noCode (task RD4-2): the round changed no code (a note-only round). A PASSED sign-off by a role holding
   CODE_PUSH is refused when no linked PR in play moved since the assignment ("no linked PR moved since your
   assignment"); noCode passes it and is recorded on the sign-off. Refused on REJECTED.
@@ -884,6 +899,15 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   producesComponent: ID
   workLevel: Int
   requiredInputs: [AgentTaskPrerequisiteInput]): AgentTask
+  """
+  A person's verdict on an answer signed off --no-change (task TPF-171), as agentTaskConfirmAnswerProgrammatic gives
+  it for the seat: BOARD_WRITE on the board. With a personal key, CONFIRMED is refused when the key's owner owns a
+  USER key the answering agent runs on; REFUSED is always allowed.
+  """
+  agentTaskConfirmAnswer(
+  taskUuid: ID!
+  verdict: AgentTaskAnswerVerdict!
+  note: String): AgentTask
   """
   Set a task's order. Recorded as orderSetBy; the coordinator may reorder after you.
   """
@@ -2284,6 +2308,10 @@ type AgentTask {
   The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
   """
   splitRequest: AgentTaskSplitRequest
+  """
+  Answers signed off --no-change and the coordinator's verdicts (task TPF-171), oldest first; empty when no answer was ever signed off --no-change.
+  """
+  answerConfirmations: [AgentTaskAnswerConfirmation!]!
   """
   The waiver the design's author put on its newest round (task TPF-152); null when none.
   """
@@ -4093,6 +4121,14 @@ enum AgentTaskHoldLevel {
 }
 
 """
+The coordinator's verdict on an answer signed off --no-change (task TPF-171).
+"""
+enum AgentTaskAnswerVerdict {
+  CONFIRMED
+  REFUSED
+}
+
+"""
 SUPERSEDED (task RD3-13): a linked PR closed unmerged and replaced by another linked PR on its repository,
 named in supersededBy; delivery counts the replacement. Declared with agentTaskSupersedePullRequest, never
 through agentTaskDeclareDelivery.
@@ -5041,7 +5077,8 @@ type Artifact {
   artifacts: [ID]
   artifactDetails: [Artifact]
   enrichmentStatus: EnrichmentStatus
-  vexImportSummary: VexImportSummary
+  importSummary: ImportSummary
+  vexImportSummary: VexImportSummary @deprecated(reason: "Use importSummary")
   "The artifact's TEA id, minted when a TEA publication first names it; read-only"
   teaUuid: ID
 }
@@ -6521,6 +6558,39 @@ type AgentTaskSplitRequest {
 }
 
 """
+An answer to a question signed off --no-change, and what the coordinator said about it (task TPF-171). CONFIRMED: the
+rounds do not make any pass stale and the task went on to the first role without a current pass (the asker, unless
+something else moved). REFUSED: reviewed as a change. LAPSED: the task
+left the coordinator by another verb (the note names it); the rounds count as a change. Only the server writes it.
+"""
+type AgentTaskAnswerConfirmation {
+  answeredAt: DateTime!
+  role: String!
+  roleUuid: ID
+  """
+  The answering session; null on a blind read.
+  """
+  session: ID
+  """
+  The answering agent; null on a blind read.
+  """
+  agent: ID
+  askingRole: ID
+  questionsRelease: ID
+  rounds: [AgentTaskAnswerRound!]!
+  state: AgentTaskAnswerConfirmationState!
+  """
+  Who confirmed, refused or lapsed it; null while PENDING.
+  """
+  settledBy: AgentActor
+  settledAt: DateTime
+  """
+  The coordinator's note, or the verb that lapsed it.
+  """
+  note: String
+}
+
+"""
 The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
 this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
 only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
@@ -7056,7 +7126,7 @@ input BoardRoleSpecInput {
   """
   blindReview: Boolean
   """
-  Operator-only: changed only from a person's apply (the UI, or a personal key). Before this role is queued on a task's design the task stops at the coordinator (task SPLIT-5). Absent: unchanged; null: false. Not on a preset.
+  Changed by a declarative apply under CONFIGURATION_WRITE and BOARD_WRITE on the board; refused on the coordinator-seat path. Before this role is queued on a task's design the task stops at the coordinator (task SPLIT-5). Absent: unchanged; null: false. Not on a preset.
   """
   coordinatorCheckpoint: Boolean
   """
@@ -7300,8 +7370,10 @@ input ArtifactInput {
   stripBom: StripBomEnum
   digestRecords: [DigestRecordInput]
   artifacts: [ArtifactInput]
-  vexScope: AnalysisScope
-  vexImportMode: VexImportMode
+  importScope: AnalysisScope
+  importMode: ImportMode
+  vexScope: AnalysisScope @deprecated(reason: "Use importScope; importScope wins if both are sent")
+  vexImportMode: VexImportMode @deprecated(reason: "Use importMode; importMode wins if both are sent")
   userIssuerClassOverride: IssuerClass
 }
 
@@ -8599,6 +8671,10 @@ Null is a real state, not a default. A document with an empty REQUIRED slot is b
   """
   fdaAssessmentNarrative: String
   """
+  SSO users whose groups claim matches no SSO-connected group of this (default) organization and who hold no pending invitation (TPF-167). Absent = REFUSE.
+  """
+  ssoUsersWithoutRole: SsoUsersWithoutRole
+  """
   Whether this org's exports carry its support attestations.
   
 NULL MEANS DISABLED. The default is off: support properties do not appear in an
@@ -8901,6 +8977,17 @@ enum EnrichmentStatus {
   COMPLETED
   FAILED
   SKIPPED
+}
+
+type ImportSummary {
+  statementsTotal: Int
+  proposalsCreated: Int
+  proposalsAutoAccepted: Int
+  proposalsAutoRejected: Int
+  attestationsDeferred: Int
+  statementsUnmatched: Int
+  statementsErrored: Int
+  errorMessages: [String]
 }
 
 type VexImportSummary {
@@ -9671,6 +9758,34 @@ enum AgentTaskSplitRequestState {
 }
 
 """
+One round an answering hop published, and the round before it (task TPF-171).
+"""
+type AgentTaskAnswerRound {
+  release: ID!
+  specification: String!
+  round: Int
+  version: String
+  path: String
+  """
+  The round it is compared against: the task's newest round of the document handed over before the answering hop began (at or above ASSEMBLED and the readers' floor; never a release of the answering hop), else the round carried from the split parent.
+  """
+  previous: ID
+  previousRound: Int
+  previousVersion: String
+  previousPath: String
+}
+
+"""
+Where the coordinator's confirmation of a no-change answer stands (task TPF-171).
+"""
+enum AgentTaskAnswerConfirmationState {
+  PENDING
+  CONFIRMED
+  REFUSED
+  LAPSED
+}
+
+"""
 One parent round a split child carries as its design (task TPF-161).
 """
 type AgentTaskCarriedRound {
@@ -9756,6 +9871,14 @@ enum AgentStatusTrigger {
   A delivery unit was declared abandoned: to the coordinator (task 18c5c293).
   """
   DELIVERY_ABANDONED
+  """
+  The coordinator confirmed an answer marked no change (task TPF-171); the task may still wait on the coordinator after it.
+  """
+  ANSWER_CONFIRMED
+  """
+  The coordinator refused an answer marked no change, so it is reviewed as a change (task TPF-171); the task may still wait on the coordinator after it.
+  """
+  ANSWER_REFUSED
 }
 
 """
@@ -9981,6 +10104,12 @@ enum AnalysisScope {
   COMPONENT
   BRANCH
   RELEASE
+}
+
+enum ImportMode {
+  AUTO_ACCEPT
+  STAGE
+  REJECT
 }
 
 enum VexImportMode {
@@ -10481,6 +10610,20 @@ enum SidPurlMode {
   DISABLED
   ENABLED_STRICT
   ENABLED_FLEXIBLE
+}
+
+"""
+What a first SSO sign-in does when its groups claim matches no SSO-connected user group of the default organization and no invitation is pending (TPF-167).
+"""
+enum SsoUsersWithoutRole {
+  """
+  No account is created; the person sees NO_ROLE. The default.
+  """
+  REFUSE
+  """
+  The account is created with no role; it holds no seat.
+  """
+  CREATE_WITHOUT_ROLE
 }
 
 """
