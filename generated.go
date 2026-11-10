@@ -7698,6 +7698,10 @@ const (
 	AgentStatusTriggerPrClosed AgentStatusTrigger = "PR_CLOSED"
 	// A delivery unit was declared abandoned: to the coordinator (task 18c5c293).
 	AgentStatusTriggerDeliveryAbandoned AgentStatusTrigger = "DELIVERY_ABANDONED"
+	// The coordinator confirmed an answer marked no change (task TPF-171); the task may still wait on the coordinator after it.
+	AgentStatusTriggerAnswerConfirmed AgentStatusTrigger = "ANSWER_CONFIRMED"
+	// The coordinator refused an answer marked no change, so it is reviewed as a change (task TPF-171); the task may still wait on the coordinator after it.
+	AgentStatusTriggerAnswerRefused AgentStatusTrigger = "ANSWER_REFUSED"
 )
 
 var AllAgentStatusTrigger = []AgentStatusTrigger{
@@ -7723,6 +7727,8 @@ var AllAgentStatusTrigger = []AgentStatusTrigger{
 	AgentStatusTriggerDelivered,
 	AgentStatusTriggerPrClosed,
 	AgentStatusTriggerDeliveryAbandoned,
+	AgentStatusTriggerAnswerConfirmed,
+	AgentStatusTriggerAnswerRefused,
 }
 
 // AgentTaskAnswerAgentTaskAnswerAgentTask includes the requested fields of the GraphQL type AgentTask.
@@ -7991,6 +7997,23 @@ func (v *AgentTaskAnswerAgentTaskAnswerAgentTask) __premarshalJSON() (*__premars
 	return &retval, nil
 }
 
+// Where the coordinator's confirmation of a no-change answer stands (task TPF-171).
+type AgentTaskAnswerConfirmationState string
+
+const (
+	AgentTaskAnswerConfirmationStatePending   AgentTaskAnswerConfirmationState = "PENDING"
+	AgentTaskAnswerConfirmationStateConfirmed AgentTaskAnswerConfirmationState = "CONFIRMED"
+	AgentTaskAnswerConfirmationStateRefused   AgentTaskAnswerConfirmationState = "REFUSED"
+	AgentTaskAnswerConfirmationStateLapsed    AgentTaskAnswerConfirmationState = "LAPSED"
+)
+
+var AllAgentTaskAnswerConfirmationState = []AgentTaskAnswerConfirmationState{
+	AgentTaskAnswerConfirmationStatePending,
+	AgentTaskAnswerConfirmationStateConfirmed,
+	AgentTaskAnswerConfirmationStateRefused,
+	AgentTaskAnswerConfirmationStateLapsed,
+}
+
 // AgentTaskAnswerResponse is returned by AgentTaskAnswer on success.
 type AgentTaskAnswerResponse struct {
 	// Answer the open questions a task is waiting on, as a round of its BOARD_QUESTIONS index, and let the
@@ -8003,6 +8026,19 @@ type AgentTaskAnswerResponse struct {
 // GetAgentTaskAnswer returns AgentTaskAnswerResponse.AgentTaskAnswer, and is useful for accessing the field via an interface.
 func (v *AgentTaskAnswerResponse) GetAgentTaskAnswer() *AgentTaskAnswerAgentTaskAnswerAgentTask {
 	return v.AgentTaskAnswer
+}
+
+// The coordinator's verdict on an answer signed off --no-change (task TPF-171).
+type AgentTaskAnswerVerdict string
+
+const (
+	AgentTaskAnswerVerdictConfirmed AgentTaskAnswerVerdict = "CONFIRMED"
+	AgentTaskAnswerVerdictRefused   AgentTaskAnswerVerdict = "REFUSED"
+)
+
+var AllAgentTaskAnswerVerdict = []AgentTaskAnswerVerdict{
+	AgentTaskAnswerVerdictConfirmed,
+	AgentTaskAnswerVerdictRefused,
 }
 
 // AgentTaskAssignByPromptVersionAgentTaskAssignProgrammaticAgentTaskAssignment includes the requested fields of the GraphQL type AgentTaskAssignment.
@@ -22651,6 +22687,4595 @@ type AgentTaskCompleteResponse struct {
 // GetAgentTaskComplete returns AgentTaskCompleteResponse.AgentTaskComplete, and is useful for accessing the field via an interface.
 func (v *AgentTaskCompleteResponse) GetAgentTaskComplete() *AgentTaskCompleteAgentTaskCompleteAgentTask {
 	return v.AgentTaskComplete
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md section 4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
+	SourceUrl   *string          `json:"sourceUrl"`
+	Status      *AgentTaskStatus `json:"status"`
+	// Role the task is queued for / worked in; retained as last role until re-authorized.
+	Role *string `json:"role"`
+	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
+	OrderIndex *int `json:"orderIndex"`
+	// Declared work level, 0 to 9; null when not set, in which case the board's defaultWorkLevel
+	// applies (effectiveWorkLevel). The default is resolved on read, never written here (RD2-1).
+	WorkLevel *int `json:"workLevel"`
+	// The work level the board reads: workLevel, else the board's defaultWorkLevel, else null (RD2-1).
+	EffectiveWorkLevel *int `json:"effectiveWorkLevel"`
+	// Who last set or cleared the work level after registration, and when (RD2-1).
+	WorkLevelSetBy *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor `json:"workLevelSetBy"`
+	WorkLevelSetAt *string                                                                        `json:"workLevelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
+	DependsOn []*string `json:"dependsOn"`
+	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
+	RequireHumanReview *bool `json:"requireHumanReview"`
+	// Hold state while ON_HOLD; null otherwise.
+	Hold       *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold                              `json:"hold"`
+	Assignment *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
+	SignOffs   []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
+	Returns    []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn          `json:"returns"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign `json:"carriedDesign"`
+	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
+	SplitRequest *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest `json:"splitRequest"`
+	// Answers signed off --no-change and the coordinator's verdicts (task TPF-171), oldest first; empty when no answer was ever signed off --no-change.
+	AnswerConfirmations []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation `json:"answerConfirmations"`
+	ParentTask          *string                                                                                                `json:"parentTask"`
+	ChildTasks          []*string                                                                                              `json:"childTasks"`
+	// Every session that ever held the assignment.
+	Sessions            []*string `json:"sessions"`
+	PrUrls              []*string `json:"prUrls"`
+	RegisteredBySession *string   `json:"registeredBySession"`
+	CreatedDate         *string   `json:"createdDate"`
+	CompletedAt         *string   `json:"completedAt"`
+	// Append-only status transition log, oldest first.
+	StatusHistory []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
+	// Who last set orderIndex, the coordinator or a person, and when.
+	OrderSetBy *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor `json:"orderSetBy"`
+	OrderSetAt *string                                                                    `json:"orderSetAt"`
+	// Required roles a person completed the task without, having said why in the completing status change.
+	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
+	QuestionStack []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetKey() *string { return v.Key }
+
+// GetNumber returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetNumber() *int { return v.Number }
+
+// GetUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetUuid() *string { return v.Uuid }
+
+// GetOrg returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Org, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetOrg() *string { return v.Org }
+
+// GetBoard returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Board, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetBoard() *string { return v.Board }
+
+// GetExternalRef returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetExternalRef() *string {
+	return v.ExternalRef
+}
+
+// GetTitle returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetTitle() *string { return v.Title }
+
+// GetDescription returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetDescription() *string {
+	return v.Description
+}
+
+// GetSourceUrl returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.SourceUrl, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetSourceUrl() *string {
+	return v.SourceUrl
+}
+
+// GetStatus returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetStatus() *AgentTaskStatus {
+	return v.Status
+}
+
+// GetRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetRole() *string { return v.Role }
+
+// GetOrderIndex returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.OrderIndex, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetOrderIndex() *int {
+	return v.OrderIndex
+}
+
+// GetWorkLevel returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.WorkLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetWorkLevel() *int {
+	return v.WorkLevel
+}
+
+// GetEffectiveWorkLevel returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.EffectiveWorkLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetEffectiveWorkLevel() *int {
+	return v.EffectiveWorkLevel
+}
+
+// GetWorkLevelSetBy returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.WorkLevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetWorkLevelSetBy() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor {
+	return v.WorkLevelSetBy
+}
+
+// GetWorkLevelSetAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.WorkLevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetWorkLevelSetAt() *string {
+	return v.WorkLevelSetAt
+}
+
+// GetGroup returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetGroup() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetTags() []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
+}
+
+// GetDependsOn returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.DependsOn, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetDependsOn() []*string {
+	return v.DependsOn
+}
+
+// GetRequireHumanReview returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetRequireHumanReview() *bool {
+	return v.RequireHumanReview
+}
+
+// GetHold returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Hold, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetHold() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold {
+	return v.Hold
+}
+
+// GetAssignment returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Assignment, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetAssignment() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment {
+	return v.Assignment
+}
+
+// GetSignOffs returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.SignOffs, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetSignOffs() []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff {
+	return v.SignOffs
+}
+
+// GetReturns returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Returns, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetReturns() []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn {
+	return v.Returns
+}
+
+// GetDesignCheckpoint returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetDesignCheckpoint() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetDesignCheckpointWaiver() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
+}
+
+// GetCarriedDesign returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetCarriedDesign() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
+// GetSplitRequest returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.SplitRequest, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetSplitRequest() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest {
+	return v.SplitRequest
+}
+
+// GetAnswerConfirmations returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.AnswerConfirmations, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetAnswerConfirmations() []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation {
+	return v.AnswerConfirmations
+}
+
+// GetParentTask returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetParentTask() *string {
+	return v.ParentTask
+}
+
+// GetChildTasks returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.ChildTasks, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetChildTasks() []*string {
+	return v.ChildTasks
+}
+
+// GetSessions returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.Sessions, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetSessions() []*string {
+	return v.Sessions
+}
+
+// GetPrUrls returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.PrUrls, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetPrUrls() []*string {
+	return v.PrUrls
+}
+
+// GetRegisteredBySession returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.RegisteredBySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetRegisteredBySession() *string {
+	return v.RegisteredBySession
+}
+
+// GetCreatedDate returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetCompletedAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.CompletedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetCompletedAt() *string {
+	return v.CompletedAt
+}
+
+// GetStatusHistory returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.StatusHistory, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetStatusHistory() []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange {
+	return v.StatusHistory
+}
+
+// GetOrderSetBy returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.OrderSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetOrderSetBy() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor {
+	return v.OrderSetBy
+}
+
+// GetOrderSetAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.OrderSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetOrderSetAt() *string {
+	return v.OrderSetAt
+}
+
+// GetRequiredRolesSkipped returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetRequiredRolesSkipped() []*string {
+	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetRolesSkippedByCondition() []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
+}
+
+// GetQuestionStack returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask.QuestionStack, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask) GetQuestionStack() []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame {
+	return v.QuestionStack
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation includes the requested fields of the GraphQL type AgentTaskAnswerConfirmation.
+// The GraphQL type's documentation follows.
+//
+// An answer to a question signed off --no-change, and what the coordinator said about it (task TPF-171). CONFIRMED: the
+// rounds do not make any pass stale and the task went on to the first role without a current pass (the asker, unless
+// something else moved). REFUSED: reviewed as a change. LAPSED: the task
+// left the coordinator by another verb (the note names it); the rounds count as a change. Only the server writes it.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation struct {
+	AnsweredAt string  `json:"answeredAt"`
+	Role       string  `json:"role"`
+	RoleUuid   *string `json:"roleUuid"`
+	// The answering session; null on a blind read.
+	Session *string `json:"session"`
+	// The answering agent; null on a blind read.
+	Agent            *string                                                                                                                          `json:"agent"`
+	AskingRole       *string                                                                                                                          `json:"askingRole"`
+	QuestionsRelease *string                                                                                                                          `json:"questionsRelease"`
+	Rounds           []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound `json:"rounds"`
+	State            AgentTaskAnswerConfirmationState                                                                                                 `json:"state"`
+	// Who confirmed, refused or lapsed it; null while PENDING.
+	SettledBy *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                                 `json:"settledAt"`
+	// The coordinator's note, or the verb that lapsed it.
+	Note *string `json:"note"`
+}
+
+// GetAnsweredAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.AnsweredAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetAnsweredAt() string {
+	return v.AnsweredAt
+}
+
+// GetRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSession returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetAgent() *string {
+	return v.Agent
+}
+
+// GetAskingRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.AskingRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetAskingRole() *string {
+	return v.AskingRole
+}
+
+// GetQuestionsRelease returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.QuestionsRelease, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetQuestionsRelease() *string {
+	return v.QuestionsRelease
+}
+
+// GetRounds returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetRounds() []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound {
+	return v.Rounds
+}
+
+// GetState returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetState() AgentTaskAnswerConfirmationState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetSettledBy() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound includes the requested fields of the GraphQL type AgentTaskAnswerRound.
+// The GraphQL type's documentation follows.
+//
+// One round an answering hop published, and the round before it (task TPF-171).
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound struct {
+	Release       string  `json:"release"`
+	Specification string  `json:"specification"`
+	Round         *int    `json:"round"`
+	Version       *string `json:"version"`
+	Path          *string `json:"path"`
+	// The round it is compared against: the task's newest round of the document handed over before the answering hop began (at or above ASSEMBLED and the readers' floor; never a release of the answering hop), else the round carried from the split parent.
+	Previous        *string `json:"previous"`
+	PreviousRound   *int    `json:"previousRound"`
+	PreviousVersion *string `json:"previousVersion"`
+	PreviousPath    *string `json:"previousPath"`
+}
+
+// GetRelease returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetRelease() string {
+	return v.Release
+}
+
+// GetSpecification returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetSpecification() string {
+	return v.Specification
+}
+
+// GetRound returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetRound() *int {
+	return v.Round
+}
+
+// GetVersion returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Version, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetVersion() *string {
+	return v.Version
+}
+
+// GetPath returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPath() *string {
+	return v.Path
+}
+
+// GetPrevious returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Previous, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPrevious() *string {
+	return v.Previous
+}
+
+// GetPreviousRound returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.PreviousRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPreviousRound() *int {
+	return v.PreviousRound
+}
+
+// GetPreviousVersion returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.PreviousVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPreviousVersion() *string {
+	return v.PreviousVersion
+}
+
+// GetPreviousPath returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.PreviousPath, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPreviousPath() *string {
+	return v.PreviousPath
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment includes the requested fields of the GraphQL type AgentTaskWorkAssignment.
+// The GraphQL type's documentation follows.
+//
+// The single live assignment -- bound to session liveness, ended on any session close.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment struct {
+	Session       *string `json:"session"`
+	Agent         *string `json:"agent"`
+	Role          *string `json:"role"`
+	AssignedAt    *string `json:"assignedAt"`
+	PromptVersion *string `json:"promptVersion"`
+}
+
+// GetSession returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment) GetAgent() *string {
+	return v.Agent
+}
+
+// GetRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment) GetRole() *string {
+	return v.Role
+}
+
+// GetAssignedAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetPromptVersion returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                           `json:"parentTask"`
+	ParentKey  string                                                                                           `json:"parentKey"`
+	Rounds     []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                           `json:"at"`
+	By         *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign) GetRounds() []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign) GetRoles() []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign) GetBy() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                          `json:"session"`
+	ReviewedBy *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                   `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold struct {
+	Level *AgentTaskHoldLevel `json:"level"`
+	Kind  *AgentTaskHoldKind  `json:"kind"`
+	// Role whose sign-off is under review; set when kind = HUMAN_GATE.
+	GateRole *string                                                                    `json:"gateRole"`
+	Reason   *string                                                                    `json:"reason"`
+	HeldBy   *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor `json:"heldBy"`
+	HeldAt   *string                                                                    `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to lift once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
+}
+
+// GetLevel returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold) GetLevel() *AgentTaskHoldLevel {
+	return v.Level
+}
+
+// GetKind returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold) GetKind() *AgentTaskHoldKind {
+	return v.Kind
+}
+
+// GetGateRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold.GateRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold) GetGateRole() *string {
+	return v.GateRole
+}
+
+// GetReason returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold) GetReason() *string {
+	return v.Reason
+}
+
+// GetHeldBy returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold.HeldBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold) GetHeldBy() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor {
+	return v.HeldBy
+}
+
+// GetHeldAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold) GetHeldAt() *string {
+	return v.HeldAt
+}
+
+// GetStop returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskOrderSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
+// The GraphQL type's documentation follows.
+//
+// One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame struct {
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
+	QuestionsRelease *string `json:"questionsRelease"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
+}
+
+// GetAskingRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame) GetAskingRole() *string {
+	return v.AskingRole
+}
+
+// GetAskingSession returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame.AskingSession, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame) GetAskingSession() *string {
+	return v.AskingSession
+}
+
+// GetAskingAgent returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame.AskingAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame) GetAskingAgent() *string {
+	return v.AskingAgent
+}
+
+// GetQuestionsRelease returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame.QuestionsRelease, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame) GetQuestionsRelease() *string {
+	return v.QuestionsRelease
+}
+
+// GetAnsweringRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame.AnsweringRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame) GetAnsweringRole() *string {
+	return v.AnsweringRole
+}
+
+// GetAskedAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame.AskedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskQuestionStackAgentQuestionFrame) GetAskedAt() *string {
+	return v.AskedAt
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn includes the requested fields of the GraphQL type AgentTaskReturn.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn struct {
+	Role        *string                `json:"role"`
+	Agent       *string                `json:"agent"`
+	Session     *string                `json:"session"`
+	Reason      *AgentTaskReturnReason `json:"reason"`
+	Description *string                `json:"description"`
+	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn) GetSession() *string {
+	return v.Session
+}
+
+// GetReason returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn) GetReason() *AgentTaskReturnReason {
+	return v.Reason
+}
+
+// GetDescription returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn) GetDescription() *string {
+	return v.Description
+}
+
+// GetReturnedAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn.ReturnedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn) GetReturnedAt() *string {
+	return v.ReturnedAt
+}
+
+// GetUsage returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
+// The GraphQL type's documentation follows.
+//
+// Append-only per-hop sign-off stored in ReARM; promptVersion pins the served prompt the agent assumed.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff struct {
+	Role          *string              `json:"role"`
+	Agent         *string              `json:"agent"`
+	Session       *string              `json:"session"`
+	AssignedAt    *string              `json:"assignedAt"`
+	SignedOffAt   *string              `json:"signedOffAt"`
+	Outcome       *AgentSignOffOutcome `json:"outcome"`
+	Note          *string              `json:"note"`
+	PromptVersion *string              `json:"promptVersion"`
+	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
+	ReviewedBy *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
+	Usage *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff) GetSession() *string {
+	return v.Session
+}
+
+// GetAssignedAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetSignedOffAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetOutcome returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff.Outcome, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff) GetOutcome() *AgentSignOffOutcome {
+	return v.Outcome
+}
+
+// GetNote returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff) GetNote() *string {
+	return v.Note
+}
+
+// GetPromptVersion returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// GetReviewedBy returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest includes the requested fields of the GraphQL type AgentTaskSplitRequest.
+// The GraphQL type's documentation follows.
+//
+// A role's request that the task be split (task SPLIT-9): a return with reason SPLIT. Rewritten by each such return;
+// settled SPLIT by the coordinator's split, DECLINED by its authorize or lift naming a role, with the note, or LAPSED
+// when the task left the coordinator any other way (routed by routing, hold lifted without a role, completed,
+// cancelled), the note naming the verb. Only the server writes it.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest struct {
+	RequestedAt string  `json:"requestedAt"`
+	Role        string  `json:"role"`
+	RoleUuid    *string `json:"roleUuid"`
+	// The requesting session; null on a blind read.
+	Session *string `json:"session"`
+	// The one-line why; null on a blind read.
+	Description *string `json:"description"`
+	// The children the requester proposes, in the split's own shape; empty when none, and on a blind read.
+	ProposedChildren []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild `json:"proposedChildren"`
+	State            AgentTaskSplitRequestState                                                                              `json:"state"`
+	// Who split, declined or lapsed it; null while REQUESTED.
+	SettledBy *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                               `json:"settledAt"`
+	// The coordinator's note, the split's "n children: keys", or the verb that lapsed it.
+	Note *string `json:"note"`
+}
+
+// GetRequestedAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest.RequestedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest) GetRequestedAt() string {
+	return v.RequestedAt
+}
+
+// GetRole returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSession returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest) GetSession() *string {
+	return v.Session
+}
+
+// GetDescription returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest) GetDescription() *string {
+	return v.Description
+}
+
+// GetProposedChildren returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest.ProposedChildren, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest) GetProposedChildren() []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild {
+	return v.ProposedChildren
+}
+
+// GetState returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest) GetState() AgentTaskSplitRequestState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest) GetSettledBy() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequest) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild includes the requested fields of the GraphQL type AgentTaskSplitChild.
+// The GraphQL type's documentation follows.
+//
+// A proposed child of a split request (task SPLIT-9): the output mirror of AgentTaskSplitChildInput.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild struct {
+	Title                   string                                                                                                               `json:"title"`
+	Description             *string                                                                                                              `json:"description"`
+	ExternalRef             *string                                                                                                              `json:"externalRef"`
+	SourceUrl               *string                                                                                                              `json:"sourceUrl"`
+	DependsOnSiblingIndexes []int                                                                                                                `json:"dependsOnSiblingIndexes"`
+	ProducesComponent       *string                                                                                                              `json:"producesComponent"`
+	WorkLevel               *int                                                                                                                 `json:"workLevel"`
+	Group                   *string                                                                                                              `json:"group"`
+	Tags                    []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
+}
+
+// GetTitle returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTitle() string {
+	return v.Title
+}
+
+// GetDescription returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDescription() *string {
+	return v.Description
+}
+
+// GetExternalRef returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetExternalRef() *string {
+	return v.ExternalRef
+}
+
+// GetSourceUrl returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.SourceUrl, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetSourceUrl() *string {
+	return v.SourceUrl
+}
+
+// GetDependsOnSiblingIndexes returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DependsOnSiblingIndexes, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDependsOnSiblingIndexes() []int {
+	return v.DependsOnSiblingIndexes
+}
+
+// GetProducesComponent returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.ProducesComponent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetProducesComponent() *string {
+	return v.ProducesComponent
+}
+
+// GetWorkLevel returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.WorkLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetWorkLevel() *int {
+	return v.WorkLevel
+}
+
+// GetGroup returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetGroup() *string {
+	return v.Group
+}
+
+// GetTags returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
+	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord struct {
+	Key   *string `json:"key"`
+	Value *string `json:"value"`
+}
+
+// GetKey returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskSplitRequestSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
+// The GraphQL type's documentation follows.
+//
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange struct {
+	From    *AgentTaskStatus                                                                                        `json:"from"`
+	To      *AgentTaskStatus                                                                                        `json:"to"`
+	At      *string                                                                                                 `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                     `json:"trigger"`
+	Actor   *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	// What the actor said: a completion's or cancellation's note, or routing's reason and the role it sent the task to (RD2-23). Null on changes recorded before notes were kept.
+	Note *string `json:"note"`
+}
+
+// GetFrom returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange) GetFrom() *AgentTaskStatus {
+	return v.From
+}
+
+// GetTo returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange.To, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange) GetTo() *AgentTaskStatus {
+	return v.To
+}
+
+// GetAt returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange) GetAt() *string {
+	return v.At
+}
+
+// GetTrigger returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange.Trigger, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange) GetTrigger() *AgentStatusTrigger {
+	return v.Trigger
+}
+
+// GetActor returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange.Actor, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange) GetActor() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor {
+	return v.Actor
+}
+
+// GetNote returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChange) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
+// AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTaskWorkLevelSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask includes the requested fields of the GraphQL type AgentTask.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask struct {
+	// <prefix>-<number>, e.g. RD-42: how people and agents name the task. Immutable; a prefix rename keeps it.
+	Key *string `json:"key"`
+	// The task's number on its board, stamped at registration and never changed (board-documents.md D7).
+	Number      *int    `json:"number"`
+	Uuid        *string `json:"uuid"`
+	Org         *string `json:"org"`
+	Board       *string `json:"board"`
+	ExternalRef *string `json:"externalRef"`
+	Title       *string `json:"title"`
+	// What the task is, beyond its one-line title (board-documents.md section 4.5); set at registration, null on older tasks.
+	Description *string          `json:"description"`
+	SourceUrl   *string          `json:"sourceUrl"`
+	Status      *AgentTaskStatus `json:"status"`
+	// Role the task is queued for / worked in; retained as last role until re-authorized.
+	Role *string `json:"role"`
+	// Coordinator-set priority; polls serve lowest first among ELIGIBLE tasks.
+	OrderIndex *int `json:"orderIndex"`
+	// Declared work level, 0 to 9; null when not set, in which case the board's defaultWorkLevel
+	// applies (effectiveWorkLevel). The default is resolved on read, never written here (RD2-1).
+	WorkLevel *int `json:"workLevel"`
+	// The work level the board reads: workLevel, else the board's defaultWorkLevel, else null (RD2-1).
+	EffectiveWorkLevel *int `json:"effectiveWorkLevel"`
+	// Who last set or cleared the work level after registration, and when (RD2-1).
+	WorkLevelSetBy *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor `json:"workLevelSetBy"`
+	WorkLevelSetAt *string                                                                                                `json:"workLevelSetAt"`
+	// The task's group, one or none (task-groups-and-tags.md D2, task RD2-29).
+	Group *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskGroupTaskGroupRef `json:"group"`
+	// Free labels (D8): the key is the label; the value is stored, not shown in v1.
+	Tags []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskTagsTagRecord `json:"tags"`
+	// The keys of the groups its group waits on that still have an open task; empty when it waits on none (D4).
+	WaitingOnGroups []*string `json:"waitingOnGroups"`
+	// Tasks that must be COMPLETED before this one is assignable (coordinator-declared, gate-enforced).
+	DependsOn []*string `json:"dependsOn"`
+	// Per-task add-only human gate: the next sign-off, whatever the role, parks the task for human review.
+	RequireHumanReview *bool `json:"requireHumanReview"`
+	// Hold state while ON_HOLD; null otherwise.
+	Hold       *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold                              `json:"hold"`
+	Assignment *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment `json:"assignment"`
+	SignOffs   []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff        `json:"signOffs"`
+	Returns    []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn          `json:"returns"`
+	// The design checkpoint the task last reached (task SPLIT-5); null when it never reached one.
+	DesignCheckpoint *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint `json:"designCheckpoint"`
+	// The waiver the design's author put on its newest round (task TPF-152); null when none.
+	DesignCheckpointWaiver *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver `json:"designCheckpointWaiver"`
+	// Present on a split child marked designFromParent: the parent's reviewed rounds that stand as this task's design.
+	CarriedDesign *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
+	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
+	SplitRequest *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
+	// Answers signed off --no-change and the coordinator's verdicts (task TPF-171), oldest first; empty when no answer was ever signed off --no-change.
+	AnswerConfirmations []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation `json:"answerConfirmations"`
+	ParentTask          *string                                                                                                                        `json:"parentTask"`
+	ChildTasks          []*string                                                                                                                      `json:"childTasks"`
+	// Every session that ever held the assignment.
+	Sessions            []*string `json:"sessions"`
+	PrUrls              []*string `json:"prUrls"`
+	RegisteredBySession *string   `json:"registeredBySession"`
+	CreatedDate         *string   `json:"createdDate"`
+	CompletedAt         *string   `json:"completedAt"`
+	// Append-only status transition log, oldest first.
+	StatusHistory []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange `json:"statusHistory"`
+	// Who last set orderIndex, the coordinator or a person, and when.
+	OrderSetBy *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor `json:"orderSetBy"`
+	OrderSetAt *string                                                                                            `json:"orderSetAt"`
+	// Required roles a person completed the task without, having said why in the completing status change.
+	RequiredRolesSkipped []*string `json:"requiredRolesSkipped"`
+	// OPTIONAL roles routing's own walk passed over because their runWhen was not met (task TPF-155), oldest first; a role runs
+	// later only when the coordinator names it or a later walk finds its condition met. Never a REQUIRED role.
+	RolesSkippedByCondition []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip `json:"rolesSkippedByCondition"`
+	// Who is waiting on whom, innermost last. Empty when nothing is outstanding.
+	QuestionStack []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame `json:"questionStack"`
+}
+
+// GetKey returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetKey() *string {
+	return v.Key
+}
+
+// GetNumber returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Number, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetNumber() *int {
+	return v.Number
+}
+
+// GetUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetOrg returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Org, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetOrg() *string {
+	return v.Org
+}
+
+// GetBoard returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Board, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetBoard() *string {
+	return v.Board
+}
+
+// GetExternalRef returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetExternalRef() *string {
+	return v.ExternalRef
+}
+
+// GetTitle returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetTitle() *string {
+	return v.Title
+}
+
+// GetDescription returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetDescription() *string {
+	return v.Description
+}
+
+// GetSourceUrl returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.SourceUrl, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetSourceUrl() *string {
+	return v.SourceUrl
+}
+
+// GetStatus returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Status, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetStatus() *AgentTaskStatus {
+	return v.Status
+}
+
+// GetRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetRole() *string {
+	return v.Role
+}
+
+// GetOrderIndex returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.OrderIndex, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetOrderIndex() *int {
+	return v.OrderIndex
+}
+
+// GetWorkLevel returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.WorkLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetWorkLevel() *int {
+	return v.WorkLevel
+}
+
+// GetEffectiveWorkLevel returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.EffectiveWorkLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetEffectiveWorkLevel() *int {
+	return v.EffectiveWorkLevel
+}
+
+// GetWorkLevelSetBy returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.WorkLevelSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetWorkLevelSetBy() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor {
+	return v.WorkLevelSetBy
+}
+
+// GetWorkLevelSetAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.WorkLevelSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetWorkLevelSetAt() *string {
+	return v.WorkLevelSetAt
+}
+
+// GetGroup returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetGroup() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskGroupTaskGroupRef {
+	return v.Group
+}
+
+// GetTags returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetTags() []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskTagsTagRecord {
+	return v.Tags
+}
+
+// GetWaitingOnGroups returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.WaitingOnGroups, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetWaitingOnGroups() []*string {
+	return v.WaitingOnGroups
+}
+
+// GetDependsOn returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.DependsOn, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetDependsOn() []*string {
+	return v.DependsOn
+}
+
+// GetRequireHumanReview returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.RequireHumanReview, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetRequireHumanReview() *bool {
+	return v.RequireHumanReview
+}
+
+// GetHold returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Hold, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetHold() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold {
+	return v.Hold
+}
+
+// GetAssignment returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Assignment, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetAssignment() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment {
+	return v.Assignment
+}
+
+// GetSignOffs returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.SignOffs, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetSignOffs() []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff {
+	return v.SignOffs
+}
+
+// GetReturns returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Returns, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetReturns() []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn {
+	return v.Returns
+}
+
+// GetDesignCheckpoint returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.DesignCheckpoint, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetDesignCheckpoint() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint {
+	return v.DesignCheckpoint
+}
+
+// GetDesignCheckpointWaiver returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.DesignCheckpointWaiver, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetDesignCheckpointWaiver() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver {
+	return v.DesignCheckpointWaiver
+}
+
+// GetCarriedDesign returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.CarriedDesign, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetCarriedDesign() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign {
+	return v.CarriedDesign
+}
+
+// GetSplitRequest returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.SplitRequest, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetSplitRequest() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest {
+	return v.SplitRequest
+}
+
+// GetAnswerConfirmations returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.AnswerConfirmations, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetAnswerConfirmations() []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation {
+	return v.AnswerConfirmations
+}
+
+// GetParentTask returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetParentTask() *string {
+	return v.ParentTask
+}
+
+// GetChildTasks returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.ChildTasks, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetChildTasks() []*string {
+	return v.ChildTasks
+}
+
+// GetSessions returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.Sessions, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetSessions() []*string {
+	return v.Sessions
+}
+
+// GetPrUrls returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.PrUrls, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetPrUrls() []*string {
+	return v.PrUrls
+}
+
+// GetRegisteredBySession returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.RegisteredBySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetRegisteredBySession() *string {
+	return v.RegisteredBySession
+}
+
+// GetCreatedDate returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.CreatedDate, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetCreatedDate() *string {
+	return v.CreatedDate
+}
+
+// GetCompletedAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.CompletedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetCompletedAt() *string {
+	return v.CompletedAt
+}
+
+// GetStatusHistory returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.StatusHistory, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetStatusHistory() []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange {
+	return v.StatusHistory
+}
+
+// GetOrderSetBy returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.OrderSetBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetOrderSetBy() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor {
+	return v.OrderSetBy
+}
+
+// GetOrderSetAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.OrderSetAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetOrderSetAt() *string {
+	return v.OrderSetAt
+}
+
+// GetRequiredRolesSkipped returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.RequiredRolesSkipped, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetRequiredRolesSkipped() []*string {
+	return v.RequiredRolesSkipped
+}
+
+// GetRolesSkippedByCondition returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.RolesSkippedByCondition, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetRolesSkippedByCondition() []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip {
+	return v.RolesSkippedByCondition
+}
+
+// GetQuestionStack returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask.QuestionStack, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask) GetQuestionStack() []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame {
+	return v.QuestionStack
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation includes the requested fields of the GraphQL type AgentTaskAnswerConfirmation.
+// The GraphQL type's documentation follows.
+//
+// An answer to a question signed off --no-change, and what the coordinator said about it (task TPF-171). CONFIRMED: the
+// rounds do not make any pass stale and the task went on to the first role without a current pass (the asker, unless
+// something else moved). REFUSED: reviewed as a change. LAPSED: the task
+// left the coordinator by another verb (the note names it); the rounds count as a change. Only the server writes it.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation struct {
+	AnsweredAt string  `json:"answeredAt"`
+	Role       string  `json:"role"`
+	RoleUuid   *string `json:"roleUuid"`
+	// The answering session; null on a blind read.
+	Session *string `json:"session"`
+	// The answering agent; null on a blind read.
+	Agent            *string                                                                                                                                                  `json:"agent"`
+	AskingRole       *string                                                                                                                                                  `json:"askingRole"`
+	QuestionsRelease *string                                                                                                                                                  `json:"questionsRelease"`
+	Rounds           []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound `json:"rounds"`
+	State            AgentTaskAnswerConfirmationState                                                                                                                         `json:"state"`
+	// Who confirmed, refused or lapsed it; null while PENDING.
+	SettledBy *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                                                         `json:"settledAt"`
+	// The coordinator's note, or the verb that lapsed it.
+	Note *string `json:"note"`
+}
+
+// GetAnsweredAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.AnsweredAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetAnsweredAt() string {
+	return v.AnsweredAt
+}
+
+// GetRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSession returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetAgent() *string {
+	return v.Agent
+}
+
+// GetAskingRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.AskingRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetAskingRole() *string {
+	return v.AskingRole
+}
+
+// GetQuestionsRelease returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.QuestionsRelease, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetQuestionsRelease() *string {
+	return v.QuestionsRelease
+}
+
+// GetRounds returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetRounds() []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound {
+	return v.Rounds
+}
+
+// GetState returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetState() AgentTaskAnswerConfirmationState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetSettledBy() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound includes the requested fields of the GraphQL type AgentTaskAnswerRound.
+// The GraphQL type's documentation follows.
+//
+// One round an answering hop published, and the round before it (task TPF-171).
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound struct {
+	Release       string  `json:"release"`
+	Specification string  `json:"specification"`
+	Round         *int    `json:"round"`
+	Version       *string `json:"version"`
+	Path          *string `json:"path"`
+	// The round it is compared against: the task's newest round of the document handed over before the answering hop began (at or above ASSEMBLED and the readers' floor; never a release of the answering hop), else the round carried from the split parent.
+	Previous        *string `json:"previous"`
+	PreviousRound   *int    `json:"previousRound"`
+	PreviousVersion *string `json:"previousVersion"`
+	PreviousPath    *string `json:"previousPath"`
+}
+
+// GetRelease returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetRelease() string {
+	return v.Release
+}
+
+// GetSpecification returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetSpecification() string {
+	return v.Specification
+}
+
+// GetRound returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetRound() *int {
+	return v.Round
+}
+
+// GetVersion returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Version, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetVersion() *string {
+	return v.Version
+}
+
+// GetPath returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPath() *string {
+	return v.Path
+}
+
+// GetPrevious returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Previous, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPrevious() *string {
+	return v.Previous
+}
+
+// GetPreviousRound returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.PreviousRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPreviousRound() *int {
+	return v.PreviousRound
+}
+
+// GetPreviousVersion returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.PreviousVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPreviousVersion() *string {
+	return v.PreviousVersion
+}
+
+// GetPreviousPath returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.PreviousPath, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPreviousPath() *string {
+	return v.PreviousPath
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment includes the requested fields of the GraphQL type AgentTaskWorkAssignment.
+// The GraphQL type's documentation follows.
+//
+// The single live assignment -- bound to session liveness, ended on any session close.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment struct {
+	Session       *string `json:"session"`
+	Agent         *string `json:"agent"`
+	Role          *string `json:"role"`
+	AssignedAt    *string `json:"assignedAt"`
+	PromptVersion *string `json:"promptVersion"`
+}
+
+// GetSession returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetAgent() *string {
+	return v.Agent
+}
+
+// GetRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetRole() *string {
+	return v.Role
+}
+
+// GetAssignedAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetPromptVersion returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign includes the requested fields of the GraphQL type AgentTaskCarriedDesign.
+// The GraphQL type's documentation follows.
+//
+// The parent's reviewed design a split child marked designFromParent builds from (task TPF-161). Written once by the split.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign struct {
+	ParentTask string                                                                                                                   `json:"parentTask"`
+	ParentKey  string                                                                                                                   `json:"parentKey"`
+	Rounds     []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound `json:"rounds"`
+	Roles      []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole   `json:"roles"`
+	At         string                                                                                                                   `json:"at"`
+	By         *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor                  `json:"by"`
+	// Server-resolved: every carried role is live.
+	Standing bool `json:"standing"`
+}
+
+// GetParentTask returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign.ParentTask, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign) GetParentTask() string {
+	return v.ParentTask
+}
+
+// GetParentKey returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign.ParentKey, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign) GetParentKey() string {
+	return v.ParentKey
+}
+
+// GetRounds returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign) GetRounds() []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound {
+	return v.Rounds
+}
+
+// GetRoles returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign.Roles, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign) GetRoles() []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole {
+	return v.Roles
+}
+
+// GetAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign) GetBy() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor {
+	return v.By
+}
+
+// GetStanding returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesign) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole includes the requested fields of the GraphQL type AgentTaskCarriedRole.
+// The GraphQL type's documentation follows.
+//
+// One design-stage role a split child counts as passed through the carried rounds (task TPF-161).
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// The parent sign-off this carry rests on: when it was signed, by which session, or by which person.
+	SignedOffAt *string `json:"signedOffAt"`
+	// The signing session; null for a person's sign-off and on a blind read. A person is marked by reviewedBy only.
+	Session    *string                                                                                                                                  `json:"session"`
+	ReviewedBy *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor `json:"reviewedBy"`
+	// True when that sign-off was REJECTED and a person decided over its items (the board's existing pass rule).
+	DecidedOver bool `json:"decidedOver"`
+	// Server-resolved: the carried pass still rests on the carried rounds (no reopen to this role and no round of its inputs published by this task since the split).
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSignedOffAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetSession returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetSession() *string {
+	return v.Session
+}
+
+// GetReviewedBy returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetReviewedBy() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetDecidedOver returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.DecidedOver, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetDecidedOver() bool {
+	return v.DecidedOver
+}
+
+// GetLive returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRole) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRolesAgentTaskCarriedRoleReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound includes the requested fields of the GraphQL type AgentTaskCarriedRound.
+// The GraphQL type's documentation follows.
+//
+// One parent round a split child carries as its design (task TPF-161).
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound struct {
+	Specification SpecificationType `json:"specification"`
+	Release       string            `json:"release"`
+	Round         *int              `json:"round"`
+	Path          *string           `json:"path"`
+}
+
+// GetSpecification returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetSpecification() SpecificationType {
+	return v.Specification
+}
+
+// GetRelease returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRelease() string {
+	return v.Release
+}
+
+// GetRound returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetRound() *int {
+	return v.Round
+}
+
+// GetPath returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskCarriedDesignRoundsAgentTaskCarriedRound) GetPath() *string {
+	return v.Path
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint includes the requested fields of the GraphQL type AgentTaskDesignCheckpoint.
+// The GraphQL type's documentation follows.
+//
+// The stop before a role that carries coordinatorCheckpoint (task SPLIT-5): the task's design was reviewed and the
+// coordinator reads it before that role is queued. Rewritten each time the checkpoint is reached; only the server writes it.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint struct {
+	// When routing first stopped the task here; kept while the record stays PENDING.
+	ReachedAt string `json:"reachedAt"`
+	// The role of the task's last hop when it was reached.
+	AfterRole *string `json:"afterRole"`
+	// The flagged role the checkpoint precedes.
+	BeforeRole string `json:"beforeRole"`
+	// The design rounds the checkpoint is about, in role order: what the ALERT names and what a split pins on every child.
+	Design []string                       `json:"design"`
+	State  AgentTaskDesignCheckpointState `json:"state"`
+	// Who sent it on or split it; null while PENDING.
+	SettledBy *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                           `json:"settledAt"`
+	// Why it was settled, e.g. "authorized for coder" or "2 children: SPLIT-7, SPLIT-8".
+	Note *string `json:"note"`
+}
+
+// GetReachedAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint.ReachedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint) GetReachedAt() string {
+	return v.ReachedAt
+}
+
+// GetAfterRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint.AfterRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint) GetAfterRole() *string {
+	return v.AfterRole
+}
+
+// GetBeforeRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint.BeforeRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint) GetBeforeRole() string {
+	return v.BeforeRole
+}
+
+// GetDesign returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint.Design, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint) GetDesign() []string {
+	return v.Design
+}
+
+// GetState returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint) GetState() AgentTaskDesignCheckpointState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint) GetSettledBy() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpoint) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver includes the requested fields of the GraphQL type AgentTaskDesignCheckpointWaiver.
+// The GraphQL type's documentation follows.
+//
+// The architect's --no-split on a design round (task TPF-152): the task does not stop at a coordinatorCheckpoint while
+// this round is the newest ARCHITECTURE round and the board's architectCheckpointWaiver is on. Written by the sign-off
+// only; cleared by a reopen to a design role or by a new round without the flag. For a role marked blindReview,
+// bySession, byAgent and note read null: the reviewer reads the work, not the worker's account of it.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver struct {
+	BySession *string `json:"bySession"`
+	ByAgent   *string `json:"byAgent"`
+	Role      string  `json:"role"`
+	RoleUuid  *string `json:"roleUuid"`
+	At        string  `json:"at"`
+	// The ARCHITECTURE release the waiver names.
+	DesignRound string  `json:"designRound"`
+	Note        *string `json:"note"`
+	// Whether routing would honour the waiver now (task TPF-152, W5): the board's architectCheckpointWaiver is on,
+	// designRound is the task's newest agent-published ARCHITECTURE round at or above ASSEMBLED, and no reopen to a
+	// design role is newer than the waiver. Resolved by the server on read; the CLI and the UI print it as is.
+	Standing bool `json:"standing"`
+}
+
+// GetBySession returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver.BySession, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver) GetBySession() *string {
+	return v.BySession
+}
+
+// GetByAgent returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver.ByAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver) GetByAgent() *string {
+	return v.ByAgent
+}
+
+// GetRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver) GetAt() string {
+	return v.At
+}
+
+// GetDesignRound returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver.DesignRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver) GetDesignRound() string {
+	return v.DesignRound
+}
+
+// GetNote returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver) GetNote() *string {
+	return v.Note
+}
+
+// GetStanding returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver.Standing, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskDesignCheckpointWaiver) GetStanding() bool {
+	return v.Standing
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskGroupTaskGroupRef includes the requested fields of the GraphQL type TaskGroupRef.
+// The GraphQL type's documentation follows.
+//
+// The group a task belongs to.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskGroupTaskGroupRef struct {
+	Uuid *string `json:"uuid"`
+	Key  *string `json:"key"`
+	Name *string `json:"name"`
+}
+
+// GetUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskGroupTaskGroupRef.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskGroupTaskGroupRef) GetUuid() *string {
+	return v.Uuid
+}
+
+// GetKey returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskGroupTaskGroupRef.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskGroupTaskGroupRef) GetKey() *string {
+	return v.Key
+}
+
+// GetName returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskGroupTaskGroupRef.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskGroupTaskGroupRef) GetName() *string {
+	return v.Name
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold includes the requested fields of the GraphQL type AgentTaskHold.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold struct {
+	Level *AgentTaskHoldLevel `json:"level"`
+	Kind  *AgentTaskHoldKind  `json:"kind"`
+	// Role whose sign-off is under review; set when kind = HUMAN_GATE.
+	GateRole *string                                                                                            `json:"gateRole"`
+	Reason   *string                                                                                            `json:"reason"`
+	HeldBy   *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor `json:"heldBy"`
+	HeldAt   *string                                                                                            `json:"heldAt"`
+	// The routing stop that placed the hold; null on any other hold. A no-progress or cycle-cap stop at
+	// COORDINATOR level is the coordinator's to lift once; at OPERATOR level it is the operator's
+	// (task c0a2134c).
+	Stop *AgentTaskHoldStop `json:"stop"`
+}
+
+// GetLevel returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold.Level, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold) GetLevel() *AgentTaskHoldLevel {
+	return v.Level
+}
+
+// GetKind returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold) GetKind() *AgentTaskHoldKind {
+	return v.Kind
+}
+
+// GetGateRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold.GateRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold) GetGateRole() *string {
+	return v.GateRole
+}
+
+// GetReason returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold) GetReason() *string {
+	return v.Reason
+}
+
+// GetHeldBy returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold.HeldBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold) GetHeldBy() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor {
+	return v.HeldBy
+}
+
+// GetHeldAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold.HeldAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold) GetHeldAt() *string {
+	return v.HeldAt
+}
+
+// GetStop returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold.Stop, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHold) GetStop() *AgentTaskHoldStop {
+	return v.Stop
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskHoldHeldByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskOrderSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame includes the requested fields of the GraphQL type AgentQuestionFrame.
+// The GraphQL type's documentation follows.
+//
+// One unanswered question: who asked, about what, and who is expected to answer.
+//
+// Questions nest -- a tester asks the coder, who cannot answer without asking the architect -- so
+// each answer pops one frame and the chain unwinds to whoever started it.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame struct {
+	AskingRole    *string `json:"askingRole"`
+	AskingSession *string `json:"askingSession"`
+	AskingAgent   *string `json:"askingAgent"`
+	// The index release carrying the items.
+	QuestionsRelease *string `json:"questionsRelease"`
+	// The role that produces the questioned input; null while the coordinator is deciding who that is.
+	AnsweringRole *string `json:"answeringRole"`
+	AskedAt       *string `json:"askedAt"`
+}
+
+// GetAskingRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskingRole() *string {
+	return v.AskingRole
+}
+
+// GetAskingSession returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingSession, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskingSession() *string {
+	return v.AskingSession
+}
+
+// GetAskingAgent returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskingAgent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskingAgent() *string {
+	return v.AskingAgent
+}
+
+// GetQuestionsRelease returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame.QuestionsRelease, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetQuestionsRelease() *string {
+	return v.QuestionsRelease
+}
+
+// GetAnsweringRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AnsweringRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAnsweringRole() *string {
+	return v.AnsweringRole
+}
+
+// GetAskedAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame.AskedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskQuestionStackAgentQuestionFrame) GetAskedAt() *string {
+	return v.AskedAt
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn includes the requested fields of the GraphQL type AgentTaskReturn.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn struct {
+	Role        *string                `json:"role"`
+	Agent       *string                `json:"agent"`
+	Session     *string                `json:"session"`
+	Reason      *AgentTaskReturnReason `json:"reason"`
+	Description *string                `json:"description"`
+	ReturnedAt  *string                `json:"returnedAt"`
+	// What this hop consumed before it was handed back. A returned hop still costs money.
+	Usage *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn) GetSession() *string {
+	return v.Session
+}
+
+// GetReason returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn) GetReason() *AgentTaskReturnReason {
+	return v.Reason
+}
+
+// GetDescription returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn) GetDescription() *string {
+	return v.Description
+}
+
+// GetReturnedAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn.ReturnedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn) GetReturnedAt() *string {
+	return v.ReturnedAt
+}
+
+// GetUsage returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn) GetUsage() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturn) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage, error) {
+	var retval __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskReturnsAgentTaskReturnUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip includes the requested fields of the GraphQL type AgentTaskConditionSkip.
+// The GraphQL type's documentation follows.
+//
+// One pass-over of a conditional role by routing (task TPF-155).
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip struct {
+	Role     string  `json:"role"`
+	RoleUuid *string `json:"roleUuid"`
+	// Why: 'runWhen not met: no mutation tag', or 'runWhen not met: tagged <key>'.
+	Reason string `json:"reason"`
+	At     string `json:"at"`
+	// Always routing.
+	By *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor `json:"by"`
+	// Document types a later role may start without, because only this role produces them.
+	Waives []SpecificationType `json:"waives"`
+	// Whether this entry is the role's current one: no sign-off of the role and no reopen to it since at. Resolved by the server; clients print it and derive nothing.
+	Live bool `json:"live"`
+}
+
+// GetRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetReason returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Reason, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetReason() string {
+	return v.Reason
+}
+
+// GetAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetAt() string {
+	return v.At
+}
+
+// GetBy returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.By, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetBy() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor {
+	return v.By
+}
+
+// GetWaives returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Waives, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetWaives() []SpecificationType {
+	return v.Waives
+}
+
+// GetLive returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip.Live, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkip) GetLive() bool {
+	return v.Live
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskRolesSkippedByConditionAgentTaskConditionSkipByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff includes the requested fields of the GraphQL type AgentTaskSignOff.
+// The GraphQL type's documentation follows.
+//
+// Append-only per-hop sign-off stored in ReARM; promptVersion pins the served prompt the agent assumed.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff struct {
+	Role          *string              `json:"role"`
+	Agent         *string              `json:"agent"`
+	Session       *string              `json:"session"`
+	AssignedAt    *string              `json:"assignedAt"`
+	SignedOffAt   *string              `json:"signedOffAt"`
+	Outcome       *AgentSignOffOutcome `json:"outcome"`
+	Note          *string              `json:"note"`
+	PromptVersion *string              `json:"promptVersion"`
+	// Reviewer identity of a HUMAN sign-off (human role stage or gate verdict); null on agent sign-offs. Non-null reviewedBy IS the human marker.
+	ReviewedBy *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor `json:"reviewedBy"`
+	// What this hop consumed, snapshotted when the hop closed and filled in by reports its session sends afterwards (refreshedAt). Null on human sign-offs and on hops that predate usage reporting.
+	Usage *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage `json:"usage"`
+	// How far this hop went over its allowance: null when the allowance or the cost is unknown, 0 within it.
+	OverAllowanceMicros *int64 `json:"overAllowanceMicros"`
+}
+
+// GetRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetRole() *string {
+	return v.Role
+}
+
+// GetAgent returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetAgent() *string {
+	return v.Agent
+}
+
+// GetSession returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetSession() *string {
+	return v.Session
+}
+
+// GetAssignedAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff.AssignedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetAssignedAt() *string {
+	return v.AssignedAt
+}
+
+// GetSignedOffAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff.SignedOffAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetSignedOffAt() *string {
+	return v.SignedOffAt
+}
+
+// GetOutcome returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff.Outcome, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOutcome() *AgentSignOffOutcome {
+	return v.Outcome
+}
+
+// GetNote returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetNote() *string {
+	return v.Note
+}
+
+// GetPromptVersion returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff.PromptVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetPromptVersion() *string {
+	return v.PromptVersion
+}
+
+// GetReviewedBy returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff.ReviewedBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetReviewedBy() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor {
+	return v.ReviewedBy
+}
+
+// GetUsage returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff.Usage, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetUsage() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage {
+	return v.Usage
+}
+
+// GetOverAllowanceMicros returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff.OverAllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOff) GetOverAllowanceMicros() *int64 {
+	return v.OverAllowanceMicros
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffReviewedByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage includes the requested fields of the GraphQL type HopUsage.
+// The GraphQL type's documentation follows.
+//
+// One hop's consumption, taken when the hop ended. Rows its session reports
+// later are folded in (refreshedAt); rows are never re-priced, so the figure
+// only ever grows by rows.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	HopUsageFields `json:"-"`
+}
+
+// GetDerivedCostMicros returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.DerivedCostMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetDerivedCostMicros() *int64 {
+	return v.HopUsageFields.DerivedCostMicros
+}
+
+// GetCostComplete returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.CostComplete, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetCostComplete() *bool {
+	return v.HopUsageFields.CostComplete
+}
+
+// GetAllowanceMicros returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage.AllowanceMicros, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) GetAllowanceMicros() *int64 {
+	return v.HopUsageFields.AllowanceMicros
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.HopUsageFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage struct {
+	DerivedCostMicros *int64 `json:"derivedCostMicros"`
+
+	CostComplete *bool `json:"costComplete"`
+
+	AllowanceMicros *int64 `json:"allowanceMicros"`
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage, error) {
+	var retval __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSignOffsAgentTaskSignOffUsageHopUsage
+
+	retval.DerivedCostMicros = v.HopUsageFields.DerivedCostMicros
+	retval.CostComplete = v.HopUsageFields.CostComplete
+	retval.AllowanceMicros = v.HopUsageFields.AllowanceMicros
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest includes the requested fields of the GraphQL type AgentTaskSplitRequest.
+// The GraphQL type's documentation follows.
+//
+// A role's request that the task be split (task SPLIT-9): a return with reason SPLIT. Rewritten by each such return;
+// settled SPLIT by the coordinator's split, DECLINED by its authorize or lift naming a role, with the note, or LAPSED
+// when the task left the coordinator any other way (routed by routing, hold lifted without a role, completed,
+// cancelled), the note naming the verb. Only the server writes it.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest struct {
+	RequestedAt string  `json:"requestedAt"`
+	Role        string  `json:"role"`
+	RoleUuid    *string `json:"roleUuid"`
+	// The requesting session; null on a blind read.
+	Session *string `json:"session"`
+	// The one-line why; null on a blind read.
+	Description *string `json:"description"`
+	// The children the requester proposes, in the split's own shape; empty when none, and on a blind read.
+	ProposedChildren []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild `json:"proposedChildren"`
+	State            AgentTaskSplitRequestState                                                                                                      `json:"state"`
+	// Who split, declined or lapsed it; null while REQUESTED.
+	SettledBy *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                       `json:"settledAt"`
+	// The coordinator's note, the split's "n children: keys", or the verb that lapsed it.
+	Note *string `json:"note"`
+}
+
+// GetRequestedAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest.RequestedAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest) GetRequestedAt() string {
+	return v.RequestedAt
+}
+
+// GetRole returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSession returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest) GetSession() *string {
+	return v.Session
+}
+
+// GetDescription returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest) GetDescription() *string {
+	return v.Description
+}
+
+// GetProposedChildren returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest.ProposedChildren, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest) GetProposedChildren() []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild {
+	return v.ProposedChildren
+}
+
+// GetState returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest) GetState() AgentTaskSplitRequestState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest) GetSettledBy() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequest) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild includes the requested fields of the GraphQL type AgentTaskSplitChild.
+// The GraphQL type's documentation follows.
+//
+// A proposed child of a split request (task SPLIT-9): the output mirror of AgentTaskSplitChildInput.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild struct {
+	Title                   string                                                                                                                                       `json:"title"`
+	Description             *string                                                                                                                                      `json:"description"`
+	ExternalRef             *string                                                                                                                                      `json:"externalRef"`
+	SourceUrl               *string                                                                                                                                      `json:"sourceUrl"`
+	DependsOnSiblingIndexes []int                                                                                                                                        `json:"dependsOnSiblingIndexes"`
+	ProducesComponent       *string                                                                                                                                      `json:"producesComponent"`
+	WorkLevel               *int                                                                                                                                         `json:"workLevel"`
+	Group                   *string                                                                                                                                      `json:"group"`
+	Tags                    []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord `json:"tags"`
+	// The proposer marked this child to build from the parent's reviewed design (task TPF-161); the coordinator decides.
+	DesignFromParent *bool `json:"designFromParent"`
+}
+
+// GetTitle returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Title, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTitle() string {
+	return v.Title
+}
+
+// GetDescription returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Description, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDescription() *string {
+	return v.Description
+}
+
+// GetExternalRef returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.ExternalRef, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetExternalRef() *string {
+	return v.ExternalRef
+}
+
+// GetSourceUrl returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.SourceUrl, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetSourceUrl() *string {
+	return v.SourceUrl
+}
+
+// GetDependsOnSiblingIndexes returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DependsOnSiblingIndexes, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDependsOnSiblingIndexes() []int {
+	return v.DependsOnSiblingIndexes
+}
+
+// GetProducesComponent returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.ProducesComponent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetProducesComponent() *string {
+	return v.ProducesComponent
+}
+
+// GetWorkLevel returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.WorkLevel, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetWorkLevel() *int {
+	return v.WorkLevel
+}
+
+// GetGroup returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Group, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetGroup() *string {
+	return v.Group
+}
+
+// GetTags returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.Tags, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetTags() []*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord {
+	return v.Tags
+}
+
+// GetDesignFromParent returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild.DesignFromParent, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChild) GetDesignFromParent() *bool {
+	return v.DesignFromParent
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord struct {
+	Key   *string `json:"key"`
+	Value *string `json:"value"`
+}
+
+// GetKey returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestProposedChildrenAgentTaskSplitChildTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskSplitRequestSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange includes the requested fields of the GraphQL type AgentTaskStatusChange.
+// The GraphQL type's documentation follows.
+//
+// One status transition, written atomically with the transition. Intervals between rows are the
+// cycle-time metrics (notably AWAITING_COORDINATOR -> QUEUED = coordinator routing latency).
+//
+// actor is who caused it: the worker or coordinator session, the human who approved at a gate, or
+// the system on a sweep. It was a bare session uuid, so every human-caused transition recorded
+// null -- "who moved this task" had no answer for exactly the moves a person made.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange struct {
+	From    *AgentTaskStatus                                                                                                                `json:"from"`
+	To      *AgentTaskStatus                                                                                                                `json:"to"`
+	At      *string                                                                                                                         `json:"at"`
+	Trigger *AgentStatusTrigger                                                                                                             `json:"trigger"`
+	Actor   *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor `json:"actor"`
+	// What the actor said: a completion's or cancellation's note, or routing's reason and the role it sent the task to (RD2-23). Null on changes recorded before notes were kept.
+	Note *string `json:"note"`
+}
+
+// GetFrom returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.From, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetFrom() *AgentTaskStatus {
+	return v.From
+}
+
+// GetTo returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.To, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetTo() *AgentTaskStatus {
+	return v.To
+}
+
+// GetAt returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.At, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetAt() *string {
+	return v.At
+}
+
+// GetTrigger returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.Trigger, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetTrigger() *AgentStatusTrigger {
+	return v.Trigger
+}
+
+// GetActor returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.Actor, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetActor() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor {
+	return v.Actor
+}
+
+// GetNote returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChange) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskStatusHistoryAgentTaskStatusChangeActorAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskTagsTagRecord includes the requested fields of the GraphQL type TagRecord.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskTagsTagRecord struct {
+	Key       *string         `json:"key"`
+	Value     *string         `json:"value"`
+	Removable *RemvovableType `json:"removable"`
+}
+
+// GetKey returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskTagsTagRecord.Key, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskTagsTagRecord) GetKey() *string {
+	return v.Key
+}
+
+// GetValue returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskTagsTagRecord.Value, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskTagsTagRecord) GetValue() *string {
+	return v.Value
+}
+
+// GetRemovable returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskTagsTagRecord.Removable, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskTagsTagRecord) GetRemovable() *RemvovableType {
+	return v.Removable
+}
+
+// AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor) __premarshalJSON() (*__premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor, error) {
+	var retval __premarshalAgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTaskWorkLevelSetByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
+}
+
+// AgentTaskConfirmAnswerProgrammaticResponse is returned by AgentTaskConfirmAnswerProgrammatic on success.
+type AgentTaskConfirmAnswerProgrammaticResponse struct {
+	// The coordinator seat's verdict on an answer signed off --no-change (task TPF-171), while the task waits on the
+	// coordinator with a PENDING answerConfirmations entry. CONFIRMED: the answer rounds change nothing, the earlier
+	// passes stand, and the task goes on to the first role without a current pass (the asker, unless another pass is
+	// stale, which is reviewed first). REFUSED: the rounds are reviewed as a change. Both are recorded on the entry and
+	// as a status-history row before routing. CONFIRMED is refused when the seat's agent gave the answer, and when the
+	// asker could not read its inputs. note, optionally: kept on the entry.
+	AgentTaskConfirmAnswerProgrammatic *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask `json:"agentTaskConfirmAnswerProgrammatic"`
+}
+
+// GetAgentTaskConfirmAnswerProgrammatic returns AgentTaskConfirmAnswerProgrammaticResponse.AgentTaskConfirmAnswerProgrammatic, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerProgrammaticResponse) GetAgentTaskConfirmAnswerProgrammatic() *AgentTaskConfirmAnswerProgrammaticAgentTaskConfirmAnswerProgrammaticAgentTask {
+	return v.AgentTaskConfirmAnswerProgrammatic
+}
+
+// AgentTaskConfirmAnswerResponse is returned by AgentTaskConfirmAnswer on success.
+type AgentTaskConfirmAnswerResponse struct {
+	// A person's verdict on an answer signed off --no-change (task TPF-171), as agentTaskConfirmAnswerProgrammatic gives
+	// it for the seat: BOARD_WRITE on the board. With a personal key, CONFIRMED is refused when the key's owner owns a
+	// USER key the answering agent runs on; REFUSED is always allowed.
+	AgentTaskConfirmAnswer *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask `json:"agentTaskConfirmAnswer"`
+}
+
+// GetAgentTaskConfirmAnswer returns AgentTaskConfirmAnswerResponse.AgentTaskConfirmAnswer, and is useful for accessing the field via an interface.
+func (v *AgentTaskConfirmAnswerResponse) GetAgentTaskConfirmAnswer() *AgentTaskConfirmAnswerAgentTaskConfirmAnswerAgentTask {
+	return v.AgentTaskConfirmAnswer
 }
 
 // AgentTaskDecideReviewItemsAgentTaskDecideReviewItemsAgentTask includes the requested fields of the GraphQL type AgentTask.
@@ -41846,6 +46471,8 @@ type AgentTaskProgrammaticAgentTaskProgrammaticAgentTask struct {
 	CarriedDesign *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
+	// Answers signed off --no-change and the coordinator's verdicts (task TPF-171), oldest first; empty when no answer was ever signed off --no-change.
+	AnswerConfirmations []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation `json:"answerConfirmations"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
 	Unassignments []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment `json:"unassignments"`
 	ParentTask    *string                                                                                  `json:"parentTask"`
@@ -42061,6 +46688,11 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetSplitRequest() 
 	return v.SplitRequest
 }
 
+// GetAnswerConfirmations returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.AnswerConfirmations, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetAnswerConfirmations() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation {
+	return v.AnswerConfirmations
+}
+
 // GetUnassignments returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.Unassignments, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetUnassignments() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment {
 	return v.Unassignments
@@ -42197,6 +46829,233 @@ func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetOpenReviewItems
 // GetOpenQuestions returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTask.OpenQuestions, and is useful for accessing the field via an interface.
 func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTask) GetOpenQuestions() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskOpenQuestionsBoardReviewItem {
 	return v.OpenQuestions
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation includes the requested fields of the GraphQL type AgentTaskAnswerConfirmation.
+// The GraphQL type's documentation follows.
+//
+// An answer to a question signed off --no-change, and what the coordinator said about it (task TPF-171). CONFIRMED: the
+// rounds do not make any pass stale and the task went on to the first role without a current pass (the asker, unless
+// something else moved). REFUSED: reviewed as a change. LAPSED: the task
+// left the coordinator by another verb (the note names it); the rounds count as a change. Only the server writes it.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation struct {
+	AnsweredAt string  `json:"answeredAt"`
+	Role       string  `json:"role"`
+	RoleUuid   *string `json:"roleUuid"`
+	// The answering session; null on a blind read.
+	Session *string `json:"session"`
+	// The answering agent; null on a blind read.
+	Agent            *string                                                                                                                        `json:"agent"`
+	AskingRole       *string                                                                                                                        `json:"askingRole"`
+	QuestionsRelease *string                                                                                                                        `json:"questionsRelease"`
+	Rounds           []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound `json:"rounds"`
+	State            AgentTaskAnswerConfirmationState                                                                                               `json:"state"`
+	// Who confirmed, refused or lapsed it; null while PENDING.
+	SettledBy *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                               `json:"settledAt"`
+	// The coordinator's note, or the verb that lapsed it.
+	Note *string `json:"note"`
+}
+
+// GetAnsweredAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.AnsweredAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetAnsweredAt() string {
+	return v.AnsweredAt
+}
+
+// GetRole returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Role, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSession returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Session, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetAgent() *string {
+	return v.Agent
+}
+
+// GetAskingRole returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.AskingRole, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetAskingRole() *string {
+	return v.AskingRole
+}
+
+// GetQuestionsRelease returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.QuestionsRelease, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetQuestionsRelease() *string {
+	return v.QuestionsRelease
+}
+
+// GetRounds returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetRounds() []*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound {
+	return v.Rounds
+}
+
+// GetState returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.State, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetState() AgentTaskAnswerConfirmationState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetSettledBy() *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Note, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetNote() *string {
+	return v.Note
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound includes the requested fields of the GraphQL type AgentTaskAnswerRound.
+// The GraphQL type's documentation follows.
+//
+// One round an answering hop published, and the round before it (task TPF-171).
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound struct {
+	Release       string  `json:"release"`
+	Specification string  `json:"specification"`
+	Round         *int    `json:"round"`
+	Version       *string `json:"version"`
+	Path          *string `json:"path"`
+	// The round it is compared against: the task's newest round of the document handed over before the answering hop began (at or above ASSEMBLED and the readers' floor; never a release of the answering hop), else the round carried from the split parent.
+	Previous        *string `json:"previous"`
+	PreviousRound   *int    `json:"previousRound"`
+	PreviousVersion *string `json:"previousVersion"`
+	PreviousPath    *string `json:"previousPath"`
+}
+
+// GetRelease returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetRelease() string {
+	return v.Release
+}
+
+// GetSpecification returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetSpecification() string {
+	return v.Specification
+}
+
+// GetRound returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetRound() *int {
+	return v.Round
+}
+
+// GetVersion returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Version, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetVersion() *string {
+	return v.Version
+}
+
+// GetPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPath() *string {
+	return v.Path
+}
+
+// GetPrevious returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Previous, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPrevious() *string {
+	return v.Previous
+}
+
+// GetPreviousRound returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.PreviousRound, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPreviousRound() *int {
+	return v.PreviousRound
+}
+
+// GetPreviousVersion returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.PreviousVersion, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPreviousVersion() *string {
+	return v.PreviousVersion
+}
+
+// GetPreviousPath returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.PreviousPath, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPreviousPath() *string {
+	return v.PreviousPath
+}
+
+// AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor, error) {
+	var retval __premarshalAgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTaskProgrammaticAgentTaskProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment includes the requested fields of the GraphQL type AgentTaskWorkAssignment.
@@ -61608,7 +66467,9 @@ type AgentTaskSignOffProgrammaticResponse struct {
 	// skips the check.
 	// noChange (task RD4-13): on a PASSED that answers a review item about the signing role's own document, the new
 	// round changes nothing to build, so the task goes back to the filer rather than to the role that builds
-	// from the round. Recorded on the sign-off; refused on REJECTED.
+	// from the round. On a PASSED that answers a question (task TPF-171), the answer changes nothing: the task stops at
+	// the coordinator for confirmation instead of going through the roles whose pass the round would make stale; absent,
+	// the answer is treated as a change. Recorded on the sign-off; refused on REJECTED.
 	// noCode (task RD4-2): the round changed no code (a note-only round). A PASSED sign-off by a role holding
 	// CODE_PUSH is refused when no linked PR in play moved since the assignment ("no linked PR moved since your
 	// assignment"); noCode passes it and is recorded on the sign-off. Refused on REJECTED.
@@ -68840,6 +73701,8 @@ type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask struct {
 	CarriedDesign *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskCarriedDesign `json:"carriedDesign"`
 	// The newest split request a hop made on the task (task SPLIT-9); null when none was ever made.
 	SplitRequest *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskSplitRequest `json:"splitRequest"`
+	// Answers signed off --no-change and the coordinator's verdicts (task TPF-171), oldest first; empty when no answer was ever signed off --no-change.
+	AnswerConfirmations []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation `json:"answerConfirmations"`
 	// Assignments a person ended by unassigning the task, oldest first (task RD3-4).
 	Unassignments []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment `json:"unassignments"`
 	ParentTask    *string                                                                                                `json:"parentTask"`
@@ -69073,6 +73936,11 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetS
 	return v.SplitRequest
 }
 
+// GetAnswerConfirmations returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.AnswerConfirmations, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetAnswerConfirmations() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation {
+	return v.AnswerConfirmations
+}
+
 // GetUnassignments returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.Unassignments, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetUnassignments() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskUnassignmentsAgentTaskUnassignment {
 	return v.Unassignments
@@ -69211,6 +74079,233 @@ func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetO
 // GetOpenQuestions returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask.OpenQuestions, and is useful for accessing the field via an interface.
 func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTask) GetOpenQuestions() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskOpenQuestionsBoardReviewItem {
 	return v.OpenQuestions
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation includes the requested fields of the GraphQL type AgentTaskAnswerConfirmation.
+// The GraphQL type's documentation follows.
+//
+// An answer to a question signed off --no-change, and what the coordinator said about it (task TPF-171). CONFIRMED: the
+// rounds do not make any pass stale and the task went on to the first role without a current pass (the asker, unless
+// something else moved). REFUSED: reviewed as a change. LAPSED: the task
+// left the coordinator by another verb (the note names it); the rounds count as a change. Only the server writes it.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation struct {
+	AnsweredAt string  `json:"answeredAt"`
+	Role       string  `json:"role"`
+	RoleUuid   *string `json:"roleUuid"`
+	// The answering session; null on a blind read.
+	Session *string `json:"session"`
+	// The answering agent; null on a blind read.
+	Agent            *string                                                                                                                                      `json:"agent"`
+	AskingRole       *string                                                                                                                                      `json:"askingRole"`
+	QuestionsRelease *string                                                                                                                                      `json:"questionsRelease"`
+	Rounds           []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound `json:"rounds"`
+	State            AgentTaskAnswerConfirmationState                                                                                                             `json:"state"`
+	// Who confirmed, refused or lapsed it; null while PENDING.
+	SettledBy *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor `json:"settledBy"`
+	SettledAt *string                                                                                                                             `json:"settledAt"`
+	// The coordinator's note, or the verb that lapsed it.
+	Note *string `json:"note"`
+}
+
+// GetAnsweredAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.AnsweredAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetAnsweredAt() string {
+	return v.AnsweredAt
+}
+
+// GetRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Role, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetRole() string {
+	return v.Role
+}
+
+// GetRoleUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.RoleUuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetRoleUuid() *string {
+	return v.RoleUuid
+}
+
+// GetSession returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Session, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetSession() *string {
+	return v.Session
+}
+
+// GetAgent returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Agent, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetAgent() *string {
+	return v.Agent
+}
+
+// GetAskingRole returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.AskingRole, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetAskingRole() *string {
+	return v.AskingRole
+}
+
+// GetQuestionsRelease returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.QuestionsRelease, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetQuestionsRelease() *string {
+	return v.QuestionsRelease
+}
+
+// GetRounds returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Rounds, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetRounds() []*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound {
+	return v.Rounds
+}
+
+// GetState returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.State, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetState() AgentTaskAnswerConfirmationState {
+	return v.State
+}
+
+// GetSettledBy returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.SettledBy, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetSettledBy() *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor {
+	return v.SettledBy
+}
+
+// GetSettledAt returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.SettledAt, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetSettledAt() *string {
+	return v.SettledAt
+}
+
+// GetNote returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation.Note, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmation) GetNote() *string {
+	return v.Note
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound includes the requested fields of the GraphQL type AgentTaskAnswerRound.
+// The GraphQL type's documentation follows.
+//
+// One round an answering hop published, and the round before it (task TPF-171).
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound struct {
+	Release       string  `json:"release"`
+	Specification string  `json:"specification"`
+	Round         *int    `json:"round"`
+	Version       *string `json:"version"`
+	Path          *string `json:"path"`
+	// The round it is compared against: the task's newest round of the document handed over before the answering hop began (at or above ASSEMBLED and the readers' floor; never a release of the answering hop), else the round carried from the split parent.
+	Previous        *string `json:"previous"`
+	PreviousRound   *int    `json:"previousRound"`
+	PreviousVersion *string `json:"previousVersion"`
+	PreviousPath    *string `json:"previousPath"`
+}
+
+// GetRelease returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Release, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetRelease() string {
+	return v.Release
+}
+
+// GetSpecification returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Specification, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetSpecification() string {
+	return v.Specification
+}
+
+// GetRound returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Round, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetRound() *int {
+	return v.Round
+}
+
+// GetVersion returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Version, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetVersion() *string {
+	return v.Version
+}
+
+// GetPath returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Path, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPath() *string {
+	return v.Path
+}
+
+// GetPrevious returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.Previous, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPrevious() *string {
+	return v.Previous
+}
+
+// GetPreviousRound returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.PreviousRound, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPreviousRound() *int {
+	return v.PreviousRound
+}
+
+// GetPreviousVersion returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.PreviousVersion, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPreviousVersion() *string {
+	return v.PreviousVersion
+}
+
+// GetPreviousPath returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound.PreviousPath, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationRoundsAgentTaskAnswerRound) GetPreviousPath() *string {
+	return v.PreviousPath
+}
+
+// AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor includes the requested fields of the GraphQL type AgentActor.
+// The GraphQL type's documentation follows.
+//
+// Who did something on a board: the identity on a pause, an event, a hold or a human sign-off.
+//
+// These were all String, and every writer invented its own encoding -- a session uuid behind a
+// "coordinator-session:" prefix, a user's email, the bare literal "operator". Reading one meant
+// knowing the convention and splitting on a colon. kind says which identity space uuid belongs
+// to; name is what a human should read. Rows written before this are decoded on read, so an
+// older pause still resolves.
+type AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor struct {
+	ActorFields `json:"-"`
+}
+
+// GetKind returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor.Kind, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) GetKind() *AgentActorKind {
+	return v.ActorFields.Kind
+}
+
+// GetUuid returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor.Uuid, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) GetUuid() *string {
+	return v.ActorFields.Uuid
+}
+
+// GetName returns AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor.Name, and is useful for accessing the field via an interface.
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) GetName() *string {
+	return v.ActorFields.Name
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ActorFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor struct {
+	Kind *AgentActorKind `json:"kind"`
+
+	Uuid *string `json:"uuid"`
+
+	Name *string `json:"name"`
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor) __premarshalJSON() (*__premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor, error) {
+	var retval __premarshalAgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAnswerConfirmationsAgentTaskAnswerConfirmationSettledByAgentActor
+
+	retval.Kind = v.ActorFields.Kind
+	retval.Uuid = v.ActorFields.Uuid
+	retval.Name = v.ActorFields.Name
+	return &retval, nil
 }
 
 // AgentTasksByUuidProgrammaticAgentTasksByUuidProgrammaticAgentTaskAssignmentAgentTaskWorkAssignment includes the requested fields of the GraphQL type AgentTaskWorkAssignment.
@@ -78059,6 +83154,8 @@ type ArtifactInput struct {
 	StripBom                *StripBomEnum        `json:"stripBom"`
 	DigestRecords           []*DigestRecordInput `json:"digestRecords,omitempty"`
 	Artifacts               []*ArtifactInput     `json:"artifacts,omitempty"`
+	ImportScope             *AnalysisScope       `json:"importScope"`
+	ImportMode              *ImportMode          `json:"importMode"`
 	VexScope                *AnalysisScope       `json:"vexScope"`
 	VexImportMode           *VexImportMode       `json:"vexImportMode"`
 	UserIssuerClassOverride *IssuerClass         `json:"userIssuerClassOverride"`
@@ -78105,6 +83202,12 @@ func (v *ArtifactInput) GetDigestRecords() []*DigestRecordInput { return v.Diges
 
 // GetArtifacts returns ArtifactInput.Artifacts, and is useful for accessing the field via an interface.
 func (v *ArtifactInput) GetArtifacts() []*ArtifactInput { return v.Artifacts }
+
+// GetImportScope returns ArtifactInput.ImportScope, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetImportScope() *AnalysisScope { return v.ImportScope }
+
+// GetImportMode returns ArtifactInput.ImportMode, and is useful for accessing the field via an interface.
+func (v *ArtifactInput) GetImportMode() *ImportMode { return v.ImportMode }
 
 // GetVexScope returns ArtifactInput.VexScope, and is useful for accessing the field via an interface.
 func (v *ArtifactInput) GetVexScope() *AnalysisScope { return v.VexScope }
@@ -83545,6 +88648,20 @@ var AllIdentifierType = []IdentifierType{
 	IdentifierTypeMacAddress,
 }
 
+type ImportMode string
+
+const (
+	ImportModeAutoAccept ImportMode = "AUTO_ACCEPT"
+	ImportModeStage      ImportMode = "STAGE"
+	ImportModeReject     ImportMode = "REJECT"
+)
+
+var AllImportMode = []ImportMode{
+	ImportModeAutoAccept,
+	ImportModeStage,
+	ImportModeReject,
+}
+
 // InstDataResponse is returned by InstData on success.
 type InstDataResponse struct {
 	InstData *json.RawMessage `json:"instData"`
@@ -88882,6 +93999,44 @@ func (v *__AgentTaskCompleteProgrammaticInput) GetSessionUuid() string { return 
 
 // GetNote returns __AgentTaskCompleteProgrammaticInput.Note, and is useful for accessing the field via an interface.
 func (v *__AgentTaskCompleteProgrammaticInput) GetNote() *string { return v.Note }
+
+// __AgentTaskConfirmAnswerInput is used internally by genqlient
+type __AgentTaskConfirmAnswerInput struct {
+	TaskUuid string                 `json:"taskUuid"`
+	Verdict  AgentTaskAnswerVerdict `json:"verdict"`
+	Note     *string                `json:"note"`
+}
+
+// GetTaskUuid returns __AgentTaskConfirmAnswerInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskConfirmAnswerInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetVerdict returns __AgentTaskConfirmAnswerInput.Verdict, and is useful for accessing the field via an interface.
+func (v *__AgentTaskConfirmAnswerInput) GetVerdict() AgentTaskAnswerVerdict { return v.Verdict }
+
+// GetNote returns __AgentTaskConfirmAnswerInput.Note, and is useful for accessing the field via an interface.
+func (v *__AgentTaskConfirmAnswerInput) GetNote() *string { return v.Note }
+
+// __AgentTaskConfirmAnswerProgrammaticInput is used internally by genqlient
+type __AgentTaskConfirmAnswerProgrammaticInput struct {
+	TaskUuid    string                 `json:"taskUuid"`
+	SessionUuid string                 `json:"sessionUuid"`
+	Verdict     AgentTaskAnswerVerdict `json:"verdict"`
+	Note        *string                `json:"note"`
+}
+
+// GetTaskUuid returns __AgentTaskConfirmAnswerProgrammaticInput.TaskUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskConfirmAnswerProgrammaticInput) GetTaskUuid() string { return v.TaskUuid }
+
+// GetSessionUuid returns __AgentTaskConfirmAnswerProgrammaticInput.SessionUuid, and is useful for accessing the field via an interface.
+func (v *__AgentTaskConfirmAnswerProgrammaticInput) GetSessionUuid() string { return v.SessionUuid }
+
+// GetVerdict returns __AgentTaskConfirmAnswerProgrammaticInput.Verdict, and is useful for accessing the field via an interface.
+func (v *__AgentTaskConfirmAnswerProgrammaticInput) GetVerdict() AgentTaskAnswerVerdict {
+	return v.Verdict
+}
+
+// GetNote returns __AgentTaskConfirmAnswerProgrammaticInput.Note, and is useful for accessing the field via an interface.
+func (v *__AgentTaskConfirmAnswerProgrammaticInput) GetNote() *string { return v.Note }
 
 // __AgentTaskDecideReviewItemsInput is used internally by genqlient
 type __AgentTaskDecideReviewItemsInput struct {
@@ -94686,6 +99841,548 @@ func AgentTaskCompleteProgrammatic(
 	return data_, err_
 }
 
+// The mutation executed by AgentTaskConfirmAnswer.
+const AgentTaskConfirmAnswer_Operation = `
+mutation AgentTaskConfirmAnswer ($taskUuid: ID!, $verdict: AgentTaskAnswerVerdict!, $note: String) {
+	agentTaskConfirmAnswer(taskUuid: $taskUuid, verdict: $verdict, note: $note) {
+		key
+		number
+		uuid
+		org
+		board
+		externalRef
+		title
+		description
+		sourceUrl
+		status
+		role
+		orderIndex
+		workLevel
+		effectiveWorkLevel
+		workLevelSetBy {
+			... ActorFields
+		}
+		workLevelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
+		dependsOn
+		requireHumanReview
+		hold {
+			level
+			kind
+			gateRole
+			reason
+			heldBy {
+				... ActorFields
+			}
+			heldAt
+			stop
+		}
+		assignment {
+			session
+			agent
+			role
+			assignedAt
+			promptVersion
+		}
+		signOffs {
+			role
+			agent
+			session
+			assignedAt
+			signedOffAt
+			outcome
+			note
+			promptVersion
+			reviewedBy {
+				... ActorFields
+			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
+		}
+		returns {
+			role
+			agent
+			session
+			reason
+			description
+			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
+		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
+		splitRequest {
+			requestedAt
+			role
+			roleUuid
+			session
+			description
+			proposedChildren {
+				title
+				description
+				externalRef
+				sourceUrl
+				dependsOnSiblingIndexes
+				producesComponent
+				workLevel
+				group
+				tags {
+					key
+					value
+				}
+				designFromParent
+			}
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
+		answerConfirmations {
+			answeredAt
+			role
+			roleUuid
+			session
+			agent
+			askingRole
+			questionsRelease
+			rounds {
+				release
+				specification
+				round
+				version
+				path
+				previous
+				previousRound
+				previousVersion
+				previousPath
+			}
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
+		parentTask
+		childTasks
+		sessions
+		prUrls
+		registeredBySession
+		createdDate
+		completedAt
+		statusHistory {
+			from
+			to
+			at
+			trigger
+			actor {
+				... ActorFields
+			}
+			note
+		}
+		orderSetBy {
+			... ActorFields
+		}
+		orderSetAt
+		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
+		questionStack {
+			askingRole
+			askingSession
+			askingAgent
+			questionsRelease
+			answeringRole
+			askedAt
+		}
+	}
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
+}
+`
+
+// A person's verdict on the same (task TPF-171); CONFIRMED is refused with a personal key of the user
+// whose key the answering agent runs on.
+func AgentTaskConfirmAnswer(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+	verdict AgentTaskAnswerVerdict,
+	note *string,
+) (data_ *AgentTaskConfirmAnswerResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskConfirmAnswer",
+		Query:  AgentTaskConfirmAnswer_Operation,
+		Variables: &__AgentTaskConfirmAnswerInput{
+			TaskUuid: taskUuid,
+			Verdict:  verdict,
+			Note:     note,
+		},
+	}
+
+	data_ = &AgentTaskConfirmAnswerResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AgentTaskConfirmAnswerProgrammatic.
+const AgentTaskConfirmAnswerProgrammatic_Operation = `
+mutation AgentTaskConfirmAnswerProgrammatic ($taskUuid: ID!, $sessionUuid: ID!, $verdict: AgentTaskAnswerVerdict!, $note: String) {
+	agentTaskConfirmAnswerProgrammatic(taskUuid: $taskUuid, sessionUuid: $sessionUuid, verdict: $verdict, note: $note) {
+		key
+		number
+		uuid
+		org
+		board
+		externalRef
+		title
+		description
+		sourceUrl
+		status
+		role
+		orderIndex
+		workLevel
+		effectiveWorkLevel
+		workLevelSetBy {
+			... ActorFields
+		}
+		workLevelSetAt
+		group {
+			uuid
+			key
+			name
+		}
+		tags {
+			key
+			value
+			removable
+		}
+		waitingOnGroups
+		dependsOn
+		requireHumanReview
+		hold {
+			level
+			kind
+			gateRole
+			reason
+			heldBy {
+				... ActorFields
+			}
+			heldAt
+			stop
+		}
+		assignment {
+			session
+			agent
+			role
+			assignedAt
+			promptVersion
+		}
+		signOffs {
+			role
+			agent
+			session
+			assignedAt
+			signedOffAt
+			outcome
+			note
+			promptVersion
+			reviewedBy {
+				... ActorFields
+			}
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
+		}
+		returns {
+			role
+			agent
+			session
+			reason
+			description
+			returnedAt
+			usage {
+				... HopUsageFields
+			}
+			overAllowanceMicros
+		}
+		designCheckpoint {
+			reachedAt
+			afterRole
+			beforeRole
+			design
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
+		designCheckpointWaiver {
+			bySession
+			byAgent
+			role
+			roleUuid
+			at
+			designRound
+			note
+			standing
+		}
+		carriedDesign {
+			parentTask
+			parentKey
+			rounds {
+				specification
+				release
+				round
+				path
+			}
+			roles {
+				role
+				roleUuid
+				signedOffAt
+				session
+				reviewedBy {
+					... ActorFields
+				}
+				decidedOver
+				live
+			}
+			at
+			by {
+				... ActorFields
+			}
+			standing
+		}
+		splitRequest {
+			requestedAt
+			role
+			roleUuid
+			session
+			description
+			proposedChildren {
+				title
+				description
+				externalRef
+				sourceUrl
+				dependsOnSiblingIndexes
+				producesComponent
+				workLevel
+				group
+				tags {
+					key
+					value
+				}
+				designFromParent
+			}
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
+		answerConfirmations {
+			answeredAt
+			role
+			roleUuid
+			session
+			agent
+			askingRole
+			questionsRelease
+			rounds {
+				release
+				specification
+				round
+				version
+				path
+				previous
+				previousRound
+				previousVersion
+				previousPath
+			}
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
+		parentTask
+		childTasks
+		sessions
+		prUrls
+		registeredBySession
+		createdDate
+		completedAt
+		statusHistory {
+			from
+			to
+			at
+			trigger
+			actor {
+				... ActorFields
+			}
+			note
+		}
+		orderSetBy {
+			... ActorFields
+		}
+		orderSetAt
+		requiredRolesSkipped
+		rolesSkippedByCondition {
+			role
+			roleUuid
+			reason
+			at
+			by {
+				... ActorFields
+			}
+			waives
+			live
+		}
+		questionStack {
+			askingRole
+			askingSession
+			askingAgent
+			questionsRelease
+			answeringRole
+			askedAt
+		}
+	}
+}
+fragment ActorFields on AgentActor {
+	kind
+	uuid
+	name
+}
+fragment HopUsageFields on HopUsage {
+	derivedCostMicros
+	costComplete
+	allowanceMicros
+}
+`
+
+// The coordinator seat's verdict on an answer signed off --no-change (task TPF-171): CONFIRMED keeps the
+// earlier passes, REFUSED reviews the rounds as a change.
+func AgentTaskConfirmAnswerProgrammatic(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	taskUuid string,
+	sessionUuid string,
+	verdict AgentTaskAnswerVerdict,
+	note *string,
+) (data_ *AgentTaskConfirmAnswerProgrammaticResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AgentTaskConfirmAnswerProgrammatic",
+		Query:  AgentTaskConfirmAnswerProgrammatic_Operation,
+		Variables: &__AgentTaskConfirmAnswerProgrammaticInput{
+			TaskUuid:    taskUuid,
+			SessionUuid: sessionUuid,
+			Verdict:     verdict,
+			Note:        note,
+		},
+	}
+
+	data_ = &AgentTaskConfirmAnswerProgrammaticResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by AgentTaskDecideReviewItems.
 const AgentTaskDecideReviewItems_Operation = `
 mutation AgentTaskDecideReviewItems ($taskUuid: ID!, $specification: SpecificationType!, $decisions: [BoardReviewItemDecisionInput!]!, $about: BoardReviewItemsAboutInput) {
@@ -97822,6 +103519,32 @@ query AgentTaskProgrammatic ($taskUuid: ID!) {
 					value
 				}
 				designFromParent
+			}
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
+		answerConfirmations {
+			answeredAt
+			role
+			roleUuid
+			session
+			agent
+			askingRole
+			questionsRelease
+			rounds {
+				release
+				specification
+				round
+				version
+				path
+				previous
+				previousRound
+				previousVersion
+				previousPath
 			}
 			state
 			settledBy {
@@ -101918,6 +107641,32 @@ query AgentTasksByUuidProgrammatic ($taskUuids: [ID!]!) {
 					value
 				}
 				designFromParent
+			}
+			state
+			settledBy {
+				... ActorFields
+			}
+			settledAt
+			note
+		}
+		answerConfirmations {
+			answeredAt
+			role
+			roleUuid
+			session
+			agent
+			askingRole
+			questionsRelease
+			rounds {
+				release
+				specification
+				round
+				version
+				path
+				previous
+				previousRound
+				previousVersion
+				previousPath
 			}
 			state
 			settledBy {
