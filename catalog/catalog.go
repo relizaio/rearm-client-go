@@ -674,10 +674,21 @@ func toNode(v any, top bool) *yaml.Node {
 }
 
 // IsNotFound reports whether err is ReARM saying that the entity does not exist: a GraphQL error
-// classified NOT_FOUND, or one whose message says so. Callers (the Terraform provider, scripts)
+// classified NOT_FOUND (extensions.classification, or errorType on older servers), or one whose
+// message says so. It reads the errors of the typed functions (gqlerror) and of Raw and
+// UploadMultipart (rearm.GraphQLErrors), bare or wrapped. Callers (the Terraform provider, scripts)
 // use it to tell "gone" apart from a real failure instead of matching message text themselves.
 func IsNotFound(err error) bool {
 	if err == nil {
+		return false
+	}
+	var raw rearm.GraphQLErrors
+	if errors.As(err, &raw) {
+		for _, e := range raw {
+			if classifiedNotFound(e.Extensions) || strings.Contains(strings.ToLower(e.Message), "not found") {
+				return true
+			}
+		}
 		return false
 	}
 	var list gqlerror.List
@@ -686,7 +697,7 @@ func IsNotFound(err error) bool {
 			if e == nil {
 				continue
 			}
-			if t, ok := e.Extensions["errorType"].(string); ok && strings.EqualFold(t, "NOT_FOUND") {
+			if classifiedNotFound(e.Extensions) {
 				return true
 			}
 			if strings.Contains(strings.ToLower(e.Message), "not found") {
@@ -697,10 +708,21 @@ func IsNotFound(err error) bool {
 	}
 	var single *gqlerror.Error
 	if errors.As(err, &single) && single != nil {
-		if t, ok := single.Extensions["errorType"].(string); ok && strings.EqualFold(t, "NOT_FOUND") {
+		if classifiedNotFound(single.Extensions) {
 			return true
 		}
 		return strings.Contains(strings.ToLower(single.Message), "not found")
 	}
 	return strings.Contains(strings.ToLower(err.Error()), "not found")
+}
+
+// classifiedNotFound reports whether a GraphQL error's extensions classify it NOT_FOUND, in any
+// case: classification is what graphql-java servers send, errorType what DGS-era servers sent.
+func classifiedNotFound(ext map[string]interface{}) bool {
+	for _, key := range []string{"classification", "errorType"} {
+		if t, ok := ext[key].(string); ok && strings.EqualFold(t, "NOT_FOUND") {
+			return true
+		}
+	}
+	return false
 }

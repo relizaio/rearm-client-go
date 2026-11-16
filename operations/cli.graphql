@@ -9,7 +9,11 @@ mutation AddArtifactProgrammatic($artifactInput: AddArtifactInput) {
 			}
 
 # from rearm-cli addRelease.go
-mutation AddReleaseProgrammatic($releaseInputProg: ReleaseInputProg!) {addReleaseProgrammatic(release:$releaseInputProg) {
+# A server without FDAW-74 does not declare displayedVersion and refuses a variables input that
+# carries the key, even as null, so the field is left out of the request when nil.
+# @genqlient(for: "ReleaseInputProg.displayedVersion", omitempty: true)
+mutation AddReleaseProgrammatic(
+	$releaseInputProg: ReleaseInputProg!) {addReleaseProgrammatic(release:$releaseInputProg) {
 	uuid
 	createdType
 	lastUpdatedBy
@@ -30,7 +34,11 @@ mutation AddReleaseProgrammatic($releaseInputProg: ReleaseInputProg!) {addReleas
 }}
 
 # from rearm-cli addReleases.go
-mutation AddReleasesProgrammatic($releaseInputsProg: [ReleaseInputProg!]!) {addReleasesProgrammatic(releases:$releaseInputsProg) {
+# A server without FDAW-74 does not declare displayedVersion and refuses a variables input that
+# carries the key, even as null, so the field is left out of the request when nil.
+# @genqlient(for: "ReleaseInputProg.displayedVersion", omitempty: true)
+mutation AddReleasesProgrammatic(
+	$releaseInputsProg: [ReleaseInputProg!]!) {addReleasesProgrammatic(releases:$releaseInputsProg) {
 	uuid
 	createdType
 	lastUpdatedBy

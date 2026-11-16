@@ -477,11 +477,22 @@ The session is required and must belong to the calling key's agent: the LOCK_REL
   lockUuid: ID!
   reason: String!
   session: ID!): Lock
-  addReleaseProgrammatic(release: ReleaseInputProg!): Release
+  """
+  Creates one release from a build. Actions that rules fire when the release is saved
+  (integration triggers, external validations, emails, pull request comments, VDR snapshots)
+  and the pull request check run are sent at that point and are not recalled when the call is
+  refused afterwards.
+  """
+  addReleaseProgrammatic(
+  release: ReleaseInputProg!): Release
   """
   Batch counterpart to addReleaseProgrammatic. Creates every supplied
   release in a single all-or-nothing transaction -- if any entry fails,
-  none are persisted. Auto-integration of products is deferred until all
+  none are persisted. Actions that rules fire when a release is saved
+  (integration triggers, external validations, emails, pull request
+  comments, VDR snapshots) and the pull request check run are sent as each
+  release is saved and are not recalled when a later release of the batch
+  is refused. Auto-integration of products is deferred until all
   releases are created, then fired once per affected feature set (deduped
   across the whole batch) instead of once per release. Use this when a CI
   run builds several component releases at once and you want a single
@@ -1124,6 +1135,10 @@ type TeaPublishPreview {
   cascades: Boolean!
   "The number of component releases a cascade would publish"
   cascadeChildren: Int!
+  "One line per direct component release of a product, in list order, classified as the cascade would; empty when the release does not cascade"
+  children: [TeaPreviewChild!]!
+  "The published artifact revisions the TEA artifact endpoints answer 410 for, each once, in the order the collection versions first name them (FDAW-80); empty when there is none"
+  withdrawn: [TeaWithdrawnRevision!]!
   profileRevision: Int
   publication: TeaPublication
   collections: [TeaPublishedCollection!]!
@@ -1146,13 +1161,17 @@ type SbomProfile {
   followedPerspective: ID
   description: String
   dependencyDepth: SbomDependencyDepth
-  optionalDependencies: SbomOptionalDependencies
+  componentScope: SbomComponentScope
+  optionalDependencies: SbomOptionalDependencies @deprecated(reason: "Replaced by componentScope (FDAW-19); served for one release")
   structure: BomStructureType
   sources: [SbomSourceKind!]
   excludedCoverage: [ArtifactCoverageType!]
   supportMetadata: SbomSupportMetadata
   internalMetadata: SbomInternalMetadata
   vulnerabilityDocuments: SbomVulnerabilityDocuments
+  excludedScope: SbomExcludedScope
+  personalData: SbomPersonalData
+  localPaths: SbomLocalPaths
   revision: Int
   createdDate: DateTime
   lastUpdatedBy: ID
@@ -1195,7 +1214,8 @@ type Submission {
   createdBy: ID
   lastActDate: DateTime
   lastActBy: ID
-  lastActKind: SubmissionActOutcome
+  "The last act: FINALIZE or CANCEL with the actor's name; null on a head stored before Finalize existed."
+  lastAct: SubmissionActRef
   "Legacy, read-only: the withdrawal of a head from before the FINAL/CANCELLED migration; written by no act."
   withdrawnDate: DateTime
   "Legacy, read-only."
@@ -1210,6 +1230,12 @@ type Submission {
   versionStates: [SubmissionVersionState!]!
   "The head's act record, oldest first."
   acts: [SubmissionAct!]!
+  "The creator, as a reader knows them: their name, else their email in this organization while a current member; null otherwise"
+  createdByName: String
+  "The last actor, resolved as createdByName is"
+  lastActByName: String
+  "The withdrawing user, resolved as createdByName is"
+  withdrawnByName: String
   settings: SubmissionSettingsRef
   versions: [SubmissionVersion!]!
   latest: SubmissionVersion
@@ -1245,9 +1271,13 @@ type SubmissionVersion {
   kind: PackageKind!
   createdDate: DateTime
   createdBy: ID
+  "The creator, as a reader knows them: their name, else their email in this organization while a current member; null otherwise"
+  createdByName: String
   reason: String
   settings: SubmissionSettingsRef
   sbomProfile: SubmissionProfileRef
+  "The release SBOM this version pins; null when the aggregate is excluded or skipped."
+  releaseSbom: ReleaseSbomRef
   parts: [SubmissionPart!]!
   manifestArtifact: ID
   manifestArtifactVersion: String
@@ -1255,6 +1285,16 @@ type SubmissionVersion {
   manifest: String!
   "Reserved for a manifest signature; null today."
   signature: String
+  "The confirmations Finalize recorded, in order; empty on a version written before Finalize."
+  confirmations: [VersionConfirmation!]!
+  "The build Finalize locked; null on a version written before Finalize."
+  build: VersionBuild
+  "Why this version was drafted; null on a version written before Finalize."
+  newVersionReason: NewVersionReason
+  "The version this one replaces, as its draft named it."
+  replaces: ReplacesRef
+  "The counts of the build's diff against its baseline; null without one."
+  diffSummary: DiffSummary
 }
 
 """
@@ -1342,6 +1382,8 @@ type Release {
   teaPublication: TeaPublication
   "The release's regulatory submissions, every kind (task TEA-35); empty on an edition without submissions"
   submissions: [Submission!]
+  "The release's drafts, at most one per kind; empty for an API key and on an edition without submissions"
+  drafts: [SubmissionDraft!]!
   inboundDeliverables: [ID]
   inboundDeliverableDetails: [Deliverable]
   tickets: [ID]
@@ -1395,6 +1437,12 @@ NULL MEANS INHERIT, not empty. Read it through the resolution seam -- release
   MEANS INHERIT: read effectiveLicense for what ReARM writes on the release's SBOM node.
   """
   licenseExpression: String
+  """
+  The version the device shows its user (FDAW-74), as the manufacturer entered it; null when not set. Written
+  into the merged release SBOM as the property reliza:displayedVersion on metadata.component; never replaces
+  version.
+  """
+  displayedVersion: String
   """
   The licence ReARM declares for this release's node in a merged SBOM (SCORE-39): the
   release override, else the component's licence, else the organization default; null when
@@ -2582,6 +2630,7 @@ type TeaPublishResult {
   outcome: TeaPublishOutcome!
   artifacts: [TeaRideAlongOutcome!]!
   children: [TeaChildPublishResult!]!
+  documents: [TeaGeneratedDocumentOutcome!]!
 }
 
 """
@@ -2604,6 +2653,9 @@ type TeaPublication {
   cascadeOf: ID
   "The generated aggregated SBOMs, one per SBOM profile, in the order published"
   aggregateArtifacts: [TeaAggregateArtifact!]!
+  vexArtifacts: [TeaVexArtifact!]!
+  "The device support statement row the TEA publish serves for a device release; null when none was stored"
+  deviceSupportStatementArtifact: ID
   aggregateArtifact: ID @deprecated(reason: "Task TEA-28: one aggregate per SBOM profile; read aggregateArtifacts. Answers the default profile's artifact, else the first, else null.")
   tei: String
   firstPublishedDate: DateTime
@@ -3122,6 +3174,11 @@ input ReleaseInputProg {
   organization default.
   """
   licenseExpression: String
+  """
+  The version the device shows its user, at most 128 characters on one line. Omitted: none on a new release,
+  unchanged on a rebuild; an empty string clears it on a rebuild.
+  """
+  displayedVersion: String
 }
 
 input AddODeliverableInput {
@@ -3284,6 +3341,8 @@ type Component {
   every other kind and for a document no board owns. The board page checks the board's permissions.
   """
   agentBoard: AgentBoardRef
+  "The regulatory package kinds switched on for this component (its effective package settings); empty on ReARM CE"
+  regulatoryPackageKinds: [PackageKind!]!
 }
 
 input CreateComponentInput {
@@ -4583,6 +4642,26 @@ enum TeaProfileSource {
   DEFAULT
 }
 
+type TeaPreviewChild {
+  release: ID!
+  componentName: String
+  version: String
+  outcome: TeaPreviewChildOutcome!
+  refusal: TeaPublishRefusal
+  detail: String
+  "The child's own COMPONENT TEA profile row when its DISABLED publishing is the refusal; null otherwise."
+  ownRow: ID
+}
+
+"""
+One published artifact revision that is withdrawn from TEA: its artifact endpoints answer 410.
+"""
+type TeaWithdrawnRevision {
+  teaUuid: ID!
+  revision: Int!
+  reason: TeaWithdrawnReason!
+}
+
 """
 One immutable version of a release's TEA collection.
 """
@@ -4622,6 +4701,14 @@ enum SbomDependencyDepth {
   TOP_LEVEL_ONLY
 }
 
+"""
+RUNTIME_ONLY leaves components with CycloneDX scope optional out of the merge; replaces SbomOptionalDependencies.
+"""
+enum SbomComponentScope {
+  ALL
+  RUNTIME_ONLY
+}
+
 enum SbomOptionalDependencies {
   INCLUDE
   EXCLUDE
@@ -4648,6 +4735,30 @@ Reserved: vulnerability documents are not part of an SBOM profile yet.
 """
 enum SbomVulnerabilityDocuments {
   NONE
+}
+
+"""
+INCLUDE keeps components with CycloneDX scope excluded in the merge.
+"""
+enum SbomExcludedScope {
+  INCLUDE
+  EXCLUDE
+}
+
+"""
+INCLUDE keeps maintainer e-mails and handles in the merge.
+"""
+enum SbomPersonalData {
+  INCLUDE
+  EXCLUDE
+}
+
+"""
+INCLUDE keeps local build paths in the merge.
+"""
+enum SbomLocalPaths {
+  INCLUDE
+  EXCLUDE
 }
 
 """
@@ -4683,14 +4794,12 @@ enum ComponentType {
 }
 
 """
-What a submission act did; a withdrawal of a FINAL head answers CANCELLED (WITHDRAWN is the outcome of acts recorded before the FINAL/CANCELLED migration).
+The last act on a submission head: its kind, when, and the actor's name as recorded.
 """
-enum SubmissionActOutcome {
-  CREATED
-  RESUBMITTED
-  WITHDRAWN
-  UNCHANGED
-  CANCELLED
+type SubmissionActRef {
+  kind: SubmissionActKind!
+  actedAt: DateTime
+  actorName: String
 }
 
 """
@@ -4752,6 +4861,16 @@ type SubmissionProfileRef {
 }
 
 """
+The release SBOM a package version pins: the CycloneDX serialNumber (a uuid), the document version, the sha256 of the stored bytes and the artifact that holds them; download it with the artifact and version.
+"""
+type ReleaseSbomRef {
+  serial: ID!
+  version: Int!
+  sha256: String!
+  artifact: ID!
+}
+
+"""
 One part of a submission version, in manifest order; download a PRODUCED or REFERENCED artifact through the artifact rawdownload endpoints with artifactVersion.
 """
 type SubmissionPart {
@@ -4764,8 +4883,64 @@ type SubmissionPart {
   mediaType: String
   size: Long
   sha256: String
+  "The document identity of a VDR, a VEX or the referenced release SBOM: urn:uuid of its serialNumber (or the OpenVEX @id)."
+  documentSerial: String
+  documentVersion: Int
   skipReason: PartSkipReason
   detail: String
+}
+
+"""
+One confirmation a Final version records: who, in which capacity, the statement and its version, and when.
+"""
+type VersionConfirmation {
+  actor: ID!
+  actorName: String
+  actorEmail: String
+  capacity: ConfirmationCapacity!
+  statementId: String!
+  statementVersion: Int!
+  confirmedAt: DateTime!
+}
+
+"""
+The build a Final version locked: its inputs fingerprint, when it was built, its closure of releases and who requested it.
+"""
+type VersionBuild {
+  inputsFingerprint: String!
+  builtAt: DateTime
+  closure: [ID!]!
+  requestedBy: ID
+  requestedByName: String
+}
+
+"""
+Why a next version is being drafted.
+"""
+enum NewVersionReason {
+  FIRST_VERSION
+  FDA_REQUEST_RESPONSE
+  CORRECTION
+  OTHER
+}
+
+"""
+The version a new version replaces.
+"""
+type ReplacesRef {
+  submission: ID!
+  version: Int!
+}
+
+"""
+The counts of a build's diff a Final version keeps; findingsChanged is findings added plus removed.
+"""
+type DiffSummary {
+  added: Int!
+  removed: Int!
+  changed: Int!
+  supportChanged: Int!
+  findingsChanged: Int!
 }
 
 type ApiKeySpec {
@@ -5048,6 +5223,40 @@ type Artifact {
   vexImportSummary: VexImportSummary
   "The artifact's TEA id, minted when a TEA publication first names it; read-only"
   teaUuid: ID
+}
+
+"""
+The working copy of a submission's next version: one per release and kind. Signed-in users only.
+"""
+type SubmissionDraft {
+  uuid: ID!
+  org: ID!
+  release: ID!
+  component: ID!
+  kind: PackageKind!
+  "The head; null until the first version exists."
+  submission: ID
+  state: SubmissionDraftState!
+  "Moves on every write of the draft; the token Confirm takes."
+  revision: Int!
+  plannedSubmission: ID!
+  plannedVersion: Int!
+  startedAt: DateTime!
+  startedBy: DraftActor!
+  reasonCategory: NewVersionReason!
+  reasonText: String
+  replaces: ReplacesRef
+  job: DraftJob!
+  build: DraftBuild
+  confirmation: HeldConfirmation
+  "The draft's act record, oldest first."
+  acts: [SubmissionAct!]!
+  "What moved since the build, recomputed on every read; never stored."
+  changesSinceBuild: ChangesSinceBuild!
+  "Whether the inputs are as the build read them: changesSinceBuild.fingerprintEqual."
+  inputsUnchanged: Boolean!
+  "The readiness rows over the build's stored check, evaluated on every read; null without a build or for a build made before the check."
+  readiness: ReadinessReport
 }
 
 type Deliverable {
@@ -6787,6 +6996,16 @@ type TeaChildPublishResult {
 }
 
 """
+One document a publish generates beside the aggregates; detail says why it was skipped.
+"""
+type TeaGeneratedDocumentOutcome {
+  kind: TeaGeneratedDocumentKind!
+  profileName: String
+  status: TeaGeneratedDocumentStatus!
+  detail: String
+}
+
+"""
 What a TEA publication is now: PUBLISHED is served on TEA, HIDDEN is not; nothing is ever deleted.
 """
 enum TeaPublicationState {
@@ -6800,6 +7019,18 @@ One named aggregate of a publication: the SBOM profile and the generated artifac
 type TeaAggregateArtifact {
   profileName: String!
   artifact: ID!
+}
+
+"""
+One SBOM profile name's living VEX on TEA, and the release SBOM version it describes (FDAW-25).
+"""
+type TeaVexArtifact {
+  profileName: String!
+  artifact: ID!
+  serial: ID
+  version: Int
+  sbomSerial: ID
+  sbomVersion: Int
 }
 
 """
@@ -8347,6 +8578,27 @@ type BoardStrengthSpec {
 }
 
 """
+What a product publish would do with one of its direct component releases, read before the click: WILL_PUBLISH stands for PUBLISHED, REPUBLISHED and UNCHANGED, and is a forecast.
+"""
+enum TeaPreviewChildOutcome {
+  WILL_PUBLISH
+  SKIPPED_DIRECT
+  SKIPPED_HIDDEN
+  SKIPPED_OTHER_PRODUCT
+  REFUSED
+}
+
+"""
+Why a published artifact revision is not served on TEA.
+"""
+enum TeaWithdrawnReason {
+  """
+  a VDR snapshot stored by a release action (FDAW-80).
+  """
+  VDR_SNAPSHOT
+}
+
+"""
 The reason a TEA collection version was written, per the TEA 1.0.0 precedence rule.
 """
 enum TeaCollectionUpdateReasonType {
@@ -8432,6 +8684,7 @@ enum PackagePart {
   NARRATIVE
   CLE
   RAW_ARTIFACTS
+  CHECK_REPORT
 }
 
 """
@@ -8555,6 +8808,8 @@ NULL MEANS DISABLED. The default is off: support properties do not appear in an
   security control and a content choice are not the same switch.
   """
   supportInjection: SupportInjectionSetting
+  "Whether a package needs a second confirmer: Confirm is open and Finalize needs a second person. Unset reads as off."
+  submissionSecondConfirmer: Boolean
   """
   Labeling VI.A.2: that patches and software updates may cease at end of support.
   """
@@ -8862,6 +9117,88 @@ type VexImportSummary {
   errorMessages: [String]
 }
 
+"""
+Where a draft stands: EDITING, or held by a confirmation until it is finalized or returned.
+"""
+enum SubmissionDraftState {
+  EDITING
+  AWAITING_CONFIRMATION
+}
+
+"""
+A person as recorded when they acted: their uuid, name and e-mail in the organization.
+"""
+type DraftActor {
+  actor: ID!
+  actorName: String
+  actorEmail: String
+}
+
+"""
+A draft's build job: the last request and how it stands. failureText names a refusal or a class, nothing else.
+"""
+type DraftJob {
+  state: DraftBuildState!
+  requestedAt: DateTime
+  requestedBy: DraftActor
+  startedAt: DateTime
+  finishedAt: DateTime
+  attempt: Int!
+  failureRefusal: SubmissionRefusal
+  failureText: String
+}
+
+"""
+A draft's last successful build.
+"""
+type DraftBuild {
+  builtAt: DateTime!
+  requestedBy: DraftActor
+  inputsFingerprint: String!
+  closure: [ID!]!
+  componentKeys: [String!]!
+  componentRefs: [DraftComponentRef!]!
+  releaseSbom: ReleaseSbomRef
+  releaseSbomNeedsBind: Boolean!
+  parts: [DraftPart!]!
+  sbomProfile: SbomProfileRef
+  settings: PackageSettingsRef
+  "What the build changes against its baseline (the previous version, else the replaced one); null without one."
+  diff: DraftDiff
+}
+
+"""
+The confirmation a draft holds until it is finalized or returned, of the build buildFingerprint names.
+"""
+type HeldConfirmation {
+  actor: ID!
+  actorName: String
+  actorEmail: String
+  capacity: ConfirmationCapacity!
+  statementId: String!
+  statementVersion: Int!
+  confirmedAt: DateTime!
+  buildFingerprint: String!
+}
+
+"""
+What moved since a draft's build: the fingerprint lines that differ, and the writes behind them, each counted once.
+"""
+type ChangesSinceBuild {
+  count: Int!
+  fingerprintEqual: Boolean!
+  "The names of the fingerprint lines that differ, added or vanished."
+  movedLines: [String!]!
+}
+
+"""
+A draft's readiness rows in the rules' order, and the rule set's version.
+"""
+type ReadinessReport {
+  ruleSetVersion: String!
+  rows: [ReadinessRow!]!
+}
+
 enum OSEnum {
   WINDOWS
   MACOS
@@ -8975,6 +9312,7 @@ enum ReleaseUpdateScopeEnum {
   TEA_PUBLICATION
   SUBMISSION
   DECLARED_LICENSE
+  DISPLAYED_VERSION
 }
 
 enum ReleaseUpdateActionEnum {
@@ -9737,6 +10075,10 @@ enum TeaRideAlongStatus {
   the first download link is not an absolute http or https URI of at most 4096 octets, or carries user information.
   """
   SKIPPED_LINK_NOT_HTTP_URL
+  """
+  a VDR snapshot stored by a release action: never published on TEA (FDAW-80).
+  """
+  SKIPPED_VDR_SNAPSHOT
 }
 
 """
@@ -9750,6 +10092,20 @@ enum TeaChildOutcome {
   SKIPPED_HIDDEN
   SKIPPED_OTHER_PRODUCT
   REFUSED
+}
+
+enum TeaGeneratedDocumentKind {
+  VEX
+  DEVICE_SUPPORT_STATEMENT
+  PACKAGE_PROFILE_SBOM
+}
+
+enum TeaGeneratedDocumentStatus {
+  PUBLISHED
+  UNCHANGED
+  SKIPPED
+  "A skip that kept the last published entry"
+  KEPT
 }
 
 enum DeclarativeAction {
@@ -10518,6 +10874,139 @@ enum DigestScope {
 }
 
 """
+Where a draft's build job stands; NONE on a draft never rebuilt.
+"""
+enum DraftBuildState {
+  NONE
+  REQUESTED
+  RUNNING
+  BUILT
+  FAILED
+}
+
+"""
+Why a submission act was refused; EDITION_UNSUPPORTED is the answer of an edition without submissions.
+"""
+enum SubmissionRefusal {
+  RELEASE_NOT_FOUND
+  RELEASE_ARCHIVED
+  COMPONENT_ARCHIVED
+  LIFECYCLE_TOO_LOW
+  ALREADY_SUBMITTED
+  NOT_SUBMITTED
+  STALE_HEAD
+  REASON_REQUIRED
+  SUBMISSION_IN_PROGRESS
+  SETTINGS_CONFLICT
+  SETTINGS_INVALID
+  PROFILE_CONFLICT
+  PROFILE_NOT_FOUND
+  PART_GENERATOR_MISSING
+  PART_MISSING
+  PART_FAILED
+  GENERATION_FAILED
+  REASON_INVALID
+  "The acting user is not a current member of the release's organization"
+  ACTOR_NOT_MEMBER
+  EDITION_UNSUPPORTED
+  "The kind is not switched on in the component's effective package settings"
+  KIND_DISABLED
+  "A REFERENCED artifact left the release's inventory or was archived while the package was being composed; repeat the act"
+  INVENTORY_CHANGED
+  DRAFT_EXISTS
+  DRAFT_NOT_FOUND
+  DRAFT_AWAITING_CONFIRMATION
+  BUILD_IN_PROGRESS
+  NO_BUILD
+  REBUILD_FIRST
+  CONFIRMATION_REQUIRED
+  SAME_CONFIRMER
+  NOT_FINAL
+  REPLACES_NOT_FOUND
+  REPLACES_NOT_REPLACEABLE
+  SUPPORT_DISCLOSURE_OFF
+  SUPPORT_INJECTION_FAILED
+  PART_MISMATCH
+  PIN_MISMATCH
+  REBUILD_LIMIT
+  MUST_FIX_OPEN
+  READINESS_CHECK_FAILED
+}
+
+"""
+One component of a build: its key and the support row and revision it read.
+"""
+type DraftComponentRef {
+  key: String!
+  supportRow: ID
+  supportRevision: Int
+}
+
+"""
+One part a build generated: an unbound artifact until the draft is finalized.
+"""
+type DraftPart {
+  part: PackagePart!
+  artifact: ID!
+  sha256: String
+  sizeBytes: Long
+  documentSerial: String
+  documentVersion: Int
+}
+
+"""
+The SBOM profile row and revision a build used.
+"""
+type SbomProfileRef {
+  uuid: ID
+  revision: Int
+}
+
+"""
+The package settings row and revision a build used.
+"""
+type PackageSettingsRef {
+  uuid: ID
+  revision: Int
+}
+
+"""
+What a draft build changes against its baseline. Each list keeps at most 500 rows; its count is the full number.
+"""
+type DraftDiff {
+  baseline: DraftDiffBaseline!
+  added: [DraftDiffComponent!]!
+  addedCount: Int!
+  removed: [DraftDiffComponent!]!
+  removedCount: Int!
+  changed: [DraftDiffVersionChange!]!
+  changedCount: Int!
+  supportChanged: [DraftDiffSupportChange!]!
+  supportChangedCount: Int!
+  "False when either side has no VDR part; the finding lists are then empty."
+  findingsCompared: Boolean!
+  findingsAdded: [DraftDiffFinding!]!
+  findingsAddedCount: Int!
+  findingsRemoved: [DraftDiffFinding!]!
+  findingsRemovedCount: Int!
+}
+
+"""
+One readiness rule as evaluated: the verb is the key of the act that fixes it, set only when the outcome is not PASS.
+"""
+type ReadinessRow {
+  rule: String!
+  severity: ReadinessSeverity!
+  outcome: ReadinessOutcome!
+  count: Int!
+  justified: Int
+  text: String!
+  verb: String
+  items: [ReadinessItem!]!
+  itemsTruncated: Boolean!
+}
+
+"""
 A CDX-2.0 party (entity with roles), per spec PR #930.
 """
 type Party {
@@ -10904,6 +11393,80 @@ enum ObservedItemStatus {
   DRIFTED
   FOREIGN_COMPONENT
   UNKNOWN
+}
+
+"""
+The submission version a draft build was compared with.
+"""
+type DraftDiffBaseline {
+  submission: ID!
+  version: Int!
+}
+
+"""
+A component added or removed, by its version-less identity.
+"""
+type DraftDiffComponent {
+  identity: String!
+  name: String
+  version: String!
+}
+
+"""
+A component whose one version changed.
+"""
+type DraftDiffVersionChange {
+  identity: String!
+  name: String
+  fromVersion: String!
+  toVersion: String!
+}
+
+"""
+A support property of a component key that differs; values cut at 512 characters, a justification change carries none.
+"""
+type DraftDiffSupportChange {
+  key: String!
+  property: String!
+  before: String
+  after: String
+}
+
+"""
+A finding of the VDR: a vulnerability id and the component it affects.
+"""
+type DraftDiffFinding {
+  vulnerabilityId: String!
+  """
+  The component as the documents name it: its purl, else its name with group and version, else the reference itself (of a BOM-Link, the part after its serial and version); null when the vulnerability names no component.
+  """
+  affectedRef: String
+}
+
+"""
+Whether an open readiness row refuses Finalize (MUST_FIX) or only informs (REVIEW).
+"""
+enum ReadinessSeverity {
+  MUST_FIX
+  REVIEW
+}
+
+"""
+A readiness row's outcome; ERROR is a rule that could not be evaluated.
+"""
+enum ReadinessOutcome {
+  PASS
+  FAIL
+  ERROR
+}
+
+"""
+One item a readiness row lists.
+"""
+type ReadinessItem {
+  key: String!
+  label: String!
+  detail: String
 }
 
 enum PartyRole {
