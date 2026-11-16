@@ -328,6 +328,10 @@ func (v *AddReleaseProgrammaticAddReleaseProgrammaticReleaseParentReleasesParent
 
 // AddReleaseProgrammaticResponse is returned by AddReleaseProgrammatic on success.
 type AddReleaseProgrammaticResponse struct {
+	// Creates one release from a build. Actions that rules fire when the release is saved
+	// (integration triggers, external validations, emails, pull request comments, VDR snapshots)
+	// and the pull request check run are sent at that point and are not recalled when the call is
+	// refused afterwards.
 	AddReleaseProgrammatic *AddReleaseProgrammaticAddReleaseProgrammaticRelease `json:"addReleaseProgrammatic"`
 }
 
@@ -436,7 +440,11 @@ func (v *AddReleasesProgrammaticAddReleasesProgrammaticReleaseParentReleasesPare
 type AddReleasesProgrammaticResponse struct {
 	// Batch counterpart to addReleaseProgrammatic. Creates every supplied
 	// release in a single all-or-nothing transaction -- if any entry fails,
-	// none are persisted. Auto-integration of products is deferred until all
+	// none are persisted. Actions that rules fire when a release is saved
+	// (integration triggers, external validations, emails, pull request
+	// comments, VDR snapshots) and the pull request check run are sent as each
+	// release is saved and are not recalled when a later release of the batch
+	// is refused. Auto-integration of products is deferred until all
 	// releases are created, then fired once per affected feature set (deduped
 	// across the whole batch) instead of once per release. Use this when a CI
 	// run builds several component releases at once and you want a single
@@ -71942,6 +71950,9 @@ type ReleaseInputProg struct {
 	// Omitted or empty for none: the release then inherits the component's licence, else the
 	// organization default.
 	LicenseExpression *string `json:"licenseExpression"`
+	// The version the device shows its user, at most 128 characters on one line. Omitted: none on a new release,
+	// unchanged on a rebuild; an empty string clears it on a rebuild.
+	DisplayedVersion *string `json:"displayedVersion,omitempty"`
 }
 
 // GetVersion returns ReleaseInputProg.Version, and is useful for accessing the field via an interface.
@@ -72030,6 +72041,9 @@ func (v *ReleaseInputProg) GetPullRequest() *PullRequestInfoInput { return v.Pul
 
 // GetLicenseExpression returns ReleaseInputProg.LicenseExpression, and is useful for accessing the field via an interface.
 func (v *ReleaseInputProg) GetLicenseExpression() *string { return v.LicenseExpression }
+
+// GetDisplayedVersion returns ReleaseInputProg.DisplayedVersion, and is useful for accessing the field via an interface.
+func (v *ReleaseInputProg) GetDisplayedVersion() *string { return v.DisplayedVersion }
 
 type ReleaseLifecycleEnum string
 
@@ -72194,6 +72208,7 @@ const (
 	ReleaseUpdateScopeEnumTeaPublication      ReleaseUpdateScopeEnum = "TEA_PUBLICATION"
 	ReleaseUpdateScopeEnumSubmission          ReleaseUpdateScopeEnum = "SUBMISSION"
 	ReleaseUpdateScopeEnumDeclaredLicense     ReleaseUpdateScopeEnum = "DECLARED_LICENSE"
+	ReleaseUpdateScopeEnumDisplayedVersion    ReleaseUpdateScopeEnum = "DISPLAYED_VERSION"
 )
 
 var AllReleaseUpdateScopeEnum = []ReleaseUpdateScopeEnum{
@@ -72219,6 +72234,7 @@ var AllReleaseUpdateScopeEnum = []ReleaseUpdateScopeEnum{
 	ReleaseUpdateScopeEnumTeaPublication,
 	ReleaseUpdateScopeEnumSubmission,
 	ReleaseUpdateScopeEnumDeclaredLicense,
+	ReleaseUpdateScopeEnumDisplayedVersion,
 }
 
 // ReleasecompletionfinalizerProgrammaticResponse is returned by ReleasecompletionfinalizerProgrammatic on success.
@@ -76946,6 +76962,8 @@ mutation AddReleaseProgrammatic ($releaseInputProg: ReleaseInputProg!) {
 `
 
 // from rearm-cli addRelease.go
+// A server without FDAW-74 does not declare displayedVersion and refuses a variables input that
+// carries the key, even as null, so the field is left out of the request when nil.
 func AddReleaseProgrammatic(
 	ctx_ context.Context,
 	client_ graphql.Client,
@@ -76997,6 +77015,8 @@ mutation AddReleasesProgrammatic ($releaseInputsProg: [ReleaseInputProg!]!) {
 `
 
 // from rearm-cli addReleases.go
+// A server without FDAW-74 does not declare displayedVersion and refuses a variables input that
+// carries the key, even as null, so the field is left out of the request when nil.
 func AddReleasesProgrammatic(
 	ctx_ context.Context,
 	client_ graphql.Client,
