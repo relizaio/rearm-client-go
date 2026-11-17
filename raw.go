@@ -78,9 +78,43 @@ func responseTooLarge() error {
 	return fmt.Errorf("%w: the answer is over %d MiB, the most this client reads", ErrResponseTooLarge, maxResponseBytes>>20)
 }
 
+// StatusError is the error of an answer with an HTTP error status (>= 400) that carried no GraphQL
+// errors: a page from an ingress, or a JSON body without an `errors` member. Match it with
+// errors.As. An answer with GraphQL errors is GraphQLErrors whatever its status.
+type StatusError struct {
+	StatusCode int
+	// Body is the start of a body that was not JSON (at most 200 bytes, trimmed); "" otherwise.
+	Body string
+	// RequestBytes is the length of the request body that was sent, as net/http knew it; 0 when
+	// there was none, -1 when unknown.
+	RequestBytes int64
+	// bodyNotJSON selects the text of Error: the non-JSON answer appends Body, even when empty.
+	bodyNotJSON bool
+}
+
+func (e *StatusError) Error() string {
+	if e.bodyNotJSON {
+		return fmt.Sprintf("rearm: request failed with status %d: %s", e.StatusCode, e.Body)
+	}
+	return fmt.Sprintf("rearm: request failed with status %d", e.StatusCode)
+}
+
+// requestBytes is the length of the body req sends: 0 for no body, -1 for a body of unknown length
+// (net/http reads a ContentLength of 0 with a body as unknown on a client request).
+func requestBytes(req *http.Request) int64 {
+	if req.Body == nil || req.Body == http.NoBody {
+		return 0
+	}
+	if req.ContentLength > 0 {
+		return req.ContentLength
+	}
+	return -1
+}
+
 // exchange runs the request through the authenticated HTTP client and splits data from errors.
 func (c *Client) exchange(req *http.Request) (json.RawMessage, error) {
 	req.Header.Set("Accept", "application/json")
+	sent := requestBytes(req)
 	resp, err := c.http.Do(req)
 	if err != nil {
 		return nil, err
@@ -96,7 +130,7 @@ func (c *Client) exchange(req *http.Request) (json.RawMessage, error) {
 	}
 	if jerr := json.Unmarshal(raw, &env); jerr != nil {
 		if resp.StatusCode >= 400 {
-			return nil, fmt.Errorf("rearm: request failed with status %d: %s", resp.StatusCode, strings.TrimSpace(string(raw[:min(len(raw), 200)])))
+			return nil, &StatusError{StatusCode: resp.StatusCode, Body: strings.TrimSpace(string(raw[:min(len(raw), 200)])), RequestBytes: sent, bodyNotJSON: true}
 		}
 		return nil, fmt.Errorf("rearm: malformed response: %w", jerr)
 	}
@@ -104,7 +138,7 @@ func (c *Client) exchange(req *http.Request) (json.RawMessage, error) {
 		return env.Data, env.Errors
 	}
 	if resp.StatusCode >= 400 {
-		return nil, fmt.Errorf("rearm: request failed with status %d", resp.StatusCode)
+		return nil, &StatusError{StatusCode: resp.StatusCode, RequestBytes: sent}
 	}
 	return env.Data, nil
 }
