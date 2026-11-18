@@ -117,6 +117,9 @@ data, err := rearm.Raw(ctx, client, "GetLatestReleaseProgrammatic", rearm.GetLat
 ```
 
 Errors from the server come back as `rearm.GraphQLErrors`; a missing entity is `catalog.IsNotFound`.
+An HTTP error status without GraphQL errors (an ingress page, a JSON body such as the backend's 413)
+is a `*rearm.StatusError` (match it with `errors.As`): its `StatusCode`, the start of a non-JSON
+`Body`, and `RequestBytes`, the size of the request body that was sent.
 
 ### Files
 
