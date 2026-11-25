@@ -102,6 +102,16 @@ reach). Refresh it whole from a server running the version you target, then rege
 do not hand-edit it. A copy spliced by hand drifts: fields the server added go missing, and
 typed callers cannot reach them. Operations live in `operations/*.graphql`.
 
+Without a running server, the same bundle can be dumped offline from a rearm-saas checkout (the
+`buildBundle` that `/api/programmatic/schema` serves), then regenerated as above:
+
+```
+cd backend && mvn -o test -Dtest=DumpProgrammaticSchemaTest -DdumpTo=/path/to/rearm-client-go/schema/programmatic.graphqls
+```
+
+Name the rearm-saas commit in the commit message, and check the diff removes no type, field,
+argument or enum value.
+
 ## The full programmatic surface
 
 `operations/cli.graphql` carries every operation the ReARM CLI sends (releases, artifacts, agent
@@ -120,6 +130,21 @@ Errors from the server come back as `rearm.GraphQLErrors`; a missing entity is `
 An HTTP error status without GraphQL errors (an ingress page, a JSON body such as the backend's 413)
 is a `*rearm.StatusError` (match it with `errors.As`): its `StatusCode`, the start of a non-JSON
 `Body`, and `RequestBytes`, the size of the request body that was sent.
+
+### Import summaries
+
+The summary of an uploaded VEX or SAFETY_CONTEXT artifact has different fields on different server
+generations, and selecting a field a server lacks fails the whole upload. So the import operation is
+built in Go per server (`import_summary.go`) instead of living in `operations/*.graphql`:
+`ProbeImportSummary` sends `ImportSummaryProbe_Operation` (an introspection of `ImportSummary` and
+`VexImportSummary`, no file) and `ParseImportSummaryProbe` turns the answer into an `ImportSupport`
+(the artifact field to read and the subset of `ImportSummaryFields` it serves; a type without all of
+`ImportSummaryRequired` is not used, and an answer with GraphQL errors reads as not supported).
+`AddArtifactWithImportsOperation(ImportSelection{Support: s, Deliverables: d})` builds the
+`addArtifactProgrammatic` mutation that also reads each stored artifact's type, display identifier,
+tags and summary on the release and, with `Deliverables`, on its inbound and outbound deliverables.
+It takes the same variables as `AddArtifactProgrammatic_Operation` and never selects source code
+entries, whose import result the server does not return.
 
 ### Files
 
