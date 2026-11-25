@@ -83226,6 +83226,7 @@ const (
 	ArtifactTypeVdr                 ArtifactType = "VDR"
 	ArtifactTypeBov                 ArtifactType = "BOV"
 	ArtifactTypeVex                 ArtifactType = "VEX"
+	ArtifactTypeSafetyContext       ArtifactType = "SAFETY_CONTEXT"
 	ArtifactTypeUserDocument        ArtifactType = "USER_DOCUMENT"
 	ArtifactTypeDevelopmentDocument ArtifactType = "DEVELOPMENT_DOCUMENT"
 	ArtifactTypeProjectDocument     ArtifactType = "PROJECT_DOCUMENT"
@@ -83251,6 +83252,8 @@ const (
 	// A document generated for a regulatory submission (an FDA premarket package): the assessment narrative, the device support statement, the support addendum, the CLE and the package manifest. Its submissionKind and submissionPart tags name the submission and the part.
 	ArtifactTypeRegulatoryDocument ArtifactType = "REGULATORY_DOCUMENT"
 	ArtifactTypeOther              ArtifactType = "OTHER"
+	// a stored type this server version does not know; upgrade to read it; never accepted as input
+	ArtifactTypeUnknown ArtifactType = "UNKNOWN"
 )
 
 var AllArtifactType = []ArtifactType{
@@ -83259,6 +83262,7 @@ var AllArtifactType = []ArtifactType{
 	ArtifactTypeVdr,
 	ArtifactTypeBov,
 	ArtifactTypeVex,
+	ArtifactTypeSafetyContext,
 	ArtifactTypeUserDocument,
 	ArtifactTypeDevelopmentDocument,
 	ArtifactTypeProjectDocument,
@@ -83282,6 +83286,7 @@ var AllArtifactType = []ArtifactType{
 	ArtifactTypeAgenticReport,
 	ArtifactTypeRegulatoryDocument,
 	ArtifactTypeOther,
+	ArtifactTypeUnknown,
 }
 
 // AttestProgrammaticAttestProgrammaticAttestation includes the requested fields of the GraphQL type Attestation.

@@ -8888,6 +8888,7 @@ enum ArtifactType {
   VDR
   BOV
   VEX
+  SAFETY_CONTEXT
   USER_DOCUMENT
   DEVELOPMENT_DOCUMENT
   PROJECT_DOCUMENT
@@ -8917,6 +8918,10 @@ enum ArtifactType {
   """
   REGULATORY_DOCUMENT
   OTHER
+  """
+  a stored type this server version does not know; upgrade to read it; never accepted as input
+  """
+  UNKNOWN
 }
 
 enum BomFormat {
@@ -8987,7 +8992,10 @@ type ImportSummary {
   attestationsDeferred: Int
   statementsUnmatched: Int
   statementsErrored: Int
+  statementsUnchanged: Int
   errorMessages: [String]
+  demotions: [ImportDemotionCount!]
+  overrideOutcome: ImportOverrideOutcome
 }
 
 type VexImportSummary {
@@ -8998,6 +9006,7 @@ type VexImportSummary {
   attestationsDeferred: Int
   statementsUnmatched: Int
   statementsErrored: Int
+  statementsUnchanged: Int
   errorMessages: [String]
 }
 
@@ -9951,6 +9960,10 @@ enum TeaRideAlongStatus {
   the first download link is not an absolute http or https URI of at most 4096 octets, or carries user information.
   """
   SKIPPED_LINK_NOT_HTTP_URL
+  """
+  the artifact's stored type is not known to this server version.
+  """
+  SKIPPED_UNKNOWN_TYPE
 }
 
 """
@@ -10743,6 +10756,19 @@ enum DigestScope {
   RAW_OCI_STORAGE
 }
 
+type ImportDemotionCount {
+  reason: ImportDemotionReason!
+  count: Int!
+}
+
+enum ImportOverrideOutcome {
+  NONE
+  UNCHANGED
+  LOWERED
+  RAISED
+  IGNORED
+}
+
 """
 A CDX-2.0 party (entity with roles), per spec PR #930.
 """
@@ -11122,6 +11148,14 @@ enum ObservedItemStatus {
   DRIFTED
   FOREIGN_COMPONENT
   UNKNOWN
+}
+
+enum ImportDemotionReason {
+  NO_FINDING_ANALYSIS_WRITE
+  SAME_SCOPE_CONFLICT
+  BROADER_SCOPE_CONFLICT
+  SEVERITY_MISSING
+  SEVERITY_CHANGE
 }
 
 enum PartyRole {
