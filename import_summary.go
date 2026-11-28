@@ -116,7 +116,12 @@ func ParseImportSummaryType(field string, data json.RawMessage) (ImportSupport, 
 	for _, e := range entries {
 		var entry map[string]json.RawMessage
 		var name string
-		if json.Unmarshal(e, &entry) != nil || entry == nil || json.Unmarshal(entry["name"], &name) != nil {
+		if json.Unmarshal(e, &entry) != nil || entry == nil {
+			return ImportSupport{}, fmt.Errorf("%w: a fields entry has no string name", ErrImportProbeMalformed)
+		}
+		// A missing or null name would decode into "" without an error; both are malformed.
+		rawName, hasName := entry["name"]
+		if !hasName || isJSONNull(rawName) || json.Unmarshal(rawName, &name) != nil {
 			return ImportSupport{}, fmt.Errorf("%w: a fields entry has no string name", ErrImportProbeMalformed)
 		}
 		served[name] = true

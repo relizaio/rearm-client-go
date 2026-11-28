@@ -317,6 +317,8 @@ func TestProbeImportSummaryClassifiesEveryAnswer(t *testing.T) {
 		{row: "14 __type a string", opts: goodFaithOpts{script: map[int]scripted{1: {200, `{"data":{"__type":"x"}}`}}}, want: malformed, requests: 1},
 		{row: "15 fields entry without a string name", opts: goodFaithOpts{script: map[int]scripted{1: {200, `{"data":{"__type":{"fields":[{"name":1}]}}}`}}},
 			want: malformed, requests: 1},
+		{row: "16 fields entry with a null name", opts: goodFaithOpts{script: map[int]scripted{1: {200, `{"data":{"__type":{"fields":[{"name":null}]}}}`}}},
+			want: malformed, requests: 1},
 	}
 	for _, c := range cases {
 		t.Run(c.row, func(t *testing.T) {
@@ -417,6 +419,7 @@ func TestParseImportSummaryType(t *testing.T) {
 		})
 	}
 	for _, data := range []string{"", "null", "{}", `{"__type":"x"}`, `{"__type":[]}`, `{"__type":{"fields":[{"name":1}]}}`,
+		`{"__type":{"fields":[{"name":null}]}}`, `{"__type":{"fields":[{}]}}`, `{"__type":{"fields":[null]}}`,
 		`{"__type":{"fields":["x"]}}`, `{"__type":{"fields":{}}}`, `[]`, `not json`} {
 		t.Run("malformed "+data, func(t *testing.T) {
 			got, err := ParseImportSummaryType(ImportSummaryField, json.RawMessage(data))
