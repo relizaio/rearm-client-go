@@ -136,10 +136,18 @@ is a `*rearm.StatusError` (match it with `errors.As`): its `StatusCode`, the sta
 The summary of an uploaded VEX or SAFETY_CONTEXT artifact has different fields on different server
 generations, and selecting a field a server lacks fails the whole upload. So the import operation is
 built in Go per server (`import_summary.go`) instead of living in `operations/*.graphql`:
-`ProbeImportSummary` sends `ImportSummaryProbe_Operation` (an introspection of `ImportSummary` and
-`VexImportSummary`, no file) and `ParseImportSummaryProbe` turns the answer into an `ImportSupport`
-(the artifact field to read and the subset of `ImportSummaryFields` it serves; a type without all of
-`ImportSummaryRequired` is not used, and an answer with GraphQL errors reads as not supported).
+`ProbeImportSummary` sends `ImportSummaryProbe_Operation`, an introspection of one type per request
+(no file): `ImportSummary` first, then `VexImportSummary` only when the first is absent or lacks a
+required field. One `__type` per request is needed because servers keep graphql-java's good-faith
+introspection limit, which refuses a request that selects `__type` or `__Type.fields` more than once.
+`ParseImportSummaryType` turns one answer into an `ImportSupport` (the artifact field to read and the
+subset of `ImportSummaryFields` it serves; a type without all of `ImportSummaryRequired` is not used,
+and a type the server does not have reads as not supported). Every error is returned, except an
+answer whose errors are all classified `IntrospectionDisabled`, which reads as not supported; a probe
+answer of the wrong shape is an error matching `ErrImportProbeMalformed`.
+`GraphQLError.Classification()` returns an error's `extensions.classification` as an
+`ErrorClassification`, to compare with `ClassificationBadFaithIntrospection`,
+`ClassificationIntrospectionDisabled` or `ClassificationValidationError`.
 `AddArtifactWithImportsOperation(ImportSelection{Support: s, Deliverables: d})` builds the
 `addArtifactProgrammatic` mutation that also reads each stored artifact's type, display identifier,
 tags and summary on the release and, with `Deliverables`, on its inbound and outbound deliverables.

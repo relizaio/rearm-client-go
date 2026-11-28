@@ -35,6 +35,29 @@ type GraphQLError struct {
 	Extensions map[string]any `json:"extensions,omitempty"`
 }
 
+// ErrorClassification is the `extensions.classification` of a GraphQL error, as graphql-java
+// servers set it.
+type ErrorClassification string
+
+// Classifications a caller compares against.
+const (
+	// ClassificationBadFaithIntrospection: the request exceeded the server's good-faith
+	// introspection limit (for example __type or __Type.fields selected more than once).
+	ClassificationBadFaithIntrospection ErrorClassification = "BadFaithIntrospection"
+	// ClassificationIntrospectionDisabled: the server does not answer introspection at all.
+	ClassificationIntrospectionDisabled ErrorClassification = "IntrospectionDisabled"
+	// ClassificationValidationError: the request failed validation against the server's schema.
+	ClassificationValidationError ErrorClassification = "ValidationError"
+)
+
+// Classification returns `extensions.classification` when it is a string, else "".
+func (e GraphQLError) Classification() ErrorClassification {
+	if s, ok := e.Extensions["classification"].(string); ok {
+		return ErrorClassification(s)
+	}
+	return ""
+}
+
 // GraphQLErrors is the whole array, returned as the error of Raw / UploadMultipart.
 type GraphQLErrors []GraphQLError
 
